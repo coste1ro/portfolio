@@ -21,133 +21,6 @@
     }
     a { color: inherit; text-decoration: none; }
 
-    /* ── Orange decorative shapes ── */
-    .deco-wrap {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      height: 88px;
-      margin-bottom: 28px;
-    }
-    .deco-2 {
-      font-size: 100px;
-      font-weight: 800;
-      line-height: 1;
-      color: var(--accent);
-      letter-spacing: -4px;
-      font-family: 'Inter', sans-serif;
-      align-self: center;
-    }
-    .deco-star {
-      width: 62px;
-      height: 62px;
-      align-self: center;
-      flex-shrink: 0;
-    }
-    .deco-blobs {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      align-self: center;
-    }
-    .blob {
-      background: #b84b10;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .blob-lg { width: 62px; height: 62px; }
-    .blob-md { width: 50px; height: 50px; background: #c75213; }
-    .blob-sm { width: 40px; height: 40px; background: #9a3d0c; }
-
-    /* ── Typography ── */
-    .hero-heading {
-      font-size: clamp(26px, 2.8vw, 40px);
-      font-weight: 400;
-      color: #e8e8e8;
-      line-height: 1.25;
-      max-width: 680px;
-      letter-spacing: -0.01em;
-    }
-
-    .section-tag {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 10px;
-    }
-
-    .project-heading {
-      font-size: clamp(24px, 2.2vw, 34px);
-      font-weight: 500;
-      color: #e8e8e8;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
-    }
-
-    /* ── Divider ── */
-    .scroll-divider {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid var(--page-border);
-      padding: 14px 24px;
-      color: var(--page-border);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      transition: border-color 0.35s, color 0.35s;
-    }
-
-    /* ── Pill button ── */
-    .btn-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      border: 1px solid #333;
-      border-radius: 100px;
-      padding: 9px 18px;
-      font-size: 13px;
-      color: #c8c8c8;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .btn-pill:hover { border-color: #666; color: #fff; }
-    .btn-pill .dot {
-      width: 7px; height: 7px;
-      background: var(--accent);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* ── Project screenshots ── */
-    .screens-grid-1 {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr 1fr;
-      gap: 6px;
-      margin-top: 36px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .screens-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 36px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .screen-img {
-      width: 100%;
-      display: block;
-      object-fit: cover;
-      aspect-ratio: 4/3;
-      background: #181818;
-    }
-
     /* ── Skills cards ── */
     .skills-grid {
       display: grid;
@@ -225,42 +98,6 @@
       color: var(--page-muted, #888);
       line-height: 1.6;
     }
-    .skill-tag {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--page-fg);
-      background: var(--card-border);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 3px 10px;
-      white-space: nowrap;
-    }
-    body.light .skill-tag {
-      background: rgba(0,0,0,0.06);
-      border-color: rgba(0,0,0,0.1);
-    }
-    .sub-card {
-      background: var(--page-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 4px;
-      transition: background 0.35s, border-color 0.35s;
-    }
-    .sub-card .sub-label {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 6px;
-    }
-    .anthropic-star {
-      color: var(--accent);
-      font-size: 22px;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
     .thorn { font-style: normal; }
 
     /* ── Theme variables ── */
@@ -288,8 +125,6 @@
     /* ── Light theme element overrides ── */
     body.light .skill-card p { color: #666; }
     body.light .skill-label { color: #aaa; }
-    body.light .elite-card-subtitle { color: #aaa; }
-    body.light .elite-card-desc { color: #777; }
     body.light .elite-highlight-dot { background: #aaa; opacity: 1; }
     body.light .noise-overlay { opacity: 0.05; }
 
@@ -378,8 +213,9 @@
       border-top: 1px solid rgba(255,255,255,0.08);
       padding: 13px 0;
       z-index: 4;
-      pointer-events: none;
+      pointer-events: auto;
     }
+    .hero-ticker:hover .hero-ticker-track { animation-play-state: paused; }
 
     .hero-ticker-track {
       display: flex;
@@ -494,116 +330,6 @@
       background-repeat: repeat;
       background-size: 120px 120px;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
-
-    /* ── Elite Plan Cards ── */
-    .projects-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-      flex: 1;
-      min-height: 0;
-    }
-
-    .elite-card {
-      position: relative;
-      border-radius: 24px;
-      overflow: hidden;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .elite-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
-      border-color: rgba(255,255,255,0.12);
-    }
-
-    .elite-card-image {
-      position: relative;
-      flex: 1;
-      min-height: 200px;
-      overflow: hidden;
-    }
-
-    .elite-card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.45s ease;
-    }
-
-    .elite-card:hover .elite-card-image img {
-      transform: scale(1.1);
-    }
-
-    .elite-card-image--trip {
-      background: linear-gradient(160deg, #c4a06a 0%, #8a5c30 40%, #3a2010 100%);
-      transition: transform 0.45s ease;
-    }
-    .elite-card:hover .elite-card-image--trip {
-      transform: scale(1.1);
-    }
-
-    .elite-card-image--neo {
-      background: linear-gradient(160deg, #1e3a6e 0%, #0d1f3c 50%, #050e1e 100%);
-      transition: transform 0.45s ease;
-    }
-    .elite-card:hover .elite-card-image--neo {
-      transform: scale(1.1);
-    }
-
-    .elite-card-image--under {
-      background: linear-gradient(160deg, #2d1a4a 0%, #160d28 50%, #06030e 100%);
-      transition: transform 0.45s ease;
-    }
-    .elite-card:hover .elite-card-image--under {
-      transform: scale(1.1);
-    }
-
-    .elite-card-image::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 130px;
-      background: linear-gradient(to top, var(--card-fade) 0%, transparent 100%);
-    }
-
-    .elite-card-body {
-      padding: 18px 22px 24px;
-      background: var(--card-bg);
-      transition: background 0.35s;
-      flex-shrink: 0;
-    }
-
-    .elite-card-subtitle {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #555;
-      margin-bottom: 5px;
-    }
-
-    .elite-card-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--page-fg-bright);
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
-      transition: color 0.35s;
-    }
-
-    .elite-card-desc {
-      font-size: 12px;
-      color: #888;
-      line-height: 1.65;
-      margin-bottom: 16px;
     }
 
     .elite-card-highlights {
@@ -808,60 +534,6 @@
       .proj-car-card { margin-left: 0; margin-top: -20px; width: auto; padding: 24px 20px; }
     }
 
-    /* ── Horizontal project cards (stacked) ── */
-    .projects-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      flex: 1;
-    }
-
-    .proj-card {
-      display: flex;
-      border-radius: 20px;
-      overflow: hidden;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      flex: 1;
-      min-height: 230px;
-      opacity: 0;
-      translate: -72px 0;
-      transition: translate 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  opacity 0.8s ease,
-                  border-color 0.35s ease,
-                  background 0.35s;
-    }
-
-    .proj-card.from-right  { translate: 72px 0; }
-    .proj-card.in          { opacity: 1; translate: 0 0; }
-    .proj-card.in:hover    { scale: 1.015; border-color: rgba(255,255,255,0.1); }
-    .proj-card.reverse     { flex-direction: row-reverse; }
-
-    .proj-card-img {
-      width: 52%;
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .proj-card-img-bg {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .proj-card-body {
-      flex: 1;
-      padding: 28px 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-width: 0;
-    }
-
     .proj-card-tag {
       font-size: 10px;
       font-weight: 500;
@@ -870,25 +542,6 @@
       color: #555;
       margin-bottom: 6px;
     }
-
-    .proj-card-title {
-      font-size: clamp(18px, 1.6vw, 26px);
-      font-weight: 700;
-      color: var(--page-fg-bright);
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-      margin-bottom: 10px;
-      transition: color 0.35s;
-    }
-
-    .proj-card-desc {
-      font-size: 13px;
-      color: #888;
-      line-height: 1.65;
-      flex: 1;
-      margin-bottom: 20px;
-    }
-
 
     /* ── Hero dithering canvas ── */
     #hero-dither {
@@ -1061,31 +714,31 @@
     <!-- Skill ticker -->
     <div class="hero-ticker">
       <div class="hero-ticker-track">
-        <span class="hero-ticker-item">UX Research</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Visual Design</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Design System</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Interaction Design</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Prototyping</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">User Testing</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Figma</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Motion Design</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Information Architecture</span><span class="hero-ticker-sep">✦</span>
         <span class="hero-ticker-item">Wireframing</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Dark Theme</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">B2B Product</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Claude Code</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Figma</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Interaction Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Vibe Coding</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">UX Research</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Motion Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Design System</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">User Testing</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Information Architecture</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Visual Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Prototyping</span><span class="hero-ticker-sep">✦</span>
         <!-- duplicate for seamless loop -->
-        <span class="hero-ticker-item">UX Research</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Visual Design</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Design System</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Interaction Design</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Prototyping</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">User Testing</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Figma</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Motion Design</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Information Architecture</span><span class="hero-ticker-sep">✦</span>
         <span class="hero-ticker-item">Wireframing</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">Dark Theme</span><span class="hero-ticker-sep">✦</span>
-        <span class="hero-ticker-item">B2B Product</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Claude Code</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Figma</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Interaction Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Vibe Coding</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">UX Research</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Motion Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Design System</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">User Testing</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Information Architecture</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Visual Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Prototyping</span><span class="hero-ticker-sep">✦</span>
       </div>
     </div>
 
@@ -1157,212 +810,6 @@
 
     </div><!-- /proj-carousel -->
 
-    <div class="projects-stack" style="display:none;">
-
-      <!-- Card 1: Trip Planner — slides in from left, image left -->
-      <div class="proj-card">
-        <div class="proj-card-img">
-          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#c4a06a 0%,#8a5c30 45%,#3a2010 100%);padding:0 28px;">
-            <div style="width:100%;max-width:440px;background:rgba(0,0,0,0.28);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.45);">
-              <div style="background:rgba(0,0,0,0.35);padding:7px 12px;display:flex;align-items:center;gap:5px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
-                <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;height:13px;margin-left:8px;"></div>
-              </div>
-              <div style="padding:12px 14px;display:flex;gap:14px;">
-                <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-                  <div style="height:7px;background:rgba(255,255,255,0.18);border-radius:3px;width:55%;"></div>
-                  <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;width:85%;"></div>
-                  <div style="display:flex;gap:5px;margin-top:2px;">
-                    <div style="background:rgba(196,160,106,0.45);border-radius:4px;padding:4px 8px;font-size:7px;color:rgba(255,255,255,0.65);">Stockholm</div>
-                    <div style="background:rgba(255,255,255,0.07);border-radius:4px;padding:4px 8px;font-size:7px;color:rgba(255,255,255,0.3);">Malmö</div>
-                    <div style="background:rgba(255,255,255,0.07);border-radius:4px;padding:4px 8px;font-size:7px;color:rgba(255,255,255,0.3);">Oslo</div>
-                  </div>
-                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:70%;"></div>
-                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:60%;"></div>
-                </div>
-                <div style="width:56px;flex-shrink:0;display:flex;flex-direction:column;gap:5px;">
-                  <div style="height:32px;border-radius:5px;background:rgba(196,160,106,0.15);border:1px solid rgba(196,160,106,0.2);"></div>
-                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:80%;"></div>
-                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:60%;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="proj-card-body">
-          <div>
-            <div class="proj-card-tag">Web App · 2025</div>
-            <div class="proj-card-title">Trip Planner</div>
-            <div class="proj-card-desc">End-to-end product design — research, wireframes, and shipped MVP. Helps travelers plan trips with smart budgeting.</div>
-          </div>
-          <div class="elite-card-highlights">
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>User Research</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Wireframing</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Visual Design</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Prototyping</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2: Neobank — slides in from right, image right -->
-      <div class="proj-card from-right reverse">
-        <div class="proj-card-img">
-          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#1e3a6e 0%,#0d1f3c 50%,#050e1e 100%);padding:0 28px;">
-            <div style="width:100%;max-width:440px;background:rgba(255,255,255,0.03);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.05);">
-              <div style="background:rgba(0,0,0,0.4);padding:7px 12px;display:flex;align-items:center;gap:5px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
-                <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:3px;height:13px;margin-left:8px;"></div>
-              </div>
-              <div style="padding:10px 14px;display:flex;gap:12px;align-items:flex-start;">
-                <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
-                  <div style="font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">BALANCE</div>
-                  <div style="height:9px;background:rgba(255,255,255,0.2);border-radius:3px;width:50%;"></div>
-                  <div style="margin-top:4px;height:28px;display:flex;align-items:flex-end;gap:3px;">
-                    <div style="flex:1;height:40%;background:rgba(30,90,180,0.4);border-radius:2px 2px 0 0;"></div>
-                    <div style="flex:1;height:60%;background:rgba(30,90,180,0.5);border-radius:2px 2px 0 0;"></div>
-                    <div style="flex:1;height:75%;background:rgba(30,90,180,0.6);border-radius:2px 2px 0 0;"></div>
-                    <div style="flex:1;height:50%;background:rgba(30,90,180,0.45);border-radius:2px 2px 0 0;"></div>
-                    <div style="flex:1;height:85%;background:rgba(60,140,255,0.7);border-radius:2px 2px 0 0;"></div>
-                    <div style="flex:1;height:65%;background:rgba(30,90,180,0.5);border-radius:2px 2px 0 0;"></div>
-                  </div>
-                </div>
-                <div style="width:70px;height:44px;border-radius:6px;background:linear-gradient(135deg,rgba(30,80,160,0.6),rgba(10,30,80,0.8));border:1px solid rgba(255,255,255,0.08);flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;padding:6px 8px;">
-                  <div style="height:5px;background:rgba(255,255,255,0.15);border-radius:2px;width:50%;"></div>
-                  <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;width:80%;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="proj-card-body">
-          <div>
-            <div class="proj-card-tag">Web & Mobile · 2024</div>
-            <div class="proj-card-title">Neobank × 60M users</div>
-            <div class="proj-card-desc">UX writing lead. Owned information architecture, interface logic, and tone of voice across the full product.</div>
-          </div>
-          <div class="elite-card-highlights">
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>UX Writing</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Info Architecture</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Content Strategy</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Team Lead × 10</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3: Underhype — slides in from left, image left -->
-      <div class="proj-card">
-        <div class="proj-card-img">
-          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#2d1a4a 0%,#160d28 50%,#06030e 100%);padding:0 28px;">
-            <div style="width:100%;max-width:440px;background:rgba(0,0,0,0.4);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.04);">
-              <div style="background:rgba(0,0,0,0.5);padding:7px 12px;display:flex;align-items:center;gap:5px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
-                <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:3px;height:13px;margin-left:8px;display:flex;align-items:center;padding-left:6px;">
-                  <div style="font-size:7px;color:rgba(255,255,255,0.2);">underhype.app</div>
-                </div>
-              </div>
-              <div style="padding:10px 14px;display:flex;gap:12px;">
-                <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
-                  <div style="display:flex;gap:5px;align-items:center;">
-                    <div style="height:5px;background:rgba(160,120,255,0.5);border-radius:2px;width:20%;"></div>
-                    <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:2px;width:40%;"></div>
-                  </div>
-                  <div style="display:flex;gap:5px;align-items:center;">
-                    <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:2px;width:12%;"></div>
-                    <div style="height:5px;background:rgba(120,80,220,0.3);border-radius:2px;width:55%;"></div>
-                  </div>
-                  <div style="display:flex;gap:5px;align-items:center;">
-                    <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:2px;width:12%;"></div>
-                    <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:2px;width:35%;"></div>
-                    <div style="height:5px;background:rgba(100,200,120,0.3);border-radius:2px;width:20%;"></div>
-                  </div>
-                  <div style="display:flex;gap:5px;align-items:center;margin-top:2px;">
-                    <div style="height:5px;background:rgba(255,255,255,0.03);border-radius:2px;width:8%;"></div>
-                    <div style="height:5px;background:rgba(160,120,255,0.25);border-radius:2px;width:45%;"></div>
-                  </div>
-                </div>
-                <div style="width:5px;background:rgba(160,120,255,0.4);border-radius:3px;flex-shrink:0;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="proj-card-body">
-          <div>
-            <div class="proj-card-tag">Side Project · 2026</div>
-            <div class="proj-card-title">Underhype</div>
-            <div class="proj-card-desc">A web app built with Claude Code. Explores AI-assisted prototyping and turns ideas into shipped products overnight.</div>
-          </div>
-          <div class="elite-card-highlights">
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Claude Code</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Design System</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Prototyping</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Shipped</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4: Analytics Platform — slides in from right, image right -->
-      <div class="proj-card from-right reverse">
-        <div class="proj-card-img">
-          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#0a3d2c 0%,#051e14 50%,#010a07 100%);padding:0 28px;">
-            <div style="width:100%;max-width:440px;background:rgba(0,0,0,0.35);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04);">
-              <div style="background:rgba(0,0,0,0.45);padding:7px 12px;display:flex;align-items:center;gap:5px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
-                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
-                <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:3px;height:13px;margin-left:8px;"></div>
-              </div>
-              <div style="padding:10px 14px;">
-                <div style="display:flex;gap:10px;margin-bottom:8px;">
-                  <div style="height:6px;background:rgba(40,180,120,0.4);border-radius:3px;width:30%;"></div>
-                  <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;width:20%;"></div>
-                  <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;width:25%;"></div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:7px;">
-                  <div style="height:22px;border-radius:5px;background:rgba(40,180,120,0.12);border:1px solid rgba(40,180,120,0.2);display:flex;align-items:center;padding:0 6px;">
-                    <div style="height:4px;background:rgba(40,180,120,0.5);border-radius:2px;width:65%;"></div>
-                  </div>
-                  <div style="height:22px;border-radius:5px;background:rgba(255,255,255,0.04);display:flex;align-items:center;padding:0 6px;">
-                    <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;width:50%;"></div>
-                  </div>
-                  <div style="height:22px;border-radius:5px;background:rgba(255,255,255,0.04);display:flex;align-items:center;padding:0 6px;">
-                    <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;width:75%;"></div>
-                  </div>
-                </div>
-                <div style="height:18px;display:flex;align-items:flex-end;gap:2px;">
-                  <div style="flex:1;height:55%;background:rgba(40,180,120,0.25);border-radius:2px 2px 0 0;"></div>
-                  <div style="flex:1;height:70%;background:rgba(40,180,120,0.3);border-radius:2px 2px 0 0;"></div>
-                  <div style="flex:1;height:45%;background:rgba(40,180,120,0.25);border-radius:2px 2px 0 0;"></div>
-                  <div style="flex:1;height:80%;background:rgba(40,180,120,0.4);border-radius:2px 2px 0 0;"></div>
-                  <div style="flex:1;height:60%;background:rgba(40,180,120,0.3);border-radius:2px 2px 0 0;"></div>
-                  <div style="flex:1;height:90%;background:rgba(40,200,130,0.55);border-radius:2px 2px 0 0;"></div>
-                  <div style="flex:1;height:70%;background:rgba(40,180,120,0.35);border-radius:2px 2px 0 0;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="proj-card-body">
-          <div>
-            <div class="proj-card-tag">SaaS · 2025</div>
-            <div class="proj-card-title">Analytics Platform</div>
-            <div class="proj-card-desc">Product design for a B2B analytics tool. Simplified complex data into clear, actionable dashboards for non-technical teams.</div>
-          </div>
-          <div class="elite-card-highlights">
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Product Design</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Data Viz</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Dashboard UX</div>
-            <div class="elite-highlight"><span class="elite-highlight-dot"></span>B2B SaaS</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
   </section>
 
   <!-- ── SKILLS ─────────────────────────────────────────────────────── -->
@@ -1613,12 +1060,11 @@
 
       const SLIDE_INTERVAL = 4000;
       let autoTimer = null;
-      let paused = false;
 
       function startTimer() {
         clearInterval(autoTimer);
         autoTimer = setInterval(() => {
-          if (!paused) goTo((current + 1) % projects.length);
+          goTo((current + 1) % projects.length);
         }, SLIDE_INTERVAL);
       }
 
@@ -1645,14 +1091,6 @@
         }, 380);
       }
 
-      // Pause flag — interval keeps running, navigation skipped while hovering
-      const carousel = document.querySelector('.proj-carousel');
-      carousel.addEventListener('mouseenter', () => { paused = true; });
-      carousel.addEventListener('mouseleave', () => {
-        paused = false;
-        startTimer(); // give full 4s after cursor leaves
-      });
-
       document.getElementById('proj-prev').addEventListener('click', () =>
         goTo((current - 1 + projects.length) % projects.length)
       );
@@ -1669,21 +1107,6 @@
         window.location.href = projects[current].url;
       });
     })();
-
-    /* ── Project cards: slide in from alternating sides on scroll ── */
-    const projObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          projObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll('.proj-card').forEach((card, i) => {
-      card.style.transitionDelay = (i * 0.06) + 's';
-      projObserver.observe(card);
-    });
 
     /* ── Skills: slide-from-top reveal + 3D TiltCard ── */
     (function () {
