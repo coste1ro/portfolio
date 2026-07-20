@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rutube Redesign — Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Code:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --page-bg: #0c0c0c;
+      --page-fg: #c8c8c8;
+      --page-fg-bright: #e8e8e8;
+      --page-border: #1e1e1e;
+      --accent: #e05c18;
+      --card-bg: #0f0f0f;
+      --card-border: rgba(255,255,255,0.06);
+      --hero-bg: #0D0908;
+      --hero-fg: #fff;
+      --hero-muted: rgba(255,255,255,0.5);
+      --nav-text: rgba(255,255,255,0.75);
+      --placeholder-bg: #161616;
+      --placeholder-border: #222;
+    }
+    body.light {
+      --page-bg: #f8f7f4;
+      --page-fg: #5a5a5a;
+      --page-fg-bright: #111;
+      --page-border: #e5e2dc;
+      --accent: #7d18e2;
+      --card-bg: #ffffff;
+      --card-border: rgba(0,0,0,0.07);
+      --hero-bg: #f8f7f4;
+      --hero-fg: #111;
+      --hero-muted: rgba(60,60,60,0.6);
+      --nav-text: rgba(20,20,20,0.7);
+      --placeholder-bg: #eeece9;
+      --placeholder-border: #dedad4;
+    }
+
+    body {
+      background: var(--page-bg);
+      color: var(--page-fg);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.35s, color 0.35s;
+    }
+    a { color: inherit; text-decoration: none; }
+    * { cursor: none !important; }
+
+    /* ── Cursor ── */
+    #cursor-outer {
+      position: fixed; top: 0; left: 0;
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1px solid rgba(180,180,180,0.5);
+      pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%);
+      will-change: left, top;
+      display: flex; align-items: center; justify-content: center;
+      transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
+                  height 0.45s cubic-bezier(0.16,1,0.3,1),
+                  background 0.35s, border-color 0.35s;
+    }
+    #cursor-dot {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #fff; pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%);
+      transition: opacity 0.2s;
+    }
+
+    /* ── Noise overlay ── */
+    .noise-overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 9990; opacity: 0.09;
+      background-repeat: repeat; background-size: 120px 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    body.light .noise-overlay { opacity: 0.05; }
+
+    /* ── Header ── */
+    .header-nav-link {
+      font-size: 13px; font-weight: 500;
+      color: var(--nav-text); letter-spacing: 0.01em;
+      transition: color 0.2s; padding: 4px 0;
+    }
+    .header-nav-link:hover { color: var(--hero-fg); }
+    .header-nav-link.active { color: var(--accent); }
+
+    #theme-btn {
+      position: relative; display: inline-flex; align-items: center;
+      padding: 4px; gap: 2px; height: 36px; border-radius: 100px;
+      background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08);
+      transition: background 0.4s, border-color 0.4s; flex-shrink: 0;
+    }
+    #toggle-slider {
+      position: absolute; left: 4px; width: 26px; height: 26px;
+      border-radius: 50%; background: rgba(255,255,255,0.14);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+      transform: translateX(0); pointer-events: none;
+    }
+    .toggle-icon {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.3s; flex-shrink: 0;
+      color: rgba(255,255,255,0.3); position: relative; z-index: 1;
+    }
+    .toggle-icon.toggle-on { color: #fff; }
+
+    /* ── Case Hero ── */
+    .case-hero {
+      min-height: 100vh;
+      background: var(--hero-bg);
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: background 0.35s;
+    }
+    #case-dither {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.28;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+    body.light #case-dither {
+      mix-blend-mode: multiply;
+      opacity: 0.22;
+    }
+    .case-hero-body {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 48px 64px;
+    }
+    .case-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+      transition: color 0.35s;
+    }
+    .case-hero-title {
+      font-size: clamp(48px, 6.5vw, 96px);
+      font-weight: 500; color: var(--hero-fg);
+      line-height: 1.0; letter-spacing: -0.03em;
+      margin-bottom: 24px; transition: color 0.35s;
+      max-width: 900px;
+    }
+    .case-meta-bar {
+      display: flex; align-items: center;
+      gap: 0; flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px; margin-top: 8px;
+      transition: border-color 0.35s;
+    }
+    body.light .case-meta-bar { border-color: rgba(0,0,0,0.1); }
+    .case-meta-item {
+      padding: 0 32px 0 0;
+      margin-right: 32px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      transition: border-color 0.35s;
+    }
+    body.light .case-meta-item { border-color: rgba(0,0,0,0.1); }
+    .case-meta-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+    .case-meta-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 4px;
+      transition: color 0.35s;
+    }
+    .case-meta-value {
+      font-size: 13px; font-weight: 400;
+      color: var(--hero-muted); transition: color 0.35s;
+    }
+
+    /* ── Content layout ── */
+    .cs-section {
+      padding: 96px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    .cs-section-wide { padding: 0; border-top: 1px solid var(--page-border); transition: border-color 0.35s; }
+    .cs-inner { max-width: 800px; }
+    .cs-section-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 32px;
+      transition: color 0.35s;
+    }
+    .cs-heading {
+      font-size: clamp(26px, 3vw, 42px);
+      font-weight: 500; color: var(--page-fg-bright);
+      letter-spacing: -0.02em; line-height: 1.15;
+      margin-bottom: 24px; transition: color 0.35s;
+    }
+    .cs-body {
+      font-size: 15px; line-height: 1.75;
+      color: var(--page-fg); max-width: 640px;
+      transition: color 0.35s;
+    }
+    .cs-body + .cs-body { margin-top: 16px; }
+
+    /* ── Pull quote ── */
+    .cs-quote {
+      font-size: clamp(22px, 2.8vw, 38px);
+      font-weight: 400; font-style: italic;
+      color: var(--page-fg-bright);
+      letter-spacing: -0.01em; line-height: 1.35;
+      max-width: 780px;
+      padding-left: 28px;
+      border-left: 2px solid var(--accent);
+      transition: color 0.35s, border-color 0.35s;
+    }
+
+    /* ── Image placeholders ── */
+    .placeholder {
+      width: 100%;
+      background: var(--placeholder-bg);
+      border: 1px solid var(--placeholder-border);
+      transition: background 0.35s, border-color 0.35s;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.1);
+      font-family: 'Fira Code', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    body.light .placeholder { color: rgba(0,0,0,0.12); }
+    .placeholder-full { aspect-ratio: 16/10; }
+    .placeholder-screen { aspect-ratio: 9/16; border-radius: 16px; }
+    .placeholder-wide { aspect-ratio: 16/7; border-radius: 16px; }
+    .placeholder-sq { aspect-ratio: 4/3; border-radius: 16px; }
+
+    /* ── Grid layouts ── */
+    .cs-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 48px; }
+    .cs-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 48px; }
+    .cs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+
+    /* ── Archetype cards ── */
+    .archetype-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px; padding: 32px;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .archetype-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+      transition: color 0.35s;
+    }
+    .archetype-name {
+      font-size: 18px; font-weight: 500;
+      color: var(--page-fg-bright); margin-bottom: 20px;
+      transition: color 0.35s;
+    }
+    .archetype-row {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .archetype-field-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 4px;
+      transition: color 0.35s;
+    }
+    body.light .archetype-field-label { color: rgba(0,0,0,0.3); }
+    .archetype-field-value {
+      font-size: 13px; color: var(--page-fg);
+      line-height: 1.5; transition: color 0.35s;
+    }
+
+    /* ── MoSCoW tags ── */
+    .moscow-group { margin-top: 32px; }
+    .moscow-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 12px;
+      transition: color 0.35s;
+    }
+    .moscow-label.m { color: #e05c18; }
+    .moscow-label.s { color: #3b82f6; }
+    .moscow-label.c { color: #94a3b8; }
+    .moscow-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+    .moscow-tag {
+      padding: 5px 12px; border-radius: 6px;
+      font-size: 12px; font-weight: 400;
+    }
+    .moscow-tag.m { background: rgba(224,92,24,0.1); color: rgba(224,92,24,0.9); }
+    .moscow-tag.s { background: rgba(59,130,246,0.1); color: rgba(59,130,246,0.9); }
+    .moscow-tag.c { background: rgba(148,163,184,0.1); color: rgba(148,163,184,0.85); }
+    body.light .moscow-label.m { color: #c04f10; }
+
+    /* ── Results list ── */
+    .cs-results { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
+    .cs-result-item {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 20px 0;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    .cs-result-item:last-child { border-bottom: 1px solid var(--page-border); }
+    .cs-result-num {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px; font-weight: 700;
+      color: var(--accent); flex-shrink: 0; width: 24px;
+      transition: color 0.35s;
+    }
+    .cs-result-text { font-size: 14px; color: var(--page-fg); line-height: 1.5; transition: color 0.35s; }
+
+    /* ── Next project ── */
+    .cs-next {
+      padding: 80px 48px;
+      border-top: 1px solid var(--page-border);
+      display: flex; align-items: center; justify-content: space-between;
+      transition: border-color 0.35s;
+    }
+    .cs-next-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+      transition: color 0.35s;
+    }
+    .cs-next-title {
+      font-size: clamp(22px, 3vw, 40px);
+      font-weight: 500; color: var(--page-fg-bright);
+      letter-spacing: -0.02em; transition: color 0.35s;
+    }
+    .cs-next-arrow {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 1px solid var(--card-border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--page-fg); flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, color 0.35s;
+    }
+    .cs-next:hover .cs-next-arrow {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+
+    /* ── Contact + footer ── */
+    .contact-section {
+      padding: 64px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    footer {
+      border-top: 1px solid var(--page-border);
+      padding: 20px 48px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px; align-items: start;
+      transition: border-color 0.35s;
+    }
+    .footer-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 3px; transition: color 0.35s;
+    }
+    .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
+
+    @media (max-width: 720px) {
+      .case-hero-body { padding: 0 20px 48px; }
+      .cs-section { padding: 64px 20px; }
+      .cs-grid-2, .cs-grid-3, .cs-split { grid-template-columns: 1fr; }
+      .cs-next { padding: 48px 20px; flex-direction: column; align-items: flex-start; gap: 24px; }
+      .contact-section { padding: 48px 20px; }
+      footer { padding: 20px; grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <section class="case-hero">
+    <canvas id="case-dither"></canvas>
+    <header style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
+      <nav style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:28px;">
+          <a href="index.html" class="header-nav-link">Home</a>
+          <a href="index.html#work" class="header-nav-link active">Projects</a>
+          <a href="index.html#about" class="header-nav-link">About</a>
+        </div>
+        <button id="theme-btn" aria-label="Toggle theme">
+          <span id="toggle-slider"></span>
+          <span id="toggle-moon" class="toggle-icon toggle-on">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span id="toggle-sun" class="toggle-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+        </button>
+      </nav>
+    </header>
+
+    <div class="case-hero-body">
+      <div class="case-label">Rutube · UX/UI Design · 2025</div>
+      <h1 class="case-hero-title">Редизайн оформления подписки</h1>
+      <div class="case-meta-bar">
+        <div class="case-meta-item">
+          <div class="case-meta-label">Роль</div>
+          <div class="case-meta-value">UX/UI Designer</div>
+        </div>
+        <div class="case-meta-item">
+          <div class="case-meta-label">Длительность</div>
+          <div class="case-meta-value">6 недель</div>
+        </div>
+        <div class="case-meta-item">
+          <div class="case-meta-label">Инструменты</div>
+          <div class="case-meta-value">Figma</div>
+        </div>
+        <div class="case-meta-item">
+          <div class="case-meta-label">Контекст</div>
+          <div class="case-meta-value">Концепт</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROBLEM ── -->
+  <section class="cs-section">
+    <div class="cs-split" style="align-items:center;">
+      <div>
+        <div class="cs-section-label">Проблема</div>
+        <h2 class="cs-heading">Пользователи бросают оформление —<br>не из-за цены</h2>
+        <p class="cs-body">Подписка — главный источник дохода видеосервиса. Но у Rutube пользователи бросают оформление на полпути или быстро отменяют. Не из-за цены, а из-за ощущения потери контроля.</p>
+        <p class="cs-body" style="margin-top:16px;">Текущий флоу не отвечает на базовые вопросы: за что я плачу, когда следующее списание, где управлять подпиской. Условия зашиты в мелкий текст, автопродление включено молча, страница тарифов перегружена. Конкурентный анализ подтверждает отставание Rutube в категориях «Понятность отмены», «Free vs Paid» и «Прозрачность цены» — там, где лидируют YouTube Premium, Кинопоиск и Иви.</p>
+      </div>
+      <div style="border-radius:16px; overflow:hidden;">
+        <img src="projects/rutube-mocks/main-ad.png" style="width:100%; display:block;">
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PULL QUOTE ── -->
+  <section class="cs-section" style="padding-top:0; border-top:none;">
+    <blockquote class="cs-quote">
+      Главная проблема — не сама подписка. А ощущение потери контроля над расходами и процессом.
+    </blockquote>
+  </section>
+
+  <!-- ── RESEARCH ── -->
+  <section class="cs-section">
+    <div class="cs-section-label">Исследование</div>
+    <div class="cs-split">
+      <div>
+        <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px); margin-bottom:16px;">Приоретизация по MoSCoW</h2>
+        <p class="cs-body" style="margin-bottom:28px;">Конкурентный анализ и интервью позволили расставить фичи по приоритетам.</p>
+        <div class="moscow-group">
+          <div class="moscow-label m">Must Have</div>
+          <div class="moscow-tags">
+            <span class="moscow-tag m">Понятность ценности</span>
+            <span class="moscow-tag m">Free vs Paid</span>
+            <span class="moscow-tag m">Прозрачность цены</span>
+            <span class="moscow-tag m">Понятность отмены</span>
+          </div>
+          <div class="moscow-label s">Should Have</div>
+          <div class="moscow-tags">
+            <span class="moscow-tag s">Контекст входа</span>
+            <span class="moscow-tag s">Навязчивость</span>
+            <span class="moscow-tag s">Кол-во шагов</span>
+          </div>
+          <div class="moscow-label c">Could Have</div>
+          <div class="moscow-tags">
+            <span class="moscow-tag c">Пробный период</span>
+            <span class="moscow-tag c">Удобство оплаты</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px); margin-bottom:16px;">Архетипы</h2>
+        <p class="cs-body" style="margin-bottom:28px;">Трое респондентов сложились в два устойчивых паттерна. Разные мотивации, общий блокер.</p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="archetype-card">
+            <div class="archetype-tag">Архетип 1</div>
+            <div class="archetype-name">Рациональный контролер</div>
+            <div class="archetype-row">
+              <div>
+                <div class="archetype-field-label">Потребность</div>
+                <div class="archetype-field-value">Прозрачность и управляемость</div>
+              </div>
+              <div>
+                <div class="archetype-field-label">Главный страх</div>
+                <div class="archetype-field-value">Автосписание без уведомления, скрытые условия</div>
+              </div>
+              <div>
+                <div class="archetype-field-label">Критерий успеха</div>
+                <div class="archetype-field-value">Понимает за что платит. Видит дату списания. Может отменить в 1–2 клика</div>
+              </div>
+            </div>
+          </div>
+          <div class="archetype-card">
+            <div class="archetype-tag">Архетип 2</div>
+            <div class="archetype-name">Прагматик «без лишнего»</div>
+            <div class="archetype-row">
+              <div>
+                <div class="archetype-field-label">Потребность</div>
+                <div class="archetype-field-value">Простота — убрать рекламу и смотреть спокойно</div>
+              </div>
+              <div>
+                <div class="archetype-field-label">Главный страх</div>
+                <div class="archetype-field-value">Навязчивость, апселлы, лишние шаги</div>
+              </div>
+              <div>
+                <div class="archetype-field-label">Критерий успеха</div>
+                <div class="archetype-field-value">Минимум шагов. Один тариф. Без давления</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CJM ── -->
+  <section class="cs-section">
+    <div class="cs-section-label">Customer Journey Map</div>
+    <div class="cs-inner">
+      <h2 class="cs-heading">Карта собрана для Рационального контролера</h2>
+      <p class="cs-body">На каждом этапе зафиксированы действия пользователя, его мысли, эмоциональное состояние и конкретные точки боли. Это и есть основа для проектирования: каждая боль на карте превращается в требование к интерфейсу.</p>
+    </div>
+    <div class="placeholder placeholder-wide" style="margin-top:40px;">Customer Journey Map</div>
+  </section>
+
+  <!-- ── SOLUTIONS ── -->
+  <section class="cs-section">
+    <div class="cs-section-label">Решения</div>
+    <div class="cs-inner">
+      <h2 class="cs-heading">5 ключевых экранов</h2>
+      <p class="cs-body">Каждый экран закрывает конкретные боли архетипа. Проектируем под Контролера — если флоу выдержит его проверку, Прагматик пройдет его автоматически.</p>
+    </div>
+  </section>
+
+  <!-- Screen 1: Выбор тарифа — full bleed -->
+  <div class="cs-section-wide">
+    <img src="projects/rutube-mocks/plans.png" style="width:100%; display:block;">
+  </div>
+
+  <section class="cs-section" style="border-top:none;">
+    <div class="cs-inner">
+      <div class="cs-section-label">Экран 1</div>
+      <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Выбор тарифа</h2>
+      <p class="cs-body">Free vs Premium в одной таблице. Premium в двух вариантах — год подсвечен как выгодный. Цена и условия крупно, без мелкого шрифта. Никаких дополнительных тарифов на первом экране — чёткая иерархия снимает и перегруз, и ощущение что выбор сделан за пользователя.</p>
+    </div>
+  </section>
+
+  <!-- Screens 2–3: Split -->
+  <section class="cs-section" style="padding-top:0; border-top:none;">
+    <div class="cs-split">
+      <div>
+        <div class="cs-section-label">Экран 2</div>
+        <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px); margin-bottom:16px;">Оплата</h2>
+        <p class="cs-body">Автопродление вынесено отдельным блоком — не мелким шрифтом под кнопкой. Дата следующего списания и сумма — явно. Поля только необходимые: без обязательного телефона, без галочек согласия с тремя условиями. Линейная форма, в которой архетип чувствует контроль над процессом.</p>
+      </div>
+      <div>
+        <img src="projects/rutube-mocks/checkout.png" style="width:100%; display:block; border-radius:20px;">
+      </div>
+    </div>
+  </section>
+
+  <!-- Screens 3–5: Grid -->
+  <section class="cs-section" style="padding-top:0; border-top:none;">
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+      <div>
+        <img src="projects/rutube-mocks/payment-success.png" style="width:100%; display:block; border-radius:16px; margin-bottom:16px;">
+        <div class="archetype-field-label" style="margin-bottom:4px;">Экран 3</div>
+        <div style="font-size:13px; color:var(--page-fg);">Успешная оплата. Подписка активна. Дата следующего списания. Напоминание за 3 дня. Управление — в настройках. Каждый элемент работает на ощущение контроля.</div>
+      </div>
+      <div>
+        <img src="projects/rutube-mocks/payment-error.png" style="width:100%; display:block; border-radius:16px; margin-bottom:16px;">
+        <div class="archetype-field-label" style="margin-bottom:4px;">Экран 4</div>
+        <div style="font-size:13px; color:var(--page-fg);">Ошибка оплаты получает то же визуальное достоинство что и успех — отдельный экран с понятным сообщением. Один путь: вернуться к форме и выбрать действие.</div>
+      </div>
+      <div>
+        <img src="projects/rutube-mocks/subscription-settings.png" style="width:100%; display:block; border-radius:16px; margin-bottom:16px;">
+        <div class="archetype-field-label" style="margin-bottom:4px;">Экран 5</div>
+        <div style="font-size:13px; color:var(--page-fg);">Отдельная страница в настройках. Тариф, сумма списания, дата, привязанная карта, статус автопродления. Отмена — явная кнопка, не спрятанная под мелкий шрифт.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTING ── -->
+  <section class="cs-section">
+    <div class="cs-section-label">Тестирование</div>
+    <div class="cs-split">
+      <div class="cs-inner">
+        <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Think-out-loud на кликабельном прототипе</h2>
+        <p class="cs-body">Модерируемое тестирование на тех же трёх респондентах, что и на этапе исследования — это позволило им сравнить старый флоу Rutube и новый прототип на собственном опыте.</p>
+        <p class="cs-body" style="margin-top:16px;">Эмоциональные боли (страх списания, недоверие) нельзя отловить только по факту прохождения шагов — важно слышать что пользователь думает в моменте.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="archetype-card">
+          <div class="archetype-field-label" style="margin-bottom:8px;">Инсайт 1</div>
+          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Блок автопродления оценён — условия списания и отмены видны явно, не зашиты в мелкий шрифт. Все четыре критерия успеха Контролера закрылись.</div>
+        </div>
+        <div class="archetype-card">
+          <div class="archetype-field-label" style="margin-bottom:8px;">Инсайт 2</div>
+          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Error-экран ощущается как тупик. «Я бы второй раз сам не тыкнул — ментально уже принимаешь, что получишь ошибку». Точка для усиления.</div>
+        </div>
+        <div class="archetype-card">
+          <div class="archetype-field-label" style="margin-bottom:8px;">Инсайт 3</div>
+          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Ирина повела себя как Прагматик — приняла решение по тарифу за 10 секунд. Флоу работает даже при пересечении паттернов внутри одного человека.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RESULTS ── -->
+  <section class="cs-section">
+    <div class="cs-section-label">Результаты</div>
+    <div class="cs-inner">
+      <h2 class="cs-heading">Кейс прошёл полный цикл: от исследования до системы, готовой к разработке</h2>
+    </div>
+    <div class="cs-results" style="margin-top:40px;">
+      <div class="cs-result-item">
+        <span class="cs-result-num">01</span>
+        <span class="cs-result-text">Собрана база исследования: 3 интервью, конкурентный анализ, приоритизация по MoSCoW</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">02</span>
+        <span class="cs-result-text">Сформированы два поведенческих архетипа на основе паттернов, а не демографии</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">03</span>
+        <span class="cs-result-text">Спроектирована информационная архитектура и CJM для Рационального контролера</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">04</span>
+        <span class="cs-result-text">Отрисованы 5 ключевых экранов: выбор тарифа, оплата, успех, ошибка, управление подпиской</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">05</span>
+        <span class="cs-result-text">Собрана двухуровневая система токенов и UI kit из 7 секций — дизайн готов к Dev Mode</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">06</span>
+        <span class="cs-result-text">Все трое респондентов прошли флоу без помощи модератора. Гипотеза подтверждена для обоих архетипов</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEXT PROJECT ── -->
+  <a href="ct.html" class="cs-next">
+    <div>
+      <div class="cs-next-label">Следующий проект</div>
+      <div class="cs-next-title">СТ Audit Portal</div>
+    </div>
+    <div class="cs-next-arrow">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </div>
+  </a>
+
+  <!-- ── CONTACT + FOOTER ── -->
+  <section class="contact-section">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+      <div>
+        <a href="mailto:sa1nteau@mail.ru" style="font-size:clamp(18px,2vw,28px); font-weight:500; color:var(--page-fg); transition:color .2s;">
+          sa1nteau@mail.ru
+        </a>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Hiring?</div>
+        <div style="display:flex; gap:16px; justify-content:flex-end;">
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Threads</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div><div class="footer-label">Andrey Beregovoy</div><div class="footer-val">2022 — 2026</div></div>
+    <div><div class="footer-label">Experience</div><div class="footer-val">3 years in UX/UI</div></div>
+    <div style="text-align:right;"><div class="footer-label">Open to opportunities</div><div class="footer-val">Remote · Worldwide</div></div>
+  </footer>
+
+  <div class="noise-overlay"></div>
+  <div id="cursor-outer"></div>
+  <div id="cursor-dot"></div>
+
+  <script>
+    /* Cursor */
+    const ring = document.getElementById('cursor-outer');
+    const dot  = document.getElementById('cursor-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    /* Theme toggle */
+    const themeBtn = document.getElementById('theme-btn');
+    const moonIcon = document.getElementById('toggle-moon');
+    const sunIcon  = document.getElementById('toggle-sun');
+    const slider   = document.getElementById('toggle-slider');
+    let isDark = true;
+
+    function applyDark() {
+      document.body.classList.remove('light');
+      themeBtn.style.background = '#1a1a1a';
+      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
+      slider.style.transform = 'translateX(0)';
+      slider.style.background = 'rgba(255,255,255,0.14)';
+      moonIcon.classList.add('toggle-on'); sunIcon.classList.remove('toggle-on');
+      sunIcon.style.color = 'rgba(255,255,255,0.3)'; moonIcon.style.color = '';
+      dot.style.background = '#fff';
+      ring.style.borderColor = 'rgba(180,180,180,0.5)';
+    }
+    function applyLight() {
+      document.body.classList.add('light');
+      themeBtn.style.background = '#e2e2e2';
+      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
+      slider.style.transform = 'translateX(28px)';
+      slider.style.background = 'rgba(0,0,0,0.1)';
+      sunIcon.classList.add('toggle-on'); moonIcon.classList.remove('toggle-on');
+      sunIcon.style.color = '#444'; moonIcon.style.color = 'rgba(0,0,0,0.3)';
+      dot.style.background = '#111';
+      ring.style.borderColor = 'rgba(20,20,20,0.35)';
+    }
+    themeBtn.addEventListener('click', () => { isDark = !isDark; isDark ? applyDark() : applyLight(); });
+
+    /* ── Case hero dithering: WebGL 4×4 ordered dither with warp ── */
+    (function () {
+      const canvas = document.getElementById('case-dither');
+      if (!canvas) return;
+      const gl = canvas.getContext('webgl2');
+      if (!gl) return;
+
+      const VERT = `#version 300 es
+        in vec2 a_pos;
+        void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
+
+      const FRAG = `#version 300 es
+        precision highp float;
+        out vec4 out_color;
+        uniform float u_time;
+        uniform vec2  u_res;
+        uniform vec3  u_color;
+
+        void main() {
+          float t = u_time;
+          vec2 shapeUV = gl_FragCoord.xy;
+          shapeUV *= 0.003;
+
+          for (float i = 1.0; i < 6.0; i++) {
+            shapeUV.x += 0.6 / i * cos(i * 2.5 * shapeUV.y + t);
+            shapeUV.y += 0.6 / i * cos(i * 1.5 * shapeUV.x + t);
+          }
+
+          float shape = 0.15 / max(0.001, abs(sin(t - shapeUV.y - shapeUV.x)));
+          shape = smoothstep(0.02, 1.0, shape);
+
+          int b[16] = int[16](0,8,2,10, 12,4,14,6, 3,11,1,9, 15,7,13,5);
+          int px = int(mod(gl_FragCoord.x, 4.0));
+          int py = int(mod(gl_FragCoord.y, 4.0));
+          float thr = float(b[py * 4 + px]) / 16.0;
+
+          float a = shape > thr ? 1.0 : 0.0;
+          out_color = vec4(u_color.r * a, u_color.g * a, u_color.b * a, a);
+        }`;
+
+      function mkShader(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FRAG));
+      gl.linkProgram(prog);
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        -1,-1, 1,-1, -1,1,  -1,1, 1,-1, 1,1
+      ]), gl.STATIC_DRAW);
+      const aPos = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+      const uTime  = gl.getUniformLocation(prog, 'u_time');
+      const uRes   = gl.getUniformLocation(prog, 'u_res');
+      const uColor = gl.getUniformLocation(prog, 'u_color');
+
+      // Rutube navy #100943 — brightened for screen blend visibility
+      const DARK_COLOR  = [0.18, 0.08, 0.72];
+      const LIGHT_COLOR = [0.12, 0.05, 0.50];
+
+      function setShaderColor() {
+        const c = document.body.classList.contains('light') ? LIGHT_COLOR : DARK_COLOR;
+        gl.uniform3f(uColor, c[0], c[1], c[2]);
+      }
+      setShaderColor();
+
+      const themeObs = new MutationObserver(setShaderColor);
+      themeObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+      function resize() {
+        canvas.width  = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      let elapsed = 0, last = performance.now(), speed = 0.2;
+      const hero = canvas.closest('.case-hero');
+      if (hero) {
+        hero.addEventListener('mouseenter', () => speed = 0.6);
+        hero.addEventListener('mouseleave', () => speed = 0.2);
+      }
+
+      (function loop() {
+        const now = performance.now();
+        elapsed += (now - last) * 0.001 * speed;
+        last = now;
+        gl.uniform1f(uTime, elapsed);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(loop);
+      })();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>СТ Audit Portal — Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Code:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --page-bg: #0c0c0c;
+      --page-fg: #c8c8c8;
+      --page-fg-bright: #e8e8e8;
+      --page-border: #1a1a1a;
+      --accent: #e05c18;
+      --card-bg: #080808;
+      --card-border: rgba(255,255,255,0.06);
+      --hero-bg: #0D0908;
+      --hero-fg: #fff;
+      --hero-muted: rgba(255,255,255,0.55);
+      --nav-text: rgba(255,255,255,0.85);
+    }
+    body.light {
+      --page-bg: #f8f7f4;
+      --page-fg: #5a5a5a;
+      --page-fg-bright: #111;
+      --page-border: #e5e2dc;
+      --accent: #7d18e2;
+      --card-bg: #ffffff;
+      --card-border: rgba(0,0,0,0.08);
+      --hero-bg: #f8f7f4;
+      --hero-fg: #111;
+      --hero-muted: rgba(60,60,60,0.65);
+      --nav-text: rgba(20,20,20,0.8);
+    }
+
+    body {
+      background: var(--page-bg);
+      color: var(--page-fg);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.35s, color 0.35s;
+      cursor: none;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Cursor ── */
+    * { cursor: none !important; }
+    #cursor-outer {
+      position: fixed; top: 0; left: 0;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(180,180,180,0.5);
+      pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%);
+      will-change: left, top;
+    }
+    #cursor-dot {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #fff;
+      pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%);
+    }
+
+    /* ── Noise overlay ── */
+    .noise-overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 9990;
+      opacity: 0.09;
+      background-repeat: repeat;
+      background-size: 120px 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    body.light .noise-overlay { opacity: 0.05; }
+
+    /* ── Header ── */
+    .header-nav-link {
+      font-size: 13px; font-weight: 500;
+      color: var(--nav-text);
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+      padding: 4px 0;
+    }
+    .header-nav-link:hover { color: var(--hero-fg); }
+    .header-nav-link.active { color: var(--accent); }
+
+    #theme-btn {
+      position: relative; display: inline-flex; align-items: center;
+      padding: 4px; gap: 2px; height: 36px;
+      border-radius: 100px; background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: background 0.4s, border-color 0.4s; flex-shrink: 0;
+    }
+    #toggle-slider {
+      position: absolute; left: 4px;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+      transform: translateX(0); pointer-events: none;
+    }
+    .toggle-icon {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.3s; flex-shrink: 0;
+      color: rgba(255,255,255,0.3); position: relative; z-index: 1;
+    }
+    .toggle-icon.toggle-on { color: #fff; }
+
+    /* ── Case hero ── */
+    .case-hero {
+      min-height: 100vh;
+      background: var(--hero-bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: background 0.35s;
+    }
+    #case-dither {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.28;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+    body.light #case-dither {
+      mix-blend-mode: multiply;
+      opacity: 0.22;
+    }
+
+    .case-hero-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 60px 48px 80px;
+      max-width: 960px;
+    }
+
+    .case-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      transition: color 0.35s;
+    }
+
+    .case-title {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 500;
+      color: var(--hero-fg);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      transition: color 0.35s;
+    }
+
+    .case-desc {
+      font-size: clamp(15px, 1.4vw, 18px);
+      font-weight: 400;
+      color: var(--hero-muted);
+      line-height: 1.55;
+      max-width: 520px;
+      transition: color 0.35s;
+    }
+
+    .case-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 48px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--nav-text);
+      transition: color 0.2s;
+    }
+    .case-back:hover { color: var(--hero-fg); }
+    .case-back svg { transition: transform 0.2s; }
+    .case-back:hover svg { transform: translateX(-3px); }
+
+    /* ── Content placeholder ── */
+    .case-content {
+      min-height: 50vh;
+      padding: 80px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+
+    /* ── Contact + footer ── */
+    .contact-section {
+      padding: 48px 48px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    footer {
+      border-top: 1px solid var(--page-border);
+      padding: 20px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+      transition: border-color 0.35s;
+    }
+    .footer-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 3px;
+      transition: color 0.35s;
+    }
+    .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
+  </style>
+</head>
+<body>
+
+  <section class="case-hero">
+    <canvas id="case-dither"></canvas>
+    <header style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
+      <nav style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:28px;">
+          <a href="index.html" class="header-nav-link">Home</a>
+          <a href="index.html#work" class="header-nav-link active">Projects</a>
+          <a href="index.html#about" class="header-nav-link">About</a>
+        </div>
+        <button id="theme-btn" aria-label="Toggle theme">
+          <span id="toggle-slider"></span>
+          <span id="toggle-moon" class="toggle-icon toggle-on">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span id="toggle-sun" class="toggle-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+        </button>
+      </nav>
+    </header>
+
+    <div class="case-hero-content">
+      <div class="case-label">Internal Tool · 2026</div>
+      <h1 class="case-title">СТ Audit Portal</h1>
+      <p class="case-desc">Internal monitoring portal for field auditors — real-time location tracking on map, task management, and territory planning.</p>
+      <a href="index.html#work" class="case-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to portfolio
+      </a>
+    </div>
+  </section>
+
+  <!-- Content comes later -->
+  <div class="case-content"></div>
+
+  <section class="contact-section">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+      <div>
+        <a href="mailto:sa1nteau@mail.ru" style="font-size:clamp(18px,2vw,28px); font-weight:500; color:var(--page-fg); transition:color .2s;">
+          sa1nteau@mail.ru
+        </a>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Hiring?</div>
+        <div style="display:flex; gap:16px; justify-content:flex-end;">
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Threads</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><div class="footer-label">Andrey Beregovoy</div><div class="footer-val">2022 — 2026</div></div>
+    <div><div class="footer-label">Experience</div><div class="footer-val">3 years in UX/UI</div></div>
+    <div style="text-align:right;"><div class="footer-label">Open to opportunities</div><div class="footer-val">Remote · Worldwide</div></div>
+  </footer>
+
+  <div class="noise-overlay"></div>
+  <div id="cursor-outer"></div>
+  <div id="cursor-dot"></div>
+
+  <script>
+    /* Cursor */
+    const ring = document.getElementById('cursor-outer');
+    const dot  = document.getElementById('cursor-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    /* Theme toggle */
+    const themeBtn = document.getElementById('theme-btn');
+    const moonIcon = document.getElementById('toggle-moon');
+    const sunIcon  = document.getElementById('toggle-sun');
+    const slider   = document.getElementById('toggle-slider');
+    let isDark = true;
+
+    function applyDark() {
+      document.body.classList.remove('light');
+      themeBtn.style.background = '#1a1a1a';
+      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
+      slider.style.transform = 'translateX(0)';
+      slider.style.background = 'rgba(255,255,255,0.14)';
+      moonIcon.classList.add('toggle-on'); sunIcon.classList.remove('toggle-on');
+      sunIcon.style.color = 'rgba(255,255,255,0.3)'; moonIcon.style.color = '';
+      dot.style.background = '#fff';
+      ring.style.borderColor = 'rgba(180,180,180,0.5)';
+    }
+    function applyLight() {
+      document.body.classList.add('light');
+      themeBtn.style.background = '#e2e2e2';
+      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
+      slider.style.transform = 'translateX(28px)';
+      slider.style.background = 'rgba(0,0,0,0.1)';
+      sunIcon.classList.add('toggle-on'); moonIcon.classList.remove('toggle-on');
+      sunIcon.style.color = '#444'; moonIcon.style.color = 'rgba(0,0,0,0.3)';
+      dot.style.background = '#111';
+      ring.style.borderColor = 'rgba(20,20,20,0.35)';
+    }
+    themeBtn.addEventListener('click', () => { isDark = !isDark; isDark ? applyDark() : applyLight(); });
+
+    /* ── Case hero dithering ── */
+    (function () {
+      const canvas = document.getElementById('case-dither');
+      if (!canvas) return;
+      const gl = canvas.getContext('webgl2');
+      if (!gl) return;
+
+      const VERT = `#version 300 es
+        in vec2 a_pos;
+        void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
+      const FRAG = `#version 300 es
+        precision highp float;
+        out vec4 out_color;
+        uniform float u_time;
+        uniform vec2  u_res;
+        uniform vec3  u_color;
+        void main() {
+          float t = u_time;
+          vec2 shapeUV = gl_FragCoord.xy * 0.003;
+          for (float i = 1.0; i < 6.0; i++) {
+            shapeUV.x += 0.6 / i * cos(i * 2.5 * shapeUV.y + t);
+            shapeUV.y += 0.6 / i * cos(i * 1.5 * shapeUV.x + t);
+          }
+          float shape = smoothstep(0.02, 1.0, 0.15 / max(0.001, abs(sin(t - shapeUV.y - shapeUV.x))));
+          int b[16] = int[16](0,8,2,10, 12,4,14,6, 3,11,1,9, 15,7,13,5);
+          float thr = float(b[int(mod(gl_FragCoord.y,4.0))*4+int(mod(gl_FragCoord.x,4.0))]) / 16.0;
+          float a = shape > thr ? 1.0 : 0.0;
+          out_color = vec4(u_color * a, a);
+        }`;
+
+      function mkShader(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FRAG));
+      gl.linkProgram(prog); gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+      const aPos = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+      const uTime = gl.getUniformLocation(prog, 'u_time');
+      const uRes  = gl.getUniformLocation(prog, 'u_res');
+      const uColor = gl.getUniformLocation(prog, 'u_color');
+
+      // CT purple #4C1D95 — brightened for screen blend
+      const DARK_COLOR  = [0.55, 0.18, 1.0];
+      const LIGHT_COLOR = [0.38, 0.12, 0.72];
+
+      function setColor() {
+        const c = document.body.classList.contains('light') ? LIGHT_COLOR : DARK_COLOR;
+        gl.uniform3f(uColor, c[0], c[1], c[2]);
+      }
+      setColor();
+      new MutationObserver(setColor).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+      function resize() {
+        canvas.width  = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      let elapsed = 0, last = performance.now(), speed = 0.2;
+      canvas.closest('.case-hero')?.addEventListener('mouseenter', () => speed = 0.6);
+      canvas.closest('.case-hero')?.addEventListener('mouseleave', () => speed = 0.2);
+
+      (function loop() {
+        const now = performance.now();
+        elapsed += (now - last) * 0.001 * speed; last = now;
+        gl.uniform1f(uTime, elapsed);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(loop);
+      })();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andrey Beregovoy — UX/UI Designer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Code:wght@700&family=Antic&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--page-bg);
+      color: var(--page-fg);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.35s, color 0.35s;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Orange decorative shapes ── */
+    .deco-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 88px;
+      margin-bottom: 28px;
+    }
+    .deco-2 {
+      font-size: 100px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -4px;
+      font-family: 'Inter', sans-serif;
+      align-self: center;
+    }
+    .deco-star {
+      width: 62px;
+      height: 62px;
+      align-self: center;
+      flex-shrink: 0;
+    }
+    .deco-blobs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      align-self: center;
+    }
+    .blob {
+      background: #b84b10;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .blob-lg { width: 62px; height: 62px; }
+    .blob-md { width: 50px; height: 50px; background: #c75213; }
+    .blob-sm { width: 40px; height: 40px; background: #9a3d0c; }
+
+    /* ── Typography ── */
+    .hero-heading {
+      font-size: clamp(26px, 2.8vw, 40px);
+      font-weight: 400;
+      color: #e8e8e8;
+      line-height: 1.25;
+      max-width: 680px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .project-heading {
+      font-size: clamp(24px, 2.2vw, 34px);
+      font-weight: 500;
+      color: #e8e8e8;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    /* ── Divider ── */
+    .scroll-divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--page-border);
+      padding: 14px 24px;
+      color: var(--page-border);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: border-color 0.35s, color 0.35s;
+    }
+
+    /* ── Pill button ── */
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 100px;
+      padding: 9px 18px;
+      font-size: 13px;
+      color: #c8c8c8;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-pill:hover { border-color: #666; color: #fff; }
+    .btn-pill .dot {
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Project screenshots ── */
+    .screens-grid-1 {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 36px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .screens-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 36px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .screen-img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      aspect-ratio: 4/3;
+      background: #181818;
+    }
+
+    /* ── Skills cards ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 6px;
+    }
+    .skills-reveal { margin-top: 28px; }
+    .skills-col { display: flex; flex-direction: column; gap: 6px; }
+
+    /* Base card: includes slide-from-top initial state */
+    .skill-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0;
+      translate: 0 -50px;
+      transition: translate 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  opacity 0.7s ease,
+                  background 0.35s, border-color 0.35s;
+    }
+    .skill-card.in { opacity: 1; translate: 0 0; }
+
+    /* Glare overlay for 3D tilt */
+    .skill-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .skill-card:hover .skill-glare { opacity: 1; }
+    .skill-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2px;
+    }
+    .skill-card p {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.55;
+    }
+    .skill-logo-wrap {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .skill-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      object-fit: contain;
+    }
+    .skill-tool {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--page-fg);
+      margin-top: 8px;
+      letter-spacing: -0.02em;
+    }
+    .skill-desc {
+      font-size: 13px;
+      color: var(--page-muted, #888);
+      line-height: 1.6;
+    }
+    .skill-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--page-fg);
+      background: var(--card-border);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    body.light .skill-tag {
+      background: rgba(0,0,0,0.06);
+      border-color: rgba(0,0,0,0.1);
+    }
+    .sub-card {
+      background: var(--page-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 4px;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .sub-card .sub-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .anthropic-star {
+      color: var(--accent);
+      font-size: 22px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .thorn { font-style: normal; }
+
+    /* ── Theme variables ── */
+    :root {
+      /* page */
+      --page-bg: #0c0c0c;
+      --page-fg: #c8c8c8;
+      --page-fg-bright: #e8e8e8;
+      --page-border: #1a1a1a;
+      --accent: #e05c18;
+      /* header */
+      --header-bg: rgba(12,12,12,0.65);
+      --header-border: rgba(255,255,255,0.05);
+      /* cards */
+      --card-bg: #080808;
+      --card-border: rgba(255,255,255,0.06);
+      --card-fade: #080808;
+      /* hero */
+      --hero-bg: #0D0908;
+      --hero-fg: #fff;
+      --hero-muted: rgba(255,255,255,0.9);
+      --nav-text: rgba(255,255,255,0.85);
+    }
+
+    /* ── Light theme element overrides ── */
+    body.light .skill-card p { color: #666; }
+    body.light .skill-label { color: #aaa; }
+    body.light .elite-card-subtitle { color: #aaa; }
+    body.light .elite-card-desc { color: #777; }
+    body.light .elite-highlight-dot { background: #aaa; opacity: 1; }
+    body.light .noise-overlay { opacity: 0.05; }
+
+    /* ── Light theme variables ── */
+    body.light {
+      --page-bg: #f8f7f4;
+      --page-fg: #5a5a5a;
+      --page-fg-bright: #111;
+      --page-border: #e5e2dc;
+      --header-bg: rgba(248,247,244,0.75);
+      --header-border: rgba(0,0,0,0.08);
+      --card-bg: #ffffff;
+      --card-border: rgba(0,0,0,0.08);
+      --card-fade: #ffffff;
+      --hero-bg: #f8f7f4;
+      --hero-fg: #111;
+      --hero-muted: rgba(60,60,60,0.85);
+      --nav-text: rgba(20,20,20,0.8);
+      --accent: var(--accent);
+    }
+
+    /* ── Hero v2 ── */
+
+    .hero-section {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--hero-bg);
+      transition: background 0.35s;
+      overflow: hidden;
+    }
+
+    /* ── Hero two-column layout ─────────────────────── */
+    .hero-layout {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(80px, 10vh, 110px) clamp(36px, 5vw, 72px) clamp(72px, 9vh, 96px);
+      text-align: center;
+      z-index: 2;
+    }
+
+    .hero-role-label {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: clamp(9px, 0.75vw, 11px);
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--hero-muted);
+      opacity: 0.55;
+      margin-bottom: clamp(16px, 2.5vh, 28px);
+    }
+
+    .hero-name-line {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: clamp(52px, 14vw, 210px);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 0.88;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    #hero-tagline {
+      display: block;
+      font-family: 'Antic', 'Inter', sans-serif;
+      font-size: clamp(13px, 1.15vw, 18px);
+      color: var(--hero-muted);
+      transition: color 0.35s;
+      line-height: 1.6;
+      margin-top: clamp(20px, 3.2vh, 40px);
+    }
+
+    /* ── Skill ticker ────────────────────────────────── */
+    .hero-ticker {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 13px 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .hero-ticker-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      width: max-content;
+      animation: ticker-scroll 36s linear infinite;
+    }
+
+    @keyframes ticker-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .hero-ticker-item {
+      font-family: 'Fira Code', monospace;
+      font-size: clamp(9px, 0.72vw, 11px);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--hero-muted);
+      opacity: 0.5;
+      padding: 0 clamp(20px, 2vw, 36px);
+      white-space: nowrap;
+    }
+
+    .hero-ticker-sep {
+      color: var(--accent);
+      opacity: 0.6;
+      font-size: 7px;
+      flex-shrink: 0;
+    }
+
+    /* Blur-text animation */
+    .blur-char {
+      display: inline-block;
+      filter: blur(12px);
+      opacity: 0;
+      transform: translateY(-22px);
+      transition: filter 0.5s ease-out, opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .blur-char.in { filter: blur(0); opacity: 1; transform: translateY(0); }
+
+    .blur-word {
+      display: inline-block;
+      filter: blur(8px);
+      opacity: 0;
+      transform: translateY(-14px);
+      transition: filter 0.5s ease-out, opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .blur-word.in { filter: blur(0); opacity: 1; transform: translateY(0); }
+
+    /* Header nav links */
+    .header-nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--nav-text);
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+      padding: 4px 0;
+    }
+    .header-nav-link:hover { color: var(--hero-fg); }
+    .header-nav-link.active { color: var(--accent); }
+
+    /* Theme toggle */
+    #theme-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      gap: 2px;
+      height: 36px;
+      border-radius: 100px;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: background 0.4s, border-color 0.4s;
+      flex-shrink: 0;
+    }
+    #toggle-slider {
+      position: absolute;
+      left: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
+      transform: translateX(0);
+      pointer-events: none;
+    }
+    .toggle-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+      flex-shrink: 0;
+      color: rgba(255,255,255,0.3);
+      position: relative;
+      z-index: 1;
+    }
+    .toggle-icon.toggle-on { color: #fff; }
+
+    /* ── Noise overlay ── */
+    .noise-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9990;
+      opacity: 0.09;
+      background-repeat: repeat;
+      background-size: 120px 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Elite Plan Cards ── */
+    .projects-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .elite-card {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .elite-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .elite-card-image {
+      position: relative;
+      flex: 1;
+      min-height: 200px;
+      overflow: hidden;
+    }
+
+    .elite-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s ease;
+    }
+
+    .elite-card:hover .elite-card-image img {
+      transform: scale(1.1);
+    }
+
+    .elite-card-image--trip {
+      background: linear-gradient(160deg, #c4a06a 0%, #8a5c30 40%, #3a2010 100%);
+      transition: transform 0.45s ease;
+    }
+    .elite-card:hover .elite-card-image--trip {
+      transform: scale(1.1);
+    }
+
+    .elite-card-image--neo {
+      background: linear-gradient(160deg, #1e3a6e 0%, #0d1f3c 50%, #050e1e 100%);
+      transition: transform 0.45s ease;
+    }
+    .elite-card:hover .elite-card-image--neo {
+      transform: scale(1.1);
+    }
+
+    .elite-card-image--under {
+      background: linear-gradient(160deg, #2d1a4a 0%, #160d28 50%, #06030e 100%);
+      transition: transform 0.45s ease;
+    }
+    .elite-card:hover .elite-card-image--under {
+      transform: scale(1.1);
+    }
+
+    .elite-card-image::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 130px;
+      background: linear-gradient(to top, var(--card-fade) 0%, transparent 100%);
+    }
+
+    .elite-card-body {
+      padding: 18px 22px 24px;
+      background: var(--card-bg);
+      transition: background 0.35s;
+      flex-shrink: 0;
+    }
+
+    .elite-card-subtitle {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .elite-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--page-fg-bright);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      transition: color 0.35s;
+    }
+
+    .elite-card-desc {
+      font-size: 12px;
+      color: #888;
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .elite-card-highlights {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .elite-highlight {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--card-border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 10px;
+      color: #777;
+      transition: background 0.35s, color 0.35s;
+    }
+
+    .elite-highlight-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0.5;
+      flex-shrink: 0;
+      transition: background 0.35s;
+    }
+
+    /* Semantic highlight colors */
+    .h-blue  { background: rgba(59,130,246,0.12);  color: rgba(59,130,246,0.9); }
+    .h-blue  .elite-highlight-dot { background: #3b82f6; opacity: 1; }
+
+    .h-violet { background: rgba(139,92,246,0.12); color: rgba(139,92,246,0.9); }
+    .h-violet .elite-highlight-dot { background: #8b5cf6; opacity: 1; }
+
+    .h-accent { background: rgba(224,92,24,0.12);  color: rgba(224,92,24,0.9); }
+    .h-accent .elite-highlight-dot { background: #e05c18; opacity: 1; }
+    body.light .h-accent { background: rgba(125,24,226,0.1); color: rgba(125,24,226,0.85); }
+    body.light .h-accent .elite-highlight-dot { background: #7d18e2; }
+
+    .h-emerald { background: rgba(16,185,129,0.1); color: rgba(16,185,129,0.9); }
+    .h-emerald .elite-highlight-dot { background: #10b981; opacity: 1; }
+
+    .h-amber { background: rgba(245,158,11,0.1);  color: rgba(245,158,11,0.9); }
+    .h-amber .elite-highlight-dot { background: #f59e0b; opacity: 1; }
+
+    .h-slate  { background: rgba(148,163,184,0.1); color: rgba(148,163,184,0.85); }
+    .h-slate  .elite-highlight-dot { background: #94a3b8; opacity: 1; }
+
+    /* ── Projects Carousel ── */
+    .proj-carousel {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 0 48px;
+    }
+
+    .proj-car-main {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .proj-car-img-outer {
+      /* fill row minus visible card portion: card_w - overlap */
+      width: calc(100% - clamp(280px, 28vw, 420px) + clamp(80px, 8vw, 120px));
+      flex-shrink: 0;
+      aspect-ratio: 16 / 10;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .proj-car-img {
+      position: absolute;
+      inset: 0;
+      transition: opacity 0.42s ease;
+    }
+
+    .proj-car-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 36px 32px;
+      margin-left: clamp(-120px, -8vw, -80px);
+      z-index: 10;
+      width: clamp(280px, 28vw, 420px);
+      flex-shrink: 0;
+      box-shadow: 0 20px 64px rgba(0,0,0,0.5);
+      transition: background 0.35s, border-color 0.35s, box-shadow 0.35s;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .proj-car-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .proj-car-card:hover .proj-car-glare { opacity: 1; }
+
+    .proj-car-view-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      transition: gap 0.2s ease, color 0.35s;
+    }
+    .proj-car-card:hover .proj-car-view-link { gap: 10px; }
+
+    #proj-car-content {
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.42s ease;
+    }
+
+    .proj-car-title {
+      font-size: clamp(20px, 2vw, 28px);
+      font-weight: 600;
+      color: var(--page-fg-bright);
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin: 8px 0 14px;
+      transition: color 0.35s;
+    }
+
+    .proj-car-desc {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .proj-car-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 24px;
+      flex-shrink: 0;
+    }
+
+    .proj-car-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--page-fg);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .proj-car-btn:hover { background: var(--card-border); }
+
+    .proj-car-dots { display: flex; gap: 8px; align-items: center; }
+
+    .proj-car-dot {
+      height: 8px; width: 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.18);
+      cursor: pointer; border: none; padding: 0;
+      position: relative; overflow: hidden;
+      transition: background 0.25s, width 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .proj-car-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0; width: 0%;
+      background: rgba(255,255,255,0.55);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+    .proj-car-dot.active::after {
+      animation: proj-dot-fill 4s linear forwards;
+    }
+    @keyframes proj-dot-fill {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+    .proj-car-dot.active { background: var(--page-fg); width: 26px; }
+    body.light .proj-car-dot { background: rgba(0,0,0,0.12); }
+    body.light .proj-car-dot.active { background: rgba(0,0,0,0.65); }
+    body.light .proj-car-dot::after { background: rgba(0,0,0,0.3); }
+    .proj-carousel:hover .proj-car-dot.active::after { animation-play-state: paused; }
+
+    @media (max-width: 720px) {
+      #work { padding: 48px 0 40px; }
+      .proj-carousel { padding: 0 20px; }
+      .proj-car-main { flex-direction: column; align-items: stretch; }
+      .proj-car-img-outer { flex: none; width: 100%; }
+      .proj-car-card { margin-left: 0; margin-top: -20px; width: auto; padding: 24px 20px; }
+    }
+
+    /* ── Horizontal project cards (stacked) ── */
+    .projects-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .proj-card {
+      display: flex;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      flex: 1;
+      min-height: 230px;
+      opacity: 0;
+      translate: -72px 0;
+      transition: translate 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  opacity 0.8s ease,
+                  border-color 0.35s ease,
+                  background 0.35s;
+    }
+
+    .proj-card.from-right  { translate: 72px 0; }
+    .proj-card.in          { opacity: 1; translate: 0 0; }
+    .proj-card.in:hover    { scale: 1.015; border-color: rgba(255,255,255,0.1); }
+    .proj-card.reverse     { flex-direction: row-reverse; }
+
+    .proj-card-img {
+      width: 52%;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .proj-card-img-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .proj-card-body {
+      flex: 1;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .proj-card-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .proj-card-title {
+      font-size: clamp(18px, 1.6vw, 26px);
+      font-weight: 700;
+      color: var(--page-fg-bright);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      transition: color 0.35s;
+    }
+
+    .proj-card-desc {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 20px;
+    }
+
+
+    /* ── Hero dithering canvas ── */
+    #hero-dither {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.30;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+    body.light #hero-dither {
+      mix-blend-mode: multiply;
+      opacity: 0.30;
+    }
+
+    /* ── Minimal ring cursor ── */
+    * { cursor: none !important; }
+
+    #cursor-outer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(180,180,180,0.5);
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      will-change: left, top;
+      display: flex; align-items: center; justify-content: center;
+      transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
+                  height 0.45s cubic-bezier(0.16,1,0.3,1),
+                  background 0.35s ease,
+                  border-color 0.35s ease;
+    }
+    #cursor-outer.cursor-link {
+      width: 72px;
+      height: 72px;
+      border-color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.07);
+    }
+    #cursor-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.2s ease 0s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #cursor-outer.cursor-link #cursor-label {
+      opacity: 1;
+      transition: opacity 0.2s ease 0.15s;
+    }
+    body.light #cursor-label { color: #111; }
+    body.light #cursor-outer.cursor-link {
+      border-color: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.05);
+    }
+
+    /* ── Preloader ──────────────────────────────────── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #0d0c0b;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    #preloader::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+    }
+    #preloader.out {
+      transform: translateY(-100%);
+      transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1) !important;
+      pointer-events: none;
+    }
+    #pl-logo {
+      position: relative;
+      width: max-content;
+      text-align: center;
+      line-height: 1;
+      padding-bottom: 0.18em;
+    }
+    .pl-name {
+      display: inline;
+      font-family: 'Fira Code', monospace;
+      font-size: clamp(22px, 3.2vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #EC4E02;
+      white-space: nowrap;
+      user-select: none;
+      text-transform: lowercase;
+    }
+    #pl-base { opacity: 0.12; }
+    #pl-fill {
+      position: absolute;
+      inset: 0;
+      width: 0%;
+      overflow: hidden;
+      transition: width 0.08s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Preloader ─────────────────────────────────────────────────────── -->
+  <div id="preloader">
+    <div id="pl-logo">
+      <div id="pl-base"><span class="pl-name"></span></div>
+      <div id="pl-fill"><span class="pl-name"></span></div>
+    </div>
+  </div>
+
+  <!-- ── HERO v2 ──────────────────────────────────────────────────────── -->
+  <section class="hero-section">
+
+    <!-- Header is part of the hero — transparent, scrolls away with it -->
+    <header id="site-header" style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
+      <nav style="display:flex; align-items:center; justify-content:space-between;">
+
+        <!-- Nav links -->
+        <div style="display:flex; align-items:center; gap:28px;">
+          <a href="#" class="header-nav-link active">Главная</a>
+          <a href="#work" class="header-nav-link">Проекты</a>
+          <a href="#about" class="header-nav-link">Обо мне</a>
+        </div>
+
+        <!-- Theme toggle -->
+        <button id="theme-btn" aria-label="Toggle theme">
+          <span id="toggle-slider"></span>
+          <span id="toggle-moon" class="toggle-icon toggle-on">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span id="toggle-sun" class="toggle-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+        </button>
+
+      </nav>
+    </header>
+
+    <!-- Dithering background -->
+    <canvas id="hero-dither"></canvas>
+
+    <!-- Two-column layout -->
+    <div class="hero-layout">
+
+      <span class="hero-role-label">UX / UI Designer</span>
+      <div>
+        <span id="name-line-1" class="hero-name-line">ANDREY</span>
+        <span id="name-line-2" class="hero-name-line">BEREGOVOY</span>
+      </div>
+      <span id="hero-tagline">Превращаю сложные задачи в понятные интерфейсы</span>
+
+    </div>
+
+    <!-- Skill ticker -->
+    <div class="hero-ticker">
+      <div class="hero-ticker-track">
+        <span class="hero-ticker-item">UX Research</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Visual Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Design System</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Interaction Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Prototyping</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">User Testing</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Figma</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Motion Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Information Architecture</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Wireframing</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Dark Theme</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">B2B Product</span><span class="hero-ticker-sep">✦</span>
+        <!-- duplicate for seamless loop -->
+        <span class="hero-ticker-item">UX Research</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Visual Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Design System</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Interaction Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Prototyping</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">User Testing</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Figma</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Motion Design</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Information Architecture</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Wireframing</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">Dark Theme</span><span class="hero-ticker-sep">✦</span>
+        <span class="hero-ticker-item">B2B Product</span><span class="hero-ticker-sep">✦</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── PROJECTS CAROUSEL ───────────────────────────────────────────── -->
+  <section id="work" style="display:flex; flex-direction:column; padding:48px 0 40px; box-sizing:border-box;">
+    <h2 style="font-size:clamp(24px,2.2vw,34px); font-weight:500; color:var(--page-fg-bright); letter-spacing:-0.02em; transition:color 0.35s; margin-bottom:24px; flex-shrink:0; padding:0 48px;">
+      <span class="thorn">П</span>роекты
+    </h2>
+
+    <div class="proj-carousel">
+
+      <!-- ── Image + Card ── -->
+      <div class="proj-car-main">
+
+        <!-- Left: stacked project images, fade between them -->
+        <div class="proj-car-img-outer">
+
+          <!-- 0: Rutube Redesign -->
+          <div class="proj-car-img" data-idx="0">
+            <img src="projects/rutube.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="Rutube Redesign">
+          </div>
+
+          <!-- 1: CT Audit Portal -->
+          <div class="proj-car-img" data-idx="1" style="opacity:0;">
+            <img src="projects/ct.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="CT Audit Portal">
+          </div>
+
+          <!-- 2: Code Compliance -->
+          <div class="proj-car-img" data-idx="2" style="opacity:0;">
+            <img src="projects/et.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="Code Compliance Platform">
+          </div>
+
+        </div><!-- /proj-car-img-outer -->
+
+        <!-- Right: info card -->
+        <div class="proj-car-card">
+          <div class="proj-car-glare"></div>
+          <div id="proj-car-content">
+            <div class="proj-card-tag">Video Platform · 2025</div>
+            <div class="proj-car-title">Rutube Redesign</div>
+            <p class="proj-car-desc">Full product redesign of Russia's largest video platform — new design system, improved video UX, and a refreshed brand feel.</p>
+            <div class="elite-card-highlights" style="margin-top:auto;">
+              <div class="elite-highlight"><span class="elite-highlight-dot"></span>UX Research</div>
+              <div class="elite-highlight"><span class="elite-highlight-dot"></span>Visual Design</div>
+              <div class="elite-highlight"><span class="elite-highlight-dot"></span>Design System</div>
+              <div class="elite-highlight"><span class="elite-highlight-dot"></span>Interaction Design</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /proj-car-main -->
+
+      <!-- Bottom nav -->
+      <div class="proj-car-nav">
+        <button class="proj-car-btn" id="proj-prev" aria-label="Previous project">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="proj-car-dots">
+          <button class="proj-car-dot active" data-idx="0" aria-label="Project 1"></button>
+          <button class="proj-car-dot" data-idx="1" aria-label="Project 2"></button>
+          <button class="proj-car-dot" data-idx="2" aria-label="Project 3"></button>
+        </div>
+        <button class="proj-car-btn" id="proj-next" aria-label="Next project">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div><!-- /proj-carousel -->
+
+    <div class="projects-stack" style="display:none;">
+
+      <!-- Card 1: Trip Planner — slides in from left, image left -->
+      <div class="proj-card">
+        <div class="proj-card-img">
+          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#c4a06a 0%,#8a5c30 45%,#3a2010 100%);padding:0 28px;">
+            <div style="width:100%;max-width:440px;background:rgba(0,0,0,0.28);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.45);">
+              <div style="background:rgba(0,0,0,0.35);padding:7px 12px;display:flex;align-items:center;gap:5px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
+                <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;height:13px;margin-left:8px;"></div>
+              </div>
+              <div style="padding:12px 14px;display:flex;gap:14px;">
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                  <div style="height:7px;background:rgba(255,255,255,0.18);border-radius:3px;width:55%;"></div>
+                  <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;width:85%;"></div>
+                  <div style="display:flex;gap:5px;margin-top:2px;">
+                    <div style="background:rgba(196,160,106,0.45);border-radius:4px;padding:4px 8px;font-size:7px;color:rgba(255,255,255,0.65);">Stockholm</div>
+                    <div style="background:rgba(255,255,255,0.07);border-radius:4px;padding:4px 8px;font-size:7px;color:rgba(255,255,255,0.3);">Malmö</div>
+                    <div style="background:rgba(255,255,255,0.07);border-radius:4px;padding:4px 8px;font-size:7px;color:rgba(255,255,255,0.3);">Oslo</div>
+                  </div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:70%;"></div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:60%;"></div>
+                </div>
+                <div style="width:56px;flex-shrink:0;display:flex;flex-direction:column;gap:5px;">
+                  <div style="height:32px;border-radius:5px;background:rgba(196,160,106,0.15);border:1px solid rgba(196,160,106,0.2);"></div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:80%;"></div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;width:60%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="proj-card-body">
+          <div>
+            <div class="proj-card-tag">Web App · 2025</div>
+            <div class="proj-card-title">Trip Planner</div>
+            <div class="proj-card-desc">End-to-end product design — research, wireframes, and shipped MVP. Helps travelers plan trips with smart budgeting.</div>
+          </div>
+          <div class="elite-card-highlights">
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>User Research</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Wireframing</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Visual Design</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Prototyping</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Neobank — slides in from right, image right -->
+      <div class="proj-card from-right reverse">
+        <div class="proj-card-img">
+          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#1e3a6e 0%,#0d1f3c 50%,#050e1e 100%);padding:0 28px;">
+            <div style="width:100%;max-width:440px;background:rgba(255,255,255,0.03);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.05);">
+              <div style="background:rgba(0,0,0,0.4);padding:7px 12px;display:flex;align-items:center;gap:5px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
+                <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:3px;height:13px;margin-left:8px;"></div>
+              </div>
+              <div style="padding:10px 14px;display:flex;gap:12px;align-items:flex-start;">
+                <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
+                  <div style="font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">BALANCE</div>
+                  <div style="height:9px;background:rgba(255,255,255,0.2);border-radius:3px;width:50%;"></div>
+                  <div style="margin-top:4px;height:28px;display:flex;align-items:flex-end;gap:3px;">
+                    <div style="flex:1;height:40%;background:rgba(30,90,180,0.4);border-radius:2px 2px 0 0;"></div>
+                    <div style="flex:1;height:60%;background:rgba(30,90,180,0.5);border-radius:2px 2px 0 0;"></div>
+                    <div style="flex:1;height:75%;background:rgba(30,90,180,0.6);border-radius:2px 2px 0 0;"></div>
+                    <div style="flex:1;height:50%;background:rgba(30,90,180,0.45);border-radius:2px 2px 0 0;"></div>
+                    <div style="flex:1;height:85%;background:rgba(60,140,255,0.7);border-radius:2px 2px 0 0;"></div>
+                    <div style="flex:1;height:65%;background:rgba(30,90,180,0.5);border-radius:2px 2px 0 0;"></div>
+                  </div>
+                </div>
+                <div style="width:70px;height:44px;border-radius:6px;background:linear-gradient(135deg,rgba(30,80,160,0.6),rgba(10,30,80,0.8));border:1px solid rgba(255,255,255,0.08);flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;padding:6px 8px;">
+                  <div style="height:5px;background:rgba(255,255,255,0.15);border-radius:2px;width:50%;"></div>
+                  <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;width:80%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="proj-card-body">
+          <div>
+            <div class="proj-card-tag">Web & Mobile · 2024</div>
+            <div class="proj-card-title">Neobank × 60M users</div>
+            <div class="proj-card-desc">UX writing lead. Owned information architecture, interface logic, and tone of voice across the full product.</div>
+          </div>
+          <div class="elite-card-highlights">
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>UX Writing</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Info Architecture</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Content Strategy</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Team Lead × 10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Underhype — slides in from left, image left -->
+      <div class="proj-card">
+        <div class="proj-card-img">
+          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#2d1a4a 0%,#160d28 50%,#06030e 100%);padding:0 28px;">
+            <div style="width:100%;max-width:440px;background:rgba(0,0,0,0.4);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.04);">
+              <div style="background:rgba(0,0,0,0.5);padding:7px 12px;display:flex;align-items:center;gap:5px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
+                <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:3px;height:13px;margin-left:8px;display:flex;align-items:center;padding-left:6px;">
+                  <div style="font-size:7px;color:rgba(255,255,255,0.2);">underhype.app</div>
+                </div>
+              </div>
+              <div style="padding:10px 14px;display:flex;gap:12px;">
+                <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
+                  <div style="display:flex;gap:5px;align-items:center;">
+                    <div style="height:5px;background:rgba(160,120,255,0.5);border-radius:2px;width:20%;"></div>
+                    <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:2px;width:40%;"></div>
+                  </div>
+                  <div style="display:flex;gap:5px;align-items:center;">
+                    <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:2px;width:12%;"></div>
+                    <div style="height:5px;background:rgba(120,80,220,0.3);border-radius:2px;width:55%;"></div>
+                  </div>
+                  <div style="display:flex;gap:5px;align-items:center;">
+                    <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:2px;width:12%;"></div>
+                    <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:2px;width:35%;"></div>
+                    <div style="height:5px;background:rgba(100,200,120,0.3);border-radius:2px;width:20%;"></div>
+                  </div>
+                  <div style="display:flex;gap:5px;align-items:center;margin-top:2px;">
+                    <div style="height:5px;background:rgba(255,255,255,0.03);border-radius:2px;width:8%;"></div>
+                    <div style="height:5px;background:rgba(160,120,255,0.25);border-radius:2px;width:45%;"></div>
+                  </div>
+                </div>
+                <div style="width:5px;background:rgba(160,120,255,0.4);border-radius:3px;flex-shrink:0;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="proj-card-body">
+          <div>
+            <div class="proj-card-tag">Side Project · 2026</div>
+            <div class="proj-card-title">Underhype</div>
+            <div class="proj-card-desc">A web app built with Claude Code. Explores AI-assisted prototyping and turns ideas into shipped products overnight.</div>
+          </div>
+          <div class="elite-card-highlights">
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Claude Code</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Design System</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Prototyping</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Shipped</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Analytics Platform — slides in from right, image right -->
+      <div class="proj-card from-right reverse">
+        <div class="proj-card-img">
+          <div class="proj-card-img-bg" style="background:linear-gradient(135deg,#0a3d2c 0%,#051e14 50%,#010a07 100%);padding:0 28px;">
+            <div style="width:100%;max-width:440px;background:rgba(0,0,0,0.35);border-radius:10px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04);">
+              <div style="background:rgba(0,0,0,0.45);padding:7px 12px;display:flex;align-items:center;gap:5px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,80,80,0.5);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,180,0,0.4);"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:rgba(80,200,80,0.4);"></div>
+                <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:3px;height:13px;margin-left:8px;"></div>
+              </div>
+              <div style="padding:10px 14px;">
+                <div style="display:flex;gap:10px;margin-bottom:8px;">
+                  <div style="height:6px;background:rgba(40,180,120,0.4);border-radius:3px;width:30%;"></div>
+                  <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;width:20%;"></div>
+                  <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;width:25%;"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:7px;">
+                  <div style="height:22px;border-radius:5px;background:rgba(40,180,120,0.12);border:1px solid rgba(40,180,120,0.2);display:flex;align-items:center;padding:0 6px;">
+                    <div style="height:4px;background:rgba(40,180,120,0.5);border-radius:2px;width:65%;"></div>
+                  </div>
+                  <div style="height:22px;border-radius:5px;background:rgba(255,255,255,0.04);display:flex;align-items:center;padding:0 6px;">
+                    <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;width:50%;"></div>
+                  </div>
+                  <div style="height:22px;border-radius:5px;background:rgba(255,255,255,0.04);display:flex;align-items:center;padding:0 6px;">
+                    <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;width:75%;"></div>
+                  </div>
+                </div>
+                <div style="height:18px;display:flex;align-items:flex-end;gap:2px;">
+                  <div style="flex:1;height:55%;background:rgba(40,180,120,0.25);border-radius:2px 2px 0 0;"></div>
+                  <div style="flex:1;height:70%;background:rgba(40,180,120,0.3);border-radius:2px 2px 0 0;"></div>
+                  <div style="flex:1;height:45%;background:rgba(40,180,120,0.25);border-radius:2px 2px 0 0;"></div>
+                  <div style="flex:1;height:80%;background:rgba(40,180,120,0.4);border-radius:2px 2px 0 0;"></div>
+                  <div style="flex:1;height:60%;background:rgba(40,180,120,0.3);border-radius:2px 2px 0 0;"></div>
+                  <div style="flex:1;height:90%;background:rgba(40,200,130,0.55);border-radius:2px 2px 0 0;"></div>
+                  <div style="flex:1;height:70%;background:rgba(40,180,120,0.35);border-radius:2px 2px 0 0;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="proj-card-body">
+          <div>
+            <div class="proj-card-tag">SaaS · 2025</div>
+            <div class="proj-card-title">Analytics Platform</div>
+            <div class="proj-card-desc">Product design for a B2B analytics tool. Simplified complex data into clear, actionable dashboards for non-technical teams.</div>
+          </div>
+          <div class="elite-card-highlights">
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Product Design</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Data Viz</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>Dashboard UX</div>
+            <div class="elite-highlight"><span class="elite-highlight-dot"></span>B2B SaaS</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SKILLS ─────────────────────────────────────────────────────── -->
+  <section id="about" style="padding:48px 48px 48px; border-top:1px solid var(--page-border); transition:border-color 0.35s;">
+    <h2 style="font-size:clamp(24px,2.2vw,34px); font-weight:500; color:var(--page-fg-bright); letter-spacing:-0.02em; transition:color 0.35s;">
+      <span class="thorn">Ч</span>то умею
+    </h2>
+
+    <div class="skills-reveal">
+      <div class="skills-grid">
+        <!-- Visual Design — left large -->
+        <div class="skill-card" style="min-height:300px;">
+          <div class="skill-glare"></div>
+          <div class="skill-logo-wrap">
+            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=figma.com&sz=128" alt="Figma">
+          </div>
+          <div class="skill-label">Визуальный дизайн</div>
+          <div class="skill-tool">Figma</div>
+          <p class="skill-desc" style="margin-top:auto;">От вайрфрейма до UI-кита в одном файле — сдаю в Dev Mode без вопросов.</p>
+        </div>
+
+        <!-- Development (top) + Creative Director (bottom) — center column -->
+        <div class="skills-col">
+          <div class="skill-card" style="flex:1;">
+            <div class="skill-glare"></div>
+            <div class="skill-logo-wrap">
+              <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=claude.ai&sz=128" alt="Claude Code">
+            </div>
+            <div class="skill-label">Разработка</div>
+            <div class="skill-tool">Claude Code</div>
+            <p class="skill-desc" style="margin-top:auto;">Дизайн в код через Claude Code — без потерь в переводе.</p>
+          </div>
+          <div class="skill-card" style="flex:1;">
+            <div class="skill-glare"></div>
+            <div class="skill-logo-wrap">
+              <span style="font-size:26px; line-height:1;">🐱</span>
+            </div>
+            <div class="skill-label">Арт-директор</div>
+            <div class="skill-tool">Марти</div>
+            <p class="skill-desc" style="margin-top:auto;">Кот. Забракованные макеты идут на доработку.</p>
+          </div>
+        </div>
+
+        <!-- Prototyping — right large -->
+        <div class="skill-card" style="min-height:300px;">
+          <div class="skill-glare"></div>
+          <div class="skill-logo-wrap">
+            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=manus.im&sz=128" alt="Manus">
+            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=lovable.dev&sz=128" alt="Lovable">
+            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=figma.com&sz=128" alt="Figma Make">
+          </div>
+          <div class="skill-label">Прототипирование</div>
+          <div class="skill-tool">Manus, Lovable,<br>Figma Make</div>
+          <p class="skill-desc" style="margin-top:auto;">Кликабельный прототип за несколько часов — проверяем идею до того, как её построят.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRE-FOOTER CONTACT ─────────────────────────────────────────── -->
+  <section style="padding:48px 48px 48px; border-top:1px solid var(--page-border); transition:border-color 0.35s;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+      <div>
+        <a href="mailto:sa1nteau@mail.ru" style="font-size:clamp(18px,2vw,28px); font-weight:500; color:var(--page-fg); transition:color .2s;">
+          sa1nteau@mail.ru
+        </a>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Ищете дизайнера?</div>
+        <div style="display:flex; gap:16px; justify-content:flex-end;">
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Threads</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer style="border-top:1px solid var(--page-border); padding:20px 48px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; transition:border-color 0.35s;">
+    <div>
+      <div style="font-size:9px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent); margin-bottom:3px;">Andrey Beregovoy</div>
+      <div style="font-size:11px; color:var(--page-fg);">2022 — 2026</div>
+    </div>
+    <div>
+      <div style="font-size:9px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent); margin-bottom:3px;">Опыт</div>
+      <div style="font-size:11px; color:var(--page-fg);">3 года в UX/UI</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:9px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent); margin-bottom:3px;">Открыт к предложениям</div>
+      <div style="font-size:11px; color:var(--page-fg);">Удалённо · Россия</div>
+    </div>
+  </footer>
+
+  <!-- ── Noise overlay ── -->
+  <div class="noise-overlay"></div>
+
+  <!-- ── DOT M Custom Cursor ── -->
+  <div id="cursor-outer"><span id="cursor-label">Открыть</span></div>
+  <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:opacity 0.2s ease;"></div>
+
+  <script>
+    /* ── Cursor ── */
+    const ring = document.getElementById('cursor-outer');
+    const dot  = document.getElementById('cursor-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    /* ── Theme toggle ── */
+    const themeBtn   = document.getElementById('theme-btn');
+    const moonIcon   = document.getElementById('toggle-moon');
+    const sunIcon    = document.getElementById('toggle-sun');
+    const slider     = document.getElementById('toggle-slider');
+    let isDark = true;
+
+    function applyDark() {
+      document.body.classList.remove('light');
+      themeBtn.style.background = '#1a1a1a';
+      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
+      slider.style.transform = 'translateX(0)';
+      slider.style.background = 'rgba(255,255,255,0.14)';
+      moonIcon.classList.add('toggle-on');
+      sunIcon.classList.remove('toggle-on');
+      sunIcon.style.color = 'rgba(255,255,255,0.3)';
+      moonIcon.style.color = '';
+      dot.style.background = '#fff';
+      ring.style.borderColor = 'rgba(180,180,180,0.5)';
+    }
+    function applyLight() {
+      document.body.classList.add('light');
+      themeBtn.style.background = '#e2e2e2';
+      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
+      slider.style.transform = 'translateX(28px)';
+      slider.style.background = 'rgba(0,0,0,0.1)';
+      sunIcon.classList.add('toggle-on');
+      moonIcon.classList.remove('toggle-on');
+      sunIcon.style.color = '#444';
+      moonIcon.style.color = 'rgba(0,0,0,0.3)';
+      dot.style.background = '#111';
+      ring.style.borderColor = 'rgba(20,20,20,0.35)';
+    }
+
+    themeBtn.addEventListener('click', () => {
+      isDark = !isDark;
+      isDark ? applyDark() : applyLight();
+    });
+
+    /* ── BlurText animation ── */
+    function blurChars(id, text, delayMs) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = [...text].map((ch, i) =>
+        `<span class="blur-char" style="transition-delay:${i * delayMs}ms">${ch}</span>`
+      ).join('');
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          el.querySelectorAll('.blur-char').forEach(s => s.classList.add('in'))
+        )
+      );
+    }
+
+    function blurWords(id, startDelay, delayMs) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const words = el.textContent.trim().split(' ');
+      el.innerHTML = words.map((w, i) =>
+        `<span class="blur-word" style="transition-delay:${startDelay + i * delayMs}ms">${w}${i < words.length - 1 ? ' ' : ''}</span>`
+      ).join('');
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          el.querySelectorAll('.blur-word').forEach(s => s.classList.add('in'))
+        )
+      );
+    }
+
+    blurChars('name-line-1', 'ANDREY',    100);
+    blurChars('name-line-2', 'BEREGOVOY',  80);
+    blurWords('hero-tagline', 700, 130);
+
+
+    /* ── Projects Carousel ── */
+    (function () {
+      const projects = [
+        {
+          url: 'rutube.html',
+          tag: 'Видеоплатформа · 2025',
+          title: 'Rutube — Редизайн подписки',
+          desc: 'Редизайн флоу оформления Premium-подписки: исследование, архетипы, CJM, 5 ключевых экранов и двухуровневая система токенов.',
+          highlights: ['UX Research', 'Visual Design', 'Design System', 'Interaction Design']
+        },
+        {
+          url: 'ct.html',
+          tag: 'Внутренний инструмент · 2026',
+          title: 'СТ — Аудит-портал',
+          desc: 'Внутренний портал для выездных аудиторов — карта с отслеживанием в реальном времени, управление заданиями и административная панель.',
+          highlights: ['Dashboard Design', 'Map UX', 'Design System', 'B2B Product']
+        },
+        {
+          url: 'et.html',
+          tag: 'SaaS · 2025',
+          title: 'Echo Twin — Мониторинг',
+          desc: 'Десктопная платформа мониторинга городской инфраструктуры в Абу-Даби: камеры на мусоровозах, детекция нарушений, дашборды для операторов.',
+          highlights: ['Visual Design', 'Data Visualization', 'GIS / Map UX', 'Dark Theme']
+        }
+      ];
+
+      let current = 0;
+      let busy = false;
+
+      const imgs    = document.querySelectorAll('.proj-car-img');
+      const dots    = document.querySelectorAll('.proj-car-dot');
+      const content = document.getElementById('proj-car-content');
+
+      const H_COLOR = {
+        'UX Research':       'h-blue',
+        'Dashboard Design':  'h-blue',
+        'Visual Design':     'h-violet',
+        'Interaction Design':'h-violet',
+        'Design System':     'h-accent',
+        'Map UX':            'h-emerald',
+        'GIS / Map UX':      'h-emerald',
+        'Data Visualization':'h-emerald',
+        'B2B Product':       'h-amber',
+        'Dark Theme':        'h-slate',
+      };
+
+      function renderContent(idx) {
+        const p = projects[idx];
+        content.innerHTML =
+          `<div class="proj-card-tag">${p.tag}</div>` +
+          `<div class="proj-car-title">${p.title}</div>` +
+          `<p class="proj-car-desc">${p.desc}</p>` +
+          `<div class="elite-card-highlights" style="margin-top:auto;">` +
+          p.highlights.map(h => {
+            const cls = H_COLOR[h] ? ` ${H_COLOR[h]}` : '';
+            return `<div class="elite-highlight${cls}"><span class="elite-highlight-dot"></span>${h}</div>`;
+          }).join('') +
+          `</div>`;
+      }
+
+      const SLIDE_INTERVAL = 4000;
+      let autoTimer = null;
+      let paused = false;
+
+      function startTimer() {
+        clearInterval(autoTimer);
+        autoTimer = setInterval(() => {
+          if (!paused) goTo((current + 1) % projects.length);
+        }, SLIDE_INTERVAL);
+      }
+
+      function goTo(next) {
+        if (busy || next === current) return;
+        busy = true;
+        startTimer(); // reset countdown on every navigation
+
+        content.style.opacity = '0';
+        imgs[current].style.opacity = '0';
+        imgs[next].style.opacity = '1';
+
+        dots[current].classList.remove('active');
+        // Force reflow so the ::after animation restarts cleanly
+        dots[next].classList.remove('active');
+        void dots[next].offsetWidth;
+        dots[next].classList.add('active');
+
+        setTimeout(() => {
+          current = next;
+          renderContent(current);
+          content.style.opacity = '1';
+          busy = false;
+        }, 380);
+      }
+
+      // Pause flag — interval keeps running, navigation skipped while hovering
+      const carousel = document.querySelector('.proj-carousel');
+      carousel.addEventListener('mouseenter', () => { paused = true; });
+      carousel.addEventListener('mouseleave', () => {
+        paused = false;
+        startTimer(); // give full 4s after cursor leaves
+      });
+
+      document.getElementById('proj-prev').addEventListener('click', () =>
+        goTo((current - 1 + projects.length) % projects.length)
+      );
+      document.getElementById('proj-next').addEventListener('click', () =>
+        goTo((current + 1) % projects.length)
+      );
+      dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+      renderContent(0);
+      startTimer();
+
+      // Card click → open case study
+      document.querySelector('.proj-car-card').addEventListener('click', () => {
+        window.location.href = projects[current].url;
+      });
+    })();
+
+    /* ── Project cards: slide in from alternating sides on scroll ── */
+    const projObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          projObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.proj-card').forEach((card, i) => {
+      card.style.transitionDelay = (i * 0.06) + 's';
+      projObserver.observe(card);
+    });
+
+    /* ── Skills: slide-from-top reveal + 3D TiltCard ── */
+    (function () {
+      const skillCards = document.querySelectorAll('.skill-card');
+
+      /* ── 1. Slide-from-top IntersectionObserver ── */
+      const skillsObs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          skillsObs.unobserve(entry.target);
+          entry.target.classList.add('in');
+        });
+      }, { threshold: 0.15 });
+
+      skillCards.forEach((card, i) => {
+        card.style.transitionDelay = (i * 0.09) + 's';
+        skillsObs.observe(card);
+      });
+
+      /* ── 2. TiltCard: 3D tilt + radial glare ── */
+      const MAX_TILT = 10;
+
+      skillCards.forEach(card => {
+        const glare = card.querySelector('.skill-glare');
+        let tx = 0, ty = 0, ttx = 0, tty = 0;
+        let rafId = null, isOver = false;
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        function tick() {
+          tx = lerp(tx, ttx, 0.1);
+          ty = lerp(ty, tty, 0.1);
+          card.style.transform =
+            `perspective(1000px) rotateX(${tx}deg) rotateY(${ty}deg)`;
+          const done = !isOver && Math.abs(ttx - tx) < 0.02 && Math.abs(tty - ty) < 0.02;
+          if (done) {
+            tx = ty = ttx = tty = 0;
+            card.style.transform = '';
+            rafId = null;
+          } else {
+            rafId = requestAnimationFrame(tick);
+          }
+        }
+
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top)  / r.height;
+          ttx = (0.5 - py) * MAX_TILT;
+          tty = (px - 0.5) * MAX_TILT;
+          if (glare) {
+            glare.style.background =
+              `radial-gradient(circle at ${px*100}% ${py*100}%, rgba(255,255,255,0.10), transparent 60%)`;
+          }
+          isOver = true;
+          if (!rafId) rafId = requestAnimationFrame(tick);
+        });
+
+        card.addEventListener('mouseleave', () => {
+          isOver = false;
+          ttx = tty = 0;
+          if (!rafId) rafId = requestAnimationFrame(tick);
+        });
+      });
+
+      /* ── Project card tilt ── */
+      const projCard = document.querySelector('.proj-car-card');
+      if (projCard) {
+        const glare = projCard.querySelector('.proj-car-glare');
+        let tx = 0, ty = 0, ttx = 0, tty = 0;
+        let rafId = null, isOver = false;
+        function lerp(a, b, t) { return a + (b - a) * t; }
+        function tick() {
+          tx = lerp(tx, ttx, 0.1);
+          ty = lerp(ty, tty, 0.1);
+          projCard.style.transform = `perspective(1000px) rotateX(${tx}deg) rotateY(${ty}deg)`;
+          const done = !isOver && Math.abs(ttx - tx) < 0.02 && Math.abs(tty - ty) < 0.02;
+          if (done) { tx = ty = ttx = tty = 0; projCard.style.transform = ''; rafId = null; }
+          else rafId = requestAnimationFrame(tick);
+        }
+        projCard.addEventListener('mousemove', e => {
+          const r = projCard.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          ttx = (0.5 - py) * MAX_TILT;
+          tty = (px - 0.5) * MAX_TILT;
+          if (glare) glare.style.background = `radial-gradient(circle at ${px*100}% ${py*100}%, rgba(255,255,255,0.10), transparent 60%)`;
+          isOver = true;
+          document.getElementById('cursor-outer').classList.add('cursor-link');
+          document.getElementById('cursor-dot').style.opacity = '0';
+          if (!rafId) rafId = requestAnimationFrame(tick);
+        });
+        projCard.addEventListener('mouseleave', () => {
+          isOver = false; ttx = tty = 0;
+          document.getElementById('cursor-outer').classList.remove('cursor-link');
+          document.getElementById('cursor-dot').style.opacity = '1';
+          if (!rafId) rafId = requestAnimationFrame(tick);
+        });
+      }
+    })();
+    /* ── Hero dithering: WebGL 4×4 ordered dither with warp ── */
+    (function () {
+      const canvas = document.getElementById('hero-dither');
+      if (!canvas) return;
+      const gl = canvas.getContext('webgl2');
+      if (!gl) return;
+
+      const VERT = `#version 300 es
+        in vec2 a_pos;
+        void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
+
+      const FRAG = `#version 300 es
+        precision highp float;
+        out vec4 out_color;
+        uniform float u_time;
+        uniform vec2  u_res;
+        uniform vec3  u_color;
+
+        void main() {
+          float t = u_time;
+
+          // Exact @paper-design/shaders Dithering shape="warp" algorithm
+          vec2 shapeUV = gl_FragCoord.xy;
+          shapeUV *= 0.003;
+
+          for (float i = 1.0; i < 6.0; i++) {
+            shapeUV.x += 0.6 / i * cos(i * 2.5 * shapeUV.y + t);
+            shapeUV.y += 0.6 / i * cos(i * 1.5 * shapeUV.x + t);
+          }
+
+          float shape = 0.15 / max(0.001, abs(sin(t - shapeUV.y - shapeUV.x)));
+          shape = smoothstep(0.02, 1.0, shape);
+
+          // 4×4 Bayer ordered dithering (type="4x4")
+          int b[16] = int[16](0,8,2,10, 12,4,14,6, 3,11,1,9, 15,7,13,5);
+          int px = int(mod(gl_FragCoord.x, 4.0));
+          int py = int(mod(gl_FragCoord.y, 4.0));
+          float thr = float(b[py * 4 + px]) / 16.0;
+
+          float a = shape > thr ? 1.0 : 0.0;
+          out_color = vec4(u_color.r * a, u_color.g * a, u_color.b * a, a);
+        }`;
+
+      function mkShader(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FRAG));
+      gl.linkProgram(prog);
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        -1,-1, 1,-1, -1,1,  -1,1, 1,-1, 1,1
+      ]), gl.STATIC_DRAW);
+      const aPos = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+      const uTime  = gl.getUniformLocation(prog, 'u_time');
+      const uRes   = gl.getUniformLocation(prog, 'u_res');
+      const uColor = gl.getUniformLocation(prog, 'u_color');
+
+      // bright orange — screen blend + opacity:0.30 creates the dark sienna look
+      const DARK_COLOR   = [0.925, 0.306, 0.008]; // #EC4E02
+      const LIGHT_COLOR  = [0.4706, 0.0941, 0.9294]; // #7802ED
+
+      function setShaderColor() {
+        const c = document.body.classList.contains('light') ? LIGHT_COLOR : DARK_COLOR;
+        gl.uniform3f(uColor, c[0], c[1], c[2]);
+      }
+      setShaderColor();
+
+      // react to theme toggles
+      const themeObserver = new MutationObserver(setShaderColor);
+      themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+      function resize() {
+        const hero = canvas.parentElement;
+        canvas.width  = hero.offsetWidth;
+        canvas.height = hero.offsetHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      let elapsed = 0, last = performance.now(), speed = 0.2;
+      const hero = canvas.closest('.hero-section');
+      if (hero) {
+        hero.addEventListener('mouseenter', () => speed = 0.6);
+        hero.addEventListener('mouseleave', () => speed = 0.2);
+      }
+
+      (function loop() {
+        const now = performance.now();
+        elapsed += (now - last) * 0.001 * speed;
+        last = now;
+        gl.uniform1f(uTime, elapsed);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(loop);
+      })();
+    })();
+
+    /* ── Preloader ── */
+    (function () {
+      const loader  = document.getElementById('preloader');
+      const fill    = document.getElementById('pl-fill');
+      const phrases = [
+        'designing', 'thinking', 'building', 'prototyping',
+        'rendering', 'crafting', 'iterating', 'polishing',
+        'structuring', 'composing', 'mapping', 'wiring'
+      ];
+      const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+      document.querySelectorAll('.pl-name').forEach(el => el.textContent = phrase);
+
+      let n = 0, done = false;
+
+      const tick = setInterval(() => {
+        if (done) return;
+        n = Math.min(n + (n < 50 ? 3 : n < 80 ? 2 : 1), 88);
+        fill.style.width = n + '%';
+      }, 55);
+
+      function finish() {
+        if (done) return;
+        done = true;
+        clearInterval(tick);
+        fill.style.width = '100%';
+        setTimeout(() => {
+          loader.classList.add('out');
+          setTimeout(() => loader.remove(), 950);
+        }, 420);
+      }
+
+      window.addEventListener('load', finish);
+      setTimeout(finish, 4000);
+    })();
+  </script>
+
+</body>
+</html>
