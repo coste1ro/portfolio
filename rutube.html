@@ -284,6 +284,8 @@
     .moscow-tag.m { background: rgba(224,92,24,0.1); color: rgba(224,92,24,0.9); }
     .moscow-tag.s { background: rgba(59,130,246,0.1); color: rgba(59,130,246,0.9); }
     .moscow-tag.c { background: rgba(148,163,184,0.1); color: rgba(148,163,184,0.85); }
+    .moscow-tag.a { background: rgba(245,158,11,0.1); color: rgba(245,158,11,0.9); }
+    .moscow-label.a { color: #f59e0b; }
     body.light .moscow-label.m { color: #c04f10; }
 
     /* ── Results list ── */
@@ -353,12 +355,119 @@
     }
     .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
 
+    /* ── Force items ── */
+    .force-item {
+      font-size: 13px; color: var(--page-fg);
+      padding-left: 14px; position: relative;
+      line-height: 1.5; transition: color 0.35s;
+    }
+    .force-item::before {
+      content: '–';
+      position: absolute; left: 0;
+      color: rgba(255,255,255,0.2);
+    }
+    body.light .force-item::before { color: rgba(0,0,0,0.2); }
+
+    /* ── Sticky case blocks ── */
+    .cb-block {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 96px;
+      align-items: start;
+      padding: 64px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    .cb-text {
+      position: sticky;
+      top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cb-num {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px; font-weight: 700;
+      color: var(--accent); letter-spacing: 0.04em;
+      transition: color 0.35s;
+    }
+    .cb-num::before { content: '('; }
+    .cb-num::after  { content: ')'; }
+    .cb-title {
+      font-size: clamp(22px, 2.2vw, 30px);
+      font-weight: 500; color: var(--page-fg-bright);
+      letter-spacing: -0.02em; line-height: 1.15;
+      transition: color 0.35s;
+    }
+    .cb-desc {
+      font-size: 13px; line-height: 1.7;
+      color: var(--page-fg); transition: color 0.35s;
+    }
+    .cb-media { display: flex; flex-direction: column; gap: 12px; }
+    @keyframes img-scale-in {
+      from { transform: scale(0.9); opacity: 0.4; }
+      to   { transform: scale(1);   opacity: 1;   }
+    }
+    .cb-media img {
+      width: 100%; display: block; border-radius: 16px;
+      animation: img-scale-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+
+    /* ── IA tree ── */
+    .ia-full {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 40px;
+      overflow-x: auto;
+    }
+    .ia-col { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
+    .ia-col-header {
+      font-size: 12px; font-weight: 600;
+      color: var(--page-fg-bright);
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 8px; text-align: center;
+      margin-bottom: 4px;
+      transition: background 0.35s, border-color 0.35s, color 0.35s;
+    }
+    .ia-col-item {
+      font-size: 11px; color: var(--page-fg);
+      padding: 7px 10px; border: 1px solid var(--card-border);
+      border-radius: 6px; line-height: 1.3;
+      transition: border-color 0.35s, color 0.35s, background 0.35s;
+    }
+    .ia-col-item.nested {
+      margin-left: 10px; font-size: 10px;
+      opacity: 0.5; border-style: dashed;
+    }
+    .ia-col-item.group-head {
+      opacity: 0.75; font-weight: 500;
+      margin-top: 4px;
+    }
+    .ia-col-item.accent {
+      background: rgba(224,92,24,0.08);
+      border-color: rgba(224,92,24,0.45);
+      color: var(--accent); font-weight: 500;
+    }
+    .ia-col-item.accent .ia-tag {
+      display: block; font-size: 9px; font-weight: 400;
+      opacity: 0.65; font-family: 'Fira Code', monospace;
+      margin-top: 2px; letter-spacing: 0.03em;
+    }
+    body.light .ia-col-header { background: rgba(0,0,0,0.05); }
+
     @media (max-width: 720px) {
       .case-hero-body { padding: 28px 20px 40px; }
       .case-hero-title { white-space: normal; }
       .cs-section { padding: 64px 20px; }
       .cs-image-block { padding: 40px 20px; }
       .cs-grid-2, .cs-grid-3, .cs-split, .cs-more-grid { grid-template-columns: 1fr; }
+      .cb-block { grid-template-columns: 1fr; gap: 32px; padding: 64px 20px; }
+      .cb-text { position: static; }
       .contact-section { padding: 48px 20px; }
       footer { padding: 20px; grid-template-columns: 1fr; }
     }
@@ -430,7 +539,7 @@
     <div class="cs-split" style="align-items:center;">
       <div>
         <div class="cs-section-label">Проблема</div>
-        <h2 class="cs-heading">Пользователи бросают оформление —<br>не из-за цены</h2>
+        <h2 class="cs-heading">Пользователи бросают оформление<br>не из-за цены</h2>
         <p class="cs-body">Подписка — главный источник дохода видеосервиса. Но у Rutube пользователи бросают оформление на полпути или быстро отменяют. Не из-за цены, а из-за ощущения потери контроля.</p>
         <p class="cs-body" style="margin-top:16px;">Текущий флоу не отвечает на базовые вопросы: за что я плачу, когда следующее списание, где управлять подпиской. Условия зашиты в мелкий текст, автопродление включено молча, страница тарифов перегружена. Конкурентный анализ подтверждает отставание Rutube в категориях «Понятность отмены», «Free vs Paid» и «Прозрачность цены» — там, где лидируют YouTube Premium, Кинопоиск и Иви.</p>
       </div>
@@ -474,10 +583,27 @@
             <span class="moscow-tag c">Удобство оплаты</span>
           </div>
         </div>
+        <div style="margin-top:32px; padding-top:28px; border-top:1px solid var(--card-border);">
+          <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px); margin-bottom:16px;">4 силы</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 24px; margin-top:0;">
+            <div class="moscow-group" style="margin-top:0;">
+              <div class="moscow-label m">Push</div>
+              <div class="moscow-tags"><span class="moscow-tag m">Раздражающая реклама</span></div>
+              <div class="moscow-label s">Pull</div>
+              <div class="moscow-tags" style="margin-bottom:0;"><span class="moscow-tag s">Отсутствие рекламы + контроль</span></div>
+            </div>
+            <div class="moscow-group" style="margin-top:0;">
+              <div class="moscow-label a">Anxiety</div>
+              <div class="moscow-tags"><span class="moscow-tag a">Автосписание и непрозрачность</span></div>
+              <div class="moscow-label c">Habit</div>
+              <div class="moscow-tags" style="margin-bottom:0;"><span class="moscow-tag c">«И так можно бесплатно»</span></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div>
         <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px); margin-bottom:16px;">Архетипы</h2>
-        <p class="cs-body" style="margin-bottom:28px;">Трое респондентов сложились в два устойчивых паттерна. Разные мотивации, общий блокер.</p>
+        <p class="cs-body" style="margin-bottom:28px;">Два паттерна, разные мотивации, общий&nbsp;блокер.</p>
         <div style="display:flex; flex-direction:column; gap:12px;">
           <div class="archetype-card">
             <div class="archetype-tag">Архетип 1</div>
@@ -520,9 +646,176 @@
     </div>
   </section>
 
+  <!-- ── 4 FORCES (removed — condensed into Подход left column) ── -->
+  <section class="cs-section" style="display:none;">
+    <div class="cs-inner">
+      <div class="cs-section-label">4 силы</div>
+      <h2 class="cs-heading">Push / Pull / Anxiety / Habit</h2>
+      <p class="cs-body">Фреймворк Jobs to Be Done помогает понять, почему пользователь переходит или не переходит на платную версию — не что он делает, а что им движет.</p>
+    </div>
+    <div class="cs-split" style="margin-top:48px; align-items:start;">
+      <!-- Архетип 1 -->
+      <div style="display:flex; flex-direction:column; gap:28px;">
+        <div style="font-size:13px; font-weight:600; color:var(--page-fg-bright); letter-spacing:-0.01em;">1. Рациональный контролер</div>
+        <div>
+          <div class="archetype-field-label" style="color:var(--accent); margin-bottom:10px;">Push — что толкает от бесплатной версии</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Раздражающая реклама</li>
+            <li class="force-item">Ограничения</li>
+            <li class="force-item">Отсутствие контроля</li>
+            <li class="force-item">Невозможность понять, что именно получаешь</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-field-label" style="color:#3b82f6; margin-bottom:10px;">Pull — что привлекает к подписке</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Отсутствие рекламы</li>
+            <li class="force-item">Эксклюзивный контент</li>
+            <li class="force-item">Чёткое описание преимуществ</li>
+            <li class="force-item">Прозрачные условия</li>
+            <li class="force-item">Возможность управлять подпиской</li>
+            <li class="force-item">Видимая дата следующего списания</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-field-label" style="color:#f59e0b; margin-bottom:10px;">Anxiety — что пугает</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Автосписание без уведомления</li>
+            <li class="force-item">Повышение цены после пробного периода</li>
+            <li class="force-item">Мелкий текст с условиями</li>
+            <li class="force-item">Скрытые условия</li>
+            <li class="force-item">Неочевидное управление подпиской</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-field-label" style="color:#94a3b8; margin-bottom:10px;">Habit — что удерживает в бесплатной модели</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Можно и так смотреть</li>
+            <li class="force-item">Лень разбираться</li>
+            <li class="force-item">Привычка обходиться без подписки</li>
+            <li class="force-item">Альтернативные сервисы</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Архетип 2 -->
+      <div style="display:flex; flex-direction:column; gap:28px;">
+        <div style="font-size:13px; font-weight:600; color:var(--page-fg-bright); letter-spacing:-0.01em;">2. Прагматик «без лишнего»</div>
+        <div>
+          <div class="archetype-field-label" style="color:var(--accent); margin-bottom:10px;">Push — что толкает от бесплатной версии</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Слишком много рекламы</li>
+            <li class="force-item">Неудобство</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-field-label" style="color:#3b82f6; margin-bottom:10px;">Pull — что привлекает к подписке</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Быстро убрать рекламу</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-field-label" style="color:#f59e0b; margin-bottom:10px;">Anxiety — что пугает</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Апселл</li>
+            <li class="force-item">Сложный флоу</li>
+            <li class="force-item">Обязательный телефон / спам</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-field-label" style="color:#94a3b8; margin-bottom:10px;">Habit — что удерживает в бесплатной модели</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+            <li class="force-item">Бесплатно тоже работает</li>
+            <li class="force-item">Не хочет тратить время</li>
+          </ul>
+        </div>
+        <!-- Выводы -->
+        <div style="padding:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; margin-top:12px; display:flex; flex-direction:column; gap:14px; transition:background 0.35s, border-color 0.35s;">
+          <div class="archetype-field-label" style="margin-bottom:0;">Выводы</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 24px;">
+            <div><span style="font-size:12px; font-weight:600; color:var(--accent);">Push</span><div style="font-size:13px; color:var(--page-fg); margin-top:4px;">Раздражающая реклама</div></div>
+            <div><span style="font-size:12px; font-weight:600; color:#f59e0b;">Anxiety</span><div style="font-size:13px; color:var(--page-fg); margin-top:4px;">Автосписание и непрозрачность</div></div>
+            <div><span style="font-size:12px; font-weight:600; color:#3b82f6;">Pull</span><div style="font-size:13px; color:var(--page-fg); margin-top:4px;">Отсутствие рекламы + контроль</div></div>
+            <div><span style="font-size:12px; font-weight:600; color:#94a3b8;">Habit</span><div style="font-size:13px; color:var(--page-fg); margin-top:4px;">«И так можно бесплатно»</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INFORMATION ARCHITECTURE ── -->
+  <section class="cs-section">
+    <div class="cs-inner">
+      <div class="cs-section-label">Информационная архитектура</div>
+      <h2 class="cs-heading">Подписка живёт в Настройки → Подписки</h2>
+      <p class="cs-body">Управление способом оплаты — в Настройки → Способы оплаты. Это критично для Контролера: он должен видеть путь к управлению ещё до оплаты.</p>
+      <p class="cs-body" style="margin-top:16px;">Отсюда структурное решение: success-экран должен явно ссылаться на это место. Иначе пользователь, оплативший подписку, остаётся без понимания, как она устроена в продукте дальше.</p>
+    </div>
+    <div class="ia-full">
+
+      <!-- Главная -->
+      <div class="ia-col">
+        <div class="ia-col-header">Главная</div>
+        <div class="ia-col-item">Персонализированный контент</div>
+        <div class="ia-col-item">Каталог</div>
+        <div class="ia-col-item">Shorts</div>
+        <div class="ia-col-item">Подборки</div>
+      </div>
+
+      <!-- Обзор -->
+      <div class="ia-col">
+        <div class="ia-col-header">Обзор</div>
+        <div class="ia-col-item">Поиск</div>
+        <div class="ia-col-item group-head">Видео</div>
+        <div class="ia-col-item nested">Каналы</div>
+        <div class="ia-col-item nested">Shorts</div>
+        <div class="ia-col-item nested">Плейлисты</div>
+        <div class="ia-col-item group-head">Каталог</div>
+        <div class="ia-col-item nested">Фильмы</div>
+        <div class="ia-col-item nested">Сериалы</div>
+        <div class="ia-col-item nested">Телешоу</div>
+        <div class="ia-col-item nested">Спорт</div>
+        <div class="ia-col-item nested">Музыка</div>
+        <div class="ia-col-item nested">Подкасты</div>
+        <div class="ia-col-item nested">Детям</div>
+      </div>
+
+      <!-- Студия -->
+      <div class="ia-col">
+        <div class="ia-col-header">Студия</div>
+        <div class="ia-col-item">Загрузить видео</div>
+        <div class="ia-col-item">Загрузить Shorts</div>
+        <div class="ia-col-item">Создать трансляцию</div>
+      </div>
+
+      <!-- Мое -->
+      <div class="ia-col">
+        <div class="ia-col-header">Мое</div>
+        <div class="ia-col-item">Подписки</div>
+        <div class="ia-col-item">История просмотра</div>
+        <div class="ia-col-item">Плейлисты</div>
+        <div class="ia-col-item">Смотреть позже</div>
+        <div class="ia-col-item">Комментарии</div>
+        <div class="ia-col-item">Понравилось</div>
+      </div>
+
+      <!-- Настройки -->
+      <div class="ia-col">
+        <div class="ia-col-header">Настройки</div>
+        <div class="ia-col-item">Мои данные</div>
+        <div class="ia-col-item">Уведомления</div>
+        <div class="ia-col-item">Устройства</div>
+        <div class="ia-col-item accent">Подписки<span class="ia-tag">← success-экран</span></div>
+        <div class="ia-col-item">Покупки</div>
+        <div class="ia-col-item accent">Способы оплаты<span class="ia-tag">← управление картой</span></div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- ── CJM ── -->
   <section class="cs-section">
     <div class="cs-inner">
+      <div class="cs-section-label">Customer Journey Map</div>
       <h2 class="cs-heading">Карта собрана для Рационального контролера</h2>
       <p class="cs-body">На каждом этапе зафиксированы действия пользователя, его мысли, эмоциональное состояние и конкретные точки боли. Это и есть основа для проектирования: каждая боль на карте превращается в требование к интерфейсу.</p>
     </div>
@@ -532,58 +825,66 @@
   <!-- ── SOLUTIONS ── -->
   <section class="cs-section">
     <div class="cs-inner">
-      <h2 class="cs-heading">5 ключевых экранов</h2>
-      <p class="cs-body">Каждый экран закрывает конкретные боли архетипа. Проектируем под Контролера — если флоу выдержит его проверку, Прагматик пройдет его автоматически.</p>
+      <div class="cs-section-label">Решения</div>
+      <h2 class="cs-heading">5 экранов — 5 болей</h2>
+      <p class="cs-body">Каждый экран закрывает конкретную точку боли архетипа. Проектируем под Контролера — если флоу выдержит его проверку, Прагматик пройдёт его автоматически.</p>
     </div>
   </section>
 
-  <!-- Screen 1: Выбор тарифа -->
-  <div class="cs-image-block">
-    <img src="projects/rutube-mocks/plans.png">
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">01</div>
+      <div class="cb-title">Выбор тарифа</div>
+      <p class="cb-desc">Главная жалоба в интервью — ощущение, что выбор уже сделан за тебя. Один экран, два варианта, цена на виду.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/rutube-mocks/plans.png">
+    </div>
   </div>
 
-  <section class="cs-section" style="border-top:none;">
-    <div class="cs-inner">
-      <div class="cs-section-label">Экран 1</div>
-      <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Выбор тарифа</h2>
-      <p class="cs-body">Free vs Premium в одной таблице. Premium в двух вариантах — год подсвечен как выгодный. Цена и условия крупно, без мелкого шрифта. Никаких дополнительных тарифов на первом экране — чёткая иерархия снимает и перегруз, и ощущение что выбор сделан за пользователя.</p>
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">02</div>
+      <div class="cb-title">Оплата</div>
+      <p class="cb-desc">Автопродление — главный страх. Вынесено отдельным блоком, дата и сумма списания — до нажатия кнопки.</p>
     </div>
-  </section>
+    <div class="cb-media">
+      <img src="projects/rutube-mocks/checkout.png">
+    </div>
+  </div>
 
-  <!-- Screens 2–3: Split -->
-  <section class="cs-section" style="padding-top:0; border-top:none;">
-    <div class="cs-split">
-      <div>
-        <div class="cs-section-label">Экран 2</div>
-        <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px); margin-bottom:16px;">Оплата</h2>
-        <p class="cs-body">Автопродление вынесено отдельным блоком — не мелким шрифтом под кнопкой. Дата следующего списания и сумма — явно. Поля только необходимые: без обязательного телефона, без галочек согласия с тремя условиями. Линейная форма, в которой архетип чувствует контроль над процессом.</p>
-      </div>
-      <div>
-        <img src="projects/rutube-mocks/checkout.png" style="width:100%; display:block; border-radius:20px;">
-      </div>
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">03</div>
+      <div class="cb-title">Успешная оплата</div>
+      <p class="cb-desc">Success-экран закрывает четыре вопроса, которые пользователь задаёт молча: за что заплатил, когда следующее списание, как уведомят, где управлять.</p>
     </div>
-  </section>
+    <div class="cb-media">
+      <img src="projects/rutube-mocks/payment-success.png">
+    </div>
+  </div>
 
-  <!-- Screens 3–5: Grid -->
-  <section class="cs-section" style="padding-top:0; border-top:none;">
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
-      <div>
-        <img src="projects/rutube-mocks/payment-success.png" style="width:100%; display:block; border-radius:16px; margin-bottom:16px;">
-        <div class="archetype-field-label" style="margin-bottom:4px;">Экран 3</div>
-        <div style="font-size:13px; color:var(--page-fg);">Успешная оплата. Подписка активна. Дата следующего списания. Напоминание за 3 дня. Управление — в настройках. Каждый элемент работает на ощущение контроля.</div>
-      </div>
-      <div>
-        <img src="projects/rutube-mocks/payment-error.png" style="width:100%; display:block; border-radius:16px; margin-bottom:16px;">
-        <div class="archetype-field-label" style="margin-bottom:4px;">Экран 4</div>
-        <div style="font-size:13px; color:var(--page-fg);">Ошибка оплаты получает то же визуальное достоинство что и успех — отдельный экран с понятным сообщением. Один путь: вернуться к форме и выбрать действие.</div>
-      </div>
-      <div>
-        <img src="projects/rutube-mocks/subscription-settings.png" style="width:100%; display:block; border-radius:16px; margin-bottom:16px;">
-        <div class="archetype-field-label" style="margin-bottom:4px;">Экран 5</div>
-        <div style="font-size:13px; color:var(--page-fg);">Отдельная страница в настройках. Тариф, сумма списания, дата, привязанная карта, статус автопродления. Отмена — явная кнопка, не спрятанная под мелкий шрифт.</div>
-      </div>
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">04</div>
+      <div class="cb-title">Ошибка оплаты</div>
+      <p class="cb-desc">Ошибка поверх формы ощущается как сбой системы — пользователь уходит. Отдельный экран с одним действием убирает ощущение тупика.</p>
     </div>
-  </section>
+    <div class="cb-media">
+      <img src="projects/rutube-mocks/payment-error.png">
+    </div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">05</div>
+      <div class="cb-title">Управление подпиской</div>
+      <p class="cb-desc">Страница, куда ведёт success-экран. Тариф, дата, карта, автопродление — всё сразу. Отмена кнопкой, не в подменю.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/rutube-mocks/subscription-settings.png">
+    </div>
+  </div>
 
   <!-- ── TESTING (OUTCOME) ── -->
   <section class="cs-section">
