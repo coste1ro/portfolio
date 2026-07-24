@@ -217,7 +217,9 @@
       z-index: 4;
       pointer-events: auto;
     }
-    .hero-ticker:hover .hero-ticker-track { animation-play-state: paused; }
+    @media (hover: hover) {
+      .hero-ticker:hover .hero-ticker-track { animation-play-state: paused; }
+    }
 
     .hero-ticker-track {
       display: flex;
