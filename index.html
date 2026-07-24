@@ -25,11 +25,11 @@
     /* ── Skills cards ── */
     .skills-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.2fr 1fr 1fr;
       gap: 6px;
     }
     .skills-reveal { margin-top: 28px; }
-    .skills-col { display: contents; }
+    .skills-col { display: flex; flex-direction: column; gap: 6px; }
 
     /* Base card: includes slide-from-top initial state */
     .skill-card {
@@ -39,7 +39,6 @@
       border: 1px solid var(--card-border);
       border-radius: 10px;
       padding: 22px 20px;
-      min-height: 240px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -525,6 +524,7 @@
       .proj-car-card { margin-left: 0; margin-top: -20px; width: auto; padding: 24px 20px; }
       #about { padding: 48px 20px !important; }
       .skills-grid { grid-template-columns: 1fr !important; }
+      .skills-col { display: contents; }
       .site-contact { padding: 48px 20px !important; }
       .site-contact > div { flex-direction: column !important; align-items: flex-start !important; }
       .site-contact > div > div:last-child { text-align: left !important; }
@@ -827,7 +827,7 @@
     <div class="skills-reveal">
       <div class="skills-grid">
         <!-- Visual Design — left large -->
-        <div class="skill-card">
+        <div class="skill-card" style="min-height:300px;">
           <div class="skill-glare"></div>
           <div class="skill-logo-wrap">
             <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=figma.com&sz=128" alt="Figma">
@@ -839,7 +839,7 @@
 
         <!-- Development (top) + Creative Director (bottom) — center column -->
         <div class="skills-col">
-          <div class="skill-card">
+          <div class="skill-card" style="flex:1;">
             <div class="skill-glare"></div>
             <div class="skill-logo-wrap">
               <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=claude.ai&sz=128" alt="Claude Code">
@@ -848,7 +848,7 @@
             <div class="skill-tool">Claude Code</div>
             <p class="skill-desc" style="margin-top:auto;">Дизайн в код через Claude Code — без потерь в переводе.</p>
           </div>
-          <div class="skill-card">
+          <div class="skill-card" style="flex:1;">
             <div class="skill-glare"></div>
             <div class="skill-logo-wrap">
               <span style="font-size:26px; line-height:1;">🐱</span>
@@ -860,7 +860,7 @@
         </div>
 
         <!-- Prototyping — right large -->
-        <div class="skill-card">
+        <div class="skill-card" style="min-height:300px;">
           <div class="skill-glare"></div>
           <div class="skill-logo-wrap">
             <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=manus.im&sz=128" alt="Manus">
