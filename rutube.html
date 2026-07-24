@@ -570,8 +570,13 @@
     body.light .cjm-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
 
     @media (max-width: 720px) {
+      header { padding: 16px 20px !important; }
       .case-hero-body { padding: 28px 20px 40px; }
-      .case-hero-title { white-space: normal; }
+      .case-hero-title { white-space: normal; font-size: clamp(28px, 8vw, 48px); }
+      .case-meta-bar { flex-direction: column; gap: 0; padding-top: 20px; }
+      .case-meta-item { padding: 12px 0; border-right: none !important; margin-right: 0 !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      body.light .case-meta-item { border-bottom-color: rgba(0,0,0,0.1); }
+      .case-meta-item:last-child { border-bottom: none; }
       .cs-section { padding: 64px 20px; }
       .cs-image-block { padding: 40px 20px; }
       .cs-grid-2, .cs-grid-3, .cs-split, .cs-more-grid { grid-template-columns: 1fr; }
