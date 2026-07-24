@@ -24,11 +24,11 @@
     /* ── Skills cards ── */
     .skills-grid {
       display: grid;
-      grid-template-columns: 1.2fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 6px;
     }
     .skills-reveal { margin-top: 28px; }
-    .skills-col { display: flex; flex-direction: column; gap: 6px; }
+    .skills-col { display: contents; }
 
     /* Base card: includes slide-from-top initial state */
     .skill-card {
@@ -38,6 +38,7 @@
       border: 1px solid var(--card-border);
       border-radius: 10px;
       padding: 22px 20px;
+      min-height: 240px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -424,7 +425,6 @@
       transition: background 0.35s, border-color 0.35s, box-shadow 0.35s;
       position: relative;
       overflow: hidden;
-      cursor: pointer;
     }
 
     .proj-car-glare {
@@ -476,7 +476,6 @@
       border: 1px solid var(--card-border);
       color: var(--page-fg);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
       flex-shrink: 0;
     }
@@ -488,7 +487,7 @@
       height: 8px; width: 8px;
       border-radius: 4px;
       background: rgba(255,255,255,0.18);
-      cursor: pointer; border: none; padding: 0;
+      border: none; padding: 0;
       position: relative; overflow: hidden;
       transition: background 0.25s, width 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
@@ -523,7 +522,6 @@
       .proj-car-card { margin-left: 0; margin-top: -20px; width: auto; padding: 24px 20px; }
       #about { padding: 48px 20px !important; }
       .skills-grid { grid-template-columns: 1fr !important; }
-      .skills-col { display: contents; }
       .site-contact { padding: 48px 20px !important; }
       .site-contact > div { flex-direction: column !important; align-items: flex-start !important; }
       .site-contact > div > div:last-child { text-align: left !important; }
@@ -531,6 +529,9 @@
       #site-footer { padding: 20px !important; grid-template-columns: 1fr !important; }
       #site-footer > div:last-child { text-align: left !important; }
     }
+
+    /* ── Minimal ring cursor ── */
+    * { cursor: none !important; }
 
     @media (hover: none) and (pointer: coarse) {
       #cursor-outer, #cursor-dot { display: none !important; }
@@ -561,9 +562,6 @@
       mix-blend-mode: multiply;
       opacity: 0.30;
     }
-
-    /* ── Minimal ring cursor ── */
-    * { cursor: none !important; }
 
     #cursor-outer {
       position: fixed;
@@ -826,7 +824,7 @@
     <div class="skills-reveal">
       <div class="skills-grid">
         <!-- Visual Design — left large -->
-        <div class="skill-card" style="min-height:300px;">
+        <div class="skill-card">
           <div class="skill-glare"></div>
           <div class="skill-logo-wrap">
             <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=figma.com&sz=128" alt="Figma">
@@ -838,7 +836,7 @@
 
         <!-- Development (top) + Creative Director (bottom) — center column -->
         <div class="skills-col">
-          <div class="skill-card" style="flex:1;">
+          <div class="skill-card">
             <div class="skill-glare"></div>
             <div class="skill-logo-wrap">
               <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=claude.ai&sz=128" alt="Claude Code">
@@ -847,7 +845,7 @@
             <div class="skill-tool">Claude Code</div>
             <p class="skill-desc" style="margin-top:auto;">Дизайн в код через Claude Code — без потерь в переводе.</p>
           </div>
-          <div class="skill-card" style="flex:1;">
+          <div class="skill-card">
             <div class="skill-glare"></div>
             <div class="skill-logo-wrap">
               <span style="font-size:26px; line-height:1;">🐱</span>
@@ -859,7 +857,7 @@
         </div>
 
         <!-- Prototyping — right large -->
-        <div class="skill-card" style="min-height:300px;">
+        <div class="skill-card">
           <div class="skill-glare"></div>
           <div class="skill-logo-wrap">
             <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=manus.im&sz=128" alt="Manus">
@@ -1187,12 +1185,15 @@
           const px = (touch.clientX - r.left) / r.width;
           const py = (touch.clientY - r.top)  / r.height;
 
+          const MAX_T = 14;
+          const tx = (0.5 - py) * MAX_T;
+          const ty = (px - 0.5) * MAX_T;
           card.animate([
-            { transform: 'scale(1)' },
-            { transform: 'scale(0.95)', offset: 0.2 },
-            { transform: 'scale(1.02)', offset: 0.6 },
-            { transform: 'scale(1)' }
-          ], { duration: 480, easing: 'cubic-bezier(0.34,1.56,0.64,1)' });
+            { transform: 'perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)', offset: 0 },
+            { transform: `perspective(900px) rotateX(${tx}deg) rotateY(${ty}deg) scale(0.97)`, offset: 0.2 },
+            { transform: `perspective(900px) rotateX(${-tx * 0.35}deg) rotateY(${-ty * 0.35}deg) scale(1.02)`, offset: 0.6 },
+            { transform: 'perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)', offset: 1 }
+          ], { duration: 560, easing: 'ease-out' });
 
           if (glare) {
             glare.style.background =
