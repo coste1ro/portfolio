@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель инсталляций — Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Code:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --page-bg: #0c0c0c;
+      --page-fg: #c8c8c8;
+      --page-fg-bright: #e8e8e8;
+      --page-border: #1e1e1e;
+      --accent: #e05c18;
+      --card-bg: #0f0f0f;
+      --card-border: rgba(255,255,255,0.06);
+      --hero-bg: #0D0908;
+      --hero-fg: #fff;
+      --hero-muted: rgba(255,255,255,0.5);
+      --nav-text: rgba(255,255,255,0.75);
+      --placeholder-bg: #161616;
+      --placeholder-border: #222;
+    }
+    body.light {
+      --page-bg: #f8f7f4;
+      --page-fg: #5a5a5a;
+      --page-fg-bright: #111;
+      --page-border: #e5e2dc;
+      --accent: #7d18e2;
+      --card-bg: #ffffff;
+      --card-border: rgba(0,0,0,0.07);
+      --hero-bg: #f8f7f4;
+      --hero-fg: #111;
+      --hero-muted: rgba(60,60,60,0.6);
+      --nav-text: rgba(20,20,20,0.7);
+      --placeholder-bg: #eeece9;
+      --placeholder-border: #dedad4;
+    }
+
+    body {
+      background: var(--page-bg);
+      color: var(--page-fg);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.35s, color 0.35s;
+    }
+    a { color: inherit; text-decoration: none; }
+    * { cursor: none !important; }
+
+    /* ── Cursor ── */
+    #cursor-outer {
+      position: fixed; top: 0; left: 0;
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1px solid rgba(180,180,180,0.5);
+      pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%);
+      will-change: left, top;
+      display: flex; align-items: center; justify-content: center;
+      transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
+                  height 0.45s cubic-bezier(0.16,1,0.3,1),
+                  background 0.35s, border-color 0.35s;
+    }
+    #cursor-dot {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #fff; pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%);
+      transition: opacity 0.2s;
+    }
+
+    /* ── Noise overlay ── */
+    .noise-overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 9990; opacity: 0.09;
+      background-repeat: repeat; background-size: 120px 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    body.light .noise-overlay { opacity: 0.05; }
+
+    /* ── Header ── */
+    .header-nav-link {
+      font-size: 13px; font-weight: 500;
+      color: var(--nav-text); letter-spacing: 0.01em;
+      transition: color 0.2s; padding: 4px 0;
+    }
+    .header-nav-link:hover { color: var(--hero-fg); }
+    .header-nav-link.active { color: var(--accent); }
+
+    #theme-btn {
+      position: relative; display: inline-flex; align-items: center;
+      padding: 4px; gap: 2px; height: 36px; border-radius: 100px;
+      background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08);
+      transition: background 0.4s, border-color 0.4s; flex-shrink: 0;
+    }
+    #toggle-slider {
+      position: absolute; left: 4px; width: 26px; height: 26px;
+      border-radius: 50%; background: rgba(255,255,255,0.14);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+      transform: translateX(0); pointer-events: none;
+    }
+    .toggle-icon {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.3s; flex-shrink: 0;
+      color: rgba(255,255,255,0.3); position: relative; z-index: 1;
+    }
+    .toggle-icon.toggle-on { color: #fff; }
+
+    /* ── Case Hero ── */
+    .case-hero {
+      background: var(--hero-bg);
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: background 0.35s;
+    }
+    .case-hero-body {
+      padding: 40px 48px 56px;
+    }
+    .case-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+      transition: color 0.35s;
+    }
+    .case-hero-title {
+      font-size: clamp(32px, 4.4vw, 68px);
+      font-weight: 500; color: var(--hero-fg);
+      line-height: 1.05; letter-spacing: -0.02em;
+      margin-bottom: 24px; transition: color 0.35s;
+    }
+    .case-meta-bar {
+      display: flex; align-items: center;
+      gap: 0; flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px; margin-top: 8px;
+      transition: border-color 0.35s;
+    }
+    body.light .case-meta-bar { border-color: rgba(0,0,0,0.1); }
+    .case-meta-item {
+      padding: 0 32px 0 0;
+      margin-right: 32px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      transition: border-color 0.35s;
+    }
+    body.light .case-meta-item { border-color: rgba(0,0,0,0.1); }
+    .case-meta-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+    .case-meta-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 4px;
+      transition: color 0.35s;
+    }
+    .case-meta-value {
+      font-size: 13px; font-weight: 400;
+      color: var(--hero-muted); transition: color 0.35s;
+    }
+
+    /* ── Content layout ── */
+    .cs-section {
+      padding: 96px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    .cs-inner { max-width: 800px; }
+    .cs-section-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 32px;
+      transition: color 0.35s;
+    }
+    .cs-heading {
+      font-size: clamp(26px, 3vw, 42px);
+      font-weight: 500; color: var(--page-fg-bright);
+      letter-spacing: -0.02em; line-height: 1.15;
+      margin-bottom: 24px; transition: color 0.35s;
+    }
+    .cs-body {
+      font-size: 15px; line-height: 1.75;
+      color: var(--page-fg); max-width: 640px;
+      transition: color 0.35s;
+    }
+    .cs-body + .cs-body { margin-top: 16px; }
+
+    /* ── Pull quote ── */
+    .cs-quote {
+      font-size: clamp(22px, 2.8vw, 38px);
+      font-weight: 400; font-style: italic;
+      color: var(--page-fg-bright);
+      letter-spacing: -0.01em; line-height: 1.35;
+      max-width: 780px;
+      padding-left: 28px;
+      border-left: 2px solid var(--accent);
+      transition: color 0.35s, border-color 0.35s;
+    }
+
+    /* ── Grid layouts ── */
+    .cs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+
+    /* ── Force items ── */
+    .force-item {
+      font-size: 14px; color: var(--page-fg);
+      padding-left: 14px; position: relative;
+      line-height: 1.6; transition: color 0.35s;
+    }
+    .force-item::before {
+      content: '–';
+      position: absolute; left: 0;
+      color: rgba(255,255,255,0.2);
+    }
+    body.light .force-item::before { color: rgba(0,0,0,0.2); }
+
+    /* ── Sticky case blocks ── */
+    .cb-block {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 96px;
+      align-items: start;
+      padding: 64px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    .cb-text {
+      position: sticky; top: 56px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .cb-num {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px; font-weight: 700;
+      color: var(--accent); letter-spacing: 0.04em;
+      transition: color 0.35s;
+    }
+    .cb-num::before { content: '('; }
+    .cb-num::after  { content: ')'; }
+    .cb-title {
+      font-size: clamp(22px, 2.2vw, 30px);
+      font-weight: 500; color: var(--page-fg-bright);
+      letter-spacing: -0.02em; line-height: 1.15;
+      transition: color 0.35s;
+    }
+    .cb-desc {
+      font-size: 13px; line-height: 1.7;
+      color: var(--page-fg); transition: color 0.35s;
+    }
+    .cb-media { display: flex; flex-direction: column; gap: 12px; }
+    @keyframes img-scale-in {
+      from { transform: scale(0.9); opacity: 0.4; }
+      to   { transform: scale(1);   opacity: 1;   }
+    }
+    .cb-media img {
+      width: 100%; display: block; border-radius: 16px;
+      animation: img-scale-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+
+    /* ── Results list ── */
+    .cs-results { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
+    .cs-result-item {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 20px 0;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    .cs-result-item:last-child { border-bottom: 1px solid var(--page-border); }
+    .cs-result-num {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px; font-weight: 700;
+      color: var(--accent); flex-shrink: 0; width: 24px;
+      transition: color 0.35s;
+    }
+    .cs-result-text { font-size: 14px; color: var(--page-fg); line-height: 1.5; transition: color 0.35s; }
+
+    /* ── More projects ── */
+    .cs-more-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; margin-top: 40px;
+    }
+    .cs-more-card {
+      display: block; border-radius: 16px; overflow: hidden;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      transition: border-color 0.2s, transform 0.2s, background 0.35s;
+    }
+    .cs-more-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-3px); }
+    body.light .cs-more-card:hover { border-color: rgba(0,0,0,0.16); }
+    .cs-more-card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; display: block; }
+    .cs-more-card-body { padding: 20px 22px 24px; }
+    .cs-more-card-tag {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: #666; margin-bottom: 6px;
+    }
+    .cs-more-card-title {
+      font-size: 18px; font-weight: 600;
+      color: var(--page-fg-bright); letter-spacing: -0.01em;
+      transition: color 0.35s;
+    }
+
+    /* ── Contact + footer ── */
+    .contact-section {
+      padding: 64px 48px;
+      border-top: 1px solid var(--page-border);
+      transition: border-color 0.35s;
+    }
+    footer {
+      border-top: 1px solid var(--page-border);
+      padding: 20px 48px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px; align-items: start;
+      transition: border-color 0.35s;
+    }
+    .footer-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 3px; transition: color 0.35s;
+    }
+    .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
+
+    @media (max-width: 720px) {
+      .case-hero-body { padding: 28px 20px 48px; }
+      .cs-section { padding: 64px 20px; }
+      .cs-split { grid-template-columns: 1fr; }
+      .cs-more-grid { grid-template-columns: 1fr; }
+      .cb-block { grid-template-columns: 1fr; gap: 32px; padding: 64px 20px; }
+      .cb-text { position: static; }
+      .contact-section { padding: 48px 20px; }
+      footer { padding: 20px; grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <section class="case-hero">
+    <header style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
+      <nav style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:28px;">
+          <a href="index.html" class="header-nav-link">Главная</a>
+          <a href="index.html#work" class="header-nav-link active">Проекты</a>
+          <a href="index.html#about" class="header-nav-link">Обо мне</a>
+        </div>
+        <button id="theme-btn" aria-label="Toggle theme">
+          <span id="toggle-slider"></span>
+          <span id="toggle-moon" class="toggle-icon toggle-on">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span id="toggle-sun" class="toggle-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+        </button>
+      </nav>
+    </header>
+
+    <div class="case-hero-body">
+      <div class="case-label">Продуктовый дизайн · 2025 · NDA</div>
+      <h1 class="case-hero-title">Панель инсталляций</h1>
+      <div class="case-meta-bar">
+        <div class="case-meta-item">
+          <div class="case-meta-label">Роль</div>
+          <div class="case-meta-value">Продуктовый дизайнер</div>
+        </div>
+        <div class="case-meta-item">
+          <div class="case-meta-label">Платформа</div>
+          <div class="case-meta-value">Веб (back-office)</div>
+        </div>
+        <div class="case-meta-item">
+          <div class="case-meta-label">Инструменты</div>
+          <div class="case-meta-value">Figma</div>
+        </div>
+        <div class="case-meta-item">
+          <div class="case-meta-label">Контекст</div>
+          <div class="case-meta-value">Коммерческий проект</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── OVERVIEW ── -->
+  <section class="cs-section">
+    <div class="cs-split" style="align-items:center;">
+      <div>
+        <div class="cs-section-label">Обзор</div>
+        <h2 class="cs-heading">Административная панель для управления установкой оборудования</h2>
+        <p class="cs-body">Продукт — внутренний инструмент для отслеживания процесса монтажа умных камер и устройств на транспортные средства. Менеджеры контролируют статус установок в разрезе компаний-клиентов, типов транспорта и команд установщиков.</p>
+      </div>
+      <div style="border-radius:16px; overflow:hidden;">
+        <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" style="width:100%; display:block;">
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CHALLENGE ── -->
+  <section class="cs-section">
+    <div class="cs-split" style="align-items:center;">
+      <div style="border-radius:16px; overflow:hidden;">
+        <img src="projects/installation_panel/Installers.png" style="width:100%; display:block;">
+      </div>
+      <div>
+        <div class="cs-section-label">Задача</div>
+        <h2 class="cs-heading">Три сущности — один интерфейс</h2>
+        <p class="cs-body">Данные об установках были разрозненны: группы инсталляций, команды установщиков и транспортные средства существовали по отдельности. Задача — собрать три взаимосвязанных модуля в единый портал.</p>
+        <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+          <div class="force-item">просматривать группы установок с детализацией по отделам и статусам;</div>
+          <div class="force-item">управлять реестром установщиков: список, профиль, создание;</div>
+          <div class="force-item">видеть привязанные транспортные средства и их типы;</div>
+          <div class="force-item">провалиться из любой сущности в связанную за один клик.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PULL QUOTE ── -->
+  <section class="cs-section" style="padding-top:0; border-top:none;">
+    <blockquote class="cs-quote">
+      Три сущности, три таблицы в разных местах — задача собрать их так, чтобы менеджер не терял контекст при переходе между ними.
+    </blockquote>
+  </section>
+
+  <!-- ── SOLUTIONS INTRO ── -->
+  <section class="cs-section">
+    <div class="cs-inner">
+      <div class="cs-section-label">Решения</div>
+      <h2 class="cs-heading">5 экранов — сквозная навигация по трём модулям</h2>
+      <p class="cs-body">Каждый модуль самодостаточен, но связан с остальными: из группы установок — в детали установки и установщика, из установщика — в его транспортные средства.</p>
+    </div>
+  </section>
+
+  <!-- ── (01) ГРУППЫ УСТАНОВОК ── -->
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">01</div>
+      <div class="cb-title">Группы установок</div>
+      <p class="cb-desc">Сводный список всех групп инсталляций: клиент, тип транспорта, статус, количество единиц. Фильтрация по статусу и компании. Отправная точка для любого сценария менеджера.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" alt="Список групп установок">
+    </div>
+  </div>
+
+  <!-- ── (02) ДЕТАЛИ УСТАНОВКИ ── -->
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">02</div>
+      <div class="cb-title">Детали установки и отдела</div>
+      <p class="cb-desc">Из списка — в конкретную инсталляцию: назначенные установщики, статус по каждому ТС, дата, отдел-заказчик. Отдельный вид по отделу собирает все его установки в одном месте.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки">
+      <img src="projects/installation_panel/Installation%20Groups%20-%20Department.png" alt="Вид по отделу">
+    </div>
+  </div>
+
+  <!-- ── (03) УСТАНОВЩИКИ ── -->
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">03</div>
+      <div class="cb-title">Реестр установщиков</div>
+      <p class="cb-desc">Список всех монтажников с поиском: имя, статус, количество активных заданий, компания. Кликабельная строка — переход в профиль конкретного установщика.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/installation_panel/Installers.png" alt="Список установщиков">
+    </div>
+  </div>
+
+  <!-- ── (04) ПРОФИЛЬ + СОЗДАНИЕ ── -->
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">04</div>
+      <div class="cb-title">Профиль и создание установщика</div>
+      <p class="cb-desc">Профиль — вся история и текущая нагрузка установщика: назначенные ТС, группы, контакты. Форма создания нового идентична по структуре профилю — один и тот же мыслительный паттерн для чтения и записи.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/installation_panel/Installers%20-%20Person.png" alt="Профиль установщика">
+      <img src="projects/installation_panel/Installers%20-%20Create%20New%20Populated.png" alt="Создание установщика">
+    </div>
+  </div>
+
+  <!-- ── (05) ТРАНСПОРТНЫЕ СРЕДСТВА ── -->
+  <div class="cb-block">
+    <div class="cb-text">
+      <div class="cb-num">05</div>
+      <div class="cb-title">Транспортные средства</div>
+      <p class="cb-desc">Список всех ТС с типом, номером, статусом установки и назначенным установщиком. Разные типы транспорта — единый формат карточки; визуальная иконка типа не даёт перепутать при больших списках.</p>
+    </div>
+    <div class="cb-media">
+      <img src="projects/installation_panel/Vehicles%20-%20List.png" alt="Список транспортных средств">
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <section class="cs-section">
+    <div class="cs-inner">
+      <h2 class="cs-heading">Единый портал вместо трёх разрозненных таблиц</h2>
+    </div>
+    <div class="cs-results">
+      <div class="cs-result-item">
+        <span class="cs-result-num">01</span>
+        <span class="cs-result-text">Менеджер видит все группы установок в одном месте и фильтрует по статусу и клиенту</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">02</span>
+        <span class="cs-result-text">Из любой группы — в детали конкретной инсталляции и отдела за один клик, без потери контекста</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">03</span>
+        <span class="cs-result-text">Реестр установщиков с поиском; профиль и форма создания используют одну и ту же структуру</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">04</span>
+        <span class="cs-result-text">Транспортные средства разных типов — в едином формате с визуальным различением по иконке типа</span>
+      </div>
+      <div class="cs-result-item">
+        <span class="cs-result-num">05</span>
+        <span class="cs-result-text">Три модуля связаны сквозными переходами: установка → установщик → транспорт — в любую сторону</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── REFLECTION ── -->
+  <section class="cs-section">
+    <div class="cs-inner">
+      <div class="cs-section-label">Рефлексия</div>
+      <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Что вынес</h2>
+      <p class="cs-body">Когда сущности связаны между собой, важно сначала нарисовать схему переходов, а не сразу экраны. Иначе получаешь пять отдельных страниц вместо единого продукта — и переделываешь навигацию в конце.</p>
+      <p class="cs-body" style="margin-top:16px;">Форма создания и профиль должны использовать одинаковую структуру полей — пользователь, который читает профиль, должен без обучения понимать, как заполнять форму. Это снижает когнитивную нагрузку и ошибки при вводе.</p>
+    </div>
+  </section>
+
+  <!-- ── MORE PROJECTS ── -->
+  <section class="cs-section">
+    <div class="cs-section-label">Другие проекты</div>
+    <div class="cs-more-grid">
+      <a href="rutube.html" class="cs-more-card">
+        <img src="projects/rutube.png" alt="Rutube Redesign">
+        <div class="cs-more-card-body">
+          <div class="cs-more-card-tag">Видеоплатформа · 2025</div>
+          <div class="cs-more-card-title">Rutube — Редизайн подписки</div>
+        </div>
+      </a>
+      <a href="auditors_monitoring.html" class="cs-more-card">
+        <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
+        <div class="cs-more-card-body">
+          <div class="cs-more-card-tag">Внутренний инструмент · 2026</div>
+          <div class="cs-more-card-title">Мониторинг аудиторов</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── CONTACT + FOOTER ── -->
+  <section class="contact-section">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+      <div>
+        <a href="mailto:sa1nteau@mail.ru" style="font-size:clamp(18px,2vw,28px); font-weight:500; color:var(--page-fg); transition:color .2s;">
+          sa1nteau@mail.ru
+        </a>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Ищете дизайнера?</div>
+        <div style="display:flex; gap:16px; justify-content:flex-end;">
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
+          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Threads</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div><div class="footer-label">Andrey Beregovoy</div><div class="footer-val">2022 — 2026</div></div>
+    <div><div class="footer-label">Опыт</div><div class="footer-val">3 года в UX/UI</div></div>
+    <div style="text-align:right;"><div class="footer-label">Открыт к предложениям</div><div class="footer-val">Удалённо · Россия</div></div>
+  </footer>
+
+  <div class="noise-overlay"></div>
+  <div id="cursor-outer"></div>
+  <div id="cursor-dot"></div>
+
+  <script>
+    /* Cursor */
+    const ring = document.getElementById('cursor-outer');
+    const dot  = document.getElementById('cursor-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    /* Theme toggle */
+    const themeBtn = document.getElementById('theme-btn');
+    const moonIcon = document.getElementById('toggle-moon');
+    const sunIcon  = document.getElementById('toggle-sun');
+    const slider   = document.getElementById('toggle-slider');
+    let isDark = true;
+
+    function applyDark() {
+      document.body.classList.remove('light');
+      themeBtn.style.background = '#1a1a1a';
+      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
+      slider.style.transform = 'translateX(0)';
+      slider.style.background = 'rgba(255,255,255,0.14)';
+      moonIcon.classList.add('toggle-on'); sunIcon.classList.remove('toggle-on');
+      sunIcon.style.color = 'rgba(255,255,255,0.3)'; moonIcon.style.color = '';
+      dot.style.background = '#fff';
+      ring.style.borderColor = 'rgba(180,180,180,0.5)';
+    }
+    function applyLight() {
+      document.body.classList.add('light');
+      themeBtn.style.background = '#e2e2e2';
+      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
+      slider.style.transform = 'translateX(28px)';
+      slider.style.background = 'rgba(0,0,0,0.1)';
+      sunIcon.classList.add('toggle-on'); moonIcon.classList.remove('toggle-on');
+      sunIcon.style.color = '#444'; moonIcon.style.color = 'rgba(0,0,0,0.3)';
+      dot.style.background = '#111';
+      ring.style.borderColor = 'rgba(20,20,20,0.35)';
+    }
+    themeBtn.addEventListener('click', () => { isDark = !isDark; isDark ? applyDark() : applyLight(); });
+  </script>
+</body>
+</html>

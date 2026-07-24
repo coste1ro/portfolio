@@ -22,8 +22,6 @@
       --hero-fg: #fff;
       --hero-muted: rgba(255,255,255,0.5);
       --nav-text: rgba(255,255,255,0.75);
-      --placeholder-bg: #161616;
-      --placeholder-border: #222;
     }
     body.light {
       --page-bg: #f8f7f4;
@@ -37,8 +35,6 @@
       --hero-fg: #111;
       --hero-muted: rgba(60,60,60,0.6);
       --nav-text: rgba(20,20,20,0.7);
-      --placeholder-bg: #eeece9;
-      --placeholder-border: #dedad4;
     }
 
     body {
@@ -170,12 +166,6 @@
       border-top: 1px solid var(--page-border);
       transition: border-color 0.35s;
     }
-    .cs-image-block {
-      padding: 64px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cs-image-block img { width: 100%; max-width: 860px; display: block; margin: 0 auto; border-radius: 20px; }
     .cs-inner { max-width: 800px; }
     .cs-section-label {
       font-family: 'Fira Code', monospace;
@@ -209,25 +199,7 @@
       transition: color 0.35s, border-color 0.35s;
     }
 
-    /* ── Image placeholders ── */
-    .placeholder {
-      width: 100%;
-      background: var(--placeholder-bg);
-      border: 1px solid var(--placeholder-border);
-      transition: background 0.35s, border-color 0.35s;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.1);
-      font-family: 'Fira Code', monospace;
-      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-    }
-    body.light .placeholder { color: rgba(0,0,0,0.12); }
-    .placeholder-full { aspect-ratio: 16/10; }
-    .placeholder-screen { aspect-ratio: 9/16; border-radius: 16px; }
-    .placeholder-wide { aspect-ratio: 16/7; border-radius: 16px; }
-    .placeholder-sq { aspect-ratio: 4/3; border-radius: 16px; }
-
-    /* ── Grid layouts ── */
-    .cs-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 48px; }
+/* ── Grid layouts ── */
     .cs-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 48px; }
     .cs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
 
@@ -284,8 +256,6 @@
     .moscow-tag.m { background: rgba(224,92,24,0.1); color: rgba(224,92,24,0.9); }
     .moscow-tag.s { background: rgba(59,130,246,0.1); color: rgba(59,130,246,0.9); }
     .moscow-tag.c { background: rgba(148,163,184,0.1); color: rgba(148,163,184,0.85); }
-    .moscow-tag.a { background: rgba(245,158,11,0.1); color: rgba(245,158,11,0.9); }
-    .moscow-label.a { color: #f59e0b; }
     body.light .moscow-label.m { color: #c04f10; }
 
     /* ── Results list ── */
@@ -354,19 +324,6 @@
       color: var(--accent); margin-bottom: 3px; transition: color 0.35s;
     }
     .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
-
-    /* ── Force items ── */
-    .force-item {
-      font-size: 13px; color: var(--page-fg);
-      padding-left: 14px; position: relative;
-      line-height: 1.5; transition: color 0.35s;
-    }
-    .force-item::before {
-      content: '–';
-      position: absolute; left: 0;
-      color: rgba(255,255,255,0.2);
-    }
-    body.light .force-item::before { color: rgba(0,0,0,0.2); }
 
     /* ── Sticky case blocks ── */
     .cb-block {
@@ -569,6 +526,49 @@
     /* ── IA out-of-focus ── */
     .ia-col.out { opacity: 0.3; }
 
+    /* ── CJM grid ── */
+    .cjm-wrap { overflow-x: auto; margin-top: 40px; padding-bottom: 8px; }
+    .cjm-grid {
+      display: grid;
+      grid-template-columns: 120px repeat(6, 210px);
+      gap: 5px;
+      width: max-content;
+    }
+    .cjm-stage {
+      font-size: 11px; font-weight: 600; color: var(--accent);
+      padding: 10px 14px; text-align: center;
+      background: rgba(224,92,24,0.08);
+      border: 1px solid rgba(224,92,24,0.3);
+      border-radius: 8px; line-height: 1.4;
+    }
+    .cjm-lbl {
+      font-family: 'Fira Code', monospace;
+      font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent);
+      padding: 8px; text-align: center;
+      background: rgba(224,92,24,0.06);
+      border: 1px solid rgba(224,92,24,0.25);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cjm-lbl.pain { color: #f87171; background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.25); }
+    .cjm-lbl.opp  { color: #4ade80; background: rgba(74,222,128,0.05);  border-color: rgba(74,222,128,0.2); }
+    .cjm-cell {
+      font-size: 11px; color: var(--page-fg); line-height: 1.55;
+      padding: 10px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      display: flex; flex-direction: column; gap: 5px;
+      transition: background 0.35s, border-color 0.35s, color 0.35s;
+    }
+    .cjm-cell.pain { background: rgba(248,113,113,0.04); border-color: rgba(248,113,113,0.14); }
+    .cjm-cell.opp  { background: rgba(74,222,128,0.04);  border-color: rgba(74,222,128,0.13); }
+    .cjm-wrap::-webkit-scrollbar { height: 4px; }
+    .cjm-wrap::-webkit-scrollbar-track { background: transparent; }
+    .cjm-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    body.light .cjm-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
+
     @media (max-width: 720px) {
       .case-hero-body { padding: 28px 20px 40px; }
       .case-hero-title { white-space: normal; }
@@ -589,9 +589,9 @@
     <header style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
       <nav style="display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:28px;">
-          <a href="index.html" class="header-nav-link">Home</a>
-          <a href="index.html#work" class="header-nav-link active">Projects</a>
-          <a href="index.html#about" class="header-nav-link">About</a>
+          <a href="index.html" class="header-nav-link">Главная</a>
+          <a href="index.html#work" class="header-nav-link active">Проекты</a>
+          <a href="index.html#about" class="header-nav-link">Обо мне</a>
         </div>
         <button id="theme-btn" aria-label="Toggle theme">
           <span id="toggle-slider"></span>
@@ -611,7 +611,7 @@
       <div class="case-meta-bar">
         <div class="case-meta-item">
           <div class="case-meta-label">Роль</div>
-          <div class="case-meta-value">UX/UI Designer</div>
+          <div class="case-meta-value">UX/UI Дизайнер</div>
         </div>
         <div class="case-meta-item">
           <div class="case-meta-label">Длительность</div>
@@ -633,7 +633,7 @@
   <section class="cs-section">
     <div class="cs-split" style="align-items:center;">
       <div style="border-radius:16px; overflow:hidden;">
-        <img src="projects/rutube-mocks/main-subscription-active.png" style="width:100%; display:block;">
+        <img src="projects/rutube/main-subscription-active.png" style="width:100%; display:block;">
       </div>
       <div>
         <div class="cs-section-label">Обзор</div>
@@ -652,7 +652,7 @@
         <p class="cs-body">Пользователи бросают оформление на полпути или быстро отменяют — не из-за цены, а из-за ощущения потери контроля. Флоу не отвечает на базовые вопросы: за что я плачу, когда следующее списание, где управлять. Условия зашиты в мелкий шрифт, автопродление включено молча.</p>
       </div>
       <div style="border-radius:16px; overflow:hidden;">
-        <img src="projects/rutube-mocks/main-ad.png" style="width:100%; display:block;">
+        <img src="projects/rutube/main-ad.png" style="width:100%; display:block;">
       </div>
     </div>
   </section>
@@ -795,7 +795,57 @@
 
     <button class="disc-toggle" onclick="toggleDisc(this)">Посмотреть CJM</button>
     <div class="disc-body">
-      <div class="placeholder placeholder-wide" style="margin-top:24px;">Customer Journey Map — Рациональный контролер</div>
+      <div class="cjm-wrap" style="margin-top:24px;">
+        <div class="cjm-grid">
+          <div></div>
+          <div class="cjm-stage">Триггер</div>
+          <div class="cjm-stage">Страница подписки</div>
+          <div class="cjm-stage">Выбор тарифа</div>
+          <div class="cjm-stage">Ввод карты</div>
+          <div class="cjm-stage">Завершение оплаты</div>
+          <div class="cjm-stage">После оплаты</div>
+
+          <div class="cjm-lbl">Действия</div>
+          <div class="cjm-cell">Видит рекламу / ограничение</div>
+          <div class="cjm-cell">Изучает условия подписки</div>
+          <div class="cjm-cell">Анализирует доступные тарифы</div>
+          <div class="cjm-cell">Вводит платежные данные</div>
+          <div class="cjm-cell">Завершает оплату</div>
+          <div class="cjm-cell">Возвращается к просмотру. Получает напоминание о списании. Решает продлевать или нет</div>
+
+          <div class="cjm-lbl">Мысли</div>
+          <div class="cjm-cell">Надоело. Возможно, стоит оформить подписку</div>
+          <div class="cjm-cell">Что входит? Есть ли подвох?</div>
+          <div class="cjm-cell">Почему мне предлагают именно это? В чём разница?</div>
+          <div class="cjm-cell">Когда спишут? Смогу ли отменить? Не поднимут ли цену?</div>
+          <div class="cjm-cell">Это всё? Где подтверждение?</div>
+          <div class="cjm-cell">Реклама пропала. Когда следующее списание? Стоит ли продлевать?</div>
+
+          <div class="cjm-lbl">Эмоции</div>
+          <div class="cjm-cell">Раздражение</div>
+          <div class="cjm-cell">Насторожённость</div>
+          <div class="cjm-cell">Сомнение</div>
+          <div class="cjm-cell">Тревога, насторожённость</div>
+          <div class="cjm-cell">Нейтральность, лёгкое недоумение</div>
+          <div class="cjm-cell">Облегчение в начале. Тревога ближе к дате списания</div>
+
+          <div class="cjm-lbl pain">Боли</div>
+          <div class="cjm-cell pain">Реклама мешает</div>
+          <div class="cjm-cell pain"><span>Перегруз текста</span><span>Нет чёткого сравнения бесплатного и платного</span><span>Условия написаны неявно</span></div>
+          <div class="cjm-cell pain"><span>Нет объяснения различий</span><span>Нет явной логики выбора</span><span>Несколько вариантов без приоритета</span></div>
+          <div class="cjm-cell pain"><span>Автопродление включено по умолчанию</span><span>Нет информации о списании</span><span>Нет информации об управлении подпиской</span></div>
+          <div class="cjm-cell pain"><span>Нет ощущения завершённости</span><span>Неочевидно, когда следующее списание</span><span>Неочевидно, где управлять подпиской</span></div>
+          <div class="cjm-cell pain"><span>Нет напоминания о списании</span><span>Сложно найти, где отменить</span><span>Непонятно, какие плюшки даёт подписка</span></div>
+
+          <div class="cjm-lbl opp">Возможности</div>
+          <div class="cjm-cell opp">Чётко показать ценность подписки</div>
+          <div class="cjm-cell opp"><span>Чёткая визуальная иерархия</span><span>Таблица free vs premium</span><span>Прозрачная стоимость без мелкого текста</span></div>
+          <div class="cjm-cell opp"><span>Обоснование рекомендуемого тарифа</span><span>Один основной вариант + альтернативы</span><span>Краткое объяснение «кому подойдёт»</span></div>
+          <div class="cjm-cell opp"><span>Явная дата следующего списания</span><span>Напоминание до списания</span><span>Видимая ссылка «управлять подпиской»</span></div>
+          <div class="cjm-cell opp"><span>Яркий экран подтверждения</span><span>Дата следующего списания</span><span>Кнопка управления подпиской</span></div>
+          <div class="cjm-cell opp"><span>Push/email за 3 дня до списания</span><span>Видимая ссылка «управление подпиской»</span><span>Информация о преимуществах в success-экране</span></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -908,7 +958,57 @@
       <h2 class="cs-heading">Карта собрана для Рационального контролера</h2>
       <p class="cs-body">На каждом этапе зафиксированы действия пользователя, его мысли, эмоциональное состояние и конкретные точки боли. Это и есть основа для проектирования: каждая боль на карте превращается в требование к интерфейсу.</p>
     </div>
-    <div class="placeholder placeholder-wide" style="margin-top:40px;">Customer Journey Map</div>
+    <div class="cjm-wrap" style="animation: img-scale-in linear both; animation-timeline: view(); animation-range: entry 0% entry 45%;">
+      <div class="cjm-grid">
+        <div></div>
+        <div class="cjm-stage">Триггер</div>
+        <div class="cjm-stage">Страница подписки</div>
+        <div class="cjm-stage">Выбор тарифа</div>
+        <div class="cjm-stage">Ввод карты</div>
+        <div class="cjm-stage">Завершение оплаты</div>
+        <div class="cjm-stage">После оплаты</div>
+
+        <div class="cjm-lbl">Действия</div>
+        <div class="cjm-cell">Видит рекламу / ограничение</div>
+        <div class="cjm-cell">Изучает условия подписки</div>
+        <div class="cjm-cell">Анализирует доступные тарифы</div>
+        <div class="cjm-cell">Вводит платежные данные</div>
+        <div class="cjm-cell">Завершает оплату</div>
+        <div class="cjm-cell">Возвращается к просмотру. Получает напоминание о списании. Решает продлевать или нет</div>
+
+        <div class="cjm-lbl">Мысли</div>
+        <div class="cjm-cell">Надоело. Возможно, стоит оформить подписку</div>
+        <div class="cjm-cell">Что входит? Есть ли подвох?</div>
+        <div class="cjm-cell">Почему мне предлагают именно это? В чём разница?</div>
+        <div class="cjm-cell">Когда спишут? Смогу ли отменить? Не поднимут ли цену?</div>
+        <div class="cjm-cell">Это всё? Где подтверждение?</div>
+        <div class="cjm-cell">Реклама пропала. Когда следующее списание? Стоит ли продлевать?</div>
+
+        <div class="cjm-lbl">Эмоции</div>
+        <div class="cjm-cell">Раздражение</div>
+        <div class="cjm-cell">Насторожённость</div>
+        <div class="cjm-cell">Сомнение</div>
+        <div class="cjm-cell">Тревога, насторожённость</div>
+        <div class="cjm-cell">Нейтральность, лёгкое недоумение</div>
+        <div class="cjm-cell">Облегчение в начале. Тревога ближе к дате списания</div>
+
+        <div class="cjm-lbl pain">Боли</div>
+        <div class="cjm-cell pain">Реклама мешает</div>
+        <div class="cjm-cell pain"><span>Перегруз текста</span><span>Нет чёткого сравнения бесплатного и платного</span><span>Условия написаны неявно</span></div>
+        <div class="cjm-cell pain"><span>Нет объяснения различий</span><span>Нет явной логики выбора</span><span>Несколько вариантов без приоритета</span></div>
+        <div class="cjm-cell pain"><span>Автопродление включено по умолчанию</span><span>Нет информации о списании</span><span>Нет информации об управлении подпиской</span></div>
+        <div class="cjm-cell pain"><span>Нет ощущения завершённости</span><span>Неочевидно, когда следующее списание</span><span>Неочевидно, где управлять подпиской</span></div>
+        <div class="cjm-cell pain"><span>Нет напоминания о списании</span><span>Сложно найти, где отменить</span><span>Непонятно, какие плюшки даёт подписка</span></div>
+
+        <div class="cjm-lbl opp">Возможности</div>
+        <div class="cjm-cell opp">Чётко показать ценность подписки</div>
+        <div class="cjm-cell opp"><span>Чёткая визуальная иерархия</span><span>Таблица free vs premium</span><span>Прозрачная стоимость без мелкого текста</span></div>
+        <div class="cjm-cell opp"><span>Обоснование рекомендуемого тарифа</span><span>Один основной вариант + альтернативы</span><span>Краткое объяснение «кому подойдёт»</span></div>
+        <div class="cjm-cell opp"><span>Явная дата следующего списания</span><span>Напоминание до списания</span><span>Видимая ссылка «управлять подпиской»</span></div>
+        <div class="cjm-cell opp"><span>Яркий экран подтверждения</span><span>Дата следующего списания</span><span>Кнопка управления подпиской</span></div>
+        <div class="cjm-cell opp"><span>Push/email за 3 дня до списания</span><span>Видимая ссылка «управление подпиской»</span><span>Информация о преимуществах в success-экране</span></div>
+      </div>
+    </div>
   </section>
 
   <!-- ── SOLUTIONS ── -->
@@ -928,7 +1028,7 @@
       <p class="cb-desc">Главная жалоба в интервью — ощущение, что выбор уже сделан за тебя. Один экран, два варианта, цена на виду.</p>
     </div>
     <div class="cb-media">
-      <img src="projects/rutube-mocks/plans.png">
+      <img src="projects/rutube/plans.png">
     </div>
   </div>
 
@@ -940,7 +1040,7 @@
       <p class="cb-desc">Автопродление — главный страх. Вынесено отдельным блоком, дата и сумма списания — до нажатия кнопки.</p>
     </div>
     <div class="cb-media">
-      <img src="projects/rutube-mocks/checkout.png">
+      <img src="projects/rutube/checkout.png">
     </div>
   </div>
 
@@ -952,7 +1052,7 @@
       <p class="cb-desc">Success-экран закрывает четыре вопроса, которые пользователь задаёт молча: за что заплатил, когда следующее списание, как уведомят, где управлять.</p>
     </div>
     <div class="cb-media">
-      <img src="projects/rutube-mocks/payment-success.png">
+      <img src="projects/rutube/payment-success.png">
     </div>
   </div>
 
@@ -964,7 +1064,7 @@
       <p class="cb-desc">Ошибка поверх формы ощущается как сбой системы — пользователь уходит. Отдельный экран с одним действием убирает ощущение тупика.</p>
     </div>
     <div class="cb-media">
-      <img src="projects/rutube-mocks/payment-error.png">
+      <img src="projects/rutube/payment-error.png">
     </div>
   </div>
 
@@ -976,7 +1076,7 @@
       <p class="cb-desc">Страница, куда ведёт success-экран. Тариф, дата, карта, автопродление — всё сразу. Отмена кнопкой, не в подменю.</p>
     </div>
     <div class="cb-media">
-      <img src="projects/rutube-mocks/subscription-settings.png">
+      <img src="projects/rutube/subscription-settings.png">
     </div>
   </div>
 
@@ -1056,18 +1156,18 @@
   <section class="cs-section">
     <div class="cs-section-label">Другие проекты</div>
     <div class="cs-more-grid">
-      <a href="ct.html" class="cs-more-card">
-        <img src="projects/ct.png" alt="СТ Audit Portal">
+      <a href="auditors_monitoring.html" class="cs-more-card">
+        <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
         <div class="cs-more-card-body">
           <div class="cs-more-card-tag">Внутренний инструмент · 2026</div>
-          <div class="cs-more-card-title">СТ — Аудит-портал</div>
+          <div class="cs-more-card-title">Мониторинг аудиторов</div>
         </div>
       </a>
-      <a href="et.html" class="cs-more-card">
-        <img src="projects/et.png" alt="Echo Twin">
+      <a href="installation_panel.html" class="cs-more-card">
+        <img src="projects/installation_panel.png" alt="Панель инсталляций">
         <div class="cs-more-card-body">
-          <div class="cs-more-card-tag">SaaS · 2025</div>
-          <div class="cs-more-card-title">Echo Twin — Мониторинг</div>
+          <div class="cs-more-card-tag">Коммерческий проект · 2025</div>
+          <div class="cs-more-card-title">Панель инсталляций</div>
         </div>
       </a>
     </div>
@@ -1082,7 +1182,7 @@
         </a>
       </div>
       <div style="text-align:right;">
-        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Hiring?</div>
+        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Ищете дизайнера?</div>
         <div style="display:flex; gap:16px; justify-content:flex-end;">
           <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
           <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
@@ -1093,8 +1193,8 @@
   </section>
   <footer>
     <div><div class="footer-label">Andrey Beregovoy</div><div class="footer-val">2022 — 2026</div></div>
-    <div><div class="footer-label">Experience</div><div class="footer-val">3 years in UX/UI</div></div>
-    <div style="text-align:right;"><div class="footer-label">Open to opportunities</div><div class="footer-val">Remote · Worldwide</div></div>
+    <div><div class="footer-label">Опыт</div><div class="footer-val">3 года в UX/UI</div></div>
+    <div style="text-align:right;"><div class="footer-label">Открыт к предложениям</div><div class="footer-val">Удалённо · Россия</div></div>
   </footer>
 
   <div class="noise-overlay"></div>

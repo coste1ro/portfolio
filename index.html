@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -437,19 +437,6 @@
     }
     .proj-car-card:hover .proj-car-glare { opacity: 1; }
 
-    .proj-car-view-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--accent);
-      letter-spacing: 0.02em;
-      transition: gap 0.2s ease, color 0.35s;
-    }
-    .proj-car-card:hover .proj-car-view-link { gap: 10px; }
-
     #proj-car-content {
       display: flex;
       flex-direction: column;
@@ -567,12 +554,13 @@
       top: 0; left: 0;
       width: 18px; height: 18px;
       border-radius: 50%;
-      border: 1px solid rgba(180,180,180,0.5);
+      border: 1.5px solid #fff;
       pointer-events: none;
       z-index: 99999;
       transform: translate(-50%, -50%);
       will-change: left, top;
       display: flex; align-items: center; justify-content: center;
+      mix-blend-mode: difference;
       transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
                   height 0.45s cubic-bezier(0.16,1,0.3,1),
                   background 0.35s ease,
@@ -581,6 +569,7 @@
     #cursor-outer.cursor-link {
       width: 72px;
       height: 72px;
+      mix-blend-mode: normal;
       border-color: rgba(255,255,255,0.55);
       background: rgba(255,255,255,0.07);
     }
@@ -765,12 +754,12 @@
 
           <!-- 1: CT Audit Portal -->
           <div class="proj-car-img" data-idx="1" style="opacity:0;">
-            <img src="projects/ct.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="CT Audit Portal">
+            <img src="projects/auditors_monitoring.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="CT Audit Portal">
           </div>
 
           <!-- 2: Code Compliance -->
           <div class="proj-car-img" data-idx="2" style="opacity:0;">
-            <img src="projects/et.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="Code Compliance Platform">
+            <img src="projects/installation_panel.png" style="width:100%;height:100%;object-fit:cover;object-position:top left;" alt="Code Compliance Platform">
           </div>
 
         </div><!-- /proj-car-img-outer -->
@@ -779,14 +768,14 @@
         <div class="proj-car-card">
           <div class="proj-car-glare"></div>
           <div id="proj-car-content">
-            <div class="proj-card-tag">Video Platform · 2025</div>
-            <div class="proj-car-title">Rutube Redesign</div>
-            <p class="proj-car-desc">Full product redesign of Russia's largest video platform — new design system, improved video UX, and a refreshed brand feel.</p>
+            <div class="proj-card-tag">Видеоплатформа · 2025</div>
+            <div class="proj-car-title">Rutube — Редизайн подписки</div>
+            <p class="proj-car-desc">Редизайн флоу оформления Premium-подписки: исследование, архетипы, CJM, 5 ключевых экранов и двухуровневая система токенов.</p>
             <div class="elite-card-highlights" style="margin-top:auto;">
-              <div class="elite-highlight"><span class="elite-highlight-dot"></span>UX Research</div>
-              <div class="elite-highlight"><span class="elite-highlight-dot"></span>Visual Design</div>
-              <div class="elite-highlight"><span class="elite-highlight-dot"></span>Design System</div>
-              <div class="elite-highlight"><span class="elite-highlight-dot"></span>Interaction Design</div>
+              <div class="elite-highlight h-blue"><span class="elite-highlight-dot"></span>UX Research</div>
+              <div class="elite-highlight h-violet"><span class="elite-highlight-dot"></span>Visual Design</div>
+              <div class="elite-highlight h-accent"><span class="elite-highlight-dot"></span>Design System</div>
+              <div class="elite-highlight h-violet"><span class="elite-highlight-dot"></span>Interaction Design</div>
             </div>
           </div>
         </div>
@@ -795,15 +784,15 @@
 
       <!-- Bottom nav -->
       <div class="proj-car-nav">
-        <button class="proj-car-btn" id="proj-prev" aria-label="Previous project">
+        <button class="proj-car-btn" id="proj-prev" aria-label="Предыдущий проект">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div class="proj-car-dots">
-          <button class="proj-car-dot active" data-idx="0" aria-label="Project 1"></button>
-          <button class="proj-car-dot" data-idx="1" aria-label="Project 2"></button>
-          <button class="proj-car-dot" data-idx="2" aria-label="Project 3"></button>
+          <button class="proj-car-dot active" data-idx="0" aria-label="Проект 1"></button>
+          <button class="proj-car-dot" data-idx="1" aria-label="Проект 2"></button>
+          <button class="proj-car-dot" data-idx="2" aria-label="Проект 3"></button>
         </div>
-        <button class="proj-car-btn" id="proj-next" aria-label="Next project">
+        <button class="proj-car-btn" id="proj-next" aria-label="Следующий проект">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
@@ -909,7 +898,7 @@
 
   <!-- ── DOT M Custom Cursor ── -->
   <div id="cursor-outer"><span id="cursor-label">Открыть</span></div>
-  <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:opacity 0.2s ease;"></div>
+  <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:opacity 0.2s ease;mix-blend-mode:difference;"></div>
 
   <script>
     /* ── Cursor ── */
@@ -943,8 +932,6 @@
       sunIcon.classList.remove('toggle-on');
       sunIcon.style.color = 'rgba(255,255,255,0.3)';
       moonIcon.style.color = '';
-      dot.style.background = '#fff';
-      ring.style.borderColor = 'rgba(180,180,180,0.5)';
     }
     function applyLight() {
       document.body.classList.add('light');
@@ -956,8 +943,6 @@
       moonIcon.classList.remove('toggle-on');
       sunIcon.style.color = '#444';
       moonIcon.style.color = 'rgba(0,0,0,0.3)';
-      dot.style.background = '#111';
-      ring.style.borderColor = 'rgba(20,20,20,0.35)';
     }
 
     themeBtn.addEventListener('click', () => {
@@ -1009,17 +994,17 @@
           highlights: ['UX Research', 'Visual Design', 'Design System', 'Interaction Design']
         },
         {
-          url: 'ct.html',
+          url: 'auditors_monitoring.html',
           tag: 'Внутренний инструмент · 2026',
-          title: 'СТ — Аудит-портал',
+          title: 'Мониторинг аудиторов',
           desc: 'Внутренний портал для выездных аудиторов — карта с отслеживанием в реальном времени, управление заданиями и административная панель.',
           highlights: ['Dashboard Design', 'Map UX', 'Design System', 'B2B Product']
         },
         {
-          url: 'et.html',
+          url: 'installation_panel.html',
           tag: 'SaaS · 2025',
-          title: 'Echo Twin — Мониторинг',
-          desc: 'Десктопная платформа мониторинга городской инфраструктуры в Абу-Даби: камеры на мусоровозах, детекция нарушений, дашборды для операторов.',
+          title: 'Панель инсталляций',
+          desc: 'Административная панель для управления процессом монтажа умных устройств на транспортные средства: группы установок, реестр монтажников, список ТС.',
           highlights: ['Visual Design', 'Data Visualization', 'GIS / Map UX', 'Dark Theme']
         }
       ];
@@ -1102,9 +1087,18 @@
       renderContent(0);
       startTimer();
 
-      // Card click → open case study
-      document.querySelector('.proj-car-card').addEventListener('click', () => {
-        window.location.href = projects[current].url;
+      // Card + image click → open case study
+      const projImgOuter = document.querySelector('.proj-car-img-outer');
+      [document.querySelector('.proj-car-card'), projImgOuter].forEach(el => {
+        el.addEventListener('click', () => { window.location.href = projects[current].url; });
+      });
+      projImgOuter.addEventListener('mouseenter', () => {
+        document.getElementById('cursor-outer').classList.add('cursor-link');
+        document.getElementById('cursor-dot').style.opacity = '0';
+      });
+      projImgOuter.addEventListener('mouseleave', () => {
+        document.getElementById('cursor-outer').classList.remove('cursor-link');
+        document.getElementById('cursor-dot').style.opacity = '1';
       });
     })();
 
