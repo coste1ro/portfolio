@@ -122,31 +122,7 @@
       --nav-text: rgba(255,255,255,0.85);
     }
 
-    /* ── Light theme element overrides ── */
-    body.light .skill-card p { color: #666; }
-    body.light .skill-label { color: #aaa; }
-    body.light .elite-highlight-dot { background: #aaa; opacity: 1; }
-    body.light .noise-overlay { opacity: 0.05; }
-
-    /* ── Light theme variables ── */
-    body.light {
-      --page-bg: #f8f7f4;
-      --page-fg: #5a5a5a;
-      --page-fg-bright: #111;
-      --page-border: #e5e2dc;
-      --header-bg: rgba(248,247,244,0.75);
-      --header-border: rgba(0,0,0,0.08);
-      --card-bg: #ffffff;
-      --card-border: rgba(0,0,0,0.08);
-      --card-fade: #ffffff;
-      --hero-bg: #f8f7f4;
-      --hero-fg: #111;
-      --hero-muted: rgba(60,60,60,0.85);
-      --nav-text: rgba(20,20,20,0.8);
-      --accent: var(--accent);
-    }
-
-    /* ── Hero v2 ── */
+    /* ── Hero ── */
 
     .hero-section {
       position: relative;
@@ -154,55 +130,140 @@
       display: flex;
       flex-direction: column;
       background: var(--hero-bg);
-      transition: background 0.35s;
       overflow: hidden;
     }
 
-    /* ── Hero two-column layout ─────────────────────── */
-    .hero-layout {
-      position: absolute;
-      inset: 0;
+    .hero-logo-name {
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--hero-fg);
+      letter-spacing: 0.01em;
+    }
+
+    .hero-text-area {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 24px 48px 28px;
+      flex-shrink: 0;
+      animation: hero-text-in 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+    }
+
+    @keyframes hero-text-in {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-label {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 14px;
+    }
+
+    .hero-headline {
+      font-family: 'Archivo', sans-serif;
+      font-size: clamp(34px, 5.5vw, 82px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.03em;
+      line-height: 1.04;
+    }
+
+    .hero-right {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: clamp(80px, 10vh, 110px) clamp(36px, 5vw, 72px) clamp(72px, 9vh, 96px);
-      text-align: center;
-      z-index: 2;
+      align-items: flex-end;
+      gap: 10px;
+      flex-shrink: 0;
+      padding-bottom: 6px;
     }
 
-    .hero-role-label {
-      display: block;
+    .hero-right-count {
       font-family: 'Fira Code', monospace;
-      font-size: clamp(9px, 0.75vw, 11px);
-      font-weight: 400;
-      letter-spacing: 0.3em;
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+    }
+
+    .hero-right-tags {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .hero-right-tools {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .hero-dither-box {
+      position: relative;
+      flex: 1;
+      min-height: 220px;
+      margin: 0 48px 56px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .hero-dither-stats {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 5;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 20px 24px;
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-stat-city {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--hero-muted);
-      opacity: 0.55;
-      margin-bottom: clamp(16px, 2.5vh, 28px);
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 4px;
     }
 
-    .hero-name-line {
-      display: block;
+    .hero-stat-time {
       font-family: 'Fira Code', monospace;
-      font-size: clamp(52px, 14vw, 210px);
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: -0.03em;
-      line-height: 0.88;
-      white-space: nowrap;
-      user-select: none;
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.06em;
     }
 
-    #hero-tagline {
-      display: block;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(13px, 1.15vw, 18px);
-      color: var(--hero-muted);
-      transition: color 0.35s;
-      line-height: 1.6;
-      margin-top: clamp(20px, 3.2vh, 40px);
+    .hero-stat-num {
+      font-family: 'Archivo', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.3);
+      text-align: right;
+      margin-top: 4px;
     }
 
     /* ── Skill ticker ────────────────────────────────── */
@@ -281,45 +342,6 @@
     .header-nav-link:hover { color: var(--hero-fg); }
     .header-nav-link.active { color: var(--accent); }
 
-    /* Theme toggle */
-    #theme-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      padding: 4px;
-      gap: 2px;
-      height: 36px;
-      border-radius: 100px;
-      background: #1a1a1a;
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: background 0.4s, border-color 0.4s;
-      flex-shrink: 0;
-    }
-    #toggle-slider {
-      position: absolute;
-      left: 4px;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.14);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
-      transform: translateX(0);
-      pointer-events: none;
-    }
-    .toggle-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.3s;
-      flex-shrink: 0;
-      color: rgba(255,255,255,0.3);
-      position: relative;
-      z-index: 1;
-    }
-    .toggle-icon.toggle-on { color: #fff; }
 
     /* ── Noise overlay ── */
     .noise-overlay {
@@ -371,8 +393,6 @@
 
     .h-accent { background: rgba(224,92,24,0.12);  color: rgba(224,92,24,0.9); }
     .h-accent .elite-highlight-dot { background: #e05c18; opacity: 1; }
-    body.light .h-accent { background: rgba(125,24,226,0.1); color: rgba(125,24,226,0.85); }
-    body.light .h-accent .elite-highlight-dot { background: #7d18e2; }
 
     .h-emerald { background: rgba(16,185,129,0.1); color: rgba(16,185,129,0.9); }
     .h-emerald .elite-highlight-dot { background: #10b981; opacity: 1; }
@@ -508,13 +528,14 @@
       to   { width: 100%; }
     }
     .proj-car-dot.active { background: var(--page-fg); width: 26px; }
-    body.light .proj-car-dot { background: rgba(0,0,0,0.12); }
-    body.light .proj-car-dot.active { background: rgba(0,0,0,0.65); }
-    body.light .proj-car-dot::after { background: rgba(0,0,0,0.3); }
     .proj-carousel:hover .proj-car-dot.active::after { animation-play-state: paused; }
 
     @media (max-width: 720px) {
       #site-header { padding: 16px 20px !important; }
+      .hero-text-area { padding: 16px 20px 20px; flex-direction: column; align-items: flex-start; gap: 24px; }
+      .hero-right { align-items: flex-start; }
+      .hero-right-tags { align-items: flex-start; }
+      .hero-dither-box { margin: 0 20px 50px; border-radius: 14px; }
       #work { padding: 48px 0 40px; }
       #work > h2 { padding: 0 20px !important; }
       .proj-carousel { padding: 0 20px; }
@@ -560,11 +581,6 @@
       mix-blend-mode: screen;
       pointer-events: none;
     }
-    body.light #hero-dither {
-      mix-blend-mode: multiply;
-      opacity: 0.30;
-    }
-
     #cursor-outer {
       position: fixed;
       top: 0; left: 0;
@@ -604,12 +620,6 @@
       opacity: 1;
       transition: opacity 0.2s ease 0.15s;
     }
-    body.light #cursor-label { color: #111; }
-    body.light #cursor-outer.cursor-link {
-      border-color: rgba(0,0,0,0.4);
-      background: rgba(0,0,0,0.05);
-    }
-
     /* ── Preloader ──────────────────────────────────── */
     #preloader {
       position: fixed;
@@ -675,44 +685,47 @@
   <!-- ── HERO v2 ──────────────────────────────────────────────────────── -->
   <section class="hero-section">
 
-    <!-- Header is part of the hero — transparent, scrolls away with it -->
+    <!-- Header -->
     <header id="site-header" style="position:relative;z-index:20;padding:20px 48px;flex-shrink:0;">
       <nav style="display:flex; align-items:center; justify-content:space-between;">
-
-        <!-- Nav links -->
+        <a href="#" class="hero-logo-name">Andrey Beregovoy</a>
         <div style="display:flex; align-items:center; gap:28px;">
-          <a href="#" class="header-nav-link active">Главная</a>
           <a href="#work" class="header-nav-link">Проекты</a>
           <a href="#about" class="header-nav-link">Обо мне</a>
+          <a href="mailto:sa1nteau@mail.ru" class="header-nav-link">Контакты</a>
         </div>
-
-        <!-- Theme toggle -->
-        <button id="theme-btn" aria-label="Toggle theme">
-          <span id="toggle-slider"></span>
-          <span id="toggle-moon" class="toggle-icon toggle-on">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </span>
-          <span id="toggle-sun" class="toggle-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </span>
-        </button>
-
       </nav>
     </header>
 
-    <!-- Dithering background -->
-    <canvas id="hero-dither"></canvas>
-
-    <!-- Two-column layout -->
-    <div class="hero-layout">
-
-      <span class="hero-role-label">Дизайн + код + кот</span>
-      <div>
-        <span id="name-line-1" class="hero-name-line">ANDREY</span>
-        <span id="name-line-2" class="hero-name-line">BEREGOVOY</span>
+    <!-- Text area -->
+    <div class="hero-text-area">
+      <div class="hero-left">
+        <span class="hero-label">Дизайнер</span>
+        <h1 class="hero-headline">Дизайн, который<br>ощущается правильно</h1>
       </div>
-      <span id="hero-tagline">Дизайнер. Figma, код и немного вайб-кодинга.</span>
+      <div class="hero-right">
+        <div class="hero-right-count">(003)</div>
+        <div class="hero-right-tags">
+          <span>Product Design</span>
+          <span>UX · UI</span>
+        </div>
+        <div class="hero-right-tools">Figma · Claude Code</div>
+      </div>
+    </div>
 
+    <!-- Dither visual box -->
+    <div class="hero-dither-box">
+      <canvas id="hero-dither"></canvas>
+      <div class="hero-dither-stats">
+        <div>
+          <div class="hero-stat-city">Санкт-Петербург</div>
+          <div class="hero-stat-time" id="hero-time"></div>
+        </div>
+        <div>
+          <div class="hero-stat-num">3+</div>
+          <div class="hero-stat-label">года в дизайне</div>
+        </div>
+      </div>
     </div>
 
     <!-- Skill ticker -->
@@ -930,40 +943,19 @@
       requestAnimationFrame(loop);
     })();
 
-    /* ── Theme toggle ── */
-    const themeBtn   = document.getElementById('theme-btn');
-    const moonIcon   = document.getElementById('toggle-moon');
-    const sunIcon    = document.getElementById('toggle-sun');
-    const slider     = document.getElementById('toggle-slider');
-    let isDark = true;
-
-    function applyDark() {
-      document.body.classList.remove('light');
-      themeBtn.style.background = '#1a1a1a';
-      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
-      slider.style.transform = 'translateX(0)';
-      slider.style.background = 'rgba(255,255,255,0.14)';
-      moonIcon.classList.add('toggle-on');
-      sunIcon.classList.remove('toggle-on');
-      sunIcon.style.color = 'rgba(255,255,255,0.3)';
-      moonIcon.style.color = '';
-    }
-    function applyLight() {
-      document.body.classList.add('light');
-      themeBtn.style.background = '#e2e2e2';
-      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
-      slider.style.transform = 'translateX(28px)';
-      slider.style.background = 'rgba(0,0,0,0.1)';
-      sunIcon.classList.add('toggle-on');
-      moonIcon.classList.remove('toggle-on');
-      sunIcon.style.color = '#444';
-      moonIcon.style.color = 'rgba(0,0,0,0.3)';
-    }
-
-    themeBtn.addEventListener('click', () => {
-      isDark = !isDark;
-      isDark ? applyDark() : applyLight();
-    });
+    /* ── Live clock ── */
+    (function () {
+      const el = document.getElementById('hero-time');
+      if (!el) return;
+      function tick() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        el.textContent = h + ':' + m;
+      }
+      tick();
+      setInterval(tick, 10000);
+    })();
 
     /* ── BlurText animation ── */
     function blurChars(id, text, delayMs) {
@@ -993,9 +985,6 @@
       );
     }
 
-    blurChars('name-line-1', 'ANDREY',    100);
-    blurChars('name-line-2', 'BEREGOVOY',  80);
-    blurWords('hero-tagline', 700, 130);
 
 
     /* ── Projects Carousel ── */
