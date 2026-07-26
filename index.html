@@ -5,9 +5,8 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Andrey Beregovoy — Designer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Fira+Code:wght@700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fira+Code:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -574,8 +573,7 @@
       border: 1.5px solid #fff;
       pointer-events: none;
       z-index: 99999;
-      transform: translate(-50%, -50%);
-      will-change: left, top;
+      will-change: transform;
       display: flex; align-items: center; justify-content: center;
       mix-blend-mode: difference;
       transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
@@ -830,7 +828,7 @@
         <div class="skill-card" style="min-height:300px;">
           <div class="skill-glare"></div>
           <div class="skill-logo-wrap">
-            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=figma.com&sz=128" alt="Figma">
+            <img class="skill-logo" src="logos/figma.png" alt="Figma">
           </div>
           <div class="skill-label">Визуальный дизайн</div>
           <div class="skill-tool">Figma</div>
@@ -842,7 +840,7 @@
           <div class="skill-card" style="flex:1;">
             <div class="skill-glare"></div>
             <div class="skill-logo-wrap">
-              <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=claude.ai&sz=128" alt="Claude Code">
+              <img class="skill-logo" src="logos/claude.png" alt="Claude Code">
             </div>
             <div class="skill-label">Разработка</div>
             <div class="skill-tool">Claude Code</div>
@@ -863,8 +861,8 @@
         <div class="skill-card" style="min-height:300px;">
           <div class="skill-glare"></div>
           <div class="skill-logo-wrap">
-            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=manus.im&sz=128" alt="Manus">
-            <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=lovable.dev&sz=128" alt="Lovable">
+            <img class="skill-logo" src="logos/manus.png" alt="Manus">
+            <img class="skill-logo" src="logos/lovable.png" alt="Lovable">
             <img class="skill-logo" src="https://www.google.com/s2/favicons?domain=figma.com&sz=128" alt="Figma Make">
           </div>
           <div class="skill-label">Прототипирование</div>
@@ -915,7 +913,7 @@
 
   <!-- ── DOT M Custom Cursor ── -->
   <div id="cursor-outer"><span id="cursor-label">Открыть</span></div>
-  <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:opacity 0.2s ease;mix-blend-mode:difference;"></div>
+  <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;will-change:transform;transition:opacity 0.2s ease;mix-blend-mode:difference;"></div>
 
   <script>
     /* ── Cursor ── */
@@ -924,11 +922,11 @@
     let mx = -100, my = -100, rx = -100, ry = -100;
     document.addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
-      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      dot.style.transform = 'translate3d(' + (mx - 4) + 'px,' + (my - 4) + 'px,0)';
     });
     (function loop() {
       rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      ring.style.transform = 'translate3d(' + (rx - 9) + 'px,' + (ry - 9) + 'px,0)';
       requestAnimationFrame(loop);
     })();
 
