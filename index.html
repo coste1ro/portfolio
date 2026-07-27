@@ -35,8 +35,13 @@
     nav {
       position: fixed;
       top: 40px;
-      right: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1440px;
       display: flex;
+      justify-content: flex-end;
+      padding-right: 40px;
       gap: 20px;
       z-index: 100;
     }
@@ -53,6 +58,8 @@
     /* ── Hero ── */
     .hero {
       min-height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
     }
@@ -76,7 +83,7 @@
     .hero-name {
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
-      font-size: 8.2vw;
+      font-size: clamp(60px, 8.2vw, 118px);
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
