@@ -160,6 +160,8 @@
       z-index: 99999;
       will-change: transform;
       mix-blend-mode: difference;
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
   </style>
 </head>
@@ -208,8 +210,11 @@
   <script>
     const ring = document.getElementById('cursor-outer');
     let mx = -100, my = -100, rx = -100, ry = -100;
-    let scale = 1, scaleTarget = 1;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    let scale = 1, scaleTarget = 1, placed = false;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      if (!placed) { placed = true; rx = mx; ry = my; ring.style.opacity = '1'; }
+    });
     document.addEventListener('mousedown', () => { scaleTarget = 0.6; });
     document.addEventListener('mouseup',   () => { scaleTarget = 1; });
     (function loop() {
