@@ -97,25 +97,14 @@
     #cursor-outer {
       position: fixed;
       top: 0; left: 0;
-      width: 36px; height: 36px;
+      width: 24px; height: 24px;
       border-radius: 50%;
       border: 1.5px solid rgba(0,0,0,0.35);
       pointer-events: none;
       z-index: 99999;
       will-change: transform;
     }
-    #cursor-dot {
-      position: fixed;
-      top: 0; left: 0;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.5);
-      pointer-events: none;
-      z-index: 99999;
-      will-change: transform;
-    }
     body.dark #cursor-outer { border-color: rgba(255,255,255,0.3); }
-    body.dark #cursor-dot   { background: rgba(255,255,255,0.4); }
   </style>
 </head>
 <body>
@@ -134,26 +123,18 @@
   </section>
 
   <div id="cursor-outer"></div>
-  <div id="cursor-dot"></div>
 
   <script>
     const ring = document.getElementById('cursor-outer');
-    const dot  = document.getElementById('cursor-dot');
     let mx = -100, my = -100, rx = -100, ry = -100;
     let scale = 1, scaleTarget = 1;
-    const MAX_DIST = 12.5;
-    document.addEventListener('mousemove',  e => { mx = e.clientX; my = e.clientY; });
-    document.addEventListener('mousedown',  () => { scaleTarget = 0.6; });
-    document.addEventListener('mouseup',    () => { scaleTarget = 1; });
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    document.addEventListener('mousedown', () => { scaleTarget = 0.6; });
+    document.addEventListener('mouseup',   () => { scaleTarget = 1; });
     (function loop() {
       rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
       scale += (scaleTarget - scale) * 0.2;
-      const dx = mx - rx, dy = my - ry;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const cx = dist > MAX_DIST ? rx + dx / dist * MAX_DIST : mx;
-      const cy = dist > MAX_DIST ? ry + dy / dist * MAX_DIST : my;
-      ring.style.transform = 'translate3d(' + (rx - 18) + 'px,' + (ry - 18) + 'px,0) scale(' + scale.toFixed(3) + ')';
-      dot.style.transform  = 'translate3d(' + (cx - 4)  + 'px,' + (cy - 4)  + 'px,0)';
+      ring.style.transform = 'translate3d(' + (rx - 12) + 'px,' + (ry - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
       requestAnimationFrame(loop);
     })();
   </script>
