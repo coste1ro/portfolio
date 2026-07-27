@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --fg: #000000;
+    }
+    body.dark {
+      --bg: #0c0c0c;
+      --fg: #f0f0f0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Jost', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 40px;
+      right: 40px;
+      display: flex;
+      gap: 20px;
+      z-index: 100;
+    }
+    .nav-link {
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      color: var(--fg);
+      transition: opacity 0.2s;
+    }
+    .nav-link:hover { opacity: 0.4; }
+
+    /* ── Page ── */
+    .page {
+      padding: 40px 40px 60px;
+    }
+
+    /* ── Title ── */
+    .page-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 8.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 102px;
+    }
+
+    /* ── Manifesto ── */
+    .manifesto {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 0 40px;
+      margin-bottom: 102px;
+      align-items: start;
+    }
+
+    .manifesto-label {
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      padding-top: 3px;
+    }
+
+    .manifesto-text {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: var(--fg);
+    }
+
+    /* ── Bio ── */
+    .bio {
+      display: grid;
+      grid-template-columns: 660px 310px 310px;
+      gap: 0 40px;
+      margin-bottom: 87px;
+      align-items: start;
+    }
+
+    .bio-photo {
+      width: 210px;
+      height: 210px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .bio-col {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: var(--fg);
+    }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 8.2vw;
+      line-height: 0.9;
+      letter-spacing: 0.03em;
+      color: var(--fg);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      display: block;
+    }
+
+    /* ── Cursor ── */
+    * { cursor: none !important; }
+
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-outer, #cursor-dot { display: none !important; }
+      * { cursor: auto !important; }
+    }
+
+    #cursor-outer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      pointer-events: none;
+      z-index: 99999;
+      will-change: transform;
+      mix-blend-mode: difference;
+      transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
+                  height 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-link">Index</a>
+    <a href="cases.html" class="nav-link">Cases</a>
+  </nav>
+
+  <main class="page">
+
+    <h1 class="page-title">About</h1>
+
+    <div class="manifesto">
+      <span class="manifesto-label">Манифест</span>
+      <p class="manifesto-text">Хороший дизайн не нуждается в объяснении. Он задевает сразу — ощущением чего-то нового, точного, сделанного с умом. Плохой виден так же мгновенно, даже если все правила соблюдены. Я работаю между этими двумя точками: держусь за систему там, где она помогает, и отпускаю её там, где она мешает.</p>
+    </div>
+
+    <div class="bio">
+      <img class="bio-photo" src="photo.png" alt="Andrey Beregovoy">
+      <p class="bio-col">В дизайне с 2023 года. Начинал с веб-дизайна и фронтенда ещё в школе — это объясняет, почему мне одинаково интересно думать головой и руками.</p>
+      <p class="bio-col">Сейчас работаю в GIS IT-компании. За три года — проекты для правительства Лондона, Абу-Даби и Москвы, дизайн-системы с нуля, UI-киты под сложные продукты.</p>
+    </div>
+
+    <div class="stats">
+      <div>
+        <span class="stat-num">3+</span>
+        <span class="stat-label">Лет в профессии</span>
+      </div>
+      <div>
+        <span class="stat-num">3</span>
+        <span class="stat-label">Страны</span>
+      </div>
+      <div>
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Итераций</span>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="cursor-outer"></div>
+  <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;will-change:transform;mix-blend-mode:difference;"></div>
+
+  <script>
+    const ring = document.getElementById('cursor-outer');
+    const dot  = document.getElementById('cursor-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = 'translate3d(' + (mx - 4) + 'px,' + (my - 4) + 'px,0)';
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.transform = 'translate3d(' + (rx - 9) + 'px,' + (ry - 9) + 'px,0)';
+      requestAnimationFrame(loop);
+    })();
+  </script>
+
+</body>
+</html>

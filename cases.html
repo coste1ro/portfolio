@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Andrey Beregovoy — Designer</title>
+  <title>Cases — Andrey Beregovoy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&display=swap" rel="stylesheet">
   <style>
@@ -18,8 +18,6 @@
       --bg: #0c0c0c;
       --fg: #f0f0f0;
     }
-
-    html, body { height: 100%; }
 
     body {
       background: var(--bg);
@@ -41,7 +39,6 @@
       z-index: 100;
     }
     .nav-link {
-      font-family: 'Jost', sans-serif;
       font-weight: 300;
       font-size: 16px;
       letter-spacing: 0;
@@ -50,41 +47,63 @@
     }
     .nav-link:hover { opacity: 0.4; }
 
-    /* ── Hero ── */
-    .hero {
+    /* ── Page ── */
+    .page {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      padding: 40px;
     }
 
-    .hero-bottom {
-      margin-top: auto;
-      padding-bottom: 40px;
-    }
-
-    .hero-subtitle {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.2;
-      letter-spacing: 0;
-      color: var(--fg);
-      padding: 0 40px;
-      margin-bottom: 20px;
-    }
-
-    .hero-name {
+    .page-title {
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
       font-size: 8.2vw;
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
-      white-space: nowrap;
       color: var(--fg);
-      padding: 0 40px;
-      display: block;
     }
+
+    /* ── Cases grid ── */
+    .cases-grid {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+
+    .case-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .case-num {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      color: var(--fg);
+      display: block;
+      padding-bottom: 12px;
+    }
+
+    .case-img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+    }
+
+    .case-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top left;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .case-item:hover .case-img img { transform: scale(1.03); }
 
     /* ── Cursor ── */
     * { cursor: none !important; }
@@ -112,16 +131,38 @@
 <body>
 
   <nav>
-    <a href="cases.html" class="nav-link">Cases</a>
+    <a href="index.html" class="nav-link">Index</a>
     <a href="about.html" class="nav-link">About</a>
   </nav>
 
-  <section class="hero">
-    <div class="hero-bottom">
-      <p class="hero-subtitle">Дизайнер с фокусом на интерфейсах, которые ощущаются<br>правильно с первого взгляда</p>
-      <span class="hero-name">ANDREY BEREGOVOY</span>
+  <main class="page">
+    <h1 class="page-title">Cases</h1>
+
+    <div class="cases-grid">
+
+      <a href="rutube.html" class="case-item">
+        <span class="case-num">[1]</span>
+        <div class="case-img">
+          <img src="projects/rutube.png" alt="Rutube — Редизайн подписки">
+        </div>
+      </a>
+
+      <a href="auditors_monitoring.html" class="case-item">
+        <span class="case-num">[2]</span>
+        <div class="case-img">
+          <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
+        </div>
+      </a>
+
+      <a href="installation_panel.html" class="case-item">
+        <span class="case-num">[3]</span>
+        <div class="case-img">
+          <img src="projects/installation_panel.png" alt="Панель инсталляций">
+        </div>
+      </a>
+
     </div>
-  </section>
+  </main>
 
   <div id="cursor-outer"></div>
   <div id="cursor-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#fff;pointer-events:none;z-index:99999;will-change:transform;mix-blend-mode:difference;"></div>
