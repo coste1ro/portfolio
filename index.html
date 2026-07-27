@@ -86,6 +86,48 @@
       display: block;
     }
 
+    /* ── Preloader ── */
+    body.preloading { overflow: hidden; }
+    nav, .hero-subtitle { transition: opacity 0.8s ease; }
+    body.preloading nav,
+    body.preloading .hero-subtitle { opacity: 0; }
+
+    #preload {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9000;
+      overflow: hidden;
+      transition: background 0.8s ease;
+    }
+    #preload-count {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      color: #000;
+      transition: opacity 0.4s ease;
+    }
+    #preload-name {
+      position: absolute;
+      left: 0; top: 0;
+      padding: 0 40px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 8.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #000;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
     /* ── Cursor ── */
     * { cursor: none !important; }
 
@@ -109,6 +151,11 @@
 </head>
 <body>
 
+  <div id="preload">
+    <span id="preload-name">ANDREY BEREGOVOY</span>
+    <span id="preload-count">000</span>
+  </div>
+
   <nav>
     <a href="index.html" class="nav-link">Index</a>
     <a href="cases.html" class="nav-link">Cases</a>
@@ -123,6 +170,68 @@
   </section>
 
   <div id="cursor-outer"></div>
+
+  <script>
+    (function () {
+      const preload  = document.getElementById('preload');
+      const countEl  = document.getElementById('preload-count');
+      const nameEl   = document.getElementById('preload-name');
+      const realName = document.querySelector('.hero-name');
+      const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      document.body.classList.add('preloading');
+
+      if (reduce) {
+        preload.remove();
+        document.body.classList.remove('preloading');
+        return;
+      }
+
+      function reveal() {
+        document.body.classList.remove('preloading');
+        preload.style.background = 'transparent';
+        preload.style.pointerEvents = 'none';
+        setTimeout(function () { preload.remove(); }, 850);
+      }
+
+      function move() {
+        const cur = nameEl.getBoundingClientRect();
+        const tgt = realName.getBoundingClientRect();
+        const dx = tgt.left - cur.left;
+        const dy = tgt.top  - cur.top;
+        nameEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
+        nameEl.style.transform = 'translateY(-50%) translate(' + dx + 'px,' + dy + 'px)';
+        setTimeout(reveal, 1000);
+      }
+
+      function finish() {
+        countEl.style.opacity = '0';
+        setTimeout(move, 300);
+      }
+
+      function run() {
+        const DURATION = 2200;
+        const start = performance.now();
+        let nameShown = false;
+        (function frame(now) {
+          const t = Math.min((now - start) / DURATION, 1);
+          countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
+          if (t >= 0.5 && !nameShown) { nameShown = true; nameEl.style.opacity = '1'; }
+          if (t < 1) requestAnimationFrame(frame);
+          else finish();
+        })(start);
+      }
+
+      if (document.fonts && document.fonts.ready) {
+        Promise.race([
+          document.fonts.ready,
+          new Promise(function (r) { setTimeout(r, 1500); })
+        ]).then(run);
+      } else {
+        run();
+      }
+    })();
+  </script>
 
   <script>
     const ring = document.getElementById('cursor-outer');
