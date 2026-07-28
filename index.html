@@ -161,7 +161,7 @@
 
     /* ── Directed page transition (INDEX — CASES — ABOUT) ── */
     @media (prefers-reduced-motion: no-preference) {
-      nav, .hero { transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
+      nav, .hero { transition: transform 0.45s cubic-bezier(0, 0.55, 0.45, 1); }
     }
     html.enter-fwd nav,
     html.enter-fwd .hero { --slideY: 100vh; }
@@ -169,6 +169,8 @@
     html.enter-back .hero { --slideY: -100vh; }
     html.no-motion nav,
     html.no-motion .hero { transition: none !important; }
+    html.enter-fwd #preload,
+    html.enter-back #preload { display: none; }
 
     /* ── Cursor ── */
     * { cursor: none !important; }
@@ -259,9 +261,11 @@
             try { sessionStorage.setItem('bvg_dir', fwd ? 'fwd' : 'back'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
             const dist = fwd ? '-100vh' : '100vh';
+            navEl.style.transition = 'transform 0.45s cubic-bezier(0.55, 0, 1, 0.45)';
+            mainEl.style.transition = 'transform 0.45s cubic-bezier(0.55, 0, 1, 0.45)';
             navEl.style.transform = 'translateY(' + dist + ')';
             mainEl.style.transform = 'translateY(' + dist + ')';
-            setTimeout(function () { window.location.href = href; }, 600);
+            setTimeout(function () { window.location.href = href; }, 450);
           });
         });
       })();

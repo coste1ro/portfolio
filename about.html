@@ -168,12 +168,17 @@
 
     /* ── Preloader ── */
     body.preloading { overflow: hidden; }
-    nav { transition: opacity 0.8s ease, transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
-    .page { transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s ease; }
+    nav { transition: opacity 0.8s ease, transform 0.45s cubic-bezier(0, 0.55, 0.45, 1); }
+    .page { transition: transform 0.45s cubic-bezier(0, 0.55, 0.45, 1); }
+    .manifesto, .bio, .stats { transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s ease; }
     body.preloading nav { opacity: 0; }
-    body.preloading .page { opacity: 0; transform: translateY(80px); }
+    body.preloading .manifesto,
+    body.preloading .bio,
+    body.preloading .stats { opacity: 0; transform: translateY(80px); }
     body.preloading.revealing nav { opacity: 1; }
-    body.preloading.revealing .page { opacity: 1; transform: translateY(0); }
+    body.preloading.revealing .manifesto,
+    body.preloading.revealing .bio,
+    body.preloading.revealing .stats { opacity: 1; transform: translateY(0); }
 
     /* ── Directed page transition (INDEX — CASES — ABOUT) ── */
     html.enter-fwd nav,
@@ -182,6 +187,8 @@
     html.enter-back .page { --slideY: -100vh; }
     html.no-motion nav,
     html.no-motion .page { transition: none !important; }
+    html.enter-fwd #preload,
+    html.enter-back #preload { display: none; }
 
     #preload {
       position: fixed;
@@ -202,6 +209,27 @@
       font-variant-numeric: tabular-nums;
       color: #000;
       transition: opacity 0.4s ease;
+    }
+    #preload-title {
+      position: absolute;
+      left: 0; bottom: 0;
+      padding: 0 40px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 8.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #000;
+      transform: translateY(50%);
+      font-kerning: none;
+    }
+    #preload-title .pl-letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.45em);
+      transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* ── Cursor ── */
@@ -230,6 +258,7 @@
 <body>
 
   <div id="preload">
+    <span id="preload-title">About</span>
     <span id="preload-count">000</span>
   </div>
 
@@ -275,10 +304,12 @@
 
   <script>
     (function () {
-      const preload = document.getElementById('preload');
-      const countEl = document.getElementById('preload-count');
-      const navEl   = document.querySelector('nav');
-      const reduce  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const preload   = document.getElementById('preload');
+      const countEl   = document.getElementById('preload-count');
+      const titleEl   = document.getElementById('preload-title');
+      const realTitle = document.querySelector('.page-title');
+      const navEl     = document.querySelector('nav');
+      const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Directed slide between INDEX — CASES — ABOUT: forward navigation exits
       // up / enters from bottom, backward exits down / enters from top. The
@@ -304,9 +335,11 @@
             try { sessionStorage.setItem('bvg_dir', fwd ? 'fwd' : 'back'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
             const dist = fwd ? '-100vh' : '100vh';
+            navEl.style.transition = 'transform 0.45s cubic-bezier(0.55, 0, 1, 0.45)';
+            mainEl.style.transition = 'transform 0.45s cubic-bezier(0.55, 0, 1, 0.45)';
             navEl.style.transform = 'translateY(' + dist + ')';
             mainEl.style.transform = 'translateY(' + dist + ')';
-            setTimeout(function () { window.location.href = href; }, 600);
+            setTimeout(function () { window.location.href = href; }, 450);
           });
         });
       })();
@@ -341,29 +374,74 @@
       }
 
       document.body.classList.add('preloading');
+      realTitle.style.opacity = '0';
+
+      const fullTitle = titleEl.textContent;
+      const letters = fullTitle.split('').map(function (ch) {
+        const s = document.createElement('span');
+        s.className = 'pl-letter';
+        s.textContent = ch;
+        return s;
+      });
+      titleEl.textContent = '';
+      letters.forEach(function (s) { titleEl.appendChild(s); });
 
       function reveal() {
+        navEl.style.opacity = '1';
+        realTitle.style.opacity = '1';
         document.body.classList.add('revealing');
-        preload.style.background = 'transparent';
-        preload.style.pointerEvents = 'none';
         setTimeout(function () {
           document.body.classList.remove('preloading');
           document.body.classList.remove('revealing');
           preload.remove();
-        }, 900);
+        }, 700);
+      }
+
+      function move() {
+        titleEl.textContent = fullTitle;
+        preload.style.background = 'transparent';
+        preload.style.pointerEvents = 'none';
+
+        const cur = titleEl.getBoundingClientRect();
+        const tgt = realTitle.getBoundingClientRect();
+        const dx = tgt.left - cur.left;
+        const dy = tgt.top  - cur.top;
+        titleEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
+        titleEl.style.transform = 'translateY(50%) translate(' + dx + 'px,' + dy + 'px)';
+
+        // Reveal nav once the ascending title sweeps past its position.
+        const navLine = navEl.getBoundingClientRect().bottom;
+        let navShown = false, moving = true;
+        (function pass() {
+          const top = titleEl.getBoundingClientRect().top;
+          if (!navShown && top <= navLine) { navShown = true; navEl.style.opacity = '1'; }
+          if (moving) requestAnimationFrame(pass);
+        })();
+
+        setTimeout(function () { moving = false; reveal(); }, 1000);
       }
 
       function finish() {
         countEl.style.opacity = '0';
-        setTimeout(reveal, 250);
+        setTimeout(move, 300);
       }
 
       function run() {
         const DURATION = 2200;
         const start = performance.now();
+        let titleShown = false;
         (function frame(now) {
           const t = Math.min((now - start) / DURATION, 1);
           countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
+          if (t >= 0.5 && !titleShown) {
+            titleShown = true;
+            letters.forEach(function (s, i) {
+              setTimeout(function () {
+                s.style.opacity = '1';
+                s.style.transform = 'translateY(0)';
+              }, i * 45);
+            });
+          }
           if (t < 1) requestAnimationFrame(frame);
           else finish();
         })(start);
