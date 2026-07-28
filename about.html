@@ -369,6 +369,7 @@
       function reveal() {
         navEl.style.opacity = '1';
         realTitle.style.opacity = '1';
+        titleEl.style.opacity = '0';
         document.body.classList.add('revealing');
         setTimeout(function () {
           document.body.classList.remove('preloading');
