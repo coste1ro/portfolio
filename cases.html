@@ -23,6 +23,8 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+
     :root {
       --bg: #ffffff;
       --fg: #000000;
@@ -88,19 +90,18 @@
       font-kerning: none;
     }
 
-    /* ── Cases grid ── */
-    .cases-grid {
+    /* ── Cases track ── */
+    .cases-viewport {
       margin-top: auto;
-      display: flex;
-      gap: 40px;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: hidden;
       padding-top: 100px;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
       transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s ease;
     }
-    .cases-grid::-webkit-scrollbar { display: none; }
+    .cases-track {
+      display: flex;
+      gap: 40px;
+      will-change: transform;
+    }
 
     .case-item {
       flex: 0 0 560px;
@@ -139,12 +140,11 @@
     }
 
     /* ── Preloader ── */
-    body.preloading { overflow: hidden; }
     nav { transition: opacity 0.35s ease; }
     body.preloading nav { opacity: 0; }
-    body.preloading .cases-grid { opacity: 0; transform: translateY(80px); }
+    body.preloading .cases-viewport { opacity: 0; transform: translateY(80px); }
     body.preloading.revealing nav { opacity: 1; }
-    body.preloading.revealing .cases-grid { opacity: 1; transform: translateY(0); }
+    body.preloading.revealing .cases-viewport { opacity: 1; transform: translateY(0); }
 
     /* ── Internal navigation dissolve ── */
     .page { transition: opacity 0.35s ease; }
@@ -235,29 +235,31 @@
   <main class="page">
     <h1 class="page-title">Cases</h1>
 
-    <div class="cases-grid">
+    <div class="cases-viewport">
+      <div class="cases-track">
 
-      <a href="rutube.html" class="case-item">
-        <span class="case-num">[1]</span>
-        <div class="case-img">
-          <img src="projects/rutube.png" alt="Rutube — Редизайн подписки">
-        </div>
-      </a>
+        <a href="rutube.html" class="case-item">
+          <span class="case-num">[1]</span>
+          <div class="case-img">
+            <img src="projects/rutube.png" alt="Rutube — Редизайн подписки">
+          </div>
+        </a>
 
-      <a href="auditors_monitoring.html" class="case-item">
-        <span class="case-num">[2]</span>
-        <div class="case-img">
-          <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
-        </div>
-      </a>
+        <a href="auditors_monitoring.html" class="case-item">
+          <span class="case-num">[2]</span>
+          <div class="case-img">
+            <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
+          </div>
+        </a>
 
-      <a href="installation_panel.html" class="case-item">
-        <span class="case-num">[3]</span>
-        <div class="case-img">
-          <img src="projects/installation_panel.png" alt="Панель инсталляций">
-        </div>
-      </a>
+        <a href="installation_panel.html" class="case-item">
+          <span class="case-num">[3]</span>
+          <div class="case-img">
+            <img src="projects/installation_panel.png" alt="Панель инсталляций">
+          </div>
+        </a>
 
+      </div>
     </div>
   </main>
 
@@ -411,13 +413,19 @@
   </script>
 
   <script>
-    const grid = document.querySelector('.cases-grid');
-    grid.addEventListener('wheel', function (e) {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        grid.scrollLeft += e.deltaY;
-      }
-    }, { passive: false });
+    const track = document.querySelector('.cases-track');
+    const originalItems = Array.from(track.children);
+    originalItems.forEach(function (item) { track.appendChild(item.cloneNode(true)); });
+
+    const ITEM_W = 560, GAP = 40;
+    const setWidth = originalItems.length * (ITEM_W + GAP);
+
+    let offset = 0;
+    document.addEventListener('wheel', function (e) {
+      offset += e.deltaY;
+      const wrapped = ((offset % setWidth) + setWidth) % setWidth;
+      track.style.transform = 'translateX(' + (-wrapped) + 'px)';
+    }, { passive: true });
   </script>
 
   <script>

@@ -32,7 +32,7 @@
       --fg: #f0f0f0;
     }
 
-    html, body { height: 100%; }
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
     body {
       background: var(--bg);
@@ -110,7 +110,6 @@
     }
 
     /* ── Preloader ── */
-    body.preloading { overflow: hidden; }
     nav { transition: opacity 0.35s ease; }
     .hero-subtitle { transition: opacity 0.8s ease; }
     body.preloading nav,
