@@ -84,6 +84,7 @@
       color: var(--fg);
       padding: 0 40px;
       display: block;
+      font-kerning: none;
     }
 
     /* ── Preloader ── */
@@ -125,6 +126,7 @@
       white-space: nowrap;
       color: #000;
       transform: translateY(-50%);
+      font-kerning: none;
     }
     #preload-name .pl-letter {
       display: inline-block;
@@ -231,7 +233,6 @@
       }
 
       function move() {
-        nameEl.textContent = fullName;
         preload.style.background = 'transparent';
         preload.style.pointerEvents = 'none';
 
