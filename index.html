@@ -193,7 +193,8 @@
         return;
       }
 
-      const letters = nameEl.textContent.split('').map(function (ch) {
+      const fullName = nameEl.textContent;
+      const letters = fullName.split('').map(function (ch) {
         const s = document.createElement('span');
         s.className = 'pl-letter';
         s.textContent = ch === ' ' ? ' ' : ch;
@@ -210,6 +211,7 @@
       }
 
       function move() {
+        nameEl.textContent = fullName;
         const cur = nameEl.getBoundingClientRect();
         const tgt = realName.getBoundingClientRect();
         const dx = tgt.left - cur.left;
