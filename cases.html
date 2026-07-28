@@ -279,7 +279,7 @@
       // only plays on a real entry (external link or reload).
       function currentFile() {
         const p = location.pathname.split('/').pop();
-        return p === '' ? 'index.html' : p;
+        return (p === '' ? 'index.html' : p).replace(/\.html$/, '');
       }
       let navBusy = false;
       (function bindNavTransition() {
@@ -287,7 +287,7 @@
         const mainEl = document.querySelector('.page');
         document.querySelectorAll('nav a').forEach(function (a) {
           const href = a.getAttribute('href');
-          if (href === here) return;
+          if (href.replace(/\.html$/, '') === here) return;
           a.addEventListener('click', function (e) {
             e.preventDefault();
             if (navBusy) return;
