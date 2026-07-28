@@ -7,6 +7,19 @@
   <title>About — Andrey Beregovoy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var entry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var navType = entry ? entry.type : 'navigate';
+      var dir = null;
+      try { dir = sessionStorage.getItem('bvg_dir'); } catch (e) {}
+      if (!dir || navType === 'reload' || navType === 'back_forward') {
+        try { sessionStorage.removeItem('bvg_dir'); } catch (e) {}
+      } else {
+        document.documentElement.classList.add('enter-' + dir);
+      }
+    })();
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -37,6 +50,7 @@
       display: flex;
       gap: 20px;
       z-index: 100;
+      transform: translateY(var(--slideY, 0px));
     }
     .nav-link {
       font-weight: 300;
@@ -63,6 +77,7 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 40px 40px 60px;
+      transform: translateY(var(--slideY, 0px));
     }
 
     /* ── Title ── */
@@ -153,12 +168,20 @@
 
     /* ── Preloader ── */
     body.preloading { overflow: hidden; }
-    nav { transition: opacity 0.8s ease; }
-    .page { transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease; }
+    nav { transition: opacity 0.8s ease, transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
+    .page { transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s ease; }
     body.preloading nav { opacity: 0; }
     body.preloading .page { opacity: 0; transform: translateY(80px); }
     body.preloading.revealing nav { opacity: 1; }
     body.preloading.revealing .page { opacity: 1; transform: translateY(0); }
+
+    /* ── Directed page transition (INDEX — CASES — ABOUT) ── */
+    html.enter-fwd nav,
+    html.enter-fwd .page { --slideY: 100vh; }
+    html.enter-back nav,
+    html.enter-back .page { --slideY: -100vh; }
+    html.no-motion nav,
+    html.no-motion .page { transition: none !important; }
 
     #preload {
       position: fixed;
@@ -254,26 +277,66 @@
     (function () {
       const preload = document.getElementById('preload');
       const countEl = document.getElementById('preload-count');
+      const navEl   = document.querySelector('nav');
       const reduce  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      function flagSet()  { try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {} }
-      function flagTake() { try { var v = sessionStorage.getItem('bvg_nav'); sessionStorage.removeItem('bvg_nav'); return v === '1'; } catch (e) { return false; } }
-      document.querySelectorAll('nav a').forEach(function (a) { a.addEventListener('click', flagSet); });
+      // Directed slide between INDEX — CASES — ABOUT: forward navigation exits
+      // up / enters from bottom, backward exits down / enters from top. The
+      // entry intro only plays on a real entry (external link or reload).
+      const PAGE_ORDER = ['index.html', 'cases.html', 'about.html'];
+      function currentFile() {
+        const p = location.pathname.split('/').pop();
+        return p === '' ? 'index.html' : p;
+      }
+      let navBusy = false;
+      (function bindNavTransition() {
+        const cur = PAGE_ORDER.indexOf(currentFile());
+        const mainEl = document.querySelector('.page');
+        document.querySelectorAll('nav a').forEach(function (a) {
+          const href = a.getAttribute('href');
+          const tgt = PAGE_ORDER.indexOf(href);
+          if (tgt === -1 || cur === -1 || tgt === cur) return;
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (navBusy) return;
+            navBusy = true;
+            const fwd = tgt > cur;
+            try { sessionStorage.setItem('bvg_dir', fwd ? 'fwd' : 'back'); } catch (err) {}
+            if (reduce) { window.location.href = href; return; }
+            const dist = fwd ? '-100vh' : '100vh';
+            navEl.style.transform = 'translateY(' + dist + ')';
+            mainEl.style.transform = 'translateY(' + dist + ')';
+            setTimeout(function () { window.location.href = href; }, 600);
+          });
+        });
+      })();
+
+      function clearEnterState(instant) {
+        const html = document.documentElement;
+        if (!html.classList.contains('enter-fwd') && !html.classList.contains('enter-back')) return;
+        if (instant) {
+          html.classList.add('no-motion');
+          html.classList.remove('enter-fwd', 'enter-back');
+          return;
+        }
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            html.classList.remove('enter-fwd', 'enter-back');
+          });
+        });
+      }
 
       function shouldPreload() {
-        const e = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-        const type = e ? e.type
-          : (performance.navigation ? ['navigate', 'reload', 'back_forward'][performance.navigation.type] : 'navigate');
-        const internal = flagTake();
-        if (type === 'reload') return true;
-        if (type === 'back_forward') return false;
-        return !internal;
+        let dir = null;
+        try { dir = sessionStorage.getItem('bvg_dir'); sessionStorage.removeItem('bvg_dir'); } catch (e) {}
+        return !dir;
       }
 
       const canShow = shouldPreload();
 
       if (reduce || !canShow) {
         preload.remove();
+        clearEnterState(reduce);
         return;
       }
 
