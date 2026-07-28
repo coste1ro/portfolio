@@ -45,7 +45,16 @@
       color: var(--fg);
       transition: opacity 0.2s;
     }
-    .nav-link:hover { opacity: 0.4; }
+    .nav-link::before,
+    .nav-link::after {
+      display: inline-block;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .nav-link::before { content: '['; margin-right: 2px; }
+    .nav-link::after  { content: ']'; margin-left: 2px; }
+    .nav-link:hover::before,
+    .nav-link:hover::after { opacity: 1; }
 
     /* ── Page ── */
     .page {
