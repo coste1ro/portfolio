@@ -183,15 +183,33 @@
       const countEl  = document.getElementById('preload-count');
       const nameEl   = document.getElementById('preload-name');
       const realName = document.querySelector('.hero-name');
+      const navEl    = document.querySelector('nav');
+      const subEl    = document.querySelector('.hero-subtitle');
       const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Size the name so its text fills the viewport width minus 40px each side.
+      function fitName(el) {
+        el.style.fontSize = '200px';
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const w = range.getBoundingClientRect().width;
+        if (w > 0) el.style.fontSize = (200 * (document.documentElement.clientWidth - 80) / w) + 'px';
+      }
+      window.addEventListener('resize', function () { fitName(realName); });
 
       document.body.classList.add('preloading');
 
       if (reduce) {
+        fitName(realName);
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () { fitName(realName); });
+        }
         preload.remove();
         document.body.classList.remove('preloading');
         return;
       }
+
+      realName.style.opacity = '0';
 
       const fullName = nameEl.textContent;
       const letters = fullName.split('').map(function (ch) {
@@ -204,21 +222,37 @@
       letters.forEach(function (s) { nameEl.appendChild(s); });
 
       function reveal() {
+        navEl.style.opacity = '1';
+        subEl.style.opacity = '1';
+        realName.style.opacity = '1';
         document.body.classList.remove('preloading');
-        preload.style.background = 'transparent';
-        preload.style.pointerEvents = 'none';
-        setTimeout(function () { preload.remove(); }, 850);
+        preload.remove();
       }
 
       function move() {
         nameEl.textContent = fullName;
+        preload.style.background = 'transparent';
+        preload.style.pointerEvents = 'none';
+
         const cur = nameEl.getBoundingClientRect();
         const tgt = realName.getBoundingClientRect();
         const dx = tgt.left - cur.left;
         const dy = tgt.top  - cur.top;
         nameEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
         nameEl.style.transform = 'translateY(-50%) translate(' + dx + 'px,' + dy + 'px)';
-        setTimeout(reveal, 1000);
+
+        // Reveal each element as the descending name sweeps past its position.
+        const navLine = navEl.getBoundingClientRect().bottom;
+        const subLine = subEl.getBoundingClientRect().top;
+        let navShown = false, subShown = false, moving = true;
+        (function pass() {
+          const top = nameEl.getBoundingClientRect().top;
+          if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; }
+          if (!subShown && top >= subLine) { subShown = true; subEl.style.opacity = '1'; }
+          if (moving) requestAnimationFrame(pass);
+        })();
+
+        setTimeout(function () { moving = false; reveal(); }, 1000);
       }
 
       function finish() {
@@ -247,13 +281,19 @@
         })(start);
       }
 
+      function begin() {
+        fitName(realName);
+        nameEl.style.fontSize = realName.style.fontSize;
+        run();
+      }
+
       if (document.fonts && document.fonts.ready) {
         Promise.race([
           document.fonts.ready,
           new Promise(function (r) { setTimeout(r, 1500); })
-        ]).then(run);
+        ]).then(begin);
       } else {
-        run();
+        begin();
       }
     })();
   </script>
