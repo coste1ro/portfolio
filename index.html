@@ -149,12 +149,8 @@
       color: #000;
       transform: translateY(-50%);
       font-kerning: none;
-    }
-    #preload-name .pl-letter {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(-0.45em);
-      transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     /* ── Internal navigation dissolve ── */
@@ -243,7 +239,10 @@
         const mainEl = document.querySelector('.hero');
         document.querySelectorAll('nav a').forEach(function (a) {
           const href = a.getAttribute('href');
-          if (href.replace(/\.html$/, '') === here) return;
+          if (href.replace(/\.html$/, '') === here) {
+            a.addEventListener('click', function (e) { e.preventDefault(); });
+            return;
+          }
           a.addEventListener('click', function (e) {
             e.preventDefault();
             if (navBusy) return;
@@ -295,16 +294,6 @@
 
       realName.style.opacity = '0';
 
-      const fullName = nameEl.textContent;
-      const letters = fullName.split('').map(function (ch) {
-        const s = document.createElement('span');
-        s.className = 'pl-letter';
-        s.textContent = ch === ' ' ? ' ' : ch;
-        return s;
-      });
-      nameEl.textContent = '';
-      letters.forEach(function (s) { nameEl.appendChild(s); });
-
       function reveal() {
         navEl.style.opacity = '1';
         subEl.style.opacity = '1';
@@ -352,12 +341,7 @@
           countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
           if (t >= 0.5 && !nameShown) {
             nameShown = true;
-            letters.forEach(function (s, i) {
-              setTimeout(function () {
-                s.style.opacity = '1';
-                s.style.transform = 'translateY(0)';
-              }, i * 45);
-            });
+            nameEl.style.clipPath = 'inset(0 0% 0 0)';
           }
           if (t < 1) requestAnimationFrame(frame);
           else finish();
