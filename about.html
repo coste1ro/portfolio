@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — Andrey Beregovoy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -151,6 +151,36 @@
       display: block;
     }
 
+    /* ── Preloader ── */
+    body.preloading { overflow: hidden; }
+    nav { transition: opacity 0.8s ease; }
+    .page { transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease; }
+    body.preloading nav { opacity: 0; }
+    body.preloading .page { opacity: 0; transform: translateY(80px); }
+    body.preloading.revealing nav { opacity: 1; }
+    body.preloading.revealing .page { opacity: 1; transform: translateY(0); }
+
+    #preload {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9000;
+      overflow: hidden;
+      transition: background 0.6s ease;
+    }
+    #preload-count {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+      color: #000;
+      transition: opacity 0.4s ease;
+    }
+
     /* ── Cursor ── */
     * { cursor: none !important; }
 
@@ -175,6 +205,10 @@
   </style>
 </head>
 <body>
+
+  <div id="preload">
+    <span id="preload-count">000</span>
+  </div>
 
   <nav>
     <a href="index.html" class="nav-link">Index</a>
@@ -215,6 +249,70 @@
   </main>
 
   <div id="cursor-outer"></div>
+
+  <script>
+    (function () {
+      const preload = document.getElementById('preload');
+      const countEl = document.getElementById('preload-count');
+      const reduce  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function flagSet()  { try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {} }
+      function flagTake() { try { var v = sessionStorage.getItem('bvg_nav'); sessionStorage.removeItem('bvg_nav'); return v === '1'; } catch (e) { return false; } }
+      document.querySelectorAll('nav a').forEach(function (a) { a.addEventListener('click', flagSet); });
+
+      function shouldPreload() {
+        const e = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+        const type = e ? e.type
+          : (performance.navigation ? ['navigate', 'reload', 'back_forward'][performance.navigation.type] : 'navigate');
+        const internal = flagTake();
+        if (type === 'reload') return true;
+        if (type === 'back_forward') return false;
+        return !internal;
+      }
+
+      const canShow = shouldPreload();
+
+      if (reduce || !canShow) {
+        preload.remove();
+        return;
+      }
+
+      document.body.classList.add('preloading');
+
+      function reveal() {
+        document.body.classList.add('revealing');
+        preload.style.background = 'transparent';
+        preload.style.pointerEvents = 'none';
+        setTimeout(function () {
+          document.body.classList.remove('preloading');
+          document.body.classList.remove('revealing');
+          preload.remove();
+        }, 900);
+      }
+
+      function finish() {
+        countEl.style.opacity = '0';
+        setTimeout(reveal, 250);
+      }
+
+      function run() {
+        const DURATION = 2200;
+        const start = performance.now();
+        (function frame(now) {
+          const t = Math.min((now - start) / DURATION, 1);
+          countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
+          if (t < 1) requestAnimationFrame(frame);
+          else finish();
+        })(start);
+      }
+
+      if (document.fonts && document.fonts.ready) {
+        Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(run);
+      } else {
+        run();
+      }
+    })();
+  </script>
 
   <script>
     const ring = document.getElementById('cursor-outer');

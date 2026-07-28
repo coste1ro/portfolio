@@ -209,9 +209,27 @@
       }
       window.addEventListener('resize', function () { fitName(realName); });
 
+      // Show the intro only on a real entry (external link or reload),
+      // not on internal navigation between our own pages.
+      function flagSet()  { try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {} }
+      function flagTake() { try { var v = sessionStorage.getItem('bvg_nav'); sessionStorage.removeItem('bvg_nav'); return v === '1'; } catch (e) { return false; } }
+      document.querySelectorAll('nav a').forEach(function (a) { a.addEventListener('click', flagSet); });
+
+      function shouldPreload() {
+        const e = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+        const type = e ? e.type
+          : (performance.navigation ? ['navigate', 'reload', 'back_forward'][performance.navigation.type] : 'navigate');
+        const internal = flagTake();
+        if (type === 'reload') return true;
+        if (type === 'back_forward') return false;
+        return !internal;
+      }
+
+      const canShow = shouldPreload();
+
       document.body.classList.add('preloading');
 
-      if (reduce) {
+      if (reduce || !canShow) {
         fitName(realName);
         if (document.fonts && document.fonts.ready) {
           document.fonts.ready.then(function () { fitName(realName); });
