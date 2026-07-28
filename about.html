@@ -205,6 +205,7 @@
       letter-spacing: 0.08em;
       font-variant-numeric: tabular-nums;
       color: #000;
+      opacity: 0;
       transition: opacity 0.4s ease;
     }
     #preload-title {
@@ -406,6 +407,7 @@
       }
 
       function run() {
+        countEl.style.opacity = '1';
         const DURATION = 2200;
         const start = performance.now();
         let titleShown = false;
