@@ -131,6 +131,7 @@
       overflow: hidden;
     }
 
+    .case-img picture { display: block; width: 100%; height: 100%; }
     .case-img img {
       width: 100%;
       height: 100%;
@@ -237,21 +238,30 @@
         <a href="rutube.html" class="case-item">
           <span class="case-num">[1]</span>
           <div class="case-img">
-            <img src="projects/rutube.png" alt="Rutube — Редизайн подписки">
+            <picture>
+              <source srcset="projects/rutube.webp" type="image/webp">
+              <img src="projects/rutube.png" alt="Rutube — Редизайн подписки" loading="eager" decoding="async">
+            </picture>
           </div>
         </a>
 
         <a href="auditors_monitoring.html" class="case-item">
           <span class="case-num">[2]</span>
           <div class="case-img">
-            <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
+            <picture>
+              <source srcset="projects/auditors_monitoring.webp" type="image/webp">
+              <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов" loading="eager" decoding="async">
+            </picture>
           </div>
         </a>
 
         <a href="installation_panel.html" class="case-item">
           <span class="case-num">[3]</span>
           <div class="case-img">
-            <img src="projects/installation_panel.png" alt="Панель инсталляций">
+            <picture>
+              <source srcset="projects/installation_panel.webp" type="image/webp">
+              <img src="projects/installation_panel.png" alt="Панель инсталляций" loading="eager" decoding="async">
+            </picture>
           </div>
         </a>
 
