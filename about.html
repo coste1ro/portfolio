@@ -100,7 +100,7 @@
     /* ── Manifesto ── */
     .manifesto {
       display: grid;
-      grid-template-columns: 310px 1fr;
+      grid-template-columns: 310fr 1010fr;
       gap: 0 40px;
       align-items: start;
     }
@@ -125,7 +125,7 @@
     /* ── Bio ── */
     .bio {
       display: grid;
-      grid-template-columns: 660px 310px 310px;
+      grid-template-columns: 660fr 310fr 310fr;
       gap: 0 40px;
       align-items: start;
     }
@@ -170,6 +170,14 @@
       text-transform: uppercase;
       color: var(--fg);
       display: block;
+    }
+
+    /* ── Responsive: collapse multi-column blocks to a single column.
+       Fires above the tablet width, so 768 lands in the stacked layout
+       (a wider version of mobile) — no separate tablet breakpoint needed. */
+    @media (max-width: 820px) {
+      .manifesto,
+      .bio { grid-template-columns: 1fr; gap: 28px; }
     }
 
     /* ── Preloader ── */
