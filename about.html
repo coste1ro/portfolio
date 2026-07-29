@@ -67,20 +67,26 @@
       transition: opacity 0.2s;
     }
     .nav-link::before,
-    .nav-link::after {
+    .nav-link::after,
+    .theme-switch button::before,
+    .theme-switch button::after {
       display: inline-block;
       opacity: 0;
       transition: opacity 0.2s ease;
     }
-    .nav-link::before { content: '['; margin-right: 2px; }
-    .nav-link::after  { content: ']'; margin-left: 2px; }
+    .nav-link::before,
+    .theme-switch button::before { content: '['; margin-right: 2px; }
+    .nav-link::after,
+    .theme-switch button::after  { content: ']'; margin-left: 2px; }
     .nav-link:hover::before,
-    .nav-link:hover::after { opacity: 1; }
+    .nav-link:hover::after,
+    .theme-switch button:hover::before,
+    .theme-switch button:hover::after { opacity: 1; }
 
     /* ── Theme switch ── */
     .theme-switch {
       position: fixed;
-      top: 64px;
+      top: 80px;
       right: 40px;
       z-index: 100;
       display: flex;
@@ -95,12 +101,16 @@
       background: none;
       border: 0;
       padding: 0;
-      font: inherit;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
       color: inherit;
       opacity: 0.35;
       transition: opacity 0.2s ease;
     }
-    .theme-switch button.active { opacity: 1; }
+    .theme-switch button.active,
+    .theme-switch button:hover { opacity: 1; }
     .theme-switch span { opacity: 0.35; }
     body.preloading .theme-switch { opacity: 0; }
 
