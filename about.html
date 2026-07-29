@@ -76,6 +76,33 @@
     .nav-link:hover::before,
     .nav-link:hover::after { opacity: 1; }
 
+    /* ── Theme switch ── */
+    .theme-switch {
+      position: fixed;
+      top: 70px;
+      right: 40px;
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      color: var(--fg);
+      transition: opacity 0.35s ease;
+    }
+    .theme-switch button {
+      background: none;
+      border: 0;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      opacity: 0.35;
+      transition: opacity 0.2s ease;
+    }
+    .theme-switch button.active { opacity: 1; }
+    .theme-switch span { opacity: 0.35; }
+    body.preloading .theme-switch { opacity: 0; }
+
     /* ── Page ── */
     .page {
       min-height: 100vh;
@@ -291,6 +318,12 @@
     <a href="about.html" class="nav-link">About</a>
   </nav>
 
+  <div class="theme-switch">
+    <button type="button" data-theme="light">LIGHT</button>
+    <span aria-hidden="true">|</span>
+    <button type="button" data-theme="dark">DARK</button>
+  </div>
+
   <main class="page">
 
     <h1 class="page-title">About</h1>
@@ -315,8 +348,8 @@
         <span class="stat-label">Лет в профессии</span>
       </div>
       <div>
-        <span class="stat-num">3</span>
-        <span class="stat-label">Страны</span>
+        <span class="stat-num">4</span>
+        <span class="stat-label">Рынка</span>
       </div>
       <div>
         <span class="stat-num stat-num--inf" role="img" aria-label="бесконечность">
@@ -465,6 +498,26 @@
       } else {
         run();
       }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const btns = document.querySelectorAll('.theme-switch button');
+      function sync() {
+        const dark = root.classList.contains('dark');
+        btns.forEach(function (b) { b.classList.toggle('active', (b.dataset.theme === 'dark') === dark); });
+      }
+      sync();
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          const dark = b.dataset.theme === 'dark';
+          root.classList.toggle('dark', dark);
+          try { localStorage.setItem('bvg_theme', dark ? 'dark' : 'light'); } catch (e) {}
+          sync();
+        });
+      });
     })();
   </script>
 
