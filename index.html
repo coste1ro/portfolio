@@ -266,6 +266,7 @@
       const realName = document.querySelector('.hero-name');
       const navEl    = document.querySelector('nav');
       const subEl    = document.querySelector('.hero-subtitle');
+      const switchEl = document.querySelector('.theme-switch');
       const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Size the name so its text fills the viewport width minus 40px each side.
@@ -352,6 +353,7 @@
         navEl.style.opacity = '1';
         subEl.style.opacity = '1';
         realName.style.opacity = '1';
+        if (switchEl) switchEl.style.opacity = '1';
         document.body.classList.remove('preloading');
         preload.remove();
       }
@@ -373,7 +375,7 @@
         let navShown = false, subShown = false, moving = true;
         (function pass() {
           const top = nameEl.getBoundingClientRect().top;
-          if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; }
+          if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; if (switchEl) switchEl.style.opacity = '1'; }
           if (!subShown && top >= subLine) { subShown = true; subEl.style.opacity = '1'; }
           if (moving) requestAnimationFrame(pass);
         })();
