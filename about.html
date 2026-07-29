@@ -79,11 +79,11 @@
     /* ── Theme switch ── */
     .theme-switch {
       position: fixed;
-      top: 70px;
+      top: 64px;
       right: 40px;
       z-index: 100;
       display: flex;
-      gap: 8px;
+      gap: 12px;
       font-family: 'Jost', sans-serif;
       font-weight: 300;
       font-size: 16px;
@@ -201,20 +201,6 @@
       display: block;
     }
 
-    /* Infinity drawn as a thin lemniscate so it matches the ExtraLight
-       numerals instead of the font's heavier ∞ glyph. */
-    .stat-num--inf {
-      display: flex;
-      align-items: center;
-      height: 0.9em;
-    }
-    .stat-num--inf svg {
-      height: 0.6em;
-      width: auto;
-      display: block;
-      overflow: visible;
-    }
-
     /* ── Responsive: collapse multi-column blocks to a single column.
        Fires above the tablet width, so 768 lands in the stacked layout
        (a wider version of mobile) — no separate tablet breakpoint needed. */
@@ -239,9 +225,11 @@
     /* ── Internal navigation dissolve ── */
     .page { transition: opacity 0.35s ease; }
     html.entering nav,
-    html.entering .page { opacity: 0; }
+    html.entering .page,
+    html.entering .theme-switch { opacity: 0; }
     html.no-motion nav,
-    html.no-motion .page { transition: none !important; }
+    html.no-motion .page,
+    html.no-motion .theme-switch { transition: none !important; }
     html.entering #preload { display: none; }
 
     #preload {
@@ -352,12 +340,8 @@
         <span class="stat-label">Рынка</span>
       </div>
       <div>
-        <span class="stat-num stat-num--inf" role="img" aria-label="бесконечность">
-          <svg viewBox="9 5 82 42" fill="none" aria-hidden="true">
-            <path d="M50 26 C60 6 90 6 90 26 C90 46 60 46 50 26 C40 6 10 6 10 26 C10 46 40 46 50 26 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-          </svg>
-        </span>
-        <span class="stat-label">Итераций</span>
+        <span class="stat-num">#</span>
+        <span class="stat-label">Дизайн + код</span>
       </div>
     </div>
 
@@ -397,10 +381,12 @@
             navBusy = true;
             try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
+            const sw = document.querySelector('.theme-switch');
             navEl.style.transition = 'opacity 0.35s ease';
             mainEl.style.transition = 'opacity 0.35s ease';
             navEl.style.opacity = '0';
             mainEl.style.opacity = '0';
+            if (sw) { sw.style.transition = 'opacity 0.35s ease'; sw.style.opacity = '0'; }
             setTimeout(function () { window.location.href = href; }, 350);
           });
         });

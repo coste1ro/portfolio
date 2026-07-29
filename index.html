@@ -162,11 +162,11 @@
     /* ── Theme switch ── */
     .theme-switch {
       position: fixed;
-      top: 70px;
+      top: 64px;
       right: 40px;
       z-index: 100;
       display: flex;
-      gap: 8px;
+      gap: 12px;
       font-family: 'Jost', sans-serif;
       font-weight: 300;
       font-size: 16px;
@@ -189,9 +189,11 @@
     /* ── Internal navigation dissolve ── */
     .hero { transition: opacity 0.35s ease; }
     html.entering nav,
-    html.entering .hero { opacity: 0; }
+    html.entering .hero,
+    html.entering .theme-switch { opacity: 0; }
     html.no-motion nav,
-    html.no-motion .hero { transition: none !important; }
+    html.no-motion .hero,
+    html.no-motion .theme-switch { transition: none !important; }
     html.entering #preload { display: none; }
 
     /* ── Cursor ── */
@@ -288,10 +290,12 @@
             navBusy = true;
             try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
+            const sw = document.querySelector('.theme-switch');
             navEl.style.transition = 'opacity 0.35s ease';
             mainEl.style.transition = 'opacity 0.35s ease';
             navEl.style.opacity = '0';
             mainEl.style.opacity = '0';
+            if (sw) { sw.style.transition = 'opacity 0.35s ease'; sw.style.opacity = '0'; }
             setTimeout(function () { window.location.href = href; }, 350);
           });
         });
