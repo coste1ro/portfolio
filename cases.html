@@ -6,7 +6,7 @@
   <link rel="icon" type="image/png" href="favicon-dark.png">
   <link rel="apple-touch-icon" href="favicon-dark.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cases — Andrey Beregovoy</title>
+  <title>Cases&nbsp;— Andrey Beregovoy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
   <script>
@@ -147,12 +147,9 @@
       display: flex;
       flex-direction: column;
       gap: 0;
-      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.4s ease;
     }
-    .case-item:hover {
-      transform: translateY(-25%);
-      transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
+    .case-item:hover { transform: translateY(-12%); }
 
     .case-num {
       font-weight: 300;
@@ -459,19 +456,29 @@
   </script>
 
   <script>
+    const viewport = document.querySelector('.cases-viewport');
     const track = document.querySelector('.cases-track');
-    const originalItems = Array.from(track.children);
-    originalItems.forEach(function (item) { track.appendChild(item.cloneNode(true)); });
-
-    const ITEM_W = 560, GAP = 40;
-    const setWidth = originalItems.length * (ITEM_W + GAP);
-
+    const items = Array.from(track.children);
+    const GAP = 40, VISIBLE = 2.3;   // 2 full cases + ~30% of the third peeking
     let offset = 0;
+
+    function apply() {
+      const max = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      offset = Math.max(0, Math.min(offset, max));
+      track.style.transform = 'translateX(' + (-offset) + 'px)';
+    }
+    function layout() {
+      const w = (viewport.clientWidth - GAP * 2) / VISIBLE;
+      items.forEach(function (it) { it.style.flexBasis = w + 'px'; });
+      apply();
+    }
     document.addEventListener('wheel', function (e) {
+      if (track.scrollWidth - viewport.clientWidth <= 0) return;
       offset += e.deltaY;
-      const wrapped = ((offset % setWidth) + setWidth) % setWidth;
-      track.style.transform = 'translateX(' + (-wrapped) + 'px)';
+      apply();
     }, { passive: true });
+    window.addEventListener('resize', layout);
+    layout();
   </script>
 
   <script>
