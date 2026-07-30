@@ -157,7 +157,7 @@
       line-height: 1.2;
       color: var(--fg);
       display: block;
-      padding-bottom: 12px;
+      padding-bottom: 40px;
     }
 
     .case-img {
@@ -183,7 +183,7 @@
     body.preloading.revealing nav { opacity: 1; }
     body.preloading.revealing .cases-viewport { opacity: 1; transform: translateY(0); }
 
-    /* ── Internal navigation dissolve ── */
+    /* ── Internal navigation intro ── */
     .page { transition: opacity 0.35s ease; }
     html.entering nav,
     html.entering .page,
@@ -191,7 +191,6 @@
     html.no-motion nav,
     html.no-motion .page,
     html.no-motion .theme-switch { transition: none !important; }
-    html.entering #preload { display: none; }
 
     #preload {
       position: fixed;
@@ -323,11 +322,13 @@
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
       const switchEl  = document.querySelector('.theme-switch');
+      const pageEl    = document.querySelector('.page');
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Internal nav between INDEX — CASES — ABOUT dissolves the current
-      // screen out, then the destination page dissolves in. The entry intro
-      // only plays on a real entry (external link or reload).
+      // screen out; the destination page plays a fast version of the entry
+      // intro (title slides up into place, no counter). The full intro with
+      // counter only plays on a real entry (external link or reload).
       function currentFile() {
         const p = location.pathname.split('/').pop();
         return (p === '' ? 'index.html' : p).replace(/\.html$/, '');
@@ -359,19 +360,11 @@
         });
       })();
 
-      function clearEnterState(instant) {
+      function clearEnterState() {
         const html = document.documentElement;
         if (!html.classList.contains('entering')) return;
-        if (instant) {
-          html.classList.add('no-motion');
-          html.classList.remove('entering');
-          return;
-        }
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            html.classList.remove('entering');
-          });
-        });
+        html.classList.add('no-motion');
+        html.classList.remove('entering');
       }
 
       function shouldPreload() {
@@ -380,9 +373,9 @@
 
       const canShow = shouldPreload();
 
-      if (reduce || !canShow) {
+      if (reduce) {
         preload.remove();
-        clearEnterState(reduce);
+        clearEnterState();
         return;
       }
 
@@ -394,6 +387,12 @@
         realTitle.style.opacity = '1';
         titleEl.style.opacity = '0';
         if (switchEl) switchEl.style.opacity = '1';
+        // Instantly lift .page's own pre-paint hide (from html.entering)
+        // so only the grid's own reveal transition animates — otherwise
+        // the two opacity fades would compound.
+        pageEl.style.transition = 'none';
+        document.documentElement.classList.remove('entering');
+        pageEl.style.opacity = '1';
         document.body.classList.add('revealing');
         setTimeout(function () {
           document.body.classList.remove('preloading');
@@ -445,6 +444,19 @@
           if (t < 1) requestAnimationFrame(frame);
           else finish();
         })(start);
+      }
+
+      if (!canShow) {
+        // Internal nav: skip the counter, show the title already fully
+        // formed at its half-visible bottom position, then run the same
+        // slide-into-place used by the full intro — so there's motion on
+        // screen from the first frame instead of a blank gap before the
+        // page dissolves in.
+        countEl.remove();
+        titleEl.style.transition = 'none';
+        titleEl.style.clipPath = 'inset(0 0% 0 0)';
+        requestAnimationFrame(move);
+        return;
       }
 
       if (document.fonts && document.fonts.ready) {
