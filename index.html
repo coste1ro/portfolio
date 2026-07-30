@@ -193,7 +193,7 @@
     }
     body.preloading .theme-switch { opacity: 0; }
 
-    /* ── Internal navigation dissolve ── */
+    /* ── Internal navigation intro ── */
     .hero { transition: opacity 0.35s ease; }
     html.entering nav,
     html.entering .hero,
@@ -201,7 +201,6 @@
     html.no-motion nav,
     html.no-motion .hero,
     html.no-motion .theme-switch { transition: none !important; }
-    html.entering #preload { display: none; }
 
     /* ── Cursor ── */
     * { cursor: none !important; }
@@ -276,8 +275,9 @@
       window.addEventListener('resize', function () { fitName(realName); });
 
       // Internal nav between INDEX — CASES — ABOUT dissolves the current
-      // screen out, then the destination page dissolves in. The entry intro
-      // only plays on a real entry (external link or reload).
+      // screen out; the destination page plays a fast version of the entry
+      // intro (name slides into place, no counter). The full intro with
+      // counter only plays on a real entry (external link or reload).
       function currentFile() {
         const p = location.pathname.split('/').pop();
         return (p === '' ? 'index.html' : p).replace(/\.html$/, '');
@@ -298,30 +298,20 @@
             navBusy = true;
             try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
-            const sw = document.querySelector('.theme-switch');
-            navEl.style.transition = 'opacity 0.35s ease';
+            // Only the page content fades — nav and the theme switch stay
+            // put throughout the whole transition.
             mainEl.style.transition = 'opacity 0.35s ease';
-            navEl.style.opacity = '0';
             mainEl.style.opacity = '0';
-            if (sw) { sw.style.transition = 'opacity 0.35s ease'; sw.style.opacity = '0'; }
             setTimeout(function () { window.location.href = href; }, 350);
           });
         });
       })();
 
-      function clearEnterState(instant) {
+      function clearEnterState() {
         const html = document.documentElement;
         if (!html.classList.contains('entering')) return;
-        if (instant) {
-          html.classList.add('no-motion');
-          html.classList.remove('entering');
-          return;
-        }
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            html.classList.remove('entering');
-          });
-        });
+        html.classList.add('no-motion');
+        html.classList.remove('entering');
       }
 
       function shouldPreload() {
@@ -330,19 +320,17 @@
 
       const canShow = shouldPreload();
 
-      document.body.classList.add('preloading');
-
-      if (reduce || !canShow) {
+      if (reduce) {
         fitName(realName);
         if (document.fonts && document.fonts.ready) {
           document.fonts.ready.then(function () { fitName(realName); });
         }
         preload.remove();
-        document.body.classList.remove('preloading');
-        clearEnterState(reduce);
+        clearEnterState();
         return;
       }
 
+      document.body.classList.add('preloading');
       realName.style.opacity = '0';
 
       function reveal() {
@@ -405,6 +393,25 @@
         fitName(realName);
         nameEl.style.fontSize = realName.style.fontSize;
         run();
+      }
+
+      if (!canShow) {
+        // Internal nav: nav and the theme switch never hide, they're shown
+        // right away. Skip the counter, show the name already fully formed
+        // at its half-visible top position, then run the same
+        // slide-into-place used by the full intro — so there's motion on
+        // screen from the first frame instead of a blank gap before the
+        // page dissolves in.
+        clearEnterState();
+        navEl.style.opacity = '1';
+        if (switchEl) switchEl.style.opacity = '1';
+        fitName(realName);
+        nameEl.style.fontSize = realName.style.fontSize;
+        countEl.remove();
+        nameEl.style.transition = 'none';
+        nameEl.style.clipPath = 'inset(0 0% 0 0)';
+        requestAnimationFrame(move);
+        return;
       }
 
       if (document.fonts && document.fonts.ready) {
