@@ -219,20 +219,11 @@
 
     /* ── Preloader ── */
     nav { transition: opacity 0.35s ease; }
-    .manifesto, .bio, .stats { transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 1s ease; }
     body.preloading nav { opacity: 0; }
-    body.preloading .manifesto,
-    body.preloading .bio,
-    body.preloading .stats { opacity: 0; transform: translateY(80px); }
-    body.preloading.revealing .manifesto,
-    body.preloading.revealing .bio,
-    body.preloading.revealing .stats { opacity: 1; transform: translateY(0); }
 
     /* ── Internal navigation intro ── */
     .page { transition: opacity 0.35s ease; }
-    html.entering nav,
-    html.entering .page,
-    html.entering .theme-switch { opacity: 0; }
+    html.entering .page { opacity: 0; }
     html.no-motion nav,
     html.no-motion .page,
     html.no-motion .theme-switch { transition: none !important; }
@@ -362,6 +353,7 @@
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
       const switchEl  = document.querySelector('.theme-switch');
+      const pageEl    = document.querySelector('.page');
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Internal nav between INDEX — CASES — ABOUT dissolves the current
@@ -417,49 +409,55 @@
       }
 
       document.body.classList.add('preloading');
-      realTitle.style.opacity = '0';
 
-      function reveal() {
-        navEl.style.opacity = '1';
-        realTitle.style.opacity = '1';
-        titleEl.style.opacity = '0';
-        if (switchEl) switchEl.style.opacity = '1';
-        setTimeout(function () {
-          document.body.classList.remove('preloading');
-          document.body.classList.remove('revealing');
-          preload.remove();
-        }, 700);
-      }
+      // Slides the whole page — title and content together, as one rigid
+      // block — from a half-visible-at-bottom start up into its natural
+      // resting position. Since the content sits inside .page, it can never
+      // drift out of sync with the title or visually collide with it: it's
+      // the exact same transform, not two separately-animated pieces.
+      function slidePageIn() {
+        const r = realTitle.getBoundingClientRect();
+        const startY = window.innerHeight - (r.top + r.height / 2);
+        pageEl.style.transition = 'none';
+        pageEl.style.transform = 'translateY(' + startY + 'px)';
+        void pageEl.offsetHeight; // commit the instant position before animating away from it
 
-      function move() {
         preload.style.background = 'transparent';
         preload.style.pointerEvents = 'none';
+        navEl.style.opacity = '1';
+        if (switchEl) switchEl.style.opacity = '1';
+        document.documentElement.classList.remove('entering');
 
-        const cur = titleEl.getBoundingClientRect();
-        const tgt = realTitle.getBoundingClientRect();
-        const dx = tgt.left - cur.left;
-        const dy = tgt.top  - cur.top;
-        titleEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
-        titleEl.style.transform = 'translateY(50%) translate(' + dx + 'px,' + dy + 'px)';
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            pageEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
+            pageEl.style.transform = 'translateY(0)';
+          });
+        });
 
-        // Content rises together with the title, not delayed after it.
-        document.body.classList.add('revealing');
-
-        // Reveal nav once the ascending title sweeps past its position.
-        const navLine = navEl.getBoundingClientRect().bottom;
-        let navShown = false, moving = true;
-        (function pass() {
-          const top = titleEl.getBoundingClientRect().top;
-          if (!navShown && top <= navLine) { navShown = true; navEl.style.opacity = '1'; if (switchEl) switchEl.style.opacity = '1'; }
-          if (moving) requestAnimationFrame(pass);
-        })();
-
-        setTimeout(function () { moving = false; reveal(); }, 1000);
+        setTimeout(function () {
+          document.body.classList.remove('preloading');
+          preload.remove();
+        }, 1000);
       }
 
+      if (!canShow) {
+        // Internal nav: nav and the theme switch never hide, they're shown
+        // right away. No counter, no clone — just slide the real page into
+        // place, so there's motion on screen from the first frame instead
+        // of a blank gap before the page appears.
+        slidePageIn();
+        return;
+      }
+
+      // Full entry: counter + clone letter-reveal (masked by #preload's
+      // opaque background), then hand off to the same slide as fast-intro.
       function finish() {
         countEl.style.opacity = '0';
-        setTimeout(move, 300);
+        setTimeout(function () {
+          titleEl.style.opacity = '0';
+          slidePageIn();
+        }, 300);
       }
 
       function run() {
@@ -477,23 +475,6 @@
           if (t < 1) requestAnimationFrame(frame);
           else finish();
         })(start);
-      }
-
-      if (!canShow) {
-        // Internal nav: nav and the theme switch never hide, they're shown
-        // right away. Skip the counter, show the title already fully formed
-        // at its half-visible bottom position, then run the same
-        // slide-into-place used by the full intro — so there's motion on
-        // screen from the first frame instead of a blank gap before the
-        // page dissolves in.
-        clearEnterState();
-        navEl.style.opacity = '1';
-        if (switchEl) switchEl.style.opacity = '1';
-        countEl.remove();
-        titleEl.style.transition = 'none';
-        titleEl.style.clipPath = 'inset(0 0% 0 0)';
-        requestAnimationFrame(move);
-        return;
       }
 
       if (document.fonts && document.fonts.ready) {
