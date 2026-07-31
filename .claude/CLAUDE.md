@@ -18,7 +18,7 @@ Personal portfolio site for Andrey Beregovoy (designer). Six static HTML pages, 
 
 - Pure HTML + CSS + vanilla JS, all inline in each `.html` file — no shared JS/CSS files, so a fix usually needs to be applied per-page
 - Tailwind CSS via CDN (only on `index.html`)
-- Fonts: Inter + Fira Code from Google Fonts
+- Fonts: Jost, Montserrat, Roboto Mono from Google Fonts (see Typography below) — `rutube.html` is the one exception, still on an older Archivo/Space Grotesk/Fira Code system pending its own rework
 - Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`. `vercel.json` sets `cleanUrls: true` (site serves `/cases` not `/cases.html`; internal links still use the `.html` filename and are matched extension-agnostically by the nav JS, see below)
 
 ## Commands
@@ -26,6 +26,14 @@ Personal portfolio site for Andrey Beregovoy (designer). Six static HTML pages, 
 No build/lint/test tooling exists in this repo. To preview changes, open the `.html` file directly in a browser (no dev server required).
 
 ## CSS architecture
+
+### Typography
+Three Google Fonts, each with a fixed role — don't mix roles or introduce new sizes ad hoc, reuse these:
+- **Jost** — body text and UI labels. Nav links, small uppercase labels (e.g. `.hero-col-label`, `ОБЗОР`/`ЗАДАЧА`-style column headers): weight 300 (Light), 16px, uppercase, 0 letter-spacing. Body paragraphs/lists (`.bio-col`, `.manifesto-text`, `.hero-col-body`): weight 300 (Light), 20px, line-height 1.2 (120%), 0 letter-spacing. Section/slide headings one step up from a label (`.manifesto-label`, case-study intro headings): weight 200 (ExtraLight), 24px, uppercase, 0.08em (8%) letter-spacing.
+- **Montserrat** — display titles only (`.page-title`, `.stat-num`, case-study `.slide-title`). Weight 200 (ExtraLight), uppercase, `font-kerning: none`, line-height ~0.9 (90%), letter-spacing ~0.02–0.03em (2–3%). Sized in **`vw`, not px** (e.g. `.page-title{font-size:8.2vw}`) so it scales proportionally with viewport — the one exception to the "fixed px" rule below.
+- **Roboto Mono** — numeric counters (`#preload-count`) and small tracked mono labels only; used sparingly.
+
+Every size above is fixed px, calibrated at a 1440px reference width — only Montserrat display titles use `vw`. This mirrors the fluid-grid technique (`fr`-based multi-column layouts) used elsewhere in the CSS: proportions are pixel-exact at 1440px and scale from there.
 
 ### Theme system
 Light theme is the default (`:root`). Dark theme applied via `html.dark`, toggled by the `.theme-switch` LIGHT|DARK buttons and persisted in `localStorage['bvg_theme']`. All colours are CSS variables (`--bg`, `--fg`, etc.) redefined per-theme. An early blocking `<script>` in `<head>` (before first paint, on every page) reads `bvg_theme` and adds `html.dark` immediately, to avoid a flash of the wrong theme. Accent colour: `#e05c18`.
