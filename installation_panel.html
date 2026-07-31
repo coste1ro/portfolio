@@ -291,6 +291,10 @@
       prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
       nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); } });
       render();
+
+      document.querySelector('.viewer-nav a').addEventListener('click', function () {
+        try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+      });
     })();
   </script>
 
