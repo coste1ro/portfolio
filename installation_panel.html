@@ -6,632 +6,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Панель инсталляций&nbsp;— Andrey Beregovoy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fira+Code:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
+  <script>
+    try { if (localStorage.getItem('bvg_theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
     :root {
-      --page-bg: #0c0c0c;
-      --page-fg: #c8c8c8;
-      --page-fg-bright: #e8e8e8;
-      --page-border: #1e1e1e;
-      --accent: #e05c18;
-      --card-bg: #0f0f0f;
-      --card-border: rgba(255,255,255,0.06);
-      --hero-bg: #0D0908;
-      --hero-fg: #fff;
-      --hero-muted: rgba(255,255,255,0.5);
-      --nav-text: rgba(255,255,255,0.75);
-      --placeholder-bg: #161616;
-      --placeholder-border: #222;
+      --bg: #ffffff;
+      --fg: #000000;
     }
-    body.light {
-      --page-bg: #f8f7f4;
-      --page-fg: #5a5a5a;
-      --page-fg-bright: #111;
-      --page-border: #e5e2dc;
-      --accent: #7d18e2;
-      --card-bg: #ffffff;
-      --card-border: rgba(0,0,0,0.07);
-      --hero-bg: #f8f7f4;
-      --hero-fg: #111;
-      --hero-muted: rgba(60,60,60,0.6);
-      --nav-text: rgba(20,20,20,0.7);
-      --placeholder-bg: #eeece9;
-      --placeholder-border: #dedad4;
+    html.dark {
+      --bg: #0c0c0c;
+      --fg: #f0f0f0;
     }
 
     body {
-      background: var(--page-bg);
-      color: var(--page-fg);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Jost', sans-serif;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.35s, color 0.35s;
+      transition: background 0.3s, color 0.3s;
     }
     a { color: inherit; text-decoration: none; }
     * { cursor: none !important; }
 
-    /* ── Cursor ── */
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-outer { display: none !important; }
+      * { cursor: auto !important; }
+    }
     #cursor-outer {
       position: fixed; top: 0; left: 0;
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 1px solid rgba(180,180,180,0.5);
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1.5px solid #fff;
       pointer-events: none; z-index: 99999;
-      transform: translate(-50%,-50%);
-      will-change: left, top;
-      display: flex; align-items: center; justify-content: center;
-      transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
-                  height 0.45s cubic-bezier(0.16,1,0.3,1),
-                  background 0.35s, border-color 0.35s;
-    }
-    #cursor-dot {
-      position: fixed; top: 0; left: 0;
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #fff; pointer-events: none; z-index: 99999;
-      transform: translate(-50%,-50%);
-      transition: opacity 0.2s;
+      will-change: transform;
+      mix-blend-mode: difference;
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
 
-    /* ── Noise overlay ── */
-    .noise-overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; z-index: 9990; opacity: 0.09;
-      background-repeat: repeat; background-size: 120px 120px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    /* ── Viewer controls ── */
+    .viewer-nav {
+      position: fixed; top: 40px; right: 40px; z-index: 100;
+      display: flex; align-items: center; gap: 24px;
     }
-    body.light .noise-overlay { opacity: 0.05; }
+    .viewer-nav button, .viewer-nav a {
+      background: none; border: 0; padding: 0; display: flex;
+      color: var(--fg); transition: opacity 0.2s ease;
+    }
+    .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
+    .viewer-nav svg { width: 20px; height: 20px; }
 
-    /* ── Header ── */
-    .header-nav-link {
-      font-size: 13px; font-weight: 500;
-      color: var(--nav-text); letter-spacing: 0.01em;
-      transition: color 0.2s; padding: 4px 0;
+    /* ── Slides ── */
+    .slides {
+      display: flex; width: 300%; height: 100%;
+      transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
+      will-change: transform;
     }
-    .header-nav-link:hover { color: var(--hero-fg); }
-    .header-nav-link.active { color: var(--accent); }
+    .slide {
+      flex: 0 0 33.3334%; height: 100%;
+      position: relative; overflow: hidden;
+    }
 
-    #theme-btn {
-      position: relative; display: inline-flex; align-items: center;
-      padding: 4px; gap: 2px; height: 36px; border-radius: 100px;
-      background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08);
-      transition: background 0.4s, border-color 0.4s; flex-shrink: 0;
-    }
-    #toggle-slider {
-      position: absolute; left: 4px; width: 26px; height: 26px;
-      border-radius: 50%; background: rgba(255,255,255,0.14);
-      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
-      transform: translateX(0); pointer-events: none;
-    }
-    .toggle-icon {
-      width: 26px; height: 26px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: color 0.3s; flex-shrink: 0;
-      color: rgba(255,255,255,0.3); position: relative; z-index: 1;
-    }
-    .toggle-icon.toggle-on { color: #fff; }
-
-    /* ── Case Hero ── */
-    .case-hero {
-      background: var(--hero-bg);
-      display: flex; flex-direction: column;
-      position: relative;
-      transition: background 0.35s;
-    }
-    .case-hero-body {
-      padding: 40px 48px 56px;
-    }
-    .case-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 20px;
-      transition: color 0.35s;
-    }
-    .case-hero-title {
-      font-family: 'Archivo', sans-serif;
-      font-size: clamp(32px, 4.4vw, 68px);
-      font-weight: 600; color: var(--hero-fg);
-      line-height: 1.05; letter-spacing: -0.02em;
-      margin-bottom: 24px; transition: color 0.35s;
-    }
-    .case-meta-bar {
-      display: grid; grid-template-columns: 1fr 1fr;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      margin-top: 8px; transition: border-color 0.35s;
-    }
-    body.light .case-meta-bar { border-color: rgba(0,0,0,0.1); }
-    .case-meta-item {
-      padding: 20px 24px 20px 0;
-      border-right: 1px solid rgba(255,255,255,0.1);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      transition: border-color 0.35s;
-    }
-    .case-meta-item:nth-child(2n) { padding: 20px 0 20px 24px; border-right: none; }
-    .case-meta-item:nth-child(n+3) { border-bottom: none; }
-    body.light .case-meta-item { border-color: rgba(0,0,0,0.1); }
-    .case-meta-label {
-      font-size: 9px; font-weight: 600;
+    .eyebrow {
+      position: absolute; top: 44px; left: 40px;
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 300; font-size: 12px;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 4px;
-      transition: color 0.35s;
-    }
-    .case-meta-value {
-      font-size: 13px; font-weight: 400;
-      color: var(--hero-muted); transition: color 0.35s;
+      opacity: 0.55;
     }
 
-    /* ── Content layout ── */
-    .cs-section {
-      padding: 96px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cs-inner { max-width: 800px; }
-    .cs-section-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 32px;
-      transition: color 0.35s;
-    }
-    .cs-heading {
-      font-family: 'Archivo', sans-serif;
-      font-size: clamp(26px, 3vw, 42px);
-      font-weight: 600; color: var(--page-fg-bright);
-      letter-spacing: -0.02em; line-height: 1.15;
-      margin-bottom: 24px; transition: color 0.35s;
-    }
-    .cs-body {
-      font-size: 15px; line-height: 1.75;
-      color: var(--page-fg); max-width: 640px;
-      transition: color 0.35s;
-    }
-    .cs-body + .cs-body { margin-top: 16px; }
-
-    /* ── Pull quote ── */
-    .cs-quote {
-      font-size: clamp(22px, 2.8vw, 38px);
-      font-weight: 400; font-style: italic;
-      color: var(--page-fg-bright);
-      letter-spacing: -0.01em; line-height: 1.35;
-      max-width: 780px;
-      padding-left: 28px;
-      border-left: 2px solid var(--accent);
-      transition: color 0.35s, border-color 0.35s;
+    .slide-title {
+      position: absolute; left: 40px; bottom: 32px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: clamp(30px, 5.4vw, 66px);
+      letter-spacing: 0.02em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
     }
 
-    /* ── Grid layouts ── */
-    .cs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-
-    /* ── Force items ── */
-    .force-item {
-      font-size: 14px; color: var(--page-fg);
-      padding-left: 14px; position: relative;
-      line-height: 1.6; transition: color 0.35s;
-    }
-    .force-item::before {
-      content: '–';
-      position: absolute; left: 0;
-      color: rgba(255,255,255,0.2);
-    }
-    body.light .force-item::before { color: rgba(0,0,0,0.2); }
-
-    /* ── Sticky case blocks ── */
-    .cb-block {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      gap: 96px;
-      align-items: start;
-      padding: 64px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cb-text {
-      position: sticky; top: 56px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .cb-num {
-      font-family: 'Fira Code', monospace;
-      font-size: 11px; font-weight: 700;
-      color: var(--accent); letter-spacing: 0.04em;
-      transition: color 0.35s;
-    }
-    .cb-num::before { content: '('; }
-    .cb-num::after  { content: ')'; }
-    .cb-title {
-      font-size: clamp(22px, 2.2vw, 30px);
-      font-weight: 500; color: var(--page-fg-bright);
-      letter-spacing: -0.02em; line-height: 1.15;
-      transition: color 0.35s;
-    }
-    .cb-desc {
-      font-size: 13px; line-height: 1.7;
-      color: var(--page-fg); transition: color 0.35s;
-    }
-    .cb-media { display: flex; flex-direction: column; gap: 12px; }
-    @keyframes img-scale-in {
-      from { transform: scale(0.9); opacity: 0.4; }
-      to   { transform: scale(1);   opacity: 1;   }
-    }
-    .cb-media img {
-      width: 100%; display: block; border-radius: 16px;
-      animation: img-scale-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 45%;
-    }
-
-    /* ── Results list ── */
-    .cs-results { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
-    .cs-result-item {
-      display: flex; align-items: baseline; gap: 16px;
-      padding: 20px 0;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cs-result-item:last-child { border-bottom: 1px solid var(--page-border); }
-    .cs-result-num {
-      font-family: 'Fira Code', monospace;
-      font-size: 11px; font-weight: 700;
-      color: var(--accent); flex-shrink: 0; width: 24px;
-      transition: color 0.35s;
-    }
-    .cs-result-text { font-size: 14px; color: var(--page-fg); line-height: 1.5; transition: color 0.35s; }
-
-    /* ── More projects ── */
-    .cs-more-grid {
+    /* ── Slide 1: hero ── */
+    .slide-hero {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 24px; margin-top: 40px;
+      height: 100%; align-items: stretch;
     }
-    .cs-more-card {
-      display: block; border-radius: 16px; overflow: hidden;
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      transition: border-color 0.2s, transform 0.2s, background 0.35s;
+    .hero-media {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 100px 32px 140px 40px;
     }
-    .cs-more-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-3px); }
-    body.light .cs-more-card:hover { border-color: rgba(0,0,0,0.16); }
-    .cs-more-card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; display: block; }
-    .cs-more-card-body { padding: 20px 22px 24px; }
-    .cs-more-card-tag {
-      font-size: 10px; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: #666; margin-bottom: 6px;
+    .hero-media img { max-width: 100%; max-height: 62vh; width: auto; display: block; }
+    .hero-copy {
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 40px; padding: 100px 40px 140px 32px;
     }
-    .cs-more-card-title {
-      font-size: 18px; font-weight: 600;
-      color: var(--page-fg-bright); letter-spacing: -0.01em;
-      transition: color 0.35s;
+    .hero-heading {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300; font-size: clamp(18px, 2vw, 28px);
+      line-height: 1.3; letter-spacing: 0.01em;
+      text-transform: uppercase; max-width: 480px;
     }
+    .hero-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .hero-col-label {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 300; font-size: 11px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      opacity: 0.5; margin-bottom: 16px;
+    }
+    .hero-col-body { font-size: 13.5px; line-height: 1.65; font-weight: 300; }
+    .hero-col-list { margin-top: 14px; padding-left: 16px; font-size: 13px; line-height: 1.75; font-weight: 300; }
+    .hero-col-list li { margin-bottom: 4px; }
 
-    /* ── Contact + footer ── */
-    .contact-section {
-      padding: 64px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
+    /* ── Slide 2: screens strip ── */
+    .slide-strip {
+      display: flex; flex-direction: column; height: 100%;
+      padding: 100px 40px 140px;
     }
-    footer {
-      border-top: 1px solid var(--page-border);
-      padding: 20px 48px;
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px; align-items: start;
-      transition: border-color 0.35s;
+    .strip-track {
+      flex: 1 1 auto; display: flex; align-items: flex-start;
+      gap: 32px; margin-top: 56px;
+      overflow-x: auto; overflow-y: hidden;
+      scrollbar-width: none;
     }
-    .footer-label {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: 0.13em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 3px; transition: color 0.35s;
-    }
-    .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
+    .strip-track::-webkit-scrollbar { display: none; }
+    .strip-item { flex: 0 0 240px; display: flex; flex-direction: column; gap: 12px; }
+    .strip-num { font-family: 'Roboto Mono', monospace; font-weight: 300; font-size: 11px; opacity: 0.5; }
+    .strip-item img { width: 100%; display: block; aspect-ratio: 16/10; object-fit: cover; object-position: top left; background: #111; }
+    .strip-caption { font-size: 12px; line-height: 1.5; font-weight: 300; opacity: 0.75; }
 
-    @media (max-width: 720px) {
-      header { padding: 16px 20px !important; }
-      .case-hero-body { padding: 28px 20px 48px; }
-      .case-hero-title { white-space: normal; font-size: clamp(28px, 8vw, 48px); }
-      .cs-section { padding: 64px 20px; }
-      .cs-split { grid-template-columns: 1fr; }
-      .cs-more-grid { grid-template-columns: 1fr; }
-      .cb-block { grid-template-columns: 1fr; gap: 32px; padding: 64px 20px; }
-      .cb-text { position: static; }
-      .contact-section { padding: 48px 20px; }
-      footer { padding: 20px; grid-template-columns: 1fr; }
+    /* ── Slide 3: callout grid ── */
+    .slide-portal {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; height: 100%;
+      padding: 0 40px; column-gap: 56px;
+    }
+    .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; height: 52vh; }
+    .portal-num { font-family: 'Roboto Mono', monospace; font-weight: 300; font-size: 13px; opacity: 0.5; margin-bottom: 10px; }
+    .portal-text { font-size: 14px; line-height: 1.55; font-weight: 300; max-width: 220px; }
+    .portal-media { display: flex; align-items: center; justify-content: center; }
+    .portal-media img { max-height: 52vh; width: auto; max-width: 100%; display: block; }
+
+    @media (max-width: 900px) {
+      .slide-hero { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
+      .hero-media, .hero-copy { padding: 90px 24px 24px; }
+      .hero-cols { grid-template-columns: 1fr; gap: 24px; }
+      .slide-portal { grid-template-columns: 1fr; row-gap: 24px; padding: 90px 24px 140px; height: auto; overflow-y: auto; }
+      .portal-callouts { flex-direction: row; justify-content: space-between; height: auto; gap: 16px; }
+      .eyebrow, .slide-title { left: 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── HERO ── -->
-  <section class="case-hero">
-    <header style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
-      <nav style="display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:28px;">
-          <a href="index.html" class="header-nav-link">Главная</a>
-          <a href="index.html#work" class="header-nav-link active">Проекты</a>
-          <a href="index.html#about" class="header-nav-link">Обо мне</a>
-        </div>
-        <button id="theme-btn" aria-label="Toggle theme">
-          <span id="toggle-slider"></span>
-          <span id="toggle-moon" class="toggle-icon toggle-on">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </span>
-          <span id="toggle-sun" class="toggle-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </span>
-        </button>
-      </nav>
-    </header>
-
-    <div class="case-hero-body">
-      <div class="case-label">Продуктовый дизайн · 2025 · NDA</div>
-      <h1 class="case-hero-title">Панель инсталляций</h1>
-      <div class="case-meta-bar">
-        <div class="case-meta-item">
-          <div class="case-meta-label">Роль</div>
-          <div class="case-meta-value">Продуктовый дизайнер</div>
-        </div>
-        <div class="case-meta-item">
-          <div class="case-meta-label">Платформа</div>
-          <div class="case-meta-value">Веб (back-office)</div>
-        </div>
-        <div class="case-meta-item">
-          <div class="case-meta-label">Инструменты</div>
-          <div class="case-meta-value">Figma</div>
-        </div>
-        <div class="case-meta-item">
-          <div class="case-meta-label">Контекст</div>
-          <div class="case-meta-value">Коммерческий проект</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── OVERVIEW ── -->
-  <section class="cs-section">
-    <div class="cs-split" style="align-items:center;">
-      <div>
-        <div class="cs-section-label">Обзор</div>
-        <h2 class="cs-heading">Административная панель для&nbsp;управления установкой оборудования</h2>
-        <p class="cs-body">Продукт&nbsp;— внутренний инструмент для&nbsp;отслеживания процесса монтажа умных камер и&nbsp;устройств на&nbsp;транспортные средства. Менеджеры контролируют статус установок в&nbsp;разрезе компаний-клиентов, типов транспорта и&nbsp;команд установщиков.</p>
-      </div>
-      <div style="border-radius:16px; overflow:hidden;">
-        <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" style="width:100%; display:block;">
-      </div>
-    </div>
-  </section>
-
-  <!-- ── CHALLENGE ── -->
-  <section class="cs-section">
-    <div class="cs-split" style="align-items:center;">
-      <div style="border-radius:16px; overflow:hidden;">
-        <img src="projects/installation_panel/Installers.png" style="width:100%; display:block;">
-      </div>
-      <div>
-        <div class="cs-section-label">Задача</div>
-        <h2 class="cs-heading">Три сущности&nbsp;— один интерфейс</h2>
-        <p class="cs-body">Данные об&nbsp;установках были разрозненны: группы инсталляций, команды установщиков и&nbsp;транспортные средства существовали по&nbsp;отдельности. Задача&nbsp;— собрать три взаимосвязанных модуля в&nbsp;единый портал.</p>
-        <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
-          <div class="force-item">просматривать группы установок с&nbsp;детализацией по&nbsp;отделам и&nbsp;статусам;</div>
-          <div class="force-item">управлять реестром установщиков: список, профиль, создание;</div>
-          <div class="force-item">видеть привязанные транспортные средства и&nbsp;их типы;</div>
-          <div class="force-item">провалиться из&nbsp;любой сущности в&nbsp;связанную за&nbsp;один клик.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PULL QUOTE ── -->
-  <section class="cs-section" style="padding-top:0; border-top:none;">
-    <blockquote class="cs-quote">
-      Три сущности, три таблицы в&nbsp;разных местах&nbsp;— задача собрать их так, чтобы менеджер не&nbsp;терял контекст при&nbsp;переходе между ними.
-    </blockquote>
-  </section>
-
-  <!-- ── SOLUTIONS INTRO ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <div class="cs-section-label">Решения</div>
-      <h2 class="cs-heading">5 экранов&nbsp;— сквозная навигация по&nbsp;трём модулям</h2>
-      <p class="cs-body">Каждый модуль самодостаточен, но&nbsp;связан с&nbsp;остальными: из&nbsp;группы установок&nbsp;— в&nbsp;детали установки и&nbsp;установщика, из&nbsp;установщика&nbsp;— в&nbsp;его транспортные средства.</p>
-    </div>
-  </section>
-
-  <!-- ── (01) ГРУППЫ УСТАНОВОК ── -->
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">01</div>
-      <div class="cb-title">Группы установок</div>
-      <p class="cb-desc">Сводный список всех групп инсталляций: клиент, тип транспорта, статус, количество единиц. Фильтрация по&nbsp;статусу и&nbsp;компании. Отправная точка для&nbsp;любого сценария менеджера.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" alt="Список групп установок">
-    </div>
+  <div class="viewer-nav">
+    <button type="button" class="viewer-prev" aria-label="Предыдущий экран">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
+    </button>
+    <button type="button" class="viewer-next" aria-label="Следующий экран">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
+    </button>
+    <a href="cases.html" aria-label="Закрыть">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>
+    </a>
   </div>
 
-  <!-- ── (02) ДЕТАЛИ УСТАНОВКИ ── -->
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">02</div>
-      <div class="cb-title">Детали установки и&nbsp;отдела</div>
-      <p class="cb-desc">Из&nbsp;списка&nbsp;— в&nbsp;конкретную инсталляцию: назначенные установщики, статус по&nbsp;каждому ТС, дата, отдел-заказчик. Отдельный вид по&nbsp;отделу собирает все его установки в&nbsp;одном месте.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки">
-      <img src="projects/installation_panel/Installation%20Groups%20-%20Department.png" alt="Вид по отделу">
-    </div>
-  </div>
+  <div class="slides">
 
-  <!-- ── (03) УСТАНОВЩИКИ ── -->
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">03</div>
-      <div class="cb-title">Реестр установщиков</div>
-      <p class="cb-desc">Список всех монтажников с&nbsp;поиском: имя, статус, количество активных заданий, компания. Кликабельная строка&nbsp;— переход в&nbsp;профиль конкретного установщика.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/installation_panel/Installers.png" alt="Список установщиков">
-    </div>
-  </div>
-
-  <!-- ── (04) ПРОФИЛЬ + СОЗДАНИЕ ── -->
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">04</div>
-      <div class="cb-title">Профиль и&nbsp;создание установщика</div>
-      <p class="cb-desc">Профиль&nbsp;— вся история и&nbsp;текущая нагрузка установщика: назначенные ТС, группы, контакты. Форма создания нового идентична по&nbsp;структуре профилю&nbsp;— один и&nbsp;тот же&nbsp;мыслительный паттерн для&nbsp;чтения и&nbsp;записи.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/installation_panel/Installers%20-%20Person.png" alt="Профиль установщика">
-      <img src="projects/installation_panel/Installers%20-%20Create%20New%20Populated.png" alt="Создание установщика">
-    </div>
-  </div>
-
-  <!-- ── (05) ТРАНСПОРТНЫЕ СРЕДСТВА ── -->
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">05</div>
-      <div class="cb-title">Транспортные средства</div>
-      <p class="cb-desc">Список всех ТС с&nbsp;типом, номером, статусом установки и&nbsp;назначенным установщиком. Разные типы транспорта&nbsp;— единый формат карточки; визуальная иконка типа не&nbsp;даёт перепутать при&nbsp;больших списках.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/installation_panel/Vehicles%20-%20List.png" alt="Список транспортных средств">
-    </div>
-  </div>
-
-  <!-- ── RESULT ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <h2 class="cs-heading">Единый портал вместо трёх разрозненных таблиц</h2>
-    </div>
-    <div class="cs-results">
-      <div class="cs-result-item">
-        <span class="cs-result-num">01</span>
-        <span class="cs-result-text">Менеджер видит все группы установок в&nbsp;одном месте и&nbsp;фильтрует по&nbsp;статусу и&nbsp;клиенту</span>
+    <!-- ── SLIDE 1 — HERO ── -->
+    <section class="slide slide-hero">
+      <div class="hero-media">
+        <img src="projects/installation_panel/Installers.png" alt="Панель инсталляций — реестр установщиков">
       </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">02</span>
-        <span class="cs-result-text">Из&nbsp;любой группы&nbsp;— в&nbsp;детали конкретной инсталляции и&nbsp;отдела за&nbsp;один клик, без&nbsp;потери контекста</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">03</span>
-        <span class="cs-result-text">Реестр установщиков с&nbsp;поиском; профиль и&nbsp;форма создания используют одну и&nbsp;ту же&nbsp;структуру</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">04</span>
-        <span class="cs-result-text">Транспортные средства разных типов&nbsp;— в&nbsp;едином формате с&nbsp;визуальным различением по&nbsp;иконке типа</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">05</span>
-        <span class="cs-result-text">Три модуля связаны сквозными переходами: установка → установщик → транспорт&nbsp;— в&nbsp;любую сторону</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── REFLECTION ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <div class="cs-section-label">Рефлексия</div>
-      <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Что вынес</h2>
-      <p class="cs-body">Когда сущности связаны между собой, важно сначала нарисовать схему переходов, а&nbsp;не&nbsp;сразу экраны. Иначе получаешь пять отдельных страниц вместо единого продукта&nbsp;— и&nbsp;переделываешь навигацию в&nbsp;конце.</p>
-      <p class="cs-body" style="margin-top:16px;">Форма создания и&nbsp;профиль должны использовать одинаковую структуру полей&nbsp;— пользователь, который читает профиль, должен без&nbsp;обучения понимать, как заполнять форму. Это снижает когнитивную нагрузку и&nbsp;ошибки при&nbsp;вводе.</p>
-    </div>
-  </section>
-
-  <!-- ── MORE PROJECTS ── -->
-  <section class="cs-section">
-    <div class="cs-section-label">Другие проекты</div>
-    <div class="cs-more-grid">
-      <a href="rutube.html" class="cs-more-card">
-        <img src="projects/rutube.png" alt="Rutube Redesign">
-        <div class="cs-more-card-body">
-          <div class="cs-more-card-tag">Видеоплатформа · 2025</div>
-          <div class="cs-more-card-title">Rutube&nbsp;— Редизайн подписки</div>
-        </div>
-      </a>
-      <a href="auditors_monitoring.html" class="cs-more-card">
-        <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
-        <div class="cs-more-card-body">
-          <div class="cs-more-card-tag">Внутренний инструмент · 2026</div>
-          <div class="cs-more-card-title">Мониторинг аудиторов</div>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- ── CONTACT + FOOTER ── -->
-  <section class="contact-section">
-    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px;">
-      <div>
-        <a href="mailto:sa1nteau@mail.ru" style="font-size:clamp(18px,2vw,28px); font-weight:500; color:var(--page-fg); transition:color .2s;">
-          sa1nteau@mail.ru
-        </a>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Ищете дизайнера?</div>
-        <div style="display:flex; gap:16px; justify-content:flex-end;">
-          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
-          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
-          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Threads</a>
+      <div class="hero-copy">
+        <h1 class="hero-heading">Административная панель для&nbsp;управления установкой оборудования</h1>
+        <div class="hero-cols">
+          <div>
+            <div class="hero-col-label">Обзор</div>
+            <p class="hero-col-body">Продукт&nbsp;— внутренний инструмент для&nbsp;отслеживания процесса монтажа умных камер и&nbsp;устройств на&nbsp;транспортные средства. Менеджеры контролируют статус установок в&nbsp;разрезе компаний-клиентов, типов транспорта и&nbsp;команд установщиков.</p>
+          </div>
+          <div>
+            <div class="hero-col-label">Задача</div>
+            <p class="hero-col-body">Данные по&nbsp;установкам были раскиданы по&nbsp;разным местам: разделы жили каждый сам по&nbsp;себе. Нужно было собрать всё в&nbsp;единый портал&nbsp;— с&nbsp;тремя связанными модулями:</p>
+            <ul class="hero-col-list">
+              <li>группы установок;</li>
+              <li>реестр установщиков;</li>
+              <li>привязанный транспорт.</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-  <footer>
-    <div><div class="footer-label">Andrey Beregovoy</div><div class="footer-val">2022&nbsp;— 2026</div></div>
-    <div><div class="footer-label">Опыт</div><div class="footer-val">3 года в&nbsp;UX/UI</div></div>
-    <div style="text-align:right;"><div class="footer-label">Открыт к&nbsp;предложениям</div><div class="footer-val">Удалённо · Россия</div></div>
-  </footer>
+      <div class="slide-title">Installation Panel</div>
+    </section>
 
-  <div class="noise-overlay"></div>
+    <!-- ── SLIDE 2 — SCREENS STRIP ── -->
+    <section class="slide slide-strip">
+      <div class="eyebrow" style="position:static;">6 экранов&nbsp;— сквозная навигация по&nbsp;трём модулям</div>
+      <div class="strip-track">
+        <div class="strip-item">
+          <span class="strip-num">[1]</span>
+          <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" alt="Список групп установок">
+          <p class="strip-caption">Группы установок&nbsp;— сводный список: клиент, тип транспорта, статус, количество единиц. Фильтр по&nbsp;статусу и&nbsp;компании&nbsp;— стартовая точка для&nbsp;менеджера.</p>
+        </div>
+        <div class="strip-item">
+          <span class="strip-num">[2]</span>
+          <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки">
+          <p class="strip-caption">Детали установки&nbsp;— из&nbsp;списка сразу в&nbsp;конкретную инсталляцию: установщики, статус по&nbsp;каждому ТС, дата, отдел-заказчик.</p>
+        </div>
+        <div class="strip-item">
+          <span class="strip-num">[3]</span>
+          <img src="projects/installation_panel/Installation%20Groups%20-%20Department.png" alt="Вид по отделу">
+          <p class="strip-caption">Детали отдела&nbsp;— собирает все установки конкретного отдела в&nbsp;одном месте.</p>
+        </div>
+        <div class="strip-item">
+          <span class="strip-num">[4]</span>
+          <img src="projects/installation_panel/Installers.png" alt="Список установщиков">
+          <p class="strip-caption">Реестр установщиков&nbsp;— список монтажников с&nbsp;поиском: имя, статус, число активных заданий, компания. Клик по&nbsp;строке&nbsp;— переход в&nbsp;профиль.</p>
+        </div>
+        <div class="strip-item">
+          <span class="strip-num">[5]</span>
+          <img src="projects/installation_panel/Installers%20-%20Person.png" alt="Профиль установщика">
+          <p class="strip-caption">Профиль установщика&nbsp;— вся история и&nbsp;текущая нагрузка: назначенные ТС, группы, контакты.</p>
+        </div>
+        <div class="strip-item">
+          <span class="strip-num">[5.1]</span>
+          <img src="projects/installation_panel/Installers%20-%20Create%20New%20Populated.png" alt="Создание установщика">
+          <p class="strip-caption">Создание установщика&nbsp;— форма идентична по&nbsp;структуре профилю: один и&nbsp;тот же&nbsp;паттерн для&nbsp;чтения и&nbsp;записи.</p>
+        </div>
+        <div class="strip-item">
+          <span class="strip-num">[6]</span>
+          <img src="projects/installation_panel/Vehicles%20-%20List.png" alt="Список транспортных средств">
+          <p class="strip-caption">Транспортные средства&nbsp;— список ТС: тип, номер, статус установки, назначенный установщик. Единый формат карточки для&nbsp;разных типов транспорта.</p>
+        </div>
+      </div>
+      <div class="slide-title">Installation Panel</div>
+    </section>
+
+    <!-- ── SLIDE 3 — CALLOUT GRID ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Единый портал вместо разрозненных таблиц</div>
+      <div class="portal-callouts">
+        <div>
+          <div class="portal-num">[1]</div>
+          <p class="portal-text">Менеджер видит все группы установок в&nbsp;одном месте и&nbsp;фильтрует по&nbsp;статусу и&nbsp;клиенту</p>
+        </div>
+        <div>
+          <div class="portal-num">[2]</div>
+          <p class="portal-text">Из&nbsp;любой группы&nbsp;— в&nbsp;детали конкретной инсталляции и&nbsp;отдела за&nbsp;один клик, без&nbsp;потери контекста</p>
+        </div>
+      </div>
+      <div class="portal-media">
+        <img src="projects/installation_panel/Installation%20Groups%20-%20Department.png" alt="Единый портал — вид по отделу">
+      </div>
+      <div class="portal-callouts">
+        <div>
+          <div class="portal-num">[3]</div>
+          <p class="portal-text">Реестр установщиков с&nbsp;поиском; профиль и&nbsp;форма создания используют одну и&nbsp;ту же&nbsp;структуру</p>
+        </div>
+        <div>
+          <div class="portal-num">[4]</div>
+          <p class="portal-text">Транспортные средства разных типов&nbsp;— в&nbsp;едином формате с&nbsp;визуальным различением по&nbsp;иконке типа</p>
+        </div>
+      </div>
+      <div class="slide-title">Installation Panel</div>
+    </section>
+
+  </div>
+
   <div id="cursor-outer"></div>
-  <div id="cursor-dot"></div>
 
   <script>
-    /* Cursor */
-    const ring = document.getElementById('cursor-outer');
-    const dot  = document.getElementById('cursor-dot');
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    document.addEventListener('mousemove', e => {
+    (function () {
+      var track = document.querySelector('.slides');
+      var slides = document.querySelectorAll('.slide');
+      var prevBtn = document.querySelector('.viewer-prev');
+      var nextBtn = document.querySelector('.viewer-next');
+      var idx = 0;
+      var total = slides.length;
+      function render() {
+        track.style.transform = 'translateX(-' + (idx * 100 / total) + '%)';
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === total - 1;
+      }
+      prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
+      nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); } });
+      render();
+    })();
+  </script>
+
+  <script>
+    var ring = document.getElementById('cursor-outer');
+    var mx = -100, my = -100;
+    var scale = 1, scaleTarget = 1, placed = false;
+    document.addEventListener('mousemove', function (e) {
       mx = e.clientX; my = e.clientY;
-      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      if (!placed) { placed = true; ring.style.opacity = '1'; }
     });
+    document.addEventListener('mousedown', function () { scaleTarget = 0.6; });
+    document.addEventListener('mouseup',   function () { scaleTarget = 1; });
     (function loop() {
-      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      scale += (scaleTarget - scale) * 0.2;
+      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
       requestAnimationFrame(loop);
     })();
-
-    /* Theme toggle */
-    const themeBtn = document.getElementById('theme-btn');
-    const moonIcon = document.getElementById('toggle-moon');
-    const sunIcon  = document.getElementById('toggle-sun');
-    const slider   = document.getElementById('toggle-slider');
-    let isDark = true;
-
-    function applyDark() {
-      document.body.classList.remove('light');
-      themeBtn.style.background = '#1a1a1a';
-      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
-      slider.style.transform = 'translateX(0)';
-      slider.style.background = 'rgba(255,255,255,0.14)';
-      moonIcon.classList.add('toggle-on'); sunIcon.classList.remove('toggle-on');
-      sunIcon.style.color = 'rgba(255,255,255,0.3)'; moonIcon.style.color = '';
-      dot.style.background = '#fff';
-      ring.style.borderColor = 'rgba(180,180,180,0.5)';
-    }
-    function applyLight() {
-      document.body.classList.add('light');
-      themeBtn.style.background = '#e2e2e2';
-      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
-      slider.style.transform = 'translateX(28px)';
-      slider.style.background = 'rgba(0,0,0,0.1)';
-      sunIcon.classList.add('toggle-on'); moonIcon.classList.remove('toggle-on');
-      sunIcon.style.color = '#444'; moonIcon.style.color = 'rgba(0,0,0,0.3)';
-      dot.style.background = '#111';
-      ring.style.borderColor = 'rgba(20,20,20,0.35)';
-    }
-    themeBtn.addEventListener('click', () => { isDark = !isDark; isDark ? applyDark() : applyLight(); });
   </script>
+
 </body>
 </html>
