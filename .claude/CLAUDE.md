@@ -4,24 +4,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal portfolio site for Andrey Beregovoy (designer). Four static HTML pages, no build step, no bundler, no npm.
+Personal portfolio site for Andrey Beregovoy (designer). Six static HTML pages, no build step, no bundler, no npm, no package.json — open any `.html` file directly or serve statically.
 
-- `index.html` — main portfolio page (hero, projects carousel, skills, contact, footer)
-- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html` — case study pages
-- `favicon.svg` — orange rounded square with cursor ring + dot
-- `projects/` — images organised per case study (`rutube/`, `auditors_monitoring/`, `installation_panel/`); some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`)
+- `index.html` — landing page: full-viewport hero with name + subtitle only
+- `cases.html` — case grid (`Cases` in nav), horizontally-scrolling `.case-item` cards linking to the three case study pages
+- `about.html` — bio page (`About` in nav): manifesto, photo + two-column bio text, stats row
+- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html` — case study detail pages
+- `favicon.svg` — orange rounded square with cursor ring + dot; `favicon-light.png`/`favicon-dark.png` swap via `prefers-color-scheme`
+- `projects/` — images organised per case study (`rutube/`, `auditors_monitoring/`, `installation_panel/`); some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Thumbnails/photos ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**, the `.webp` is what most browsers actually load
+- `logos/` — third-party tool logos (Claude, Figma, Lovable, Manus) used in the skills/tools section
 
 ## Tech stack
 
-- Pure HTML + CSS + vanilla JS, all inline in each `.html` file
+- Pure HTML + CSS + vanilla JS, all inline in each `.html` file — no shared JS/CSS files, so a fix usually needs to be applied per-page
 - Tailwind CSS via CDN (only on `index.html`)
 - Fonts: Inter + Fira Code from Google Fonts
-- Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`
+- Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`. `vercel.json` sets `cleanUrls: true` (site serves `/cases` not `/cases.html`; internal links still use the `.html` filename and are matched extension-agnostically by the nav JS, see below)
+
+## Commands
+
+No build/lint/test tooling exists in this repo. To preview changes, open the `.html` file directly in a browser (no dev server required).
 
 ## CSS architecture
 
 ### Theme system
-Dark theme is default. Light theme applied via `body.light`. All colours use CSS variables defined in `:root` (dark) and `body.light` blocks. Accent colour: `#e05c18`.
+Light theme is the default (`:root`). Dark theme applied via `html.dark`, toggled by the `.theme-switch` LIGHT|DARK buttons and persisted in `localStorage['bvg_theme']`. All colours are CSS variables (`--bg`, `--fg`, etc.) redefined per-theme. An early blocking `<script>` in `<head>` (before first paint, on every page) reads `bvg_theme` and adds `html.dark` immediately, to avoid a flash of the wrong theme. Accent colour: `#e05c18`.
 
 ### Cursor
 - `* { cursor: none !important; }` hides native cursor globally on all pages
@@ -36,6 +43,21 @@ Breakpoint: `@media (max-width: 720px)`. Skills grid uses `display: contents` on
 - Meta-bar: CSS Grid `grid-template-columns: 1fr 1fr`, borders via `nth-child(2n)` / `nth-child(n+3)`
 - Hero title: `white-space: normal; font-size: clamp(28px, 8vw, 48px)` at mobile
 - Scroll reveal: `animation-timeline: view()` with `animation-range: entry 0% entry 45%`
+
+## Page navigation & transitions
+
+`index.html`, `cases.html`, `about.html` share a hand-rolled intro/transition system, duplicated inline per page (no shared JS file). Understanding it requires reading the same block in all three:
+
+- **Reload/direct-visit** plays the full intro: a counter (`#preload-count`, 000→100), then the title/name reveals, driven by `run()`.
+- **Internal nav clicks** (nav-link → another of these 3 pages) skip the counter. A click handler sets `sessionStorage['bvg_nav'] = '1'` before navigating; an early `<head>` script on the destination page reads and clears that flag into `window.__bvgInternal`, and `shouldPreload()` (`return !window.__bvgInternal`) decides which path to take.
+- **`cases.html`/`about.html`** use `slidePageIn()`: the entire `.page` — title *and* content together, as literal sibling DOM, not separate clones — is rigid-transformed up from off-screen in one `translateY` animation. This replaced an earlier design where title and content animated separately (via measured clone landing) and visibly collided — don't reintroduce separate clone/landing animations for title vs. content on these two pages.
+- **`index.html`** intentionally still uses the older mechanic: a `#preload-name` clone measures `dx`/`dy` and slides onto `.hero-name` (`move()`), while `nav`/`.hero-subtitle`/`.theme-switch` reveal via a sweep check against the clone's position (`reveal()`). This was left as-is because the subtitle reveal is opacity-only with no competing transform, so it never had the collision bug that motivated `slidePageIn()` on the other two pages — don't unify it with `slidePageIn()` without a reason.
+- `html.entering .page`/`.hero { opacity: 0 }` is the **only** pre-paint hide rule — `nav` and `.theme-switch` are deliberately *not* in it, so they render at natural opacity from the first frame and never flicker/disappear during navigation. Don't add them back to that selector.
+- `html.no-motion` (set via `clearEnterState()`) forces `transition: none !important` on nav/.page(or .hero)/.theme-switch — this is the `prefers-reduced-motion` / instant-reveal path.
+- Exit animation (leaving the current page) only fades the main content element (`opacity 0.35s ease`) — nav and `.theme-switch` are never faded on exit either.
+- Nav self-clicks (link to the page you're already on) must call `e.preventDefault()` and no-op — otherwise it falls through to a real browser navigation that skips the `bvg_nav` flag and replays the full counter intro.
+
+If you change this system on one page, check whether the same fix applies on the other two — there is no shared module to edit once, and (per above) `index.html` deliberately diverges from `cases.html`/`about.html`.
 
 ## Do NOT touch
 
