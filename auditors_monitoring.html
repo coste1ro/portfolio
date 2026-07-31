@@ -129,14 +129,14 @@
 
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
-    .strip-track {
-      position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
-      display: flex; justify-content: center; align-items: flex-start;
-      gap: 40px; padding: 0 40px;
-      overflow-x: auto; overflow-y: hidden;
-      scrollbar-width: none;
+    .strip-viewport {
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
+      overflow: hidden;
     }
-    .strip-track::-webkit-scrollbar { display: none; }
+    .strip-track {
+      display: flex; align-items: flex-start; gap: 40px;
+      will-change: transform;
+    }
     .strip-item { flex: 0 0 528px; display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
@@ -221,41 +221,43 @@
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
       <div class="eyebrow">5 экранов&nbsp;— один маршрут менеджера</div>
-      <div class="strip-track">
-        <div class="strip-item">
-          <span class="strip-num">[1]</span>
-          <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Обзорная карта аудиторов">
-          <p class="strip-caption">Карта всех аудиторов&nbsp;— каждый пин показывает статус цветом иконки. Фильтры «Группа» и&nbsp;«Статус» сверху&nbsp;— менеджер видит всех сразу, без&nbsp;поисков вручную.</p>
-        </div>
-        <div class="strip-item">
-          <span class="strip-num">[1.1]</span>
-          <img src="projects/auditors_monitoring/pin%20coding%20system.png" alt="Система кодирования пинов">
-          <p class="strip-caption">Цветовое кодирование пинов.</p>
-        </div>
-        <div class="strip-item">
-          <span class="strip-num">[2]</span>
-          <img src="projects/auditors_monitoring/02%20auditors%20list%20popup.png" alt="Список аудиторов и карточка">
-          <p class="strip-caption">Список + карточка аудитора&nbsp;— клик по&nbsp;строке или по&nbsp;пину на&nbsp;карте ведёт в&nbsp;одну и&nbsp;ту же&nbsp;карточку: статус, устройство, версия приложения, свежесть данных.</p>
-        </div>
-        <div class="strip-item">
-          <span class="strip-num">[3]</span>
-          <img src="projects/auditors_monitoring/03%20auditors%20route.png" alt="Маршрут аудитора">
-          <p class="strip-caption">Маршрут аудитора за&nbsp;день&nbsp;— путь по&nbsp;посещённым точкам, время в&nbsp;пути между ними видно по&nbsp;клику на&nbsp;отрезок.</p>
-        </div>
-        <div class="strip-item">
-          <span class="strip-num">[4]</span>
-          <img src="projects/auditors_monitoring/04%20tt%20details%20list.png" alt="Детали торговой точки — список">
-          <p class="strip-caption">Детали торговой точки&nbsp;— статус сбора, вывеска, назначенные аудиторы, даты плана и&nbsp;визита.</p>
-        </div>
-        <div class="strip-item">
-          <span class="strip-num">[4.1]</span>
-          <img src="projects/auditors_monitoring/05%20tt%20details%20popup.png" alt="Детали торговой точки — попап">
-          <p class="strip-caption">Тот же&nbsp;объём данных в&nbsp;модальном виде&nbsp;— доступ одинаковый с&nbsp;общей карты и&nbsp;с&nbsp;карты конкретного аудитора.</p>
-        </div>
-        <div class="strip-item">
-          <span class="strip-num">[5]</span>
-          <img src="projects/auditors_monitoring/06%20legend.png" alt="Легенда карты">
-          <p class="strip-caption">Легенда карты&nbsp;— разбита по&nbsp;смысловым группам, а&nbsp;не&nbsp;единым плоским списком.</p>
+      <div class="strip-viewport">
+        <div class="strip-track">
+          <div class="strip-item">
+            <span class="strip-num">[1]</span>
+            <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Обзорная карта аудиторов">
+            <p class="strip-caption">Карта всех аудиторов&nbsp;— каждый пин показывает статус цветом иконки. Фильтры «Группа» и&nbsp;«Статус» сверху&nbsp;— менеджер видит всех сразу, без&nbsp;поисков вручную.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[1.1]</span>
+            <img src="projects/auditors_monitoring/pin%20coding%20system.png" alt="Система кодирования пинов">
+            <p class="strip-caption">Цветовое кодирование пинов.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[2]</span>
+            <img src="projects/auditors_monitoring/02%20auditors%20list%20popup.png" alt="Список аудиторов и карточка">
+            <p class="strip-caption">Список + карточка аудитора&nbsp;— клик по&nbsp;строке или по&nbsp;пину на&nbsp;карте ведёт в&nbsp;одну и&nbsp;ту же&nbsp;карточку: статус, устройство, версия приложения, свежесть данных.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[3]</span>
+            <img src="projects/auditors_monitoring/03%20auditors%20route.png" alt="Маршрут аудитора">
+            <p class="strip-caption">Маршрут аудитора за&nbsp;день&nbsp;— путь по&nbsp;посещённым точкам, время в&nbsp;пути между ними видно по&nbsp;клику на&nbsp;отрезок.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[4]</span>
+            <img src="projects/auditors_monitoring/04%20tt%20details%20list.png" alt="Детали торговой точки — список">
+            <p class="strip-caption">Детали торговой точки&nbsp;— статус сбора, вывеска, назначенные аудиторы, даты плана и&nbsp;визита.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[4.1]</span>
+            <img src="projects/auditors_monitoring/05%20tt%20details%20popup.png" alt="Детали торговой точки — попап">
+            <p class="strip-caption">Тот же&nbsp;объём данных в&nbsp;модальном виде&nbsp;— доступ одинаковый с&nbsp;общей карты и&nbsp;с&nbsp;карты конкретного аудитора.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[5]</span>
+            <img src="projects/auditors_monitoring/06%20legend.png" alt="Легенда карты">
+            <p class="strip-caption">Легенда карты&nbsp;— разбита по&nbsp;смысловым группам, а&nbsp;не&nbsp;единым плоским списком.</p>
+          </div>
         </div>
       </div>
       <div class="slide-title">Audit Monitoring</div>
@@ -310,6 +312,30 @@
       prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
       nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); } });
       render();
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var viewport = document.querySelector('.strip-viewport');
+      var stripTrack = document.querySelector('.strip-track');
+      var offset = 0;
+      function apply() {
+        var max = Math.max(0, stripTrack.scrollWidth - viewport.clientWidth);
+        if (max === 0) {
+          stripTrack.style.transform = 'translateX(' + ((viewport.clientWidth - stripTrack.scrollWidth) / 2) + 'px)';
+          return;
+        }
+        offset = Math.max(0, Math.min(offset, max));
+        stripTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+      }
+      document.addEventListener('wheel', function (e) {
+        if (stripTrack.scrollWidth - viewport.clientWidth <= 0) return;
+        offset += e.deltaY;
+        apply();
+      }, { passive: true });
+      window.addEventListener('resize', apply);
+      apply();
     })();
   </script>
 
