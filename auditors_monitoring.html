@@ -50,15 +50,15 @@
 
     /* ── Viewer controls ── */
     .viewer-nav {
-      position: fixed; top: 40px; right: 40px; z-index: 100;
-      display: flex; align-items: center; gap: 24px;
+      position: fixed; top: 2.7778vw; right: 2.7778vw; z-index: 100;
+      display: flex; align-items: center; gap: 1.6667vw;
     }
     .viewer-nav button, .viewer-nav a {
       background: none; border: 0; padding: 0; display: flex;
       color: var(--fg); transition: opacity 0.2s ease;
     }
     .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
-    .viewer-nav svg { width: 48px; height: 48px; }
+    .viewer-nav svg { width: 3.3333vw; height: 3.3333vw; }
 
     /* ── Slides ── */
     .slides {
@@ -72,16 +72,16 @@
     }
 
     .eyebrow {
-      position: absolute; top: 40px; left: 40px; height: 48px;
+      position: absolute; top: 2.7778vw; left: 2.7778vw; height: 3.3333vw;
       display: flex; align-items: center;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: 1.6667vw;
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg);
     }
 
     .slide-title {
-      position: absolute; left: 40px; bottom: 40px;
+      position: absolute; left: 2.7778vw; bottom: 2.7778vw;
       font-family: 'Montserrat', sans-serif;
       font-weight: 200; font-size: 5.5556vw;
       letter-spacing: 0.03em; line-height: 0.9;
@@ -91,84 +91,84 @@
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
-      position: absolute; top: 232px; left: 40px; right: 40px;
+      position: absolute; top: 16.1111vw; left: 2.7778vw; right: 2.7778vw;
       display: grid; grid-template-columns: 660fr 310fr 310fr;
-      column-gap: 40px; align-items: start;
+      column-gap: 2.7778vw; align-items: start;
     }
     .hero-media { grid-column: 1; grid-row: 1 / 3; }
     .hero-media img { width: 100%; display: block; }
     .hero-heading {
       grid-column: 2 / span 2; grid-row: 1;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: 1.6667vw;
       letter-spacing: 0.08em; line-height: normal;
       text-transform: uppercase; color: var(--fg);
-      margin-bottom: 40px;
+      margin-bottom: 2.7778vw;
     }
     .hero-col-a { grid-column: 2; grid-row: 2; }
     .hero-col-b { grid-column: 3; grid-row: 2; }
     .hero-col-label {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: 1.6667vw;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 32px;
+      color: var(--fg); margin-bottom: 2.2222vw;
     }
     .hero-col-body {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: 1.3889vw;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
     .hero-col-list {
-      margin-top: 16px; padding-left: 14px; list-style: none;
+      margin-top: 1.1111vw; padding-left: 0.9722vw; list-style: none;
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: 1.3889vw;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
-    .hero-col-list li { position: relative; margin-bottom: 6px; }
-    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
+    .hero-col-list li { position: relative; margin-bottom: 0.4167vw; }
+    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -0.9722vw; }
 
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
     .strip-viewport {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
+      position: absolute; left: 2.7778vw; right: 2.7778vw; top: 50%; transform: translateY(-50%);
       overflow: hidden;
     }
     .strip-track {
-      display: flex; align-items: flex-start; gap: 40px;
+      display: flex; align-items: flex-start; gap: 2.7778vw;
       will-change: transform;
     }
-    .strip-item { flex: 0 0 528px; display: flex; flex-direction: column; }
+    .strip-item { flex: 0 0 36.6667vw; display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: 1.6667vw;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 20px;
+      color: var(--fg); margin-bottom: 1.3889vw;
     }
-    .strip-item img { width: 528px; height: 330px; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
+    .strip-item img { width: 36.6667vw; height: 22.9167vw; display: block; object-fit: cover; object-position: top left; margin-bottom: 1.3889vw; }
     .strip-caption {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: 1.3889vw;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
     /* ── Slide 3: callout grid ── */
     .slide-portal { position: relative; height: 100%; }
     .portal-grid {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
-      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
+      position: absolute; left: 2.7778vw; right: 2.7778vw; top: 50%; transform: translateY(-50%);
+      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 2.7778vw;
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
     .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; }
     .portal-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: 1.6667vw;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 20px;
+      color: var(--fg); margin-bottom: 1.3889vw;
     }
     .portal-text {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: 1.3889vw;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
