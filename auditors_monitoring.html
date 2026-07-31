@@ -72,11 +72,12 @@
     }
 
     .eyebrow {
-      position: absolute; top: 44px; left: 40px;
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 300; font-size: 12px;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      opacity: 0.55;
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg);
     }
 
     .slide-title {
@@ -127,21 +128,28 @@
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Slide 2: screens strip ── */
-    .slide-strip {
-      display: flex; flex-direction: column; height: 100%;
-      padding: 100px 40px 140px;
-    }
+    .slide-strip { position: relative; height: 100%; }
     .strip-track {
-      flex: 1 1 auto; display: flex; align-items: flex-start;
-      gap: 32px; margin-top: 56px;
+      position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+      display: flex; justify-content: center; align-items: flex-start;
+      gap: 40px; padding: 0 40px;
       overflow-x: auto; overflow-y: hidden;
       scrollbar-width: none;
     }
     .strip-track::-webkit-scrollbar { display: none; }
-    .strip-item { flex: 0 0 240px; display: flex; flex-direction: column; gap: 12px; }
-    .strip-num { font-family: 'Roboto Mono', monospace; font-weight: 300; font-size: 11px; opacity: 0.5; }
-    .strip-item img { width: 100%; display: block; aspect-ratio: 16/10; object-fit: cover; object-position: top left; background: #111; }
-    .strip-caption { font-size: 12px; line-height: 1.5; font-weight: 300; opacity: 0.75; }
+    .strip-item { flex: 0 0 528px; display: flex; flex-direction: column; }
+    .strip-num {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 20px;
+    }
+    .strip-item img { width: 528px; height: 330px; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
+    .strip-caption {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
 
     /* ── Slide 3: callout grid ── */
     .slide-portal {
@@ -212,7 +220,7 @@
 
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
-      <div class="eyebrow" style="position:static;">5 экранов&nbsp;— один маршрут менеджера</div>
+      <div class="eyebrow">5 экранов&nbsp;— один маршрут менеджера</div>
       <div class="strip-track">
         <div class="strip-item">
           <span class="strip-num">[1]</span>
