@@ -52,15 +52,15 @@
 
     /* ── Viewer controls ── */
     .viewer-nav {
-      position: fixed; top: 2.7778vw; right: 2.7778vw; z-index: 100;
-      display: flex; align-items: center; gap: 1.6667vw;
+      position: fixed; top: 40px; right: 40px; z-index: 100;
+      display: flex; align-items: center; gap: 24px;
     }
     .viewer-nav button, .viewer-nav a {
       background: none; border: 0; padding: 0; display: flex;
       color: var(--fg); transition: opacity 0.2s ease;
     }
     .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
-    .viewer-nav svg { width: 3.3333vw; height: 3.3333vw; }
+    .viewer-nav svg { width: 48px; height: 48px; }
 
     /* ── Slides ── */
     .slides {
@@ -74,16 +74,16 @@
     }
 
     .eyebrow {
-      position: absolute; top: 2.7778vw; left: 2.7778vw; height: 3.3333vw;
+      position: absolute; top: 40px; left: 40px; height: 48px;
       display: flex; align-items: center;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 1.6667vw;
+      font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg);
     }
 
     .slide-title {
-      position: absolute; left: 2.7778vw; bottom: 2.7778vw;
+      position: absolute; left: 40px; bottom: 40px;
       font-family: 'Montserrat', sans-serif;
       font-weight: 200; font-size: 5.5556vw;
       letter-spacing: 0.03em; line-height: 0.9;
@@ -93,84 +93,84 @@
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
-      position: absolute; top: 16.1111vw; left: 2.7778vw; right: 2.7778vw;
+      position: absolute; top: 232px; left: 40px; right: 40px;
       display: grid; grid-template-columns: 660fr 310fr 310fr;
-      column-gap: 2.7778vw; align-items: start;
+      column-gap: 40px; align-items: start;
     }
     .hero-media { grid-column: 1; grid-row: 1 / 3; }
     .hero-media img { width: 100%; display: block; }
     .hero-heading {
       grid-column: 2 / span 2; grid-row: 1;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 1.6667vw;
+      font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; line-height: normal;
       text-transform: uppercase; color: var(--fg);
-      margin-bottom: 2.7778vw;
+      margin-bottom: 40px;
     }
     .hero-col-a { grid-column: 2; grid-row: 2; }
     .hero-col-b { grid-column: 3; grid-row: 2; }
     .hero-col-label {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 1.6667vw;
+      font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 2.2222vw;
+      color: var(--fg); margin-bottom: 32px;
     }
     .hero-col-body {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 1.3889vw;
+      font-weight: 300; font-size: 20px;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
     .hero-col-list {
-      margin-top: 1.1111vw; padding-left: 0.9722vw; list-style: none;
+      margin-top: 16px; padding-left: 14px; list-style: none;
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 1.3889vw;
+      font-weight: 300; font-size: 20px;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
-    .hero-col-list li { position: relative; margin-bottom: 0.4167vw; }
-    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -0.9722vw; }
+    .hero-col-list li { position: relative; margin-bottom: 6px; }
+    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
     .strip-viewport {
-      position: absolute; left: 2.7778vw; right: 2.7778vw; top: 50%; transform: translateY(-50%);
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
       overflow: hidden;
     }
     .strip-track {
-      display: flex; align-items: flex-start; gap: 2.7778vw;
+      display: flex; align-items: flex-start; gap: 40px;
       will-change: transform;
     }
-    .strip-item { flex: 0 0 36.6667vw; display: flex; flex-direction: column; }
+    .strip-item { flex: 0 0 528px; display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 1.6667vw;
+      font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 1.3889vw;
+      color: var(--fg); margin-bottom: 20px;
     }
-    .strip-item img { width: 36.6667vw; height: 22.9167vw; display: block; object-fit: cover; object-position: top left; margin-bottom: 1.3889vw; }
+    .strip-item img { width: 528px; height: 330px; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
     .strip-caption {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 1.3889vw;
+      font-weight: 300; font-size: 20px;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
     /* ── Slide 3: callout grid ── */
     .slide-portal { position: relative; height: 100%; }
     .portal-grid {
-      position: absolute; left: 2.7778vw; right: 2.7778vw; top: 50%; transform: translateY(-50%);
-      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 2.7778vw;
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
+      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
     .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; }
     .portal-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 1.6667vw;
+      font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 1.3889vw;
+      color: var(--fg); margin-bottom: 20px;
     }
     .portal-text {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 1.3889vw;
+      font-weight: 300; font-size: 20px;
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
@@ -321,6 +321,7 @@
       var nextBtn = document.querySelector('.viewer-next');
       var idx = 0;
       var total = slides.length;
+      var stripIdx = Array.prototype.indexOf.call(slides, document.querySelector('.slide-strip'));
       function render() {
         track.style.transform = 'translateX(-' + (idx * 100 / total) + '%)';
         prevBtn.disabled = idx === 0;
@@ -333,15 +334,14 @@
       document.querySelector('.viewer-nav a').addEventListener('click', function () {
         try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
       });
-    })();
-  </script>
 
-  <script>
-    (function () {
+      // Screens-strip horizontal scroll — only while that slide is the active one,
+      // otherwise wheel input on another slide silently piles up as a strip offset
+      // and the strip jumps ahead the moment you swipe over to it.
       var viewport = document.querySelector('.strip-viewport');
       var stripTrack = document.querySelector('.strip-track');
       var offset = 0;
-      function apply() {
+      function applyStrip() {
         var max = Math.max(0, stripTrack.scrollWidth - viewport.clientWidth);
         if (max === 0) {
           stripTrack.style.transform = 'translateX(' + ((viewport.clientWidth - stripTrack.scrollWidth) / 2) + 'px)';
@@ -351,12 +351,13 @@
         stripTrack.style.transform = 'translateX(' + (-offset) + 'px)';
       }
       document.addEventListener('wheel', function (e) {
+        if (idx !== stripIdx) return;
         if (stripTrack.scrollWidth - viewport.clientWidth <= 0) return;
         offset += e.deltaY;
-        apply();
+        applyStrip();
       }, { passive: true });
-      window.addEventListener('resize', apply);
-      apply();
+      window.addEventListener('resize', applyStrip);
+      applyStrip();
     })();
   </script>
 
