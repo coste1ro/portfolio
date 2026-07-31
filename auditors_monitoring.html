@@ -80,43 +80,51 @@
     }
 
     .slide-title {
-      position: absolute; left: 40px; bottom: 32px;
+      position: absolute; left: 40px; bottom: 40px;
       font-family: 'Montserrat', sans-serif;
-      font-weight: 200; font-size: clamp(30px, 5.4vw, 66px);
-      letter-spacing: 0.02em; line-height: 0.9;
+      font-weight: 200; font-size: 5.5556vw;
+      letter-spacing: 0.03em; line-height: 0.9;
       text-transform: uppercase; font-kerning: none;
     }
 
     /* ── Slide 1: hero ── */
-    .slide-hero {
-      display: grid; grid-template-columns: 1fr 1fr;
-      height: 100%; align-items: stretch;
+    .slide-hero { position: relative; height: 100%; }
+    .hero-grid {
+      position: absolute; top: 232px; left: 40px; right: 40px;
+      display: grid; grid-template-columns: 660fr 310fr 310fr;
+      column-gap: 40px; align-items: start;
     }
-    .hero-media {
-      display: flex; align-items: center; justify-content: flex-end;
-      padding: 100px 32px 140px 40px;
-    }
-    .hero-media img { max-width: 100%; max-height: 62vh; width: auto; display: block; }
-    .hero-copy {
-      display: flex; flex-direction: column; justify-content: center;
-      gap: 40px; padding: 100px 40px 140px 32px;
-    }
+    .hero-media { grid-column: 1; grid-row: 1 / 3; }
+    .hero-media img { width: 100%; display: block; }
     .hero-heading {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 300; font-size: clamp(18px, 2vw, 28px);
-      line-height: 1.3; letter-spacing: 0.01em;
-      text-transform: uppercase; max-width: 480px;
+      grid-column: 2 / span 2; grid-row: 1;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; line-height: normal;
+      text-transform: uppercase; color: var(--fg);
+      margin-bottom: 40px;
     }
-    .hero-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .hero-col-a { grid-column: 2; grid-row: 2; }
+    .hero-col-b { grid-column: 3; grid-row: 2; }
     .hero-col-label {
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 300; font-size: 11px;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      opacity: 0.5; margin-bottom: 16px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 16px;
+      letter-spacing: 0; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 32px;
     }
-    .hero-col-body { font-size: 13.5px; line-height: 1.65; font-weight: 300; }
-    .hero-col-list { margin-top: 14px; padding-left: 16px; font-size: 13px; line-height: 1.75; font-weight: 300; }
-    .hero-col-list li { margin-bottom: 4px; }
+    .hero-col-body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+    .hero-col-list {
+      margin-top: 16px; padding-left: 14px; list-style: none;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+    .hero-col-list li { position: relative; margin-bottom: 6px; }
+    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Slide 2: screens strip ── */
     .slide-strip {
@@ -148,9 +156,13 @@
     .portal-media img { max-height: 52vh; width: auto; max-width: 100%; display: block; }
 
     @media (max-width: 900px) {
-      .slide-hero { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
-      .hero-media, .hero-copy { padding: 90px 24px 24px; }
-      .hero-cols { grid-template-columns: 1fr; gap: 24px; }
+      .slide-hero { height: auto; overflow-y: auto; }
+      .hero-grid {
+        position: static; display: flex; flex-direction: column;
+        gap: 24px; padding: 90px 24px 140px;
+      }
+      .hero-heading { margin-bottom: 0; }
+      .hero-col-a, .hero-col-b { grid-column: unset; grid-row: unset; }
       .slide-portal { grid-template-columns: 1fr; row-gap: 24px; padding: 90px 24px 140px; height: auto; overflow-y: auto; }
       .portal-callouts { flex-direction: row; justify-content: space-between; height: auto; gap: 16px; }
       .eyebrow, .slide-title { left: 24px; }
@@ -175,26 +187,24 @@
 
     <!-- ── SLIDE 1 — HERO ── -->
     <section class="slide slide-hero">
-      <div class="hero-media">
-        <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Мониторинг аудиторов — обзорная карта">
-      </div>
-      <div class="hero-copy">
+      <div class="hero-grid">
+        <div class="hero-media">
+          <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Мониторинг аудиторов — обзорная карта">
+        </div>
         <h1 class="hero-heading">Инструмент для&nbsp;менеджера полевого аудита</h1>
-        <div class="hero-cols">
-          <div>
-            <div class="hero-col-label">Обзор</div>
-            <p class="hero-col-body">Экосистема для&nbsp;полевого аудита розничных точек: мобильное приложение для&nbsp;аудиторов и&nbsp;веб-портал для&nbsp;менеджеров. У&nbsp;менеджера в&nbsp;подчинении десятки аудиторов, каждый день выполняющих задания по&nbsp;разным торговым точкам города.</p>
-          </div>
-          <div>
-            <div class="hero-col-label">Задача</div>
-            <p class="hero-col-body">Раньше, чтобы понять, где аудитор и&nbsp;как идёт его день, менеджеру приходилось звонить или писать&nbsp;— при&nbsp;таком количестве людей в&nbsp;поле это не&nbsp;масштабируется. Нужно было:</p>
-            <ul class="hero-col-list">
-              <li>видеть всех аудиторов на&nbsp;карте одновременно, с&nbsp;фильтром по&nbsp;группе и&nbsp;статусу;</li>
-              <li>быстро находить нужного человека и&nbsp;открывать его карточку;</li>
-              <li>смотреть маршрут аудитора за&nbsp;день;</li>
-              <li>открывать детали любой точки&nbsp;— из&nbsp;списка или прямо с&nbsp;карты.</li>
-            </ul>
-          </div>
+        <div class="hero-col-a">
+          <div class="hero-col-label">Обзор</div>
+          <p class="hero-col-body">Экосистема для&nbsp;полевого аудита розничных точек: мобильное приложение для&nbsp;аудиторов и&nbsp;веб-портал для&nbsp;менеджеров. У&nbsp;менеджера в&nbsp;подчинении десятки аудиторов, каждый день выполняющих задания по&nbsp;разным торговым точкам города.</p>
+        </div>
+        <div class="hero-col-b">
+          <div class="hero-col-label">Задача</div>
+          <p class="hero-col-body">Раньше, чтобы понять, где аудитор и&nbsp;как идёт его день, менеджеру приходилось звонить или писать&nbsp;— при&nbsp;таком количестве людей в&nbsp;поле это не&nbsp;масштабируется. Нужно было:</p>
+          <ul class="hero-col-list">
+            <li>видеть всех аудиторов на&nbsp;карте одновременно, с&nbsp;фильтром по&nbsp;группе и&nbsp;статусу;</li>
+            <li>быстро находить нужного человека и&nbsp;открывать его карточку;</li>
+            <li>смотреть маршрут аудитора за&nbsp;день;</li>
+            <li>открывать детали любой точки&nbsp;— из&nbsp;списка или прямо с&nbsp;карты.</li>
+          </ul>
         </div>
       </div>
       <div class="slide-title">Audit Monitoring</div>
