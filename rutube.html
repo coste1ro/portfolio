@@ -8,745 +8,372 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rutube Redesign&nbsp;— Andrey Beregovoy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fira+Code:wght@700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
+  <script>
+    try { if (localStorage.getItem('bvg_theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
     :root {
-      --page-bg: #0c0c0c;
-      --page-fg: #c8c8c8;
-      --page-fg-bright: #e8e8e8;
-      --page-border: #1e1e1e;
-      --accent: #e05c18;
-      --card-bg: #0f0f0f;
-      --card-border: rgba(255,255,255,0.06);
-      --hero-bg: #0D0908;
-      --hero-fg: #fff;
-      --hero-muted: rgba(255,255,255,0.5);
-      --nav-text: rgba(255,255,255,0.75);
+      --bg: #ffffff;
+      --fg: #000000;
     }
-    body.light {
-      --page-bg: #f8f7f4;
-      --page-fg: #5a5a5a;
-      --page-fg-bright: #111;
-      --page-border: #e5e2dc;
-      --accent: #7d18e2;
-      --card-bg: #ffffff;
-      --card-border: rgba(0,0,0,0.07);
-      --hero-bg: #f8f7f4;
-      --hero-fg: #111;
-      --hero-muted: rgba(60,60,60,0.6);
-      --nav-text: rgba(20,20,20,0.7);
+    html.dark {
+      --bg: #0c0c0c;
+      --fg: #f0f0f0;
     }
 
     body {
-      background: var(--page-bg);
-      color: var(--page-fg);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Jost', sans-serif;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.35s, color 0.35s;
+      transition: background 0.3s, color 0.3s;
     }
     a { color: inherit; text-decoration: none; }
     * { cursor: none !important; }
 
-    /* ── Cursor ── */
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-outer { display: none !important; }
+      * { cursor: auto !important; }
+    }
     #cursor-outer {
       position: fixed; top: 0; left: 0;
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 1px solid rgba(180,180,180,0.5);
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1.5px solid #fff;
       pointer-events: none; z-index: 99999;
-      transform: translate(-50%,-50%);
-      will-change: left, top;
-      display: flex; align-items: center; justify-content: center;
-      transition: width 0.45s cubic-bezier(0.16,1,0.3,1),
-                  height 0.45s cubic-bezier(0.16,1,0.3,1),
-                  background 0.35s, border-color 0.35s;
-    }
-    #cursor-dot {
-      position: fixed; top: 0; left: 0;
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #fff; pointer-events: none; z-index: 99999;
-      transform: translate(-50%,-50%);
-      transition: opacity 0.2s;
+      will-change: transform;
+      mix-blend-mode: difference;
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
 
-    /* ── Noise overlay ── */
-    .noise-overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; z-index: 9990; opacity: 0.09;
-      background-repeat: repeat; background-size: 120px 120px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    /* ── Viewer controls ── */
+    .viewer-nav {
+      position: fixed; top: 40px; right: 40px; z-index: 100;
+      display: flex; align-items: center; gap: 24px;
     }
-    body.light .noise-overlay { opacity: 0.05; }
+    .viewer-nav button, .viewer-nav a {
+      background: none; border: 0; padding: 0; display: flex;
+      color: var(--fg); transition: opacity 0.2s ease;
+    }
+    .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
+    .viewer-nav svg { width: 48px; height: 48px; }
 
-    /* ── Header ── */
-    .header-nav-link {
-      font-size: 13px; font-weight: 500;
-      color: var(--nav-text); letter-spacing: 0.01em;
-      transition: color 0.2s; padding: 4px 0;
+    /* ── Slides ── */
+    .slides {
+      display: flex; width: 900%; height: 100%;
+      transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
+      will-change: transform;
     }
-    .header-nav-link:hover { color: var(--hero-fg); }
-    .header-nav-link.active { color: var(--accent); }
-
-    #theme-btn {
-      position: relative; display: inline-flex; align-items: center;
-      padding: 4px; gap: 2px; height: 36px; border-radius: 100px;
-      background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08);
-      transition: background 0.4s, border-color 0.4s; flex-shrink: 0;
-    }
-    #toggle-slider {
-      position: absolute; left: 4px; width: 26px; height: 26px;
-      border-radius: 50%; background: rgba(255,255,255,0.14);
-      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
-      transform: translateX(0); pointer-events: none;
-    }
-    .toggle-icon {
-      width: 26px; height: 26px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: color 0.3s; flex-shrink: 0;
-      color: rgba(255,255,255,0.3); position: relative; z-index: 1;
-    }
-    .toggle-icon.toggle-on { color: #fff; }
-
-    /* ── Case Hero ── */
-    .case-hero {
-      background: var(--hero-bg);
-      display: flex; flex-direction: column;
-      position: relative;
-      transition: background 0.35s;
-    }
-    .case-hero-body {
-      padding: 40px 48px 56px;
-    }
-    .case-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 20px;
-      transition: color 0.35s;
-    }
-    .case-hero-title {
-      font-family: 'Archivo', sans-serif;
-      font-size: clamp(32px, 4.4vw, 68px);
-      font-weight: 600; color: var(--hero-fg);
-      line-height: 1.05; letter-spacing: -0.02em;
-      margin-bottom: 24px; transition: color 0.35s;
-      white-space: nowrap;
-    }
-    .case-meta-bar {
-      display: grid; grid-template-columns: 1fr 1fr;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      margin-top: 8px; transition: border-color 0.35s;
-    }
-    body.light .case-meta-bar { border-color: rgba(0,0,0,0.1); }
-    .case-meta-item {
-      padding: 20px 24px 20px 0;
-      border-right: 1px solid rgba(255,255,255,0.1);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      transition: border-color 0.35s;
-    }
-    .case-meta-item:nth-child(2n) { padding: 20px 0 20px 24px; border-right: none; }
-    .case-meta-item:nth-child(n+3) { border-bottom: none; }
-    body.light .case-meta-item { border-color: rgba(0,0,0,0.1); }
-    .case-meta-label {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 4px;
-      transition: color 0.35s;
-    }
-    .case-meta-value {
-      font-size: 13px; font-weight: 400;
-      color: var(--hero-muted); transition: color 0.35s;
+    .slide {
+      flex: 0 0 11.1112%; height: 100%;
+      position: relative; overflow: hidden;
     }
 
-    /* ── Content layout ── */
-    .cs-section {
-      padding: 96px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cs-inner { max-width: 800px; }
-    .cs-section-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 32px;
-      transition: color 0.35s;
-    }
-    .cs-heading {
-      font-family: 'Archivo', sans-serif;
-      font-size: clamp(26px, 3vw, 42px);
-      font-weight: 600; color: var(--page-fg-bright);
-      letter-spacing: -0.02em; line-height: 1.15;
-      margin-bottom: 24px; transition: color 0.35s;
-    }
-    .cs-body {
-      font-size: 15px; line-height: 1.75;
-      color: var(--page-fg); max-width: 640px;
-      transition: color 0.35s;
-    }
-    .cs-body + .cs-body { margin-top: 16px; }
-
-    /* ── Pull quote ── */
-    .cs-quote {
-      font-size: clamp(22px, 2.8vw, 38px);
-      font-weight: 400; font-style: italic;
-      color: var(--page-fg-bright);
-      letter-spacing: -0.01em; line-height: 1.35;
-      max-width: 780px;
-      padding-left: 28px;
-      border-left: 2px solid var(--accent);
-      transition: color 0.35s, border-color 0.35s;
+    .eyebrow {
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg);
     }
 
-/* ── Grid layouts ── */
-    .cs-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 48px; }
-    .cs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .slide-title {
+      position: absolute; left: 40px; bottom: 40px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 5.5556vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+    }
 
-    /* ── Archetype cards ── */
-    .archetype-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px; padding: 32px;
-      transition: background 0.35s, border-color 0.35s;
+    /* ── Shared: section heading + body (used on every text-led slide) ── */
+    .section-heading {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; line-height: 1.3;
+      text-transform: uppercase; color: var(--fg);
+    }
+    .section-body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+      margin-top: 20px;
+    }
+    .field-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 16px;
+    }
+    .field-value {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+
+    /* ── Shared: horizontal-scroll wide image (research table, CJMs, IA) ── */
+    .wide-viewport { position: absolute; left: 40px; right: 40px; overflow: hidden; }
+    .wide-track { height: 100%; display: flex; align-items: center; will-change: transform; }
+    .wide-track img { height: 100%; width: auto; display: block; }
+
+    /* ── Slide 1: hero ── */
+    .slide-hero { position: relative; height: 100%; }
+    .hero-grid {
+      position: absolute; top: 232px; left: 40px; right: 40px;
+      display: grid; grid-template-columns: 660fr 310fr 310fr;
+      column-gap: 40px; align-items: start;
+    }
+    .hero-media { grid-column: 1; grid-row: 1 / 3; }
+    .hero-media img { width: 100%; display: block; }
+    .hero-heading {
+      grid-column: 2 / span 2; grid-row: 1;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; line-height: normal;
+      text-transform: uppercase; color: var(--fg);
+      margin-bottom: 40px;
+    }
+    .hero-col-a { grid-column: 2; grid-row: 2; }
+    .hero-col-b { grid-column: 3; grid-row: 2; }
+    .hero-col-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 32px;
+    }
+    .hero-col-body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
+    /* ── Slide 2: research (list + table) ── */
+    .slide-research { position: relative; height: 100%; }
+    .research-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
+    .research-list { position: absolute; top: 300px; left: 40px; }
+    .research-list img { display: block; max-width: 820px; width: 100%; }
+    .research-table.wide-viewport { top: 664px; bottom: 140px; }
+
+    /* ── Slide 3: priority (reviews + moscow) ── */
+    .slide-priority { position: relative; height: 100%; }
+    .priority-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
+    .priority-visuals {
+      position: absolute; top: 300px; left: 40px; right: 40px; bottom: 140px;
+      display: flex; gap: 40px; align-items: stretch;
+    }
+    .priority-reviews { flex: 0 0 auto; height: 100%; }
+    .priority-reviews img { height: 100%; width: auto; display: block; }
+    .priority-moscow { flex: 1 1 auto; display: flex; align-items: center; min-width: 0; }
+    .priority-moscow img { width: 100%; display: block; }
+
+    /* ── Slide 4: audience (ЦА) ── */
+    .slide-audience { position: relative; height: 100%; }
+    .audience-ages {
+      position: absolute; top: 180px; left: 40px; right: 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 40px;
+    }
+    .audience-ages > div.dim { opacity: 0.35; }
+    .audience-lower {
+      position: absolute; top: 460px; left: 40px; right: 40px;
+      display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px;
+    }
+    .audience-method-row { margin-top: 20px; }
+    .audience-method-row:first-of-type { margin-top: 24px; }
+
+    /* ── Slide 5: archetypes ── */
+    .slide-archetypes { position: relative; height: 100%; }
+    .archetypes-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
+    .archetypes-grid {
+      position: absolute; top: 260px; left: 40px; right: 40px; bottom: 140px;
+      display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px;
     }
     .archetype-tag {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 12px;
-      transition: color 0.35s;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+      letter-spacing: 0; text-transform: uppercase; color: var(--fg);
+      opacity: 0.5; margin-bottom: 8px;
     }
     .archetype-name {
-      font-size: 18px; font-weight: 500;
-      color: var(--page-fg-bright); margin-bottom: 20px;
-      transition: color 0.35s;
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
+      margin-bottom: 20px;
     }
-    .archetype-row {
-      display: flex; flex-direction: column; gap: 14px;
-    }
+    .archetype-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
     .archetype-field-label {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(255,255,255,0.3); margin-bottom: 4px;
-      transition: color 0.35s;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+      letter-spacing: 0; text-transform: uppercase; color: var(--fg);
+      opacity: 0.5; margin-bottom: 4px;
     }
-    body.light .archetype-field-label { color: rgba(0,0,0,0.3); }
     .archetype-field-value {
-      font-size: 13px; color: var(--page-fg);
-      line-height: 1.5; transition: color 0.35s;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .archetype-quote {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg); margin-top: 24px;
+      padding-left: 16px; border-left: 1px solid var(--fg);
     }
 
-    /* ── MoSCoW tags ── */
-    .moscow-group { margin-top: 32px; }
-    .moscow-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; margin-bottom: 12px;
-      transition: color 0.35s;
+    /* ── Slide 6: 4 forces ── */
+    .slide-forces { position: relative; height: 100%; }
+    .forces-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
+    .forces-grid {
+      position: absolute; top: 320px; left: 40px; right: 40px; bottom: 140px;
+      display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+      column-gap: 40px; row-gap: 32px;
     }
-    .moscow-label.m { color: #e05c18; }
-    .moscow-label.s { color: #3b82f6; }
-    .moscow-label.c { color: #94a3b8; }
-    .moscow-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
-    .moscow-tag {
-      padding: 5px 12px; border-radius: 6px;
-      font-size: 12px; font-weight: 400;
+    .force-label {
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
+      margin-bottom: 16px;
     }
-    .moscow-tag.m { background: rgba(224,92,24,0.1); color: rgba(224,92,24,0.9); }
-    .moscow-tag.s { background: rgba(59,130,246,0.1); color: rgba(59,130,246,0.9); }
-    .moscow-tag.c { background: rgba(148,163,184,0.1); color: rgba(148,163,184,0.85); }
-    body.light .moscow-label.m { color: #c04f10; }
-
-    /* ── Results list ── */
-    .cs-results { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
-    .cs-result-item {
-      display: flex; align-items: baseline; gap: 16px;
-      padding: 20px 0;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cs-result-item:last-child { border-bottom: 1px solid var(--page-border); }
-    .cs-result-num {
-      font-family: 'Fira Code', monospace;
-      font-size: 11px; font-weight: 700;
-      color: var(--accent); flex-shrink: 0; width: 24px;
-      transition: color 0.35s;
-    }
-    .cs-result-text { font-size: 14px; color: var(--page-fg); line-height: 1.5; transition: color 0.35s; }
-
-    /* ── More projects ── */
-    .cs-more-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-top: 40px;
-    }
-    .cs-more-card {
-      display: block;
-      border-radius: 16px;
-      overflow: hidden;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      transition: border-color 0.2s, transform 0.2s, background 0.35s;
-    }
-    .cs-more-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-3px); }
-    body.light .cs-more-card:hover { border-color: rgba(0,0,0,0.16); }
-    .cs-more-card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; display: block; }
-    .cs-more-card-body { padding: 20px 22px 24px; }
-    .cs-more-card-tag {
-      font-size: 10px; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: #666; margin-bottom: 6px;
-    }
-    .cs-more-card-title {
-      font-size: 18px; font-weight: 600;
-      color: var(--page-fg-bright); letter-spacing: -0.01em;
-      transition: color 0.35s;
+    .force-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg); max-width: 480px;
     }
 
-    /* ── Contact + footer ── */
-    .contact-section {
-      padding: 64px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    footer {
-      border-top: 1px solid var(--page-border);
-      padding: 20px 48px;
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px; align-items: start;
-      transition: border-color 0.35s;
-    }
-    .footer-label {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: 0.13em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 3px; transition: color 0.35s;
-    }
-    .footer-val { font-size: 11px; color: var(--page-fg); transition: color 0.35s; }
+    /* ── Slides 7–9: wide image (CJM x2, IA) ── */
+    .slide-wide { position: relative; height: 100%; }
+    .wide-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
+    .slide-wide .wide-viewport { top: 280px; bottom: 140px; }
 
-    /* ── Sticky case blocks ── */
-    .cb-block {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      gap: 96px;
-      align-items: start;
-      padding: 64px 48px;
-      border-top: 1px solid var(--page-border);
-      transition: border-color 0.35s;
-    }
-    .cb-text {
-      position: sticky;
-      top: 56px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .cb-num {
-      font-family: 'Fira Code', monospace;
-      font-size: 11px; font-weight: 700;
-      color: var(--accent); letter-spacing: 0.04em;
-      transition: color 0.35s;
-    }
-    .cb-num::before { content: '('; }
-    .cb-num::after  { content: ')'; }
-    .cb-title {
-      font-size: clamp(22px, 2.2vw, 30px);
-      font-weight: 500; color: var(--page-fg-bright);
-      letter-spacing: -0.02em; line-height: 1.15;
-      transition: color 0.35s;
-    }
-    .cb-desc {
-      font-size: 13px; line-height: 1.7;
-      color: var(--page-fg); transition: color 0.35s;
-    }
-    .cb-media { display: flex; flex-direction: column; gap: 12px; }
-    @keyframes img-scale-in {
-      from { transform: scale(0.9); opacity: 0.4; }
-      to   { transform: scale(1);   opacity: 1;   }
-    }
-    .cb-media img {
-      width: 100%; display: block; border-radius: 16px;
-      animation: img-scale-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 45%;
-    }
-
-    /* ── IA tree ── */
-    .ia-full {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      margin-top: 40px;
-      overflow-x: auto;
-    }
-    .ia-col { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
-    .ia-col-header {
-      font-size: 12px; font-weight: 600;
-      color: var(--page-fg-bright);
-      padding: 10px 12px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--card-border);
-      border-radius: 8px; text-align: center;
-      margin-bottom: 4px;
-      transition: background 0.35s, border-color 0.35s, color 0.35s;
-    }
-    .ia-col-item {
-      font-size: 11px; color: var(--page-fg);
-      padding: 7px 10px; border: 1px solid var(--card-border);
-      border-radius: 6px; line-height: 1.3;
-      transition: border-color 0.35s, color 0.35s, background 0.35s;
-    }
-    .ia-col-item.nested {
-      margin-left: 10px; font-size: 10px;
-      opacity: 0.5; border-style: dashed;
-    }
-    .ia-col-item.group-head {
-      opacity: 0.75; font-weight: 500;
-      margin-top: 4px;
-    }
-    .ia-col-item.accent {
-      background: rgba(224,92,24,0.08);
-      border-color: rgba(224,92,24,0.45);
-      color: var(--accent); font-weight: 500;
-    }
-    .ia-col-item.accent .ia-tag {
-      display: block; font-size: 9px; font-weight: 400;
-      opacity: 0.65; font-family: 'Fira Code', monospace;
-      margin-top: 2px; letter-spacing: 0.03em;
-    }
-    body.light .ia-col-header { background: rgba(0,0,0,0.05); }
-
-    /* ── Disclosure ── */
-    .disc-toggle {
-      display: inline-flex; align-items: center; gap: 10px;
-      margin-top: 32px; padding: 8px 16px;
-      font-size: 12px; font-weight: 500;
-      color: var(--page-fg); opacity: 0.45;
-      background: none; border: 1px solid var(--card-border);
-      border-radius: 8px; transition: opacity 0.2s, border-color 0.2s;
-    }
-    .disc-toggle:hover { opacity: 0.9; border-color: rgba(255,255,255,0.18); }
-    body.light .disc-toggle:hover { border-color: rgba(0,0,0,0.18); }
-    .disc-toggle::after {
-      content: '+';
-      font-family: 'Fira Code', monospace; font-size: 14px;
-      opacity: 0.7;
-    }
-    .disc-toggle.open { opacity: 0.8; }
-    .disc-toggle.open::after { content: '−'; }
-    .disc-body {
-      overflow: hidden; max-height: 0;
-      transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
-    }
-    .disc-body.open { max-height: 3000px; }
-
-    /* ── Insight cards ── */
-    .insight-card {
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 12px; padding: 24px;
-      display: flex; flex-direction: column; gap: 10px;
-      transition: background 0.35s, border-color 0.35s;
-    }
-    .insight-num {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
-      color: var(--accent); transition: color 0.35s;
-    }
-    .insight-text { font-size: 13px; line-height: 1.65; color: var(--page-fg); transition: color 0.35s; }
-
-    /* ── Competitor strip ── */
-    .competitor-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
-    .competitor-chip {
-      font-size: 11px; font-weight: 400; padding: 5px 14px;
-      border-radius: 20px; border: 1px solid var(--card-border);
-      color: var(--page-fg); opacity: 0.45;
-      transition: border-color 0.35s, color 0.35s, opacity 0.35s;
-    }
-    .competitor-chip.focus {
-      border-color: rgba(224,92,24,0.5); color: var(--accent); opacity: 1;
-    }
-
-    /* ── JTBD quote ── */
-    .jtbd-quote {
-      font-size: 13px; font-style: italic;
-      color: var(--page-fg); line-height: 1.65;
-      padding-left: 16px; margin-top: 20px;
-      border-left: 2px solid var(--card-border);
-      transition: color 0.35s, border-color 0.35s;
-    }
-
-    /* ── 4 forces synthesis block ── */
-    .jtbd-synthesis {
-      font-size: 14px; line-height: 1.75; color: var(--page-fg);
-      max-width: 680px; padding: 24px 28px;
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 16px; margin-top: 40px;
-      transition: background 0.35s, border-color 0.35s, color 0.35s;
-    }
-
-    /* ── MoSCoW rationale ── */
-    .moscow-rationale {
-      font-size: 12px; line-height: 1.7; color: var(--page-fg);
-      opacity: 0.6; margin-top: -14px; margin-bottom: 28px;
-      max-width: 520px; transition: color 0.35s;
-    }
-
-    /* ── Archetype label in cb-block ── */
-    .cb-archetype {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--page-fg);
-      opacity: 0.28; transition: color 0.35s;
-    }
-
-    /* ── Research table ── */
-    .research-table {
-      width: 100%; border-collapse: collapse; font-size: 11px;
-    }
-    .research-table th {
-      font-family: 'Fira Code', monospace; font-size: 8px;
-      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--page-fg); opacity: 0.4; padding: 12px 14px;
-      border-bottom: 1px solid var(--card-border); text-align: left;
-      white-space: nowrap; transition: color 0.35s;
-    }
-    .research-table th.rt-col { color: var(--accent); opacity: 1; }
-    .research-table td {
-      padding: 10px 14px; border-bottom: 1px solid var(--card-border);
-      color: var(--page-fg); white-space: nowrap;
-      transition: color 0.35s, border-color 0.35s;
-    }
-    .research-table tr:last-child td { border-bottom: none; }
-    .research-table td:first-child { opacity: 0.75; }
-    .research-table td.hi { color: #4ade80; font-weight: 600; }
-    .research-table td.mid { color: #f59e0b; }
-    .research-table td.lo { color: var(--page-fg); opacity: 0.25; }
-
-    /* ── IA out-of-focus ── */
-    .ia-col.out { opacity: 0.3; }
-
-    /* ── CJM grid ── */
-    .cjm-wrap { overflow-x: auto; margin-top: 40px; padding-bottom: 8px; }
-    .cjm-grid {
-      display: grid;
-      grid-template-columns: 120px repeat(6, 210px);
-      gap: 5px;
-      width: max-content;
-    }
-    .cjm-stage {
-      font-size: 11px; font-weight: 600; color: var(--accent);
-      padding: 10px 14px; text-align: center;
-      background: rgba(224,92,24,0.08);
-      border: 1px solid rgba(224,92,24,0.3);
-      border-radius: 8px; line-height: 1.4;
-    }
-    .cjm-lbl {
-      font-family: 'Fira Code', monospace;
-      font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--accent);
-      padding: 8px; text-align: center;
-      background: rgba(224,92,24,0.06);
-      border: 1px solid rgba(224,92,24,0.25);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .cjm-lbl.pain { color: #f87171; background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.25); }
-    .cjm-lbl.opp  { color: #4ade80; background: rgba(74,222,128,0.05);  border-color: rgba(74,222,128,0.2); }
-    .cjm-cell {
-      font-size: 11px; color: var(--page-fg); line-height: 1.55;
-      padding: 10px 12px;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      background: var(--card-bg);
-      display: flex; flex-direction: column; gap: 5px;
-      transition: background 0.35s, border-color 0.35s, color 0.35s;
-    }
-    .cjm-cell.pain { background: rgba(248,113,113,0.04); border-color: rgba(248,113,113,0.14); }
-    .cjm-cell.opp  { background: rgba(74,222,128,0.04);  border-color: rgba(74,222,128,0.13); }
-    .cjm-wrap::-webkit-scrollbar { height: 4px; }
-    .cjm-wrap::-webkit-scrollbar-track { background: transparent; }
-    .cjm-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-    body.light .cjm-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
-
-    @media (max-width: 720px) {
-      header { padding: 16px 20px !important; }
-      .case-hero-body { padding: 28px 20px 40px; }
-      .case-hero-title { white-space: normal; font-size: clamp(28px, 8vw, 48px); }
-      .cs-section { padding: 64px 20px; }
-      .cs-image-block { padding: 40px 20px; }
-      .cs-grid-2, .cs-grid-3, .cs-split, .cs-more-grid { grid-template-columns: 1fr; }
-      .cb-block { grid-template-columns: 1fr; gap: 32px; padding: 64px 20px; }
-      .cb-text { position: static; }
-      .contact-section { padding: 48px 20px; }
-      footer { padding: 20px; grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .slide { overflow-y: auto; }
+      .hero-grid, .archetypes-grid, .audience-ages, .audience-lower, .forces-grid,
+      .priority-visuals {
+        position: static; display: flex; flex-direction: column;
+        gap: 24px; padding: 90px 24px 140px;
+      }
+      .research-head, .priority-head, .archetypes-head, .forces-head, .wide-head {
+        position: static; margin: 90px 24px 24px; max-width: none;
+      }
+      .research-list { position: static; margin: 0 24px 24px; }
+      .research-list img, .priority-moscow img { max-width: 100%; }
+      .research-table.wide-viewport, .slide-wide .wide-viewport {
+        position: static; height: 220px; margin: 0 24px 24px;
+      }
+      .priority-reviews, .priority-reviews img { height: 260px; }
+      .eyebrow, .slide-title { left: 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── HERO ── -->
-  <section class="case-hero">
-    <header style="position:relative; z-index:20; padding:20px 48px; flex-shrink:0;">
-      <nav style="display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:28px;">
-          <a href="index.html" class="header-nav-link">Главная</a>
-          <a href="index.html#work" class="header-nav-link active">Проекты</a>
-          <a href="index.html#about" class="header-nav-link">Обо мне</a>
-        </div>
-        <button id="theme-btn" aria-label="Toggle theme">
-          <span id="toggle-slider"></span>
-          <span id="toggle-moon" class="toggle-icon toggle-on">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </span>
-          <span id="toggle-sun" class="toggle-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </span>
-        </button>
-      </nav>
-    </header>
+  <div class="viewer-nav">
+    <button type="button" class="viewer-prev" aria-label="Предыдущий экран">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M162.83,205.17a4,4,0,0,1-5.66,5.66l-80-80a4,4,0,0,1,0-5.66l80-80a4,4,0,1,1,5.66,5.66L85.66,128Z"/></svg>
+    </button>
+    <button type="button" class="viewer-next" aria-label="Следующий экран">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M178.83,130.83l-80,80a4,4,0,0,1-5.66-5.66L170.34,128,93.17,50.83a4,4,0,0,1,5.66-5.66l80,80A4,4,0,0,1,178.83,130.83Z"/></svg>
+    </button>
+    <a href="cases.html" aria-label="Закрыть">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
+    </a>
+  </div>
 
-    <div class="case-hero-body">
-      <div class="case-label">Rutube · UX/UI Design · 2025</div>
-      <h1 class="case-hero-title">Редизайн оформления подписки</h1>
-      <div class="case-meta-bar">
-        <div class="case-meta-item">
-          <div class="case-meta-label">Роль</div>
-          <div class="case-meta-value">UX/UI Дизайнер</div>
+  <div class="slides">
+
+    <!-- ── SLIDE 1 — HERO (Обзор + Проблема) ── -->
+    <section class="slide slide-hero">
+      <div class="hero-grid">
+        <div class="hero-media">
+          <img src="projects/rutube/main-subscription-active.png" alt="Rutube — экран активной подписки">
         </div>
-        <div class="case-meta-item">
-          <div class="case-meta-label">Длительность</div>
-          <div class="case-meta-value">6 недель</div>
+        <h1 class="hero-heading">Подписка&nbsp;— главный источник дохода видеосервиса</h1>
+        <div class="hero-col-a">
+          <div class="hero-col-label">Обзор</div>
+          <p class="hero-col-body">Rutube теряет не&nbsp;тех, кто не&nbsp;хочет платить. Он теряет тех, кто хотел&nbsp;— но&nbsp;не&nbsp;понял условий, испугался автосписания или не&nbsp;нашёл кнопку отмены.</p>
         </div>
-        <div class="case-meta-item">
-          <div class="case-meta-label">Инструменты</div>
-          <div class="case-meta-value">Figma</div>
-        </div>
-        <div class="case-meta-item">
-          <div class="case-meta-label">Контекст</div>
-          <div class="case-meta-value">Концепт</div>
+        <div class="hero-col-b">
+          <div class="hero-col-label">Проблема</div>
+          <p class="hero-col-body">Пользователи бросают оформление на&nbsp;полпути&nbsp;— не&nbsp;из-за цены, а&nbsp;из-за ощущения потери контроля. Флоу не&nbsp;отвечает: за&nbsp;что я&nbsp;плачу, когда списание, где управлять.</p>
         </div>
       </div>
-    </div>
-  </section>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-  <!-- ── OVERVIEW ── -->
-  <section class="cs-section">
-    <div class="cs-split" style="align-items:center;">
-      <div style="border-radius:16px; overflow:hidden;">
-        <img src="projects/rutube/main-subscription-active.png" style="width:100%; display:block;">
+    <!-- ── SLIDE 2 — ИССЛЕДОВАНИЕ ── -->
+    <section class="slide slide-research">
+      <div class="eyebrow">Исследование</div>
+      <div class="research-head">
+        <h2 class="section-heading">Rutube отстаёт там, где&nbsp;конкуренты уже задали стандарт</h2>
+        <p class="section-body">Сравнительный анализ восьми сервисов и&nbsp;три пользовательских интервью дали один сигнал: ожидания по&nbsp;прозрачности уже сформированы конкурентами&nbsp;— Rutube им не&nbsp;соответствует.</p>
       </div>
-      <div>
-        <div class="cs-section-label">Обзор</div>
-        <h2 class="cs-heading">Подписка&nbsp;— главный источник дохода видеосервиса</h2>
-        <p class="cs-body">Rutube теряет не&nbsp;тех, кто не&nbsp;хочет платить. Он теряет тех, кто хотел&nbsp;— но&nbsp;не&nbsp;понял условий, испугался автосписания или не&nbsp;нашёл кнопку отмены до&nbsp;того, как нажать «оформить». Редизайн начался с&nbsp;одного вопроса: почему подписка ощущается как ловушка?</p>
+      <div class="research-list">
+        <img src="projects/rutube/competitors_list.png" alt="Список конкурентов">
       </div>
-    </div>
-  </section>
-
-  <!-- ── PROBLEM (CHALLENGE) ── -->
-  <section class="cs-section">
-    <div class="cs-split" style="align-items:center;">
-      <div>
-        <div class="cs-section-label">Проблема</div>
-        <h2 class="cs-heading">Пользователи бросают оформление<br>не&nbsp;из-за цены</h2>
-        <p class="cs-body">Пользователи бросают оформление на&nbsp;полпути или быстро отменяют&nbsp;— не&nbsp;из-за цены, а&nbsp;из-за ощущения потери контроля. Флоу не&nbsp;отвечает на&nbsp;базовые вопросы: за&nbsp;что я&nbsp;плачу, когда следующее списание, где управлять. Условия зашиты в&nbsp;мелкий шрифт, автопродление включено молча.</p>
+      <div class="research-table wide-viewport">
+        <div class="wide-track">
+          <img src="projects/rutube/competitors_table.png" alt="Таблица сравнения конкурентов">
+        </div>
       </div>
-      <div style="border-radius:16px; overflow:hidden;">
-        <img src="projects/rutube/main-ad.png" style="width:100%; display:block;">
+      <div class="slide-title">Rutube</div>
+    </section>
+
+    <!-- ── SLIDE 3 — ПРИОРИТИЗАЦИЯ (отзывы + MoSCoW) ── -->
+    <section class="slide slide-priority">
+      <div class="eyebrow">Приоритизация</div>
+      <div class="priority-head">
+        <h2 class="section-heading">Четыре категории определили фокус редизайна</h2>
+        <p class="section-body">Исследование выявило критические отставания&nbsp;— они стали Must не&nbsp;потому что «было бы&nbsp;хорошо», а&nbsp;потому что без&nbsp;них конверсия невозможна ни для&nbsp;одного архетипа.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ── PULL QUOTE ── -->
-  <section class="cs-section" style="padding-top:0; border-top:none;">
-    <blockquote class="cs-quote">
-      Главная проблема&nbsp;— не&nbsp;сама подписка. А&nbsp;ощущение потери контроля над&nbsp;расходами и&nbsp;процессом.
-    </blockquote>
-  </section>
-
-  <!-- ── RESEARCH ── -->
-  <section class="cs-section">
-    <div class="cs-section-label">Исследование</div>
-    <h2 class="cs-heading">Rutube отстаёт там, где конкуренты уже задали стандарт</h2>
-    <p class="cs-body">Сравнительный анализ восьми сервисов и&nbsp;три пользовательских интервью дали один сигнал: ожидания по&nbsp;прозрачности уже сформированы конкурентами&nbsp;— Rutube им не&nbsp;соответствует.</p>
-
-    <div class="competitor-strip">
-      <span class="competitor-chip">YouTube Premium</span>
-      <span class="competitor-chip">Кинопоиск</span>
-      <span class="competitor-chip">Иви</span>
-      <span class="competitor-chip">Okko</span>
-      <span class="competitor-chip">VK Видео</span>
-      <span class="competitor-chip">Wink</span>
-      <span class="competitor-chip">START</span>
-      <span class="competitor-chip focus">Rutube</span>
-    </div>
-
-    <div class="cs-grid-3" style="margin-top:32px;">
-      <div class="insight-card">
-        <div class="insight-num">Инсайт 01</div>
-        <div class="insight-text">«Понятность отмены»&nbsp;— последнее место среди всех сервисов. Отмена спрятана глубже трёх уровней меню.</div>
+      <div class="priority-visuals">
+        <div class="priority-reviews">
+          <img src="projects/rutube/reviews.png" alt="Отзывы пользователей о сервисах">
+        </div>
+        <div class="priority-moscow">
+          <img src="projects/rutube/moscow.png" alt="Приоритизация MoSCoW">
+        </div>
       </div>
-      <div class="insight-card">
-        <div class="insight-num">Инсайт 02</div>
-        <div class="insight-text">Дата следующего списания не&nbsp;видна до&nbsp;оплаты. YouTube Premium и&nbsp;Кинопоиск показывают её явно&nbsp;— Rutube нет.</div>
+      <div class="slide-title">Rutube</div>
+    </section>
+
+    <!-- ── SLIDE 4 — ЦА ПРОЕКТА ── -->
+    <section class="slide slide-audience">
+      <div class="eyebrow">ЦА проекта</div>
+      <div class="audience-ages">
+        <div class="dim">
+          <div class="field-label">18–24</div>
+          <p class="field-value">Активно потребляют UGC, но&nbsp;очень чувствительны к&nbsp;цене.</p>
+        </div>
+        <div>
+          <div class="field-label">25–34</div>
+          <p class="field-value">Наиболее платежеспособная и&nbsp;зрелая аудитория в&nbsp;цифровых продуктах, активно использует подписки и&nbsp;диджитал-контент.</p>
+        </div>
+        <div class="dim">
+          <div class="field-label">35–44</div>
+          <p class="field-value">Стабильны в&nbsp;доходе, но&nbsp;ниже цифровая гибкость.</p>
+        </div>
       </div>
-      <div class="insight-card">
-        <div class="insight-num">Инсайт 03</div>
-        <div class="insight-text">Free vs Paid не&nbsp;разграничены визуально: непонятно, что даёт Premium сверх бесплатного.</div>
+      <div class="audience-lower">
+        <div>
+          <div class="hero-col-label">Цель исследования</div>
+          <p class="hero-col-body">Узнать, как и&nbsp;почему пользователи оформляют подписку на&nbsp;Rutube, какие проблемы возникают и&nbsp;как их&nbsp;решают.</p>
+        </div>
+        <div>
+          <div class="hero-col-label">Подходящий метод исследования</div>
+          <p class="hero-col-body audience-method-row">Интервью&nbsp;— онлайн-встречи с&nbsp;несколькими знакомыми.</p>
+          <p class="hero-col-body audience-method-row">Наблюдение&nbsp;— посмотреть, как они оформляют подписку.</p>
+        </div>
       </div>
-    </div>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-    <blockquote class="cs-quote" style="margin-top:56px; font-size:clamp(16px,1.8vw,26px);">
-      «Я&nbsp;просто не&nbsp;понимаю&nbsp;— если подпишусь, как потом отменить? Вот и&nbsp;не&nbsp;подписываюсь.»
-    </blockquote>
-
-    <button class="disc-toggle" onclick="toggleDisc(this)">Показать полное исследование</button>
-    <div class="disc-body">
-      <div style="margin-top:28px; overflow-x:auto; border:1px solid var(--card-border); border-radius:12px; transition:border-color 0.35s;">
-        <table class="research-table">
-          <thead>
-            <tr>
-              <th>Критерий</th>
-              <th>YT Premium</th>
-              <th>Кинопоиск</th>
-              <th>Иви</th>
-              <th>Okko</th>
-              <th>VK Видео</th>
-              <th>Wink</th>
-              <th class="rt-col">Rutube</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Понятность ценности</td><td class="hi">+</td><td class="hi">+</td><td class="hi">+</td><td class="mid">±</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-            <tr><td>Free vs Paid</td><td class="hi">+</td><td class="hi">+</td><td class="hi">+</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-            <tr><td>Прозрачность цены</td><td class="hi">+</td><td class="hi">+</td><td class="mid">±</td><td class="hi">+</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-            <tr><td>Понятность отмены</td><td class="hi">+</td><td class="hi">+</td><td class="hi">+</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-            <tr><td>Контекст входа</td><td class="hi">+</td><td class="mid">±</td><td class="lo">−</td><td class="mid">±</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-            <tr><td>Навязчивость</td><td class="hi">+</td><td class="hi">+</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-            <tr><td>Кол-во шагов</td><td class="hi">+</td><td class="hi">+</td><td class="hi">+</td><td class="mid">±</td><td class="lo">−</td><td class="lo">−</td><td class="lo">−</td></tr>
-          </tbody>
-        </table>
+    <!-- ── SLIDE 5 — АРХЕТИПЫ ── -->
+    <section class="slide slide-archetypes">
+      <div class="eyebrow">Архетипы</div>
+      <div class="archetypes-head">
+        <h2 class="section-heading">Два паттерна. Один барьер.</h2>
+        <p class="section-body">Три интервью выявили два устойчивых паттерна&nbsp;— по&nbsp;отношению к&nbsp;деньгам и&nbsp;процессу, не&nbsp;по&nbsp;возрасту.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ── ARCHETYPES ── -->
-  <section class="cs-section">
-    <div class="cs-section-label">Архетипы</div>
-    <h2 class="cs-heading">Два паттерна. Один барьер.</h2>
-    <p class="cs-body">Три интервью выявили два устойчивых поведенческих паттерна&nbsp;— не&nbsp;по&nbsp;возрасту или доходу, а&nbsp;по&nbsp;отношению к&nbsp;деньгам и&nbsp;процессу.</p>
-
-    <div class="cs-split" style="margin-top:40px; align-items:start;">
-      <div>
-        <div class="archetype-card">
+      <div class="archetypes-grid">
+        <div>
           <div class="archetype-tag">Архетип 1</div>
-          <div class="archetype-name">Рациональный контролер</div>
-          <div class="archetype-row">
+          <div class="archetype-name">Рациональный контролёр</div>
+          <div class="archetype-fields">
             <div>
               <div class="archetype-field-label">Контекст</div>
               <div class="archetype-field-value">Смотрит много, думает об&nbsp;экономии</div>
@@ -757,507 +384,188 @@
             </div>
             <div>
               <div class="archetype-field-label">Страх</div>
-              <div class="archetype-field-value">Автосписание без&nbsp;уведомления, скрытые условия</div>
+              <div class="archetype-field-value">Автосписание без&nbsp;уведомления</div>
             </div>
             <div>
               <div class="archetype-field-label">Успех</div>
-              <div class="archetype-field-value">Видит за&nbsp;что платит. Может отменить в&nbsp;1–2 клика</div>
+              <div class="archetype-field-value">Отменяет в&nbsp;1–2 клика</div>
             </div>
           </div>
+          <blockquote class="archetype-quote">«Когда вижу автопродление, хочу понять условия заранее&nbsp;— чтобы потом не&nbsp;чувствовать себя обманутым»</blockquote>
         </div>
-        <blockquote class="jtbd-quote">«Когда вижу автопродление, хочу понять условия заранее&nbsp;— чтобы потом не&nbsp;чувствовать себя обманутым»</blockquote>
-      </div>
-      <div>
-        <div class="archetype-card">
+        <div>
           <div class="archetype-tag">Архетип 2</div>
           <div class="archetype-name">Прагматик «без&nbsp;лишнего»</div>
-          <div class="archetype-row">
+          <div class="archetype-fields">
             <div>
               <div class="archetype-field-label">Контекст</div>
               <div class="archetype-field-value">Смотрит иногда, реклама раздражает</div>
             </div>
             <div>
               <div class="archetype-field-label">Мотивация</div>
-              <div class="archetype-field-value">Убрать рекламу быстро, без&nbsp;лишних шагов</div>
+              <div class="archetype-field-value">Убрать рекламу быстро</div>
             </div>
             <div>
               <div class="archetype-field-label">Страх</div>
-              <div class="archetype-field-value">Апселл, сложный флоу, навязчивость</div>
+              <div class="archetype-field-value">Апселл, сложный флоу</div>
             </div>
             <div>
               <div class="archetype-field-label">Успех</div>
-              <div class="archetype-field-value">Оплатил&nbsp;— смотрит. Без&nbsp;лишних вопросов</div>
+              <div class="archetype-field-value">Оплатил&nbsp;— смотрит, без&nbsp;вопросов</div>
             </div>
           </div>
-        </div>
-        <blockquote class="jtbd-quote">«Когда реклама мешает смотреть, хочу убрать её за&nbsp;один шаг&nbsp;— и&nbsp;не&nbsp;разбираться в&nbsp;тарифах»</blockquote>
-      </div>
-    </div>
-
-    <div class="jtbd-synthesis">
-      У&nbsp;обоих один Push&nbsp;— реклама. Но&nbsp;Pull разный: Контролёру нужна прозрачность и&nbsp;ощущение контроля над&nbsp;расходами, Прагматику&nbsp;— просто минимум действий. Anxiety у&nbsp;обоих одна: автосписание и&nbsp;непрозрачные условия. Habit удерживает в&nbsp;бесплатной версии по&nbsp;инерции&nbsp;— «и&nbsp;так работает».
-    </div>
-
-    <button class="disc-toggle" onclick="toggleDisc(this)">Посмотреть CJM</button>
-    <div class="disc-body">
-      <div class="cjm-wrap" style="margin-top:24px;">
-        <div class="cjm-grid">
-          <div></div>
-          <div class="cjm-stage">Триггер</div>
-          <div class="cjm-stage">Страница подписки</div>
-          <div class="cjm-stage">Выбор тарифа</div>
-          <div class="cjm-stage">Ввод карты</div>
-          <div class="cjm-stage">Завершение оплаты</div>
-          <div class="cjm-stage">После оплаты</div>
-
-          <div class="cjm-lbl">Действия</div>
-          <div class="cjm-cell">Видит рекламу / ограничение</div>
-          <div class="cjm-cell">Изучает условия подписки</div>
-          <div class="cjm-cell">Анализирует доступные тарифы</div>
-          <div class="cjm-cell">Вводит платежные данные</div>
-          <div class="cjm-cell">Завершает оплату</div>
-          <div class="cjm-cell">Возвращается к&nbsp;просмотру. Получает напоминание о&nbsp;списании. Решает продлевать или нет</div>
-
-          <div class="cjm-lbl">Мысли</div>
-          <div class="cjm-cell">Надоело. Возможно, стоит оформить подписку</div>
-          <div class="cjm-cell">Что входит? Есть ли&nbsp;подвох?</div>
-          <div class="cjm-cell">Почему мне предлагают именно это? В&nbsp;чём разница?</div>
-          <div class="cjm-cell">Когда спишут? Смогу ли&nbsp;отменить? Не&nbsp;поднимут ли&nbsp;цену?</div>
-          <div class="cjm-cell">Это всё? Где подтверждение?</div>
-          <div class="cjm-cell">Реклама пропала. Когда следующее списание? Стоит ли&nbsp;продлевать?</div>
-
-          <div class="cjm-lbl">Эмоции</div>
-          <div class="cjm-cell">Раздражение</div>
-          <div class="cjm-cell">Насторожённость</div>
-          <div class="cjm-cell">Сомнение</div>
-          <div class="cjm-cell">Тревога, насторожённость</div>
-          <div class="cjm-cell">Нейтральность, лёгкое недоумение</div>
-          <div class="cjm-cell">Облегчение в&nbsp;начале. Тревога ближе к&nbsp;дате списания</div>
-
-          <div class="cjm-lbl pain">Боли</div>
-          <div class="cjm-cell pain">Реклама мешает</div>
-          <div class="cjm-cell pain"><span>Перегруз текста</span><span>Нет чёткого сравнения бесплатного и&nbsp;платного</span><span>Условия написаны неявно</span></div>
-          <div class="cjm-cell pain"><span>Нет объяснения различий</span><span>Нет явной логики выбора</span><span>Несколько вариантов без&nbsp;приоритета</span></div>
-          <div class="cjm-cell pain"><span>Автопродление включено по&nbsp;умолчанию</span><span>Нет информации о&nbsp;списании</span><span>Нет информации об&nbsp;управлении подпиской</span></div>
-          <div class="cjm-cell pain"><span>Нет ощущения завершённости</span><span>Неочевидно, когда следующее списание</span><span>Неочевидно, где управлять подпиской</span></div>
-          <div class="cjm-cell pain"><span>Нет напоминания о&nbsp;списании</span><span>Сложно найти, где отменить</span><span>Непонятно, какие плюшки даёт подписка</span></div>
-
-          <div class="cjm-lbl opp">Возможности</div>
-          <div class="cjm-cell opp">Чётко показать ценность подписки</div>
-          <div class="cjm-cell opp"><span>Чёткая визуальная иерархия</span><span>Таблица free vs premium</span><span>Прозрачная стоимость без&nbsp;мелкого текста</span></div>
-          <div class="cjm-cell opp"><span>Обоснование рекомендуемого тарифа</span><span>Один основной вариант + альтернативы</span><span>Краткое объяснение «кому подойдёт»</span></div>
-          <div class="cjm-cell opp"><span>Явная дата следующего списания</span><span>Напоминание до&nbsp;списания</span><span>Видимая ссылка «управлять подпиской»</span></div>
-          <div class="cjm-cell opp"><span>Яркий экран подтверждения</span><span>Дата следующего списания</span><span>Кнопка управления подпиской</span></div>
-          <div class="cjm-cell opp"><span>Push/email за&nbsp;3 дня до&nbsp;списания</span><span>Видимая ссылка «управление подпиской»</span><span>Информация о&nbsp;преимуществах в&nbsp;success-экране</span></div>
+          <blockquote class="archetype-quote">«Когда реклама мешает смотреть, хочу убрать её за&nbsp;один шаг&nbsp;— и&nbsp;не&nbsp;разбираться в&nbsp;тарифах»</blockquote>
         </div>
       </div>
-    </div>
-  </section>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-  <!-- ── PRIORITIZATION ── -->
-  <section class="cs-section">
-    <div class="cs-section-label">Приоритизация</div>
-    <h2 class="cs-heading">Четыре категории определили фокус редизайна</h2>
-    <p class="cs-body">Исследование выявило критические отставания&nbsp;— они стали Must не&nbsp;потому что «было бы&nbsp;хорошо», а&nbsp;потому что без&nbsp;них конверсия невозможна ни для&nbsp;одного архетипа.</p>
-
-    <div class="moscow-group">
-      <div class="moscow-label m">Must Have</div>
-      <div class="moscow-tags">
-        <span class="moscow-tag m">Понятность ценности</span>
-        <span class="moscow-tag m">Free vs Paid</span>
-        <span class="moscow-tag m">Прозрачность цены</span>
-        <span class="moscow-tag m">Понятность отмены</span>
+    <!-- ── SLIDE 6 — 4 СИЛЫ ── -->
+    <section class="slide slide-forces">
+      <div class="eyebrow">4 силы</div>
+      <div class="forces-head">
+        <h2 class="section-heading">JTBD: что толкает и&nbsp;что держит</h2>
       </div>
-      <p class="moscow-rationale">Без&nbsp;прозрачности цены, понятной ценности и&nbsp;доступной отмены ни Контролёр, ни Прагматик не&nbsp;дойдут до&nbsp;оплаты. Это условия доверия, не&nbsp;улучшения.</p>
-
-      <div class="moscow-label s">Should Have</div>
-      <div class="moscow-tags">
-        <span class="moscow-tag s">Контекст входа</span>
-        <span class="moscow-tag s">Навязчивость</span>
-        <span class="moscow-tag s">Кол-во шагов</span>
+      <div class="forces-grid">
+        <div>
+          <div class="force-label">Push</div>
+          <p class="force-text">Реклама&nbsp;— один и&nbsp;тот же&nbsp;толчок к&nbsp;действию для&nbsp;обоих архетипов.</p>
+        </div>
+        <div>
+          <div class="force-label">Pull</div>
+          <p class="force-text">Разный: Контролёру&nbsp;— прозрачность и&nbsp;контроль над&nbsp;расходами, Прагматику&nbsp;— минимум действий.</p>
+        </div>
+        <div>
+          <div class="force-label">Anxiety</div>
+          <p class="force-text">Одна на&nbsp;двоих: автосписание и&nbsp;непрозрачные условия.</p>
+        </div>
+        <div>
+          <div class="force-label">Habit</div>
+          <p class="force-text">Удерживает в&nbsp;бесплатной версии по&nbsp;инерции&nbsp;— «и&nbsp;так работает».</p>
+        </div>
       </div>
-      <p class="moscow-rationale">Контекст входа и&nbsp;кол-во шагов критичны для&nbsp;Прагматика. Навязчивость&nbsp;— для&nbsp;обоих. Следующая итерация после MVP.</p>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-      <div class="moscow-label c">Could Have</div>
-      <div class="moscow-tags">
-        <span class="moscow-tag c">Пробный период</span>
-        <span class="moscow-tag c">Удобство оплаты</span>
+    <!-- ── SLIDE 7 — CJM: КОНТРОЛЁР ── -->
+    <section class="slide slide-wide">
+      <div class="eyebrow">Customer Journey Map</div>
+      <div class="wide-head">
+        <h2 class="section-heading">Карта собрана для&nbsp;Рационального контролёра</h2>
       </div>
-      <p class="moscow-rationale" style="margin-bottom:0;">Ценные, но&nbsp;не&nbsp;критичные в&nbsp;рамках 6-недельного проекта. Не&nbsp;влияют на&nbsp;основной барьер доверия.</p>
-    </div>
-  </section>
-
-  <!-- ── INFORMATION ARCHITECTURE ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <div class="cs-section-label">Информационная архитектура</div>
-      <h2 class="cs-heading">Подписка живёт в&nbsp;Настройки → Подписки</h2>
-      <p class="cs-body">Success-экран должен явно указывать на&nbsp;этот путь&nbsp;— иначе пользователь остаётся без&nbsp;понимания, как управлять подпиской после оплаты. Редизайн затронул только раздел Настройки.</p>
-    </div>
-    <div class="ia-full">
-
-      <!-- Главная -->
-      <div class="ia-col out">
-        <div class="ia-col-header">Главная</div>
-        <div class="ia-col-item">Персонализированный контент</div>
-        <div class="ia-col-item">Каталог</div>
-        <div class="ia-col-item">Shorts</div>
-        <div class="ia-col-item">Подборки</div>
+      <div class="wide-viewport">
+        <div class="wide-track">
+          <img src="projects/rutube/cjm_kontroler.png" alt="CJM — Рациональный контролёр">
+        </div>
       </div>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-      <!-- Обзор -->
-      <div class="ia-col out">
-        <div class="ia-col-header">Обзор</div>
-        <div class="ia-col-item">Поиск</div>
-        <div class="ia-col-item group-head">Видео</div>
-        <div class="ia-col-item nested">Каналы</div>
-        <div class="ia-col-item nested">Shorts</div>
-        <div class="ia-col-item nested">Плейлисты</div>
-        <div class="ia-col-item group-head">Каталог</div>
-        <div class="ia-col-item nested">Фильмы</div>
-        <div class="ia-col-item nested">Сериалы</div>
-        <div class="ia-col-item nested">Телешоу</div>
-        <div class="ia-col-item nested">Спорт</div>
-        <div class="ia-col-item nested">Музыка</div>
-        <div class="ia-col-item nested">Подкасты</div>
-        <div class="ia-col-item nested">Детям</div>
+    <!-- ── SLIDE 8 — CJM: ПРАГМАТИК ── -->
+    <section class="slide slide-wide">
+      <div class="eyebrow">Customer Journey Map</div>
+      <div class="wide-head">
+        <h2 class="section-heading">Карта собрана для&nbsp;Прагматика «без&nbsp;лишнего»</h2>
       </div>
-
-      <!-- Студия -->
-      <div class="ia-col out">
-        <div class="ia-col-header">Студия</div>
-        <div class="ia-col-item">Загрузить видео</div>
-        <div class="ia-col-item">Загрузить Shorts</div>
-        <div class="ia-col-item">Создать трансляцию</div>
+      <div class="wide-viewport">
+        <div class="wide-track">
+          <img src="projects/rutube/cjm_pragmatik.png" alt="CJM — Прагматик без лишнего">
+        </div>
       </div>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-      <!-- Мое -->
-      <div class="ia-col out">
-        <div class="ia-col-header">Мое</div>
-        <div class="ia-col-item">Подписки</div>
-        <div class="ia-col-item">История просмотра</div>
-        <div class="ia-col-item">Плейлисты</div>
-        <div class="ia-col-item">Смотреть позже</div>
-        <div class="ia-col-item">Комментарии</div>
-        <div class="ia-col-item">Понравилось</div>
+    <!-- ── SLIDE 9 — ИНФОРМАЦИОННАЯ АРХИТЕКТУРА ── -->
+    <section class="slide slide-wide">
+      <div class="eyebrow">Информационная архитектура</div>
+      <div class="wide-head">
+        <h2 class="section-heading">Подписка живёт в&nbsp;Настройки → Подписки</h2>
+        <p class="section-body">Success-экран должен явно указывать на&nbsp;этот путь&nbsp;— иначе пользователь не&nbsp;поймёт, как управлять подпиской после оплаты.</p>
       </div>
-
-      <!-- Настройки -->
-      <div class="ia-col">
-        <div class="ia-col-header">Настройки</div>
-        <div class="ia-col-item">Мои данные</div>
-        <div class="ia-col-item">Уведомления</div>
-        <div class="ia-col-item">Устройства</div>
-        <div class="ia-col-item accent">Подписки<span class="ia-tag">← success-экран</span></div>
-        <div class="ia-col-item">Покупки</div>
-        <div class="ia-col-item accent">Способы оплаты<span class="ia-tag">← управление картой</span></div>
+      <div class="wide-viewport">
+        <div class="wide-track">
+          <img src="projects/rutube/IA.png" alt="Информационная архитектура">
+        </div>
       </div>
+      <div class="slide-title">Rutube</div>
+    </section>
 
-    </div>
-  </section>
-
-  <!-- ── CJM ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <div class="cs-section-label">Customer Journey Map</div>
-      <h2 class="cs-heading">Карта собрана для&nbsp;Рационального контролера</h2>
-      <p class="cs-body">На&nbsp;каждом этапе зафиксированы действия пользователя, его мысли, эмоциональное состояние и&nbsp;конкретные точки боли. Это и&nbsp;есть основа для&nbsp;проектирования: каждая боль на&nbsp;карте превращается в&nbsp;требование к&nbsp;интерфейсу.</p>
-    </div>
-    <div class="cjm-wrap" style="animation: img-scale-in linear both; animation-timeline: view(); animation-range: entry 0% entry 45%;">
-      <div class="cjm-grid">
-        <div></div>
-        <div class="cjm-stage">Триггер</div>
-        <div class="cjm-stage">Страница подписки</div>
-        <div class="cjm-stage">Выбор тарифа</div>
-        <div class="cjm-stage">Ввод карты</div>
-        <div class="cjm-stage">Завершение оплаты</div>
-        <div class="cjm-stage">После оплаты</div>
-
-        <div class="cjm-lbl">Действия</div>
-        <div class="cjm-cell">Видит рекламу / ограничение</div>
-        <div class="cjm-cell">Изучает условия подписки</div>
-        <div class="cjm-cell">Анализирует доступные тарифы</div>
-        <div class="cjm-cell">Вводит платежные данные</div>
-        <div class="cjm-cell">Завершает оплату</div>
-        <div class="cjm-cell">Возвращается к&nbsp;просмотру. Получает напоминание о&nbsp;списании. Решает продлевать или нет</div>
-
-        <div class="cjm-lbl">Мысли</div>
-        <div class="cjm-cell">Надоело. Возможно, стоит оформить подписку</div>
-        <div class="cjm-cell">Что входит? Есть ли&nbsp;подвох?</div>
-        <div class="cjm-cell">Почему мне предлагают именно это? В&nbsp;чём разница?</div>
-        <div class="cjm-cell">Когда спишут? Смогу ли&nbsp;отменить? Не&nbsp;поднимут ли&nbsp;цену?</div>
-        <div class="cjm-cell">Это всё? Где подтверждение?</div>
-        <div class="cjm-cell">Реклама пропала. Когда следующее списание? Стоит ли&nbsp;продлевать?</div>
-
-        <div class="cjm-lbl">Эмоции</div>
-        <div class="cjm-cell">Раздражение</div>
-        <div class="cjm-cell">Насторожённость</div>
-        <div class="cjm-cell">Сомнение</div>
-        <div class="cjm-cell">Тревога, насторожённость</div>
-        <div class="cjm-cell">Нейтральность, лёгкое недоумение</div>
-        <div class="cjm-cell">Облегчение в&nbsp;начале. Тревога ближе к&nbsp;дате списания</div>
-
-        <div class="cjm-lbl pain">Боли</div>
-        <div class="cjm-cell pain">Реклама мешает</div>
-        <div class="cjm-cell pain"><span>Перегруз текста</span><span>Нет чёткого сравнения бесплатного и&nbsp;платного</span><span>Условия написаны неявно</span></div>
-        <div class="cjm-cell pain"><span>Нет объяснения различий</span><span>Нет явной логики выбора</span><span>Несколько вариантов без&nbsp;приоритета</span></div>
-        <div class="cjm-cell pain"><span>Автопродление включено по&nbsp;умолчанию</span><span>Нет информации о&nbsp;списании</span><span>Нет информации об&nbsp;управлении подпиской</span></div>
-        <div class="cjm-cell pain"><span>Нет ощущения завершённости</span><span>Неочевидно, когда следующее списание</span><span>Неочевидно, где управлять подпиской</span></div>
-        <div class="cjm-cell pain"><span>Нет напоминания о&nbsp;списании</span><span>Сложно найти, где отменить</span><span>Непонятно, какие плюшки даёт подписка</span></div>
-
-        <div class="cjm-lbl opp">Возможности</div>
-        <div class="cjm-cell opp">Чётко показать ценность подписки</div>
-        <div class="cjm-cell opp"><span>Чёткая визуальная иерархия</span><span>Таблица free vs premium</span><span>Прозрачная стоимость без&nbsp;мелкого текста</span></div>
-        <div class="cjm-cell opp"><span>Обоснование рекомендуемого тарифа</span><span>Один основной вариант + альтернативы</span><span>Краткое объяснение «кому подойдёт»</span></div>
-        <div class="cjm-cell opp"><span>Явная дата следующего списания</span><span>Напоминание до&nbsp;списания</span><span>Видимая ссылка «управлять подпиской»</span></div>
-        <div class="cjm-cell opp"><span>Яркий экран подтверждения</span><span>Дата следующего списания</span><span>Кнопка управления подпиской</span></div>
-        <div class="cjm-cell opp"><span>Push/email за&nbsp;3 дня до&nbsp;списания</span><span>Видимая ссылка «управление подпиской»</span><span>Информация о&nbsp;преимуществах в&nbsp;success-экране</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── SOLUTIONS ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <div class="cs-section-label">Решения</div>
-      <h2 class="cs-heading">5 экранов&nbsp;— 5 болей</h2>
-      <p class="cs-body">Каждый экран закрывает конкретную точку боли архетипа. Проектируем под&nbsp;Контролера&nbsp;— если флоу выдержит его проверку, Прагматик пройдёт его автоматически.</p>
-    </div>
-  </section>
-
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">01</div>
-      <div class="cb-title">Выбор тарифа</div>
-      <div class="cb-archetype">Контролёр · Прагматик</div>
-      <p class="cb-desc">Главная жалоба в&nbsp;интервью&nbsp;— ощущение, что выбор уже сделан за&nbsp;тебя. Один экран, два варианта, цена на&nbsp;виду.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/rutube/plans.png">
-    </div>
   </div>
 
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">02</div>
-      <div class="cb-title">Оплата</div>
-      <div class="cb-archetype">Контролёр</div>
-      <p class="cb-desc">Автопродление&nbsp;— главный страх. Вынесено отдельным блоком, дата и&nbsp;сумма списания&nbsp;— до&nbsp;нажатия кнопки.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/rutube/checkout.png">
-    </div>
-  </div>
-
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">03</div>
-      <div class="cb-title">Успешная оплата</div>
-      <div class="cb-archetype">Контролёр</div>
-      <p class="cb-desc">Success-экран закрывает четыре вопроса, которые пользователь задаёт молча: за&nbsp;что заплатил, когда следующее списание, как уведомят, где управлять.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/rutube/payment-success.png">
-    </div>
-  </div>
-
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">04</div>
-      <div class="cb-title">Ошибка оплаты</div>
-      <div class="cb-archetype">Контролёр · Прагматик</div>
-      <p class="cb-desc">Ошибка поверх формы ощущается как сбой системы&nbsp;— пользователь уходит. Отдельный экран с&nbsp;одним действием убирает ощущение тупика.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/rutube/payment-error.png">
-    </div>
-  </div>
-
-  <div class="cb-block">
-    <div class="cb-text">
-      <div class="cb-num">05</div>
-      <div class="cb-title">Управление подпиской</div>
-      <div class="cb-archetype">Контролёр</div>
-      <p class="cb-desc">Страница, куда ведёт success-экран. Тариф, дата, карта, автопродление&nbsp;— всё сразу. Отмена кнопкой, не&nbsp;в&nbsp;подменю.</p>
-    </div>
-    <div class="cb-media">
-      <img src="projects/rutube/subscription-settings.png">
-    </div>
-  </div>
-
-  <!-- ── TESTING (OUTCOME) ── -->
-  <section class="cs-section">
-    <div class="cs-section-label">Итоги</div>
-    <div class="cs-split">
-      <div class="cs-inner">
-        <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Think-out-loud на&nbsp;кликабельном прототипе</h2>
-        <p class="cs-body">Модерируемое тестирование на&nbsp;тех же&nbsp;трёх респондентах, что и&nbsp;на&nbsp;этапе исследования&nbsp;— это позволило им сравнить старый флоу Rutube и&nbsp;новый прототип на&nbsp;собственном опыте.</p>
-        <p class="cs-body" style="margin-top:16px;">Эмоциональные боли (страх списания, недоверие) нельзя отловить только по&nbsp;факту прохождения шагов&nbsp;— важно слышать что пользователь думает в&nbsp;моменте.</p>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <div class="archetype-card">
-          <div class="archetype-field-label" style="margin-bottom:8px;">Инсайт 1</div>
-          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Блок автопродления оценён&nbsp;— условия списания и&nbsp;отмены видны явно, не&nbsp;зашиты в&nbsp;мелкий шрифт. Все четыре критерия успеха Контролера закрылись.</div>
-        </div>
-        <div class="archetype-card">
-          <div class="archetype-field-label" style="margin-bottom:8px;">Инсайт 2</div>
-          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Error-экран ощущается как тупик. «Я&nbsp;бы&nbsp;второй раз сам не&nbsp;тыкнул&nbsp;— ментально уже принимаешь, что получишь ошибку». Точка для&nbsp;усиления.</div>
-        </div>
-        <div class="archetype-card">
-          <div class="archetype-field-label" style="margin-bottom:8px;">Инсайт 3</div>
-          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Ирина повела себя как Прагматик&nbsp;— приняла решение по&nbsp;тарифу за&nbsp;10 секунд. Флоу работает даже при&nbsp;пересечении паттернов внутри одного человека.</div>
-        </div>
-        <div class="archetype-card" style="margin-top:0;">
-          <div class="archetype-field-label" style="margin-bottom:8px;">Что изменили по&nbsp;итогам</div>
-          <div style="font-size:13px; color:var(--page-fg); line-height:1.55;">Error-экран обозначен как точка для&nbsp;доработки в&nbsp;следующей итерации. Кардинальных изменений не&nbsp;потребовалось&nbsp;— основная гипотеза подтвердилась для&nbsp;обоих архетипов.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── RESULTS ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <h2 class="cs-heading">Кейс прошёл полный цикл: от&nbsp;исследования до&nbsp;системы, готовой к&nbsp;разработке</h2>
-    </div>
-    <div class="cs-results" style="margin-top:40px;">
-      <div class="cs-result-item">
-        <span class="cs-result-num">01</span>
-        <span class="cs-result-text">Собрана база исследования: 3 интервью, конкурентный анализ, приоритизация по&nbsp;MoSCoW</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">02</span>
-        <span class="cs-result-text">Сформированы два поведенческих архетипа на&nbsp;основе паттернов, а&nbsp;не&nbsp;демографии</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">03</span>
-        <span class="cs-result-text">Спроектирована информационная архитектура и&nbsp;CJM для&nbsp;Рационального контролера</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">04</span>
-        <span class="cs-result-text">Отрисованы 5 ключевых экранов: выбор тарифа, оплата, успех, ошибка, управление подпиской</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">05</span>
-        <span class="cs-result-text">Собрана двухуровневая система токенов и&nbsp;UI kit из&nbsp;7 секций&nbsp;— дизайн готов к&nbsp;Dev Mode</span>
-      </div>
-      <div class="cs-result-item">
-        <span class="cs-result-num">06</span>
-        <span class="cs-result-text">Все трое респондентов прошли флоу без&nbsp;помощи модератора. Гипотеза подтверждена для&nbsp;обоих архетипов</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── REFLECTION ── -->
-  <section class="cs-section">
-    <div class="cs-inner">
-      <div class="cs-section-label">Рефлексия</div>
-      <h2 class="cs-heading" style="font-size:clamp(20px,2.2vw,30px);">Что бы&nbsp;сделал иначе</h2>
-      <p class="cs-body">Если бы&nbsp;начинал заново&nbsp;— уделил бы&nbsp;больше времени флоу на&nbsp;схемах до&nbsp;того, как заходить в&nbsp;детали экранов: переделывать логику на&nbsp;прототипе дороже. Не&nbsp;успел собрать полноценный CJM для&nbsp;Прагматика&nbsp;— он остался на&nbsp;уровне гипотезы, хотя в&nbsp;тесте подтвердился. Следующий шаг&nbsp;— проверить, работает ли&nbsp;экран управления подпиской так же&nbsp;уверенно, как экран оплаты: в&nbsp;тестировании он вызвал меньше реакции.</p>
-    </div>
-  </section>
-
-  <!-- ── MORE PROJECTS ── -->
-  <section class="cs-section">
-    <div class="cs-section-label">Другие проекты</div>
-    <div class="cs-more-grid">
-      <a href="auditors_monitoring.html" class="cs-more-card">
-        <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов">
-        <div class="cs-more-card-body">
-          <div class="cs-more-card-tag">Внутренний инструмент · 2026</div>
-          <div class="cs-more-card-title">Мониторинг аудиторов</div>
-        </div>
-      </a>
-      <a href="installation_panel.html" class="cs-more-card">
-        <img src="projects/installation_panel.png" alt="Панель инсталляций">
-        <div class="cs-more-card-body">
-          <div class="cs-more-card-tag">Коммерческий проект · 2025</div>
-          <div class="cs-more-card-title">Панель инсталляций</div>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- ── CONTACT + FOOTER ── -->
-  <section class="contact-section">
-    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px;">
-      <div>
-        <a href="mailto:sa1nteau@mail.ru" style="font-size:clamp(18px,2vw,28px); font-weight:500; color:var(--page-fg); transition:color .2s;">
-          sa1nteau@mail.ru
-        </a>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; transition:color 0.35s;">Ищете дизайнера?</div>
-        <div style="display:flex; gap:16px; justify-content:flex-end;">
-          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">LinkedIn</a>
-          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Insta</a>
-          <a href="#" style="font-size:13px; color:var(--page-fg); transition:color .2s;">Threads</a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <footer>
-    <div><div class="footer-label">Andrey Beregovoy</div><div class="footer-val">2022&nbsp;— 2026</div></div>
-    <div><div class="footer-label">Опыт</div><div class="footer-val">3 года в&nbsp;UX/UI</div></div>
-    <div style="text-align:right;"><div class="footer-label">Открыт к&nbsp;предложениям</div><div class="footer-val">Удалённо · Россия</div></div>
-  </footer>
-
-  <div class="noise-overlay"></div>
   <div id="cursor-outer"></div>
-  <div id="cursor-dot"></div>
 
   <script>
-    /* Disclosure toggle */
-    function toggleDisc(btn) {
-      const body = btn.nextElementSibling;
-      body.classList.toggle('open');
-      btn.classList.toggle('open');
-    }
+    (function () {
+      var track = document.querySelector('.slides');
+      var slides = document.querySelectorAll('.slide');
+      var prevBtn = document.querySelector('.viewer-prev');
+      var nextBtn = document.querySelector('.viewer-next');
+      var idx = 0;
+      var total = slides.length;
+      function render() {
+        track.style.transform = 'translateX(-' + (idx * 100 / total) + '%)';
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === total - 1;
+      }
+      prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
+      nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); } });
+      render();
 
-    /* Cursor */
-    const ring = document.getElementById('cursor-outer');
-    const dot  = document.getElementById('cursor-dot');
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    document.addEventListener('mousemove', e => {
+      document.querySelector('.viewer-nav a').addEventListener('click', function () {
+        try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+      });
+
+      // Horizontal-scroll wide images (research table, both CJMs, IA) — each
+      // only responds to wheel input while its own slide is the active one,
+      // otherwise scrolling elsewhere would silently pile up its offset and
+      // it'd jump ahead the moment you swipe over to it.
+      var wideEls = document.querySelectorAll('.wide-viewport');
+      var wides = Array.prototype.map.call(wideEls, function (viewport) {
+        return {
+          viewport: viewport,
+          track: viewport.querySelector('.wide-track'),
+          slideIdx: Array.prototype.indexOf.call(slides, viewport.closest('.slide')),
+          offset: 0
+        };
+      });
+      function applyWide(w) {
+        var max = Math.max(0, w.track.scrollWidth - w.viewport.clientWidth);
+        if (max === 0) {
+          w.track.style.transform = 'translateX(' + ((w.viewport.clientWidth - w.track.scrollWidth) / 2) + 'px)';
+          return;
+        }
+        w.offset = Math.max(0, Math.min(w.offset, max));
+        w.track.style.transform = 'translateX(' + (-w.offset) + 'px)';
+      }
+      document.addEventListener('wheel', function (e) {
+        wides.forEach(function (w) {
+          if (idx !== w.slideIdx) return;
+          if (w.track.scrollWidth - w.viewport.clientWidth <= 0) return;
+          w.offset += e.deltaY;
+          applyWide(w);
+        });
+      }, { passive: true });
+      window.addEventListener('resize', function () { wides.forEach(applyWide); });
+      wides.forEach(applyWide);
+    })();
+  </script>
+
+  <script>
+    var ring = document.getElementById('cursor-outer');
+    var mx = -100, my = -100;
+    var scale = 1, scaleTarget = 1, placed = false;
+    document.addEventListener('mousemove', function (e) {
       mx = e.clientX; my = e.clientY;
-      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      if (!placed) { placed = true; ring.style.opacity = '1'; }
     });
+    document.addEventListener('mousedown', function () { scaleTarget = 0.6; });
+    document.addEventListener('mouseup',   function () { scaleTarget = 1; });
     (function loop() {
-      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      scale += (scaleTarget - scale) * 0.2;
+      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
       requestAnimationFrame(loop);
     })();
-
-    /* Theme toggle */
-    const themeBtn = document.getElementById('theme-btn');
-    const moonIcon = document.getElementById('toggle-moon');
-    const sunIcon  = document.getElementById('toggle-sun');
-    const slider   = document.getElementById('toggle-slider');
-    let isDark = true;
-
-    function applyDark() {
-      document.body.classList.remove('light');
-      themeBtn.style.background = '#1a1a1a';
-      themeBtn.style.borderColor = 'rgba(255,255,255,0.08)';
-      slider.style.transform = 'translateX(0)';
-      slider.style.background = 'rgba(255,255,255,0.14)';
-      moonIcon.classList.add('toggle-on'); sunIcon.classList.remove('toggle-on');
-      sunIcon.style.color = 'rgba(255,255,255,0.3)'; moonIcon.style.color = '';
-      dot.style.background = '#fff';
-      ring.style.borderColor = 'rgba(180,180,180,0.5)';
-    }
-    function applyLight() {
-      document.body.classList.add('light');
-      themeBtn.style.background = '#e2e2e2';
-      themeBtn.style.borderColor = 'rgba(0,0,0,0.08)';
-      slider.style.transform = 'translateX(28px)';
-      slider.style.background = 'rgba(0,0,0,0.1)';
-      sunIcon.classList.add('toggle-on'); moonIcon.classList.remove('toggle-on');
-      sunIcon.style.color = '#444'; moonIcon.style.color = 'rgba(0,0,0,0.3)';
-      dot.style.background = '#111';
-      ring.style.borderColor = 'rgba(20,20,20,0.35)';
-    }
-    themeBtn.addEventListener('click', () => { isDark = !isDark; isDark ? applyDark() : applyLight(); });
   </script>
+
 </body>
 </html>
