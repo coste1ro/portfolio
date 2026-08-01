@@ -115,15 +115,14 @@
       line-height: 1.2; color: var(--fg);
     }
 
-    /* ── Shared: horizontal-scroll wide image (research table, CJMs, IA) ── */
-    .wide-viewport { position: absolute; left: 40px; right: 40px; overflow: hidden; }
+    /* ── Shared: horizontal-scroll wide image (IA) ── */
     .wide-track { height: 100%; display: flex; align-items: center; will-change: transform; }
     .wide-track img { height: 100%; width: auto; display: block; }
 
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
-      position: absolute; top: 232px; left: 40px; right: 40px;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
@@ -154,22 +153,23 @@
     /* ── Slide 2: research (list + table) ── */
     .slide-research { position: relative; height: 100%; }
     .competitors-wrap {
-      position: absolute; top: 167px; left: 40px; right: 40px; bottom: 40px;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       display: flex; gap: 16px; align-items: flex-start;
     }
     .competitors-groups {
       flex: 0 0 300px; display: flex; flex-direction: column; gap: 56px;
     }
     .competitors-group-label {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
-      color: var(--fg); margin-bottom: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 16px;
     }
     .competitors-group-list {
-      list-style: disc; padding-left: 24px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+      list-style: disc; padding-left: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
       line-height: 1.2; color: var(--fg);
     }
-    .competitors-group-list li { margin-bottom: 6px; }
+    .competitors-group-list li { margin-bottom: 8px; }
     .competitors-table-wrap { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
     .competitors-table { border-collapse: collapse; width: 100%; }
     .competitors-table th {
@@ -178,8 +178,8 @@
       color: var(--fg); padding: 8px; text-align: center; vertical-align: middle;
       line-height: 1.2;
     }
-    .competitors-table td { padding: 8px 4px; text-align: center; vertical-align: middle; height: 50px; }
-    .competitors-table tr.group-break td { padding-top: 24px; }
+    .competitors-table td { padding: 14px 4px; text-align: center; vertical-align: middle; height: 64px; }
+    .competitors-table tr.group-break td { padding-top: 30px; }
     .competitors-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
     .status-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; }
     .status-dot.hi { background: #22c55e; }
@@ -197,7 +197,7 @@
     /* ── Slide 3: priority (reviews + moscow) ── */
     .slide-priority { position: relative; height: 100%; }
     .priority-wrap {
-      position: absolute; top: 173px; left: 40px; right: 40px; bottom: 40px;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       display: flex; gap: 40px; align-items: flex-start;
     }
     .reviews-table-wrap { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
@@ -207,7 +207,7 @@
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
       color: var(--fg); padding: 8px; text-align: center;
     }
-    .reviews-table td { padding: 0 8px; vertical-align: middle; height: 50px; }
+    .reviews-table td { padding: 10px 8px; vertical-align: middle; height: 68px; }
     .reviews-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
     .reviews-text {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 10px;
@@ -233,7 +233,7 @@
     /* ── Slide 4: archetypes ── */
     .slide-archetypes { position: relative; height: 100%; }
     .archetypes-grid {
-      position: absolute; top: 175px; left: 40px; right: 40px;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px;
       align-items: start;
     }
@@ -259,9 +259,14 @@
 
     /* ── Slide 5: 4 forces ── */
     .slide-forces { position: relative; height: 100%; }
-    .forces-card-a { position: absolute; top: 175px; left: 40px; width: 310px; }
-    .forces-card-b { position: absolute; top: 175px; left: 390px; width: 310px; }
-    .forces-conclusion { position: absolute; top: 175px; left: 1090px; width: 310px; }
+    .forces-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      display: grid; grid-template-columns: 310fr 310fr 390fr 310fr; column-gap: 40px;
+      align-items: start;
+    }
+    .forces-card-a { grid-column: 1; }
+    .forces-card-b { grid-column: 2; }
+    .forces-conclusion { grid-column: 4; }
     .forces-conclusion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
     .forces-conclusion-list p {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
@@ -270,13 +275,17 @@
 
     /* ── Slide 9: wide image (IA) ── */
     .slide-wide { position: relative; height: 100%; }
-    .wide-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
-    .slide-wide .wide-viewport { top: 280px; bottom: 140px; }
+    .wide-content {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      display: flex; flex-direction: column;
+    }
+    .wide-head { max-width: 900px; }
+    .wide-viewport { margin-top: 40px; height: 500px; overflow: hidden; }
 
     /* ── Slides 7–8: CJM tables (Контролёр, Прагматик) ── */
     .slide-cjm { position: relative; height: 100%; }
     .cjm-wrap {
-      position: absolute; top: 175px; left: 40px; right: 40px; bottom: 40px;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       overflow-x: auto; overflow-y: hidden;
     }
     .cjm-table { border-collapse: collapse; }
@@ -295,24 +304,17 @@
 
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid {
-        position: static; display: flex; flex-direction: column;
+      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap {
+        position: static; transform: none; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
-      .wide-head {
-        position: static; margin: 90px 24px 24px; max-width: none;
+      .wide-content {
+        position: static; transform: none; margin: 90px 24px 140px;
       }
-      .slide-forces {
-        display: flex; flex-direction: column; gap: 24px; padding: 90px 24px 140px;
-      }
-      .forces-card-a, .forces-card-b, .forces-conclusion {
-        position: static; width: 100%;
-      }
-      .slide-wide .wide-viewport {
-        position: static; height: 220px; margin: 0 24px 24px;
-      }
-      .competitors-wrap, .priority-wrap, .cjm-wrap {
-        position: static; flex-direction: column; margin: 90px 24px 24px; bottom: auto;
+      .wide-head { max-width: none; }
+      .forces-card-a, .forces-card-b, .forces-conclusion { width: 100%; }
+      .wide-viewport {
+        height: 220px; margin-top: 24px;
       }
       .competitors-groups { flex-basis: auto; }
       .competitors-table-wrap, .reviews-table-wrap { width: 100%; }
@@ -709,6 +711,7 @@
     <section class="slide slide-forces">
       <div class="eyebrow">4 силы</div>
 
+      <div class="forces-wrap">
       <div class="archetype-card forces-card-a" style="padding: 24px;">
         <div class="archetype-card-title">Рациональный контролер</div>
         <div>
@@ -792,6 +795,7 @@
           <p>Главная Anxiety&nbsp;— автосписание и&nbsp;непрозрачность</p>
           <p>Главная Habit&nbsp;— «и&nbsp;так можно бесплатно»</p>
         </div>
+      </div>
       </div>
 
       <div class="slide-title">Rutube Subscription</div>
@@ -936,13 +940,15 @@
     <!-- ── SLIDE 8 — ИНФОРМАЦИОННАЯ АРХИТЕКТУРА ── -->
     <section class="slide slide-wide">
       <div class="eyebrow">Информационная архитектура</div>
-      <div class="wide-head">
-        <h2 class="section-heading">Подписка живёт в&nbsp;Настройки → Подписки</h2>
-        <p class="section-body">Success-экран должен явно указывать на&nbsp;этот путь&nbsp;— иначе пользователь не&nbsp;поймёт, как управлять подпиской после оплаты.</p>
-      </div>
-      <div class="wide-viewport">
-        <div class="wide-track">
-          <img src="projects/rutube/IA.png" alt="Информационная архитектура">
+      <div class="wide-content">
+        <div class="wide-head">
+          <h2 class="section-heading">Подписка живёт в&nbsp;Настройки → Подписки</h2>
+          <p class="section-body">Success-экран должен явно указывать на&nbsp;этот путь&nbsp;— иначе пользователь не&nbsp;поймёт, как управлять подпиской после оплаты.</p>
+        </div>
+        <div class="wide-viewport">
+          <div class="wide-track">
+            <img src="projects/rutube/IA.png" alt="Информационная архитектура">
+          </div>
         </div>
       </div>
       <div class="slide-title">Rutube Subscription</div>
