@@ -64,12 +64,12 @@
 
     /* ── Slides ── */
     .slides {
-      display: flex; width: 1000%; height: 100%;
+      display: flex; width: 1100%; height: 100%;
       transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
       will-change: transform;
     }
     .slide {
-      flex: 0 0 10%; height: 100%;
+      flex: 0 0 9.0910%; height: 100%;
       position: relative; overflow: hidden;
     }
 
@@ -352,6 +352,26 @@
       overflow: hidden;
     }
     .userflow-wrap img { height: 620px; width: auto; display: block; }
+
+    /* ── Slide 12: UI screens strip ── */
+    .slide-strip { position: relative; height: 100%; }
+    .strip-viewport {
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
+    }
+    .strip-track { display: flex; align-items: flex-start; gap: 40px; }
+    .strip-item { flex: 0 0 540px; display: flex; flex-direction: column; }
+    .strip-num {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 20px;
+    }
+    .strip-item img { width: 540px; height: 384px; display: block; object-fit: cover; margin-bottom: 20px; }
+    .strip-caption {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: 20px;
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
 
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
@@ -1092,6 +1112,51 @@
       <div class="eyebrow">User-flow</div>
       <div class="userflow-wrap hscroll-viewport">
         <img class="hscroll-track" src="projects/rutube/user-flow.svg" alt="User-flow оформления подписки Rutube Premium">
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 11 — UI SCREENS STRIP ── -->
+    <section class="slide slide-strip">
+      <div class="eyebrow">UI</div>
+      <div class="strip-viewport hscroll-viewport">
+        <div class="strip-track hscroll-track">
+          <div class="strip-item">
+            <span class="strip-num">[1]</span>
+            <img src="projects/rutube/ui-01.png" alt="Просмотр без подписки">
+            <p class="strip-caption">Просмотр без&nbsp;подписки</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[2]</span>
+            <img src="projects/rutube/ui-02.png" alt="Выбор тарифа">
+            <p class="strip-caption">Выбор тарифа</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[3]</span>
+            <img src="projects/rutube/ui-03.png" alt="Оплата">
+            <p class="strip-caption">Оплата</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[4]</span>
+            <img src="projects/rutube/ui-04.png" alt="Успешная оплата">
+            <p class="strip-caption">Успешная оплата</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[5]</span>
+            <img src="projects/rutube/ui-05.png" alt="Ошибка оплаты">
+            <p class="strip-caption">Ошибка оплаты</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[6]</span>
+            <img src="projects/rutube/ui-06.png" alt="Просмотр с подпиской">
+            <p class="strip-caption">Просмотр с&nbsp;подпиской</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[7]</span>
+            <img src="projects/rutube/ui-07.png" alt="Управление подпиской">
+            <p class="strip-caption">Управление подпиской</p>
+          </div>
+        </div>
       </div>
       <div class="slide-title">Rutube Subscription</div>
     </section>
