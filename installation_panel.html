@@ -149,14 +149,17 @@
       display: flex; align-items: flex-start; gap: 40px;
       will-change: transform;
     }
-    .strip-item { flex: 0 0 880px; display: flex; flex-direction: column; }
+    .strip-item { flex: 0 0 auto; display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 20px;
     }
-    .strip-item img { width: 880px; height: 550px; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
+    .strip-item img {
+      height: min(550px, calc(100vh - 344px)); width: auto; aspect-ratio: 880 / 550;
+      display: block; object-fit: cover; object-position: top left; margin-bottom: 20px;
+    }
     .strip-caption {
       font-family: 'Jost', sans-serif;
       font-weight: 300; font-size: 20px;
@@ -191,6 +194,7 @@
       .hero-grid {
         position: static; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
+        max-height: none; overflow-y: visible;
       }
       .hero-heading { margin-bottom: 0; }
       .hero-col-a, .hero-col-b { grid-column: unset; grid-row: unset; }
@@ -198,16 +202,10 @@
       .portal-grid {
         position: static; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
+        max-height: none; overflow-y: visible;
       }
       .portal-callouts { flex-direction: row; justify-content: space-between; gap: 16px; }
       .eyebrow, .slide-title { left: 24px; }
-    }
-
-    /* ── Short-viewport safety net (13" MacBook Chrome etc: real content
-       height often 700-800px after browser chrome, well under the 900px
-       reference) — the strip image is the tall offender here. ── */
-    @media (max-height: 900px) {
-      .strip-item img { height: 300px; }
     }
   </style>
 </head>
