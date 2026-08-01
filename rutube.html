@@ -230,89 +230,88 @@
     }
     .moscow-group-list li { margin-bottom: 4px; }
 
-    /* ── Slide 4: audience (ЦА) ── */
-    .slide-audience { position: relative; height: 100%; }
-    .audience-ages {
-      position: absolute; top: 180px; left: 40px; right: 40px;
-      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 40px;
-    }
-    .audience-ages > div.dim { opacity: 0.35; }
-    .audience-lower {
-      position: absolute; top: 460px; left: 40px; right: 40px;
-      display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px;
-    }
-    .audience-method-row { margin-top: 20px; }
-    .audience-method-row:first-of-type { margin-top: 24px; }
-
-    /* ── Slide 5: archetypes ── */
+    /* ── Slide 4: archetypes ── */
     .slide-archetypes { position: relative; height: 100%; }
-    .archetypes-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
     .archetypes-grid {
-      position: absolute; top: 260px; left: 40px; right: 40px; bottom: 140px;
-      display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px;
+      position: absolute; top: 175px; left: 40px; right: 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px;
+      align-items: start;
     }
-    .archetype-tag {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
-      letter-spacing: 0; text-transform: uppercase; color: var(--fg);
-      opacity: 0.5; margin-bottom: 8px;
+    .archetype-card {
+      background: rgba(79,70,229,0.05); padding: 24px;
+      display: flex; flex-direction: column; gap: 12px;
     }
-    .archetype-name {
-      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
-      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
-      margin-bottom: 20px;
-    }
-    .archetype-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
-    .archetype-field-label {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
-      letter-spacing: 0; text-transform: uppercase; color: var(--fg);
-      opacity: 0.5; margin-bottom: 4px;
-    }
-    .archetype-field-value {
+    .archetype-card-title {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
       line-height: 1.2; color: var(--fg);
     }
-    .archetype-quote {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
-      line-height: 1.2; color: var(--fg); margin-top: 24px;
-      padding-left: 16px; border-left: 1px solid var(--fg);
+    .archetype-card-field-label {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      line-height: 1.2; color: var(--fg); margin-bottom: 4px;
     }
+    .archetype-card-list {
+      list-style: disc; padding-left: 18px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .archetype-card-list li { margin-bottom: 2px; }
+    .archetype-card-list li:last-child { margin-bottom: 0; }
 
-    /* ── Slide 6: 4 forces ── */
+    /* ── Slide 5: 4 forces ── */
     .slide-forces { position: relative; height: 100%; }
-    .forces-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
-    .forces-grid {
-      position: absolute; top: 320px; left: 40px; right: 40px; bottom: 140px;
-      display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-      column-gap: 40px; row-gap: 32px;
-    }
-    .force-label {
-      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
-      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
-      margin-bottom: 16px;
-    }
-    .force-text {
+    .forces-card-a { position: absolute; top: 175px; left: 40px; width: 310px; }
+    .forces-card-b { position: absolute; top: 175px; left: 390px; width: 310px; }
+    .forces-conclusion { position: absolute; top: 175px; left: 1090px; width: 310px; }
+    .forces-conclusion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .forces-conclusion-list p {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
-      line-height: 1.2; color: var(--fg); max-width: 480px;
+      line-height: 1.2; color: var(--fg);
     }
 
-    /* ── Slides 7–9: wide image (CJM x2, IA) ── */
+    /* ── Slide 9: wide image (IA) ── */
     .slide-wide { position: relative; height: 100%; }
     .wide-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
     .slide-wide .wide-viewport { top: 280px; bottom: 140px; }
 
+    /* ── Slides 7–8: CJM tables (Контролёр, Прагматик) ── */
+    .slide-cjm { position: relative; height: 100%; }
+    .cjm-wrap {
+      position: absolute; top: 175px; left: 40px; right: 40px; bottom: 40px;
+      overflow-x: auto; overflow-y: hidden;
+    }
+    .cjm-table { border-collapse: collapse; }
+    .cjm-table th, .cjm-table td { padding: 10px 20px; vertical-align: middle; text-align: center; min-width: 220px; }
+    .cjm-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+    }
+    .cjm-table td { background: rgba(79,70,229,0.05); }
+    .cjm-table td.row-label { background: rgba(79,70,229,0.25); }
+    .cjm-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .cjm-table td.row-label .cjm-text { font-size: 16px; }
+
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid, .audience-ages, .audience-lower, .forces-grid {
+      .hero-grid, .archetypes-grid {
         position: static; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
-      .archetypes-head, .forces-head, .wide-head {
+      .wide-head {
         position: static; margin: 90px 24px 24px; max-width: none;
+      }
+      .slide-forces {
+        display: flex; flex-direction: column; gap: 24px; padding: 90px 24px 140px;
+      }
+      .forces-card-a, .forces-card-b, .forces-conclusion {
+        position: static; width: 100%;
       }
       .slide-wide .wide-viewport {
         position: static; height: 220px; margin: 0 24px 24px;
       }
-      .competitors-wrap, .priority-wrap {
+      .competitors-wrap, .priority-wrap, .cjm-wrap {
         position: static; flex-direction: column; margin: 90px 24px 24px; bottom: auto;
       }
       .competitors-groups { flex-basis: auto; }
@@ -595,151 +594,346 @@
       <div class="slide-title">Rutube Subscription</div>
     </section>
 
-    <!-- ── SLIDE 4 — ЦА ПРОЕКТА ── -->
-    <section class="slide slide-audience">
-      <div class="eyebrow">ЦА проекта</div>
-      <div class="audience-ages">
-        <div class="dim">
-          <div class="field-label">18–24</div>
-          <p class="field-value">Активно потребляют UGC, но&nbsp;очень чувствительны к&nbsp;цене.</p>
-        </div>
-        <div>
-          <div class="field-label">25–34</div>
-          <p class="field-value">Наиболее платежеспособная и&nbsp;зрелая аудитория в&nbsp;цифровых продуктах, активно использует подписки и&nbsp;диджитал-контент.</p>
-        </div>
-        <div class="dim">
-          <div class="field-label">35–44</div>
-          <p class="field-value">Стабильны в&nbsp;доходе, но&nbsp;ниже цифровая гибкость.</p>
-        </div>
-      </div>
-      <div class="audience-lower">
-        <div>
-          <div class="hero-col-label">Цель исследования</div>
-          <p class="hero-col-body">Узнать, как и&nbsp;почему пользователи оформляют подписку на&nbsp;Rutube, какие проблемы возникают и&nbsp;как их&nbsp;решают.</p>
-        </div>
-        <div>
-          <div class="hero-col-label">Подходящий метод исследования</div>
-          <p class="hero-col-body audience-method-row">Интервью&nbsp;— онлайн-встречи с&nbsp;несколькими знакомыми.</p>
-          <p class="hero-col-body audience-method-row">Наблюдение&nbsp;— посмотреть, как они оформляют подписку.</p>
-        </div>
-      </div>
-      <div class="slide-title">Rutube Subscription</div>
-    </section>
-
-    <!-- ── SLIDE 5 — АРХЕТИПЫ ── -->
+    <!-- ── SLIDE 4 — АРХЕТИПЫ ── -->
     <section class="slide slide-archetypes">
       <div class="eyebrow">Архетипы</div>
-      <div class="archetypes-head">
-        <h2 class="section-heading">Два паттерна. Один барьер.</h2>
-        <p class="section-body">Три интервью выявили два устойчивых паттерна&nbsp;— по&nbsp;отношению к&nbsp;деньгам и&nbsp;процессу, не&nbsp;по&nbsp;возрасту.</p>
-      </div>
       <div class="archetypes-grid">
         <div>
-          <div class="archetype-tag">Архетип 1</div>
-          <div class="archetype-name">Рациональный контролёр</div>
-          <div class="archetype-fields">
-            <div>
-              <div class="archetype-field-label">Контекст</div>
-              <div class="archetype-field-value">Смотрит много, думает об&nbsp;экономии</div>
-            </div>
-            <div>
-              <div class="archetype-field-label">Мотивация</div>
-              <div class="archetype-field-value">Прозрачность и&nbsp;управляемость</div>
-            </div>
-            <div>
-              <div class="archetype-field-label">Страх</div>
-              <div class="archetype-field-value">Автосписание без&nbsp;уведомления</div>
-            </div>
-            <div>
-              <div class="archetype-field-label">Успех</div>
-              <div class="archetype-field-value">Отменяет в&nbsp;1–2 клика</div>
-            </div>
-          </div>
-          <blockquote class="archetype-quote">«Когда вижу автопродление, хочу понять условия заранее&nbsp;— чтобы потом не&nbsp;чувствовать себя обманутым»</blockquote>
+          <div class="field-label">ЦА</div>
+          <p class="field-value">Основная аудитория&nbsp;— 25–34: платёжеспособна, зрела в&nbsp;цифровых продуктах, уже привыкла жить на&nbsp;подписках. Но&nbsp;внутри неё&nbsp;— не&nbsp;один сценарий поведения.</p>
         </div>
         <div>
-          <div class="archetype-tag">Архетип 2</div>
-          <div class="archetype-name">Прагматик «без&nbsp;лишнего»</div>
-          <div class="archetype-fields">
-            <div>
-              <div class="archetype-field-label">Контекст</div>
-              <div class="archetype-field-value">Смотрит иногда, реклама раздражает</div>
-            </div>
-            <div>
-              <div class="archetype-field-label">Мотивация</div>
-              <div class="archetype-field-value">Убрать рекламу быстро</div>
-            </div>
-            <div>
-              <div class="archetype-field-label">Страх</div>
-              <div class="archetype-field-value">Апселл, сложный флоу</div>
-            </div>
-            <div>
-              <div class="archetype-field-label">Успех</div>
-              <div class="archetype-field-value">Оплатил&nbsp;— смотрит, без&nbsp;вопросов</div>
-            </div>
+          <div class="field-label">Метод</div>
+          <p class="field-value">Глубинные интервью с&nbsp;представителями аудитории показали: за&nbsp;одинаковым действием&nbsp;— оформлением подписки&nbsp;— стоят разные мотивы, страхи и&nbsp;ожидания.</p>
+        </div>
+        <div class="archetype-card">
+          <div class="archetype-card-title">Рациональный контролёр</div>
+          <div>
+            <div class="archetype-card-field-label">Контекст</div>
+            <ul class="archetype-card-list">
+              <li>Использует видеосервисы регулярно</li>
+              <li>Цифрово грамотен</li>
+              <li>Замечает логику интерфейса</li>
+              <li>Следит за&nbsp;расходами</li>
+            </ul>
           </div>
-          <blockquote class="archetype-quote">«Когда реклама мешает смотреть, хочу убрать её за&nbsp;один шаг&nbsp;— и&nbsp;не&nbsp;разбираться в&nbsp;тарифах»</blockquote>
+          <div>
+            <div class="archetype-card-field-label">Мотивация</div>
+            <ul class="archetype-card-list">
+              <li>Хочет пользоваться подпиской осознанно, при&nbsp;полном контроле</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Ключевая потребность</div>
+            <ul class="archetype-card-list">
+              <li>Прозрачность и&nbsp;управляемость</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Страх</div>
+            <ul class="archetype-card-list">
+              <li>Автосписание без&nbsp;уведомления</li>
+              <li>Повышение цены без&nbsp;уведомления</li>
+              <li>Скрытые условия</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Поведенческий паттерн</div>
+            <ul class="archetype-card-list">
+              <li>Частично читает интерфейс</li>
+              <li>Замечает несоответствия</li>
+              <li>Раздражается при&nbsp;отсутствии логики</li>
+              <li>Сравнивает бесплатное и&nbsp;платное</li>
+              <li>Ищет подтверждение ценности</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Критерий успеха</div>
+            <ul class="archetype-card-list">
+              <li>Понимает, за&nbsp;что платит</li>
+              <li>Видит дату списания</li>
+              <li>Может отменить в&nbsp;1–2 клика</li>
+              <li>Видит явное сравнение тарифов</li>
+            </ul>
+          </div>
+        </div>
+        <div class="archetype-card">
+          <div class="archetype-card-title">Прагматик «без&nbsp;лишнего»</div>
+          <div>
+            <div class="archetype-card-field-label">Контекст</div>
+            <ul class="archetype-card-list">
+              <li>Видео&nbsp;= вечерний отдых</li>
+              <li>Не&nbsp;хочет разбираться</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Мотивация</div>
+            <ul class="archetype-card-list">
+              <li>Убрать рекламу и&nbsp;смотреть спокойно</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Ключевая потребность</div>
+            <ul class="archetype-card-list">
+              <li>Простота</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Страх</div>
+            <ul class="archetype-card-list">
+              <li>Навязчивость, апселлы, лишние шаги</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Поведенческий паттерн</div>
+            <ul class="archetype-card-list">
+              <li>Не&nbsp;читает текст</li>
+              <li>Принимает быстрые решения</li>
+              <li>Бросит процесс при&nbsp;фрустрации</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Критерий успеха</div>
+            <ul class="archetype-card-list">
+              <li>Минимум шагов</li>
+              <li>Один тариф</li>
+              <li>Без&nbsp;давления</li>
+            </ul>
+          </div>
         </div>
       </div>
       <div class="slide-title">Rutube Subscription</div>
     </section>
 
-    <!-- ── SLIDE 6 — 4 СИЛЫ ── -->
+    <!-- ── SLIDE 5 — 4 СИЛЫ ── -->
     <section class="slide slide-forces">
       <div class="eyebrow">4 силы</div>
-      <div class="forces-head">
-        <h2 class="section-heading">JTBD: что толкает и&nbsp;что держит</h2>
+
+      <div class="archetype-card forces-card-a" style="padding: 24px;">
+        <div class="archetype-card-title">Рациональный контролер</div>
+        <div>
+          <div class="archetype-card-field-label">Push (что толкает от&nbsp;бесплатной версии)</div>
+          <ul class="archetype-card-list">
+            <li>Раздражающая реклама</li>
+            <li>Ограничения</li>
+            <li>Отсутствие контроля</li>
+            <li>Невозможность точно понимать, что получаешь</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Pull (что привлекает к&nbsp;подписке)</div>
+          <ul class="archetype-card-list">
+            <li>Отсутствие рекламы</li>
+            <li>Эксклюзив</li>
+            <li>Чёткое описание преимуществ</li>
+            <li>Прозрачные условия</li>
+            <li>Возможность управлять подпиской</li>
+            <li>Видимая дата следующего списания</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Anxiety (что пугает)</div>
+          <ul class="archetype-card-list">
+            <li>Автосписание без&nbsp;уведомления</li>
+            <li>Повышение цены после пробного периода</li>
+            <li>Мелкий текст</li>
+            <li>Скрытые условия</li>
+            <li>Неочевидное управление подпиской</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Habit (что удерживает в&nbsp;бесплатной модели)</div>
+          <ul class="archetype-card-list">
+            <li>Можно и&nbsp;так смотреть</li>
+            <li>Лень разбираться</li>
+            <li>Привычка обходиться без&nbsp;подписки</li>
+            <li>Альтернативные сервисы</li>
+          </ul>
+        </div>
       </div>
-      <div class="forces-grid">
+
+      <div class="archetype-card forces-card-b" style="padding: 12px 24px; gap: 10px;">
+        <div class="archetype-card-title">Прагматик «без&nbsp;лишнего»</div>
         <div>
-          <div class="force-label">Push</div>
-          <p class="force-text">Реклама&nbsp;— один и&nbsp;тот же&nbsp;толчок к&nbsp;действию для&nbsp;обоих архетипов.</p>
+          <div class="archetype-card-field-label">Push</div>
+          <ul class="archetype-card-list">
+            <li>Слишком много рекламы</li>
+            <li>Неудобство</li>
+          </ul>
         </div>
         <div>
-          <div class="force-label">Pull</div>
-          <p class="force-text">Разный: Контролёру&nbsp;— прозрачность и&nbsp;контроль над&nbsp;расходами, Прагматику&nbsp;— минимум действий.</p>
+          <div class="archetype-card-field-label">Pull</div>
+          <ul class="archetype-card-list">
+            <li>Быстро убрать рекламу</li>
+          </ul>
         </div>
         <div>
-          <div class="force-label">Anxiety</div>
-          <p class="force-text">Одна на&nbsp;двоих: автосписание и&nbsp;непрозрачные условия.</p>
+          <div class="archetype-card-field-label">Anxiety</div>
+          <ul class="archetype-card-list">
+            <li>Апселл</li>
+            <li>Сложный флоу</li>
+            <li>Телефон / спам</li>
+          </ul>
         </div>
         <div>
-          <div class="force-label">Habit</div>
-          <p class="force-text">Удерживает в&nbsp;бесплатной версии по&nbsp;инерции&nbsp;— «и&nbsp;так работает».</p>
+          <div class="archetype-card-field-label">Habit</div>
+          <ul class="archetype-card-list">
+            <li>Бесплатно тоже работает</li>
+            <li>Не&nbsp;хочет тратить время</li>
+          </ul>
         </div>
+      </div>
+
+      <div class="forces-conclusion">
+        <h2 class="section-heading">Вывод</h2>
+        <div class="forces-conclusion-list">
+          <p>Главный Push&nbsp;— раздражающая реклама</p>
+          <p>Главный Pull&nbsp;— отсутствие рекламы + ощущение контроля</p>
+          <p>Главная Anxiety&nbsp;— автосписание и&nbsp;непрозрачность</p>
+          <p>Главная Habit&nbsp;— «и&nbsp;так можно бесплатно»</p>
+        </div>
+      </div>
+
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 6 — CJM: КОНТРОЛЁР ── -->
+    <section class="slide slide-cjm">
+      <div class="eyebrow">CJM (контролёр)</div>
+      <div class="cjm-wrap">
+        <table class="cjm-table">
+          <thead>
+            <tr>
+              <th>Этап</th>
+              <th>Триггер</th>
+              <th>Страница подписки</th>
+              <th>Выбор тарифа</th>
+              <th>Ввод карты</th>
+              <th>Завершение оплаты</th>
+              <th>После оплаты</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Действия пользователя</p></td>
+              <td><p class="cjm-text">Видит рекламу / ограничение</p></td>
+              <td><p class="cjm-text">Изучает условия подписки</p></td>
+              <td><p class="cjm-text">Анализирует доступные тарифы</p></td>
+              <td><p class="cjm-text">Вводит платёжные данные</p></td>
+              <td><p class="cjm-text">Завершает оплату</p></td>
+              <td><p class="cjm-text">Возвращается к&nbsp;просмотру. Получает напоминание о&nbsp;списании. Решает продлевать или&nbsp;нет</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Мысли</p></td>
+              <td><p class="cjm-text">Надоело. Возможно, стоит оформить подписку</p></td>
+              <td><p class="cjm-text">Что входит? Есть&nbsp;ли подвох?</p></td>
+              <td><p class="cjm-text">Почему мне предлагают именно это?<br>В чём разница?</p></td>
+              <td><p class="cjm-text">Когда спишут? Смогу&nbsp;ли отменить?<br>Не поднимут ли&nbsp;цену?</p></td>
+              <td><p class="cjm-text">Это всё? Где подтверждение?</p></td>
+              <td><p class="cjm-text">Реклама пропала. Когда следующее списание? Стоит&nbsp;ли продлевать?</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Эмоции</p></td>
+              <td><p class="cjm-text">Раздражение</p></td>
+              <td><p class="cjm-text">Настороженность</p></td>
+              <td><p class="cjm-text">Сомнение</p></td>
+              <td><p class="cjm-text">Тревога, настороженность</p></td>
+              <td><p class="cjm-text">Нейтральность, лёгкое недоумение</p></td>
+              <td><p class="cjm-text">Облегчение в&nbsp;начале. Тревога ближе к&nbsp;дате списания, если&nbsp;нет напоминания</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Боли</p></td>
+              <td><p class="cjm-text">Реклама мешает</p></td>
+              <td><p class="cjm-text">Перегруз текста<br>Нет чёткого сравнения бесплатного и&nbsp;платного<br>Условия описаны неявно</p></td>
+              <td><p class="cjm-text">Нет объяснения различий<br>Нет явной логики выбора<br>Несколько вариантов без&nbsp;приоритета</p></td>
+              <td><p class="cjm-text">Автопродление включено по&nbsp;умолчанию<br>Нет напоминания о&nbsp;списании<br>Нет видимой информации об&nbsp;управлении подпиской</p></td>
+              <td><p class="cjm-text">Нет ощущения завершённости<br>Неочевидно, когда следующее списание<br>Неочевидно, где управлять подпиской</p></td>
+              <td><p class="cjm-text">Нет напоминания о&nbsp;списании. Сложно найти, где отменить. Не&nbsp;понятно, какие плюшки даёт подписка</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Возможности для&nbsp;улучшения</p></td>
+              <td><p class="cjm-text">Чётко показать ценность подписки</p></td>
+              <td><p class="cjm-text">Чёткая визуальная иерархия<br>Таблица free vs&nbsp;premium<br>Прозрачная стоимость без&nbsp;мелкого текста</p></td>
+              <td><p class="cjm-text">Обоснование рекомендуемого тарифа<br>Один основной вариант + альтернативы<br>Краткое объяснение «кому подойдёт»</p></td>
+              <td><p class="cjm-text">Явная дата следующего списания<br>Информация о&nbsp;напоминании до&nbsp;списания<br>Видимая ссылка «управлять подпиской»</p></td>
+              <td><p class="cjm-text">Яркий экран подтверждения<br>Дата следующего списания<br>Кнопка управления подпиской</p></td>
+              <td><p class="cjm-text">Push/email с&nbsp;напоминанием за&nbsp;3 дня. Видимая ссылка «управление подпиской». Информация о&nbsp;следующем списании в&nbsp;самом success-экране</p></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="slide-title">Rutube Subscription</div>
     </section>
 
-    <!-- ── SLIDE 7 — CJM: КОНТРОЛЁР ── -->
-    <section class="slide slide-wide">
-      <div class="eyebrow">Customer Journey Map</div>
-      <div class="wide-head">
-        <h2 class="section-heading">Карта собрана для&nbsp;Рационального контролёра</h2>
-      </div>
-      <div class="wide-viewport">
-        <div class="wide-track">
-          <img src="projects/rutube/cjm_kontroler.png" alt="CJM — Рациональный контролёр">
-        </div>
+    <!-- ── SLIDE 7 — CJM: ПРАГМАТИК ── -->
+    <section class="slide slide-cjm">
+      <div class="eyebrow">CJM (прагматик)</div>
+      <div class="cjm-wrap">
+        <table class="cjm-table">
+          <thead>
+            <tr>
+              <th>Этап</th>
+              <th>Триггер</th>
+              <th>Страница подписки</th>
+              <th>Выбор тарифа</th>
+              <th>Ввод карты</th>
+              <th>Завершение оплаты</th>
+              <th>После оплаты</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Действия пользователя</p></td>
+              <td><p class="cjm-text">Смотрит видео, сталкивается с&nbsp;рекламой</p></td>
+              <td><p class="cjm-text">Переходит на&nbsp;страницу оформления</p></td>
+              <td><p class="cjm-text">Быстро сканирует варианты</p></td>
+              <td><p class="cjm-text">Вводит карту</p></td>
+              <td><p class="cjm-text">Завершает оплату</p></td>
+              <td><p class="cjm-text">Возвращается к&nbsp;просмотру, про подписку больше не&nbsp;думает</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Мысли</p></td>
+              <td><p class="cjm-text">Да сколько можно уже</p></td>
+              <td><p class="cjm-text">Где кнопка?</p></td>
+              <td><p class="cjm-text">Мне просто без&nbsp;рекламы, остальное не&nbsp;важно</p></td>
+              <td><p class="cjm-text">Быстрее бы закончить</p></td>
+              <td><p class="cjm-text">Теперь рекламы не&nbsp;будет?</p></td>
+              <td><p class="cjm-text">Наконец без&nbsp;рекламы, красота</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Эмоции</p></td>
+              <td><p class="cjm-text">Раздражение</p></td>
+              <td><p class="cjm-text">Нетерпение</p></td>
+              <td><p class="cjm-text">Сомнение, если слишком много вариантов</p></td>
+              <td><p class="cjm-text">Раздражение, если шагов больше одного-двух</p></td>
+              <td><p class="cjm-text">Облегчение, если эффект моментальный</p></td>
+              <td><p class="cjm-text">Облегчение, дальше&nbsp;— ноль внимания к&nbsp;теме</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Боли</p></td>
+              <td><p class="cjm-text">Реклама мешает</p></td>
+              <td><p class="cjm-text">Перегруз текста<br>Несколько тарифов<br>Непонятно, что выбрать</p></td>
+              <td><p class="cjm-text">Избыточный выбор<br>Апселл<br>Сложная структура</p></td>
+              <td><p class="cjm-text">Лишние поля<br>Телефон<br>Подписки сверху<br>Предложения «улучшить тариф»</p></td>
+              <td><p class="cjm-text">Непонятно, активировалась ли&nbsp;подписка<br>Нет явного подтверждения</p></td>
+              <td><p class="cjm-text">Не&nbsp;отслеживает списания, узнает о&nbsp;продлении только по&nbsp;факту в&nbsp;банке, не&nbsp;помнит что и&nbsp;как отменить если&nbsp;понадобится</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Возможности для&nbsp;улучшения</p></td>
+              <td><p class="cjm-text">Дать быстрый, очевидный переход к&nbsp;подписке без&nbsp;лишнего текста и&nbsp;объяснений</p></td>
+              <td><p class="cjm-text">Один основной тариф, крупная кнопка, минимум второстепенной информации на&nbsp;первом экране</p></td>
+              <td><p class="cjm-text">Чётко обозначить базовый сценарий: «Без&nbsp;рекламы&nbsp;— X&nbsp;₽ в&nbsp;месяц». Всё остальное&nbsp;— вторично</p></td>
+              <td><p class="cjm-text">Минимум полей, линейный процесс, без&nbsp;апселлов на&nbsp;этом этапе</p></td>
+              <td><p class="cjm-text">Мгновенное исчезновение рекламы + короткий, понятный success-экран</p></td>
+              <td><p class="cjm-text">Одно ненавязчивое уведомление сразу после оплаты (без&nbsp;рекламы + где отменить), дальше не&nbsp;трогать</p></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="slide-title">Rutube Subscription</div>
     </section>
 
-    <!-- ── SLIDE 8 — CJM: ПРАГМАТИК ── -->
-    <section class="slide slide-wide">
-      <div class="eyebrow">Customer Journey Map</div>
-      <div class="wide-head">
-        <h2 class="section-heading">Карта собрана для&nbsp;Прагматика «без&nbsp;лишнего»</h2>
-      </div>
-      <div class="wide-viewport">
-        <div class="wide-track">
-          <img src="projects/rutube/cjm_pragmatik.png" alt="CJM — Прагматик без лишнего">
-        </div>
-      </div>
-      <div class="slide-title">Rutube Subscription</div>
-    </section>
-
-    <!-- ── SLIDE 9 — ИНФОРМАЦИОННАЯ АРХИТЕКТУРА ── -->
+    <!-- ── SLIDE 8 — ИНФОРМАЦИОННАЯ АРХИТЕКТУРА ── -->
     <section class="slide slide-wide">
       <div class="eyebrow">Информационная архитектура</div>
       <div class="wide-head">
