@@ -64,12 +64,12 @@
 
     /* ── Slides ── */
     .slides {
-      display: flex; width: 800%; height: 100%;
+      display: flex; width: 900%; height: 100%;
       transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
       will-change: transform;
     }
     .slide {
-      flex: 0 0 12.5%; height: 100%;
+      flex: 0 0 11.1112%; height: 100%;
       position: relative; overflow: hidden;
     }
 
@@ -314,9 +314,36 @@
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
     }
 
+    /* ── Slide 10: JTBD ── */
+    .slide-jtbd { position: relative; height: 100%; }
+    .jtbd-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+    }
+    .jtbd-grid {
+      position: relative; display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px;
+    }
+    .jtbd-divider {
+      position: absolute; top: 0; bottom: 0; left: 50%; width: 1px;
+      background: var(--fg); opacity: 0.15;
+    }
+    .jtbd-heading {
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
+    }
+    .jtbd-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .jtbd-gap-a { margin-top: 32px; }
+    .jtbd-gap-b { margin-top: 216px; }
+    .jtbd-gap-c { margin-top: 215px; }
+    .jtbd-gap-d { margin-top: 59px; }
+    .jtbd-gap-e { margin-top: 192px; }
+
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap {
+      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap {
         position: static; transform: none; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
@@ -325,6 +352,9 @@
       .competitors-table-wrap, .reviews-table-wrap { width: 100%; }
       .moscow-col { flex-basis: auto; }
       .eyebrow, .slide-title { left: 24px; }
+      .jtbd-grid { grid-template-columns: 1fr; row-gap: 24px; }
+      .jtbd-divider { display: none; }
+      .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e { margin-top: 0; }
     }
   </style>
 </head>
@@ -1011,6 +1041,33 @@
             <div class="ia-item">Подписки</div>
             <div class="ia-item">Покупки</div>
             <div class="ia-item">Способы оплаты</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 9 — JTBD ── -->
+    <section class="slide slide-jtbd">
+      <div class="eyebrow">JTBD</div>
+      <div class="jtbd-wrap">
+        <div class="jtbd-grid">
+          <div class="jtbd-divider"></div>
+          <div>
+            <div class="jtbd-heading">Контролер</div>
+            <p class="jtbd-text jtbd-gap-a">Когда я&nbsp;открываю страницу подписки и&nbsp;не&nbsp;понимаю условий, я&nbsp;хочу найти чёткую информацию о&nbsp;цене, дате списания и&nbsp;отмене, чтобы не&nbsp;чувствовать, что меня обманули.</p>
+            <p class="jtbd-text jtbd-gap-b">Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть дату следующего списания и&nbsp;быстро найти управление, чтобы контролировать ситуацию.</p>
+          </div>
+          <div>
+            <p class="jtbd-text jtbd-gap-c">Когда я&nbsp;выбираю тариф и&nbsp;не&nbsp;понимаю, чем платное отличается от&nbsp;бесплатного, я&nbsp;хочу увидеть явное сравнение, чтобы заплатить осознанно, а&nbsp;не&nbsp;вслепую.</p>
+          </div>
+          <div>
+            <div class="jtbd-heading">Прагматик</div>
+            <p class="jtbd-text jtbd-gap-a">Когда реклама прерывает просмотр, я&nbsp;хочу убрать её&nbsp;за&nbsp;минимум шагов, чтобы сразу вернуться к&nbsp;видео без&nbsp;фрустрации.</p>
+          </div>
+          <div>
+            <p class="jtbd-text jtbd-gap-d">Когда я&nbsp;вижу страницу оформления, я&nbsp;хочу увидеть один понятный тариф и&nbsp;сразу оплатить, чтобы не&nbsp;разбираться в&nbsp;вариантах и&nbsp;не&nbsp;тратить время.</p>
+            <p class="jtbd-text jtbd-gap-e">Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть, что реклама пропала, чтобы убедиться, что всё&nbsp;сработало, и&nbsp;больше не&nbsp;думать об&nbsp;этом.</p>
           </div>
         </div>
       </div>
