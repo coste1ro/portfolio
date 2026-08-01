@@ -64,12 +64,12 @@
 
     /* ── Slides ── */
     .slides {
-      display: flex; width: 900%; height: 100%;
+      display: flex; width: 1000%; height: 100%;
       transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
       will-change: transform;
     }
     .slide {
-      flex: 0 0 11.1112%; height: 100%;
+      flex: 0 0 10%; height: 100%;
       position: relative; overflow: hidden;
     }
 
@@ -341,9 +341,17 @@
     .jtbd-gap-d { margin-top: 59px; }
     .jtbd-gap-e { margin-top: 192px; }
 
+    /* ── Slide 11: user-flow ── */
+    .slide-userflow { position: relative; height: 100%; }
+    .userflow-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      overflow-x: auto;
+    }
+    .userflow-wrap img { height: 496px; width: auto; display: block; }
+
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap {
+      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap, .userflow-wrap {
         position: static; transform: none; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
@@ -354,6 +362,7 @@
       .eyebrow, .slide-title { left: 24px; }
       .jtbd-grid { grid-template-columns: 1fr; row-gap: 24px; }
       .jtbd-divider { display: none; }
+      .userflow-wrap img { height: 220px; }
       .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e { margin-top: 0; }
     }
   </style>
@@ -1070,6 +1079,15 @@
             <p class="jtbd-text jtbd-gap-e">Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть, что реклама пропала, чтобы убедиться, что всё&nbsp;сработало, и&nbsp;больше не&nbsp;думать об&nbsp;этом.</p>
           </div>
         </div>
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 10 — USER-FLOW ── -->
+    <section class="slide slide-userflow">
+      <div class="eyebrow">User-flow</div>
+      <div class="userflow-wrap">
+        <img src="projects/rutube/user-flow.svg" alt="User-flow оформления подписки Rutube Premium">
       </div>
       <div class="slide-title">Rutube Subscription</div>
     </section>
