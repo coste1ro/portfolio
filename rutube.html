@@ -196,15 +196,39 @@
 
     /* ── Slide 3: priority (reviews + moscow) ── */
     .slide-priority { position: relative; height: 100%; }
-    .priority-head { position: absolute; top: 120px; left: 40px; right: 40px; max-width: 900px; }
-    .priority-visuals {
-      position: absolute; top: 300px; left: 40px; right: 40px; bottom: 140px;
-      display: flex; gap: 40px; align-items: stretch;
+    .priority-wrap {
+      position: absolute; top: 173px; left: 40px; right: 40px; bottom: 40px;
+      display: flex; gap: 40px; align-items: flex-start;
     }
-    .priority-reviews { flex: 0 0 auto; height: 100%; }
-    .priority-reviews img { height: 100%; width: auto; display: block; }
-    .priority-moscow { flex: 1 1 auto; display: flex; align-items: center; min-width: 0; }
-    .priority-moscow img { width: 100%; display: block; }
+    .reviews-table-wrap { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+    .reviews-table { border-collapse: collapse; width: 100%; }
+    .reviews-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      color: var(--fg); padding: 8px; text-align: center;
+    }
+    .reviews-table td { padding: 0 8px; vertical-align: middle; height: 50px; }
+    .reviews-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
+    .reviews-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 10px;
+      line-height: 1.2; color: var(--fg); text-align: center;
+    }
+    .moscow-col { flex: 0 0 310px; }
+    .moscow-heading {
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      letter-spacing: 0.08em; line-height: 1.3; text-transform: uppercase; color: var(--fg);
+    }
+    .moscow-groups { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
+    .moscow-group-label {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      color: var(--fg); margin-bottom: 12px;
+    }
+    .moscow-group-list {
+      list-style: disc; padding-left: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .moscow-group-list li { margin-bottom: 4px; }
 
     /* ── Slide 4: audience (ЦА) ── */
     .slide-audience { position: relative; height: 100%; }
@@ -278,24 +302,22 @@
 
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid, .audience-ages, .audience-lower, .forces-grid,
-      .priority-visuals {
+      .hero-grid, .archetypes-grid, .audience-ages, .audience-lower, .forces-grid {
         position: static; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
-      .priority-head, .archetypes-head, .forces-head, .wide-head {
+      .archetypes-head, .forces-head, .wide-head {
         position: static; margin: 90px 24px 24px; max-width: none;
       }
-      .priority-moscow img { max-width: 100%; }
       .slide-wide .wide-viewport {
         position: static; height: 220px; margin: 0 24px 24px;
       }
-      .competitors-wrap {
+      .competitors-wrap, .priority-wrap {
         position: static; flex-direction: column; margin: 90px 24px 24px; bottom: auto;
       }
       .competitors-groups { flex-basis: auto; }
-      .competitors-table-wrap { width: 100%; }
-      .priority-reviews, .priority-reviews img { height: 260px; }
+      .competitors-table-wrap, .reviews-table-wrap { width: 100%; }
+      .moscow-col { flex-basis: auto; }
       .eyebrow, .slide-title { left: 24px; }
     }
   </style>
@@ -472,19 +494,102 @@
       <div class="slide-title">Rutube Subscription</div>
     </section>
 
-    <!-- ── SLIDE 3 — ПРИОРИТИЗАЦИЯ (отзывы + MoSCoW) ── -->
+    <!-- ── SLIDE 3 — ОТЗЫВЫ + ПРИОРИТИЗАЦИЯ (MoSCoW) ── -->
     <section class="slide slide-priority">
-      <div class="eyebrow">Приоритизация</div>
-      <div class="priority-head">
-        <h2 class="section-heading">Четыре категории определили фокус редизайна</h2>
-        <p class="section-body">Исследование выявило критические отставания&nbsp;— они стали Must не&nbsp;потому что «было бы&nbsp;хорошо», а&nbsp;потому что без&nbsp;них конверсия невозможна ни для&nbsp;одного архетипа.</p>
-      </div>
-      <div class="priority-visuals">
-        <div class="priority-reviews">
-          <img src="projects/rutube/reviews.png" alt="Отзывы пользователей о сервисах">
+      <div class="eyebrow">Отзывы</div>
+      <div class="priority-wrap">
+        <div class="reviews-table-wrap">
+          <table class="reviews-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Нравится</th>
+                <th>Не нравится</th>
+                <th>Игнорят</th>
+                <th>Про подписку</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
+                <td><p class="reviews-text">огромный выбор контента<br>удобный плеер<br>лучшие рекомендации</p></td>
+                <td><p class="reviews-text">реклама, «дожим на&nbsp;премиум»<br>политика модерации<br>иногда сбоит в&nbsp;РФ</p></td>
+                <td><p class="reviews-text">умные настройки</p></td>
+                <td><p class="reviews-text">ценят за&nbsp;отсутствие рекламы + офлайн-функции</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-vk.png" alt="VK Видео"></td>
+                <td><p class="reviews-text">доступность<br>эксклюзивный ру контент<br>VK экосистема</p></td>
+                <td><p class="reviews-text">нерелевантные рекомендации<br>реклама<br>глюки, баги, лаги</p></td>
+                <td><p class="reviews-text">офлайн-функции</p></td>
+                <td><p class="reviews-text">—</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск"></td>
+                <td><p class="reviews-text">кино+всё на&nbsp;свете<br>качество контента<br>удобно яндекс юзерам</p></td>
+                <td><p class="reviews-text">слабый каталог<br>дорогие доп пакеты<br>автопродления/списания</p></td>
+                <td><p class="reviews-text">тонкие настройки плеера<br>подписка ≠ всё включено</p></td>
+                <td><p class="reviews-text">выгодно, если&nbsp;Плюс и&nbsp;так нужен</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-ivi.png" alt="Иви"></td>
+                <td><p class="reviews-text">большой каталог<br>удобство фильтрации<br>акции/промо</p></td>
+                <td><p class="reviews-text">«неожиданные списания»<br>вторая касса (часть контента платная даже при&nbsp;подписке)</p></td>
+                <td><p class="reviews-text">отключение автопродления</p></td>
+                <td><p class="reviews-text">скидки<br>«ловушка на&nbsp;автоплатёж»</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
+                <td><p class="reviews-text">качество контента<br>широкие разделы<br>экосистемные пакеты</p></td>
+                <td><p class="reviews-text">вторая касса<br>автозапуск трейлеров<br>«было дёшево, стало дорого» (эффект акции)</p></td>
+                <td><p class="reviews-text">бесплатный контент<br>«подписка + отдельные покупки» — это норм</p></td>
+                <td><p class="reviews-text">ожидание «всё включено»</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
+                <td><p class="reviews-text">дёшево<br>эксклюзивы ТНТ</p></td>
+                <td><p class="reviews-text">узкий контент, подписка ради одного сериала<br>слабый поиск</p></td>
+                <td><p class="reviews-text">нишевый сервис, не&nbsp;универсальный кинотеатр</p></td>
+                <td><p class="reviews-text">качество приложения ≠ цена<br>автопродление раздражает</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell"><img src="projects/rutube/logo-smotrim.png" alt="Смотрим"></td>
+                <td><p class="reviews-text">все архивы ТВ в&nbsp;одном месте<br>бесплатно</p></td>
+                <td><p class="reviews-text">плохой UX/UI<br>тонна рекламы<br>поломки</p></td>
+                <td><p class="reviews-text">объём архива<br>доп разделы</p></td>
+                <td><p class="reviews-text">—</p></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="priority-moscow">
-          <img src="projects/rutube/moscow.png" alt="Приоритизация MoSCoW">
+        <div class="moscow-col">
+          <h2 class="moscow-heading">Приоритизация<br>по&nbsp;MoSCoW</h2>
+          <div class="moscow-groups">
+            <div>
+              <div class="moscow-group-label">Must Have</div>
+              <ul class="moscow-group-list">
+                <li>Понятность ценности</li>
+                <li>Free vs Paid</li>
+                <li>Прозрачность цены</li>
+                <li>Понятность отмены</li>
+              </ul>
+            </div>
+            <div>
+              <div class="moscow-group-label">Should Have</div>
+              <ul class="moscow-group-list">
+                <li>Контекст входа</li>
+                <li>Навязчивость</li>
+                <li>Кол-во шагов до&nbsp;оформления</li>
+              </ul>
+            </div>
+            <div>
+              <div class="moscow-group-label">Could Have</div>
+              <ul class="moscow-group-list">
+                <li>Пробный период</li>
+                <li>Удобство оплаты</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
       <div class="slide-title">Rutube Subscription</div>
