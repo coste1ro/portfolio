@@ -421,8 +421,8 @@
       line-height: 1.2; color: var(--fg);
     }
     .insights-gap-a { margin-top: 226px; }
-    .insights-gap-b { margin-top: 372px; }
-    .insights-gap-c { margin-top: 425px; }
+    .insights-gap-b { margin-top: min(372px, calc(100vh - 364px)); }
+    .insights-gap-c { margin-top: min(425px, calc(100vh - 292px)); }
 
     /* ── Slide 15: dev-prep ── */
     .slide-devprep { position: relative; height: 100%; }
@@ -476,6 +476,29 @@
       .results-quote, .results-done { flex-basis: auto; width: 100%; }
       .results-lists { flex-direction: column; gap: 24px; }
       .results-list { flex-basis: auto; width: 100%; }
+    }
+
+    /* ── Short-viewport safety net (13" MacBook Chrome etc: real content
+       height often 700-800px after browser chrome, well under the 900px
+       reference) — compact overrides so nothing overlaps the header/footer,
+       independent of window width. ── */
+    @media (max-height: 820px) {
+      .cjm-table { height: 460px; }
+      .userflow-wrap img { height: 460px; }
+      .competitors-table td { height: 44px; }
+      .reviews-table td { height: 46px; }
+      .ia-item { min-height: 44px; }
+      .moscow-groups { gap: 12px; margin-top: 12px; }
+      .moscow-group-list li { margin-bottom: 2px; }
+      .archetype-card { gap: 12px; }
+      .archetype-card-fields { gap: 6px; }
+      .strip-item img { height: 280px; }
+      .testing-table th, .testing-table td { padding: 8px 20px; }
+      .insights-gap-b { margin-top: 180px; }
+      .insights-gap-c { margin-top: 220px; }
+      .jtbd-gap-b { margin-top: 110px; }
+      .jtbd-gap-c { margin-top: 110px; }
+      .jtbd-gap-e { margin-top: 100px; }
     }
   </style>
 </head>
