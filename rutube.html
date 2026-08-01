@@ -236,17 +236,20 @@
     .slide-archetypes { position: relative; height: 100%; }
     .archetypes-grid {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 40px;
       align-items: start;
     }
+    .archetypes-intro { display: flex; flex-direction: column; gap: 40px; }
+    .archetypes-intro-block { display: flex; flex-direction: column; gap: 24px; }
     .archetype-card {
       background: rgba(79,70,229,0.05); padding: 24px;
-      display: flex; flex-direction: column; gap: 12px;
+      display: flex; flex-direction: column; gap: 24px;
     }
     .archetype-card-title {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
       line-height: 1.2; color: var(--fg);
     }
+    .archetype-card-fields { display: flex; flex-direction: column; gap: 12px; }
     .archetype-card-field-label {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
       line-height: 1.2; color: var(--fg); margin-bottom: 4px;
@@ -264,12 +267,9 @@
     .slide-forces { position: relative; height: 100%; }
     .forces-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      display: grid; grid-template-columns: 310fr 310fr 390fr 310fr; column-gap: 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 40px;
       align-items: start;
     }
-    .forces-card-a { grid-column: 1; }
-    .forces-card-b { grid-column: 2; }
-    .forces-conclusion { grid-column: 4; }
     .forces-conclusion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
     .forces-conclusion-list p {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
@@ -315,7 +315,7 @@
         position: static; transform: none; margin: 90px 24px 140px;
       }
       .wide-head { max-width: none; }
-      .forces-card-a, .forces-card-b, .forces-conclusion { width: 100%; }
+      .forces-wrap > * { width: 100%; }
       .wide-viewport {
         height: 220px; margin-top: 24px;
       }
@@ -603,16 +603,19 @@
     <section class="slide slide-archetypes">
       <div class="eyebrow">Архетипы</div>
       <div class="archetypes-grid">
-        <div>
-          <div class="field-label">ЦА</div>
-          <p class="field-value">Основная аудитория&nbsp;— 25–34: платёжеспособна, зрела в&nbsp;цифровых продуктах, уже привыкла жить на&nbsp;подписках. Но&nbsp;внутри неё&nbsp;— не&nbsp;один сценарий поведения.</p>
-        </div>
-        <div>
-          <div class="field-label">Метод</div>
-          <p class="field-value">Глубинные интервью с&nbsp;представителями аудитории показали: за&nbsp;одинаковым действием&nbsp;— оформлением подписки&nbsp;— стоят разные мотивы, страхи и&nbsp;ожидания.</p>
+        <div class="archetypes-intro">
+          <div class="archetypes-intro-block">
+            <div class="field-label">ЦА</div>
+            <p class="field-value">Основная аудитория&nbsp;— 25–34: платёжеспособна, зрела в&nbsp;цифровых продуктах, уже привыкла жить на&nbsp;подписках. Но&nbsp;внутри неё&nbsp;— не&nbsp;один сценарий поведения.</p>
+          </div>
+          <div class="archetypes-intro-block">
+            <div class="field-label">Метод</div>
+            <p class="field-value">Глубинные интервью с&nbsp;представителями аудитории показали: за&nbsp;одинаковым действием&nbsp;— оформлением подписки&nbsp;— стоят разные мотивы, страхи и&nbsp;ожидания.</p>
+          </div>
         </div>
         <div class="archetype-card">
           <div class="archetype-card-title">Рациональный контролёр</div>
+          <div class="archetype-card-fields">
           <div>
             <div class="archetype-card-field-label">Контекст</div>
             <ul class="archetype-card-list">
@@ -661,9 +664,11 @@
               <li>Видит явное сравнение тарифов</li>
             </ul>
           </div>
+          </div>
         </div>
         <div class="archetype-card">
           <div class="archetype-card-title">Прагматик «без&nbsp;лишнего»</div>
+          <div class="archetype-card-fields">
           <div>
             <div class="archetype-card-field-label">Контекст</div>
             <ul class="archetype-card-list">
@@ -705,6 +710,7 @@
               <li>Без&nbsp;давления</li>
             </ul>
           </div>
+          </div>
         </div>
       </div>
       <div class="slide-title">Rutube Subscription</div>
@@ -715,8 +721,9 @@
       <div class="eyebrow">4 силы</div>
 
       <div class="forces-wrap">
-      <div class="archetype-card forces-card-a" style="padding: 24px;">
+      <div class="archetype-card">
         <div class="archetype-card-title">Рациональный контролер</div>
+        <div class="archetype-card-fields">
         <div>
           <div class="archetype-card-field-label">Push (что толкает от&nbsp;бесплатной версии)</div>
           <ul class="archetype-card-list">
@@ -756,10 +763,12 @@
             <li>Альтернативные сервисы</li>
           </ul>
         </div>
+        </div>
       </div>
 
-      <div class="archetype-card forces-card-b" style="padding: 12px 24px; gap: 10px;">
+      <div class="archetype-card">
         <div class="archetype-card-title">Прагматик «без&nbsp;лишнего»</div>
+        <div class="archetype-card-fields">
         <div>
           <div class="archetype-card-field-label">Push</div>
           <ul class="archetype-card-list">
@@ -787,6 +796,7 @@
             <li>Бесплатно тоже работает</li>
             <li>Не&nbsp;хочет тратить время</li>
           </ul>
+        </div>
         </div>
       </div>
 
