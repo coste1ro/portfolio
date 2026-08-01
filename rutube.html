@@ -90,6 +90,10 @@
       text-transform: uppercase; font-kerning: none;
     }
 
+    /* ── Shared: wheel-driven horizontal pan (wide tables, IA, user-flow) ── */
+    .hscroll-viewport { overflow: hidden; }
+    .hscroll-track { will-change: transform; }
+
     /* ── Shared: section heading + body (used on every text-led slide) ── */
     .section-heading {
       font-family: 'Jost', sans-serif;
@@ -167,7 +171,7 @@
     }
     .competitors-group-list li { margin-bottom: 8px; }
     .competitors-group-list li::marker { font-size: 0.4em; }
-    .competitors-table-wrap { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+    .competitors-table-wrap { flex: 1 1 auto; min-width: 0; overflow: hidden; }
     .competitors-table { border-collapse: collapse; width: 100%; }
     .competitors-table th {
       background: rgba(79,70,229,0.25);
@@ -197,7 +201,7 @@
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       display: flex; gap: 40px; align-items: flex-start;
     }
-    .reviews-table-wrap { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+    .reviews-table-wrap { flex: 1 1 auto; min-width: 0; overflow: hidden; }
     .reviews-table { border-collapse: collapse; width: 100%; }
     .reviews-table th {
       background: rgba(79,70,229,0.25);
@@ -276,10 +280,10 @@
     .slide-cjm { position: relative; height: 100%; }
     .cjm-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      overflow-x: auto; overflow-y: hidden;
+      overflow: hidden;
     }
-    .cjm-table { border-collapse: separate; border-spacing: 4px; }
-    .cjm-table th, .cjm-table td { padding: 10px 20px; vertical-align: middle; text-align: center; min-width: 220px; }
+    .cjm-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 1981px; }
+    .cjm-table th, .cjm-table td { padding: 10px 20px; vertical-align: middle; text-align: center; }
     .cjm-table th {
       background: rgba(79,70,229,0.25);
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
@@ -296,7 +300,7 @@
     .slide-ia { position: relative; height: 100%; }
     .ia-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      overflow-x: auto;
+      overflow: hidden;
     }
     .ia-columns { display: flex; gap: 15px; width: max-content; }
     .ia-col { display: flex; flex-direction: column; gap: 12px; width: 260px; flex-shrink: 0; }
@@ -345,7 +349,7 @@
     .slide-userflow { position: relative; height: 100%; }
     .userflow-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      overflow-x: auto;
+      overflow: hidden;
     }
     .userflow-wrap img { height: 496px; width: auto; display: block; }
 
@@ -425,8 +429,8 @@
             </ul>
           </div>
         </div>
-        <div class="competitors-table-wrap">
-          <table class="competitors-table">
+        <div class="competitors-table-wrap hscroll-viewport">
+          <table class="competitors-table hscroll-track">
             <thead>
               <tr>
                 <th></th>
@@ -543,8 +547,8 @@
     <section class="slide slide-priority">
       <div class="eyebrow">Отзывы</div>
       <div class="priority-wrap">
-        <div class="reviews-table-wrap">
-          <table class="reviews-table">
+        <div class="reviews-table-wrap hscroll-viewport">
+          <table class="reviews-table hscroll-track">
             <thead>
               <tr>
                 <th></th>
@@ -858,8 +862,8 @@
     <!-- ── SLIDE 6 — CJM: КОНТРОЛЁР ── -->
     <section class="slide slide-cjm">
       <div class="eyebrow">CJM (контролёр)</div>
-      <div class="cjm-wrap">
-        <table class="cjm-table">
+      <div class="cjm-wrap hscroll-viewport">
+        <table class="cjm-table hscroll-track">
           <thead>
             <tr>
               <th>Этап</th>
@@ -926,8 +930,8 @@
     <!-- ── SLIDE 7 — CJM: ПРАГМАТИК ── -->
     <section class="slide slide-cjm">
       <div class="eyebrow">CJM (прагматик)</div>
-      <div class="cjm-wrap">
-        <table class="cjm-table">
+      <div class="cjm-wrap hscroll-viewport">
+        <table class="cjm-table hscroll-track">
           <thead>
             <tr>
               <th>Этап</th>
@@ -994,8 +998,8 @@
     <!-- ── SLIDE 8 — IA ── -->
     <section class="slide slide-ia">
       <div class="eyebrow">IA</div>
-      <div class="ia-wrap">
-        <div class="ia-columns">
+      <div class="ia-wrap hscroll-viewport">
+        <div class="ia-columns hscroll-track">
           <div class="ia-col">
             <div class="ia-item ia-item-title">Главная</div>
             <div class="ia-item">Персонализированный контент</div>
@@ -1086,8 +1090,8 @@
     <!-- ── SLIDE 10 — USER-FLOW ── -->
     <section class="slide slide-userflow">
       <div class="eyebrow">User-flow</div>
-      <div class="userflow-wrap">
-        <img src="projects/rutube/user-flow.svg" alt="User-flow оформления подписки Rutube Premium">
+      <div class="userflow-wrap hscroll-viewport">
+        <img class="hscroll-track" src="projects/rutube/user-flow.svg" alt="User-flow оформления подписки Rutube Premium">
       </div>
       <div class="slide-title">Rutube Subscription</div>
     </section>
@@ -1116,6 +1120,39 @@
       document.querySelector('.viewer-nav a').addEventListener('click', function () {
         try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
       });
+
+      // Wheel-driven horizontal pan for wide content (tables, IA, user-flow) —
+      // each viewport only responds while its own slide is the active one,
+      // otherwise scrolling elsewhere would silently pile up its offset and
+      // it'd jump ahead the moment you swipe over to it.
+      var wideEls = document.querySelectorAll('.hscroll-viewport');
+      var wides = Array.prototype.map.call(wideEls, function (viewport) {
+        return {
+          viewport: viewport,
+          track: viewport.querySelector('.hscroll-track'),
+          slideIdx: Array.prototype.indexOf.call(slides, viewport.closest('.slide')),
+          offset: 0
+        };
+      });
+      function applyWide(w) {
+        var max = Math.max(0, w.track.scrollWidth - w.viewport.clientWidth);
+        if (max === 0) {
+          w.track.style.transform = 'translateX(' + ((w.viewport.clientWidth - w.track.scrollWidth) / 2) + 'px)';
+          return;
+        }
+        w.offset = Math.max(0, Math.min(w.offset, max));
+        w.track.style.transform = 'translateX(' + (-w.offset) + 'px)';
+      }
+      document.addEventListener('wheel', function (e) {
+        wides.forEach(function (w) {
+          if (idx !== w.slideIdx) return;
+          if (w.track.scrollWidth - w.viewport.clientWidth <= 0) return;
+          w.offset += e.deltaY;
+          applyWide(w);
+        });
+      }, { passive: true });
+      window.addEventListener('resize', function () { wides.forEach(applyWide); });
+      wides.forEach(applyWide);
     })();
   </script>
 
