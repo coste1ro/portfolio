@@ -103,6 +103,7 @@
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
       position: absolute; top: 232px; left: 40px; right: 40px;
+      max-height: calc(100vh - 336px); overflow-y: auto;
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
@@ -166,6 +167,7 @@
     .slide-portal { position: relative; height: 100%; }
     .portal-grid {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
+      max-height: calc(100vh - 208px); overflow-y: auto;
       display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
     }
     .portal-media { grid-column: 2; }
@@ -199,6 +201,13 @@
       }
       .portal-callouts { flex-direction: row; justify-content: space-between; gap: 16px; }
       .eyebrow, .slide-title { left: 24px; }
+    }
+
+    /* ── Short-viewport safety net (13" MacBook Chrome etc: real content
+       height often 700-800px after browser chrome, well under the 900px
+       reference) — the strip image is the tall offender here. ── */
+    @media (max-height: 900px) {
+      .strip-item img { height: 300px; }
     }
   </style>
 </head>

@@ -481,24 +481,31 @@
     /* ── Short-viewport safety net (13" MacBook Chrome etc: real content
        height often 700-800px after browser chrome, well under the 900px
        reference) — compact overrides so nothing overlaps the header/footer,
-       independent of window width. ── */
-    @media (max-height: 820px) {
-      .cjm-table { height: 460px; }
-      .userflow-wrap img { height: 460px; }
-      .competitors-table td { height: 44px; }
-      .reviews-table td { height: 46px; }
-      .ia-item { min-height: 44px; }
-      .moscow-groups { gap: 12px; margin-top: 12px; }
+       independent of window width. Non-pannable wrappers additionally get
+       a hard max-height + overflow-y:auto guarantee — pannable ones
+       (hscroll-viewport, driven by a passive wheel listener) skip that,
+       since native vertical scroll there would fight the JS horizontal pan. ── */
+    @media (max-height: 900px) {
+      .cjm-table { height: 400px; }
+      .userflow-wrap img { height: 400px; }
+      .competitors-table td { height: 40px; }
+      .reviews-table td { height: 42px; }
+      .ia-item { min-height: 40px; }
+      .moscow-groups { gap: 10px; margin-top: 10px; }
       .moscow-group-list li { margin-bottom: 2px; }
-      .archetype-card { gap: 12px; }
-      .archetype-card-fields { gap: 6px; }
-      .strip-item img { height: 280px; }
-      .testing-table th, .testing-table td { padding: 8px 20px; }
-      .insights-gap-b { margin-top: 180px; }
-      .insights-gap-c { margin-top: 220px; }
-      .jtbd-gap-b { margin-top: 110px; }
-      .jtbd-gap-c { margin-top: 110px; }
-      .jtbd-gap-e { margin-top: 100px; }
+      .archetype-card { gap: 10px; }
+      .archetype-card-fields { gap: 5px; }
+      .strip-item img { height: 240px; }
+      .testing-table th, .testing-table td { padding: 6px 20px; }
+      .insights-gap-b { margin-top: 140px; }
+      .insights-gap-c { margin-top: 180px; }
+      .jtbd-gap-b { margin-top: 90px; }
+      .jtbd-gap-c { margin-top: 90px; }
+      .jtbd-gap-e { margin-top: 80px; }
+
+      .hero-grid, .archetypes-grid, .forces-wrap, .jtbd-wrap, .insights-wrap, .devprep-wrap, .results-wrap {
+        max-height: calc(100vh - 208px); overflow-y: auto;
+      }
     }
   </style>
 </head>
