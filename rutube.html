@@ -282,7 +282,7 @@
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       overflow: hidden;
     }
-    .cjm-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 1981px; height: 620px; }
+    .cjm-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 1981px; height: min(620px, calc(100vh - 220px)); }
     .cjm-table th, .cjm-table td { padding: 26px 20px; vertical-align: middle; text-align: center; }
     .cjm-table th {
       background: rgba(79,70,229,0.25);
@@ -351,7 +351,7 @@
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       overflow: hidden;
     }
-    .userflow-wrap img { height: 620px; width: auto; display: block; }
+    .userflow-wrap img { height: min(620px, calc(100vh - 220px)); width: auto; display: block; }
 
     /* ── Slide 12: UI screens strip ── */
     .slide-strip { position: relative; height: 100%; }
