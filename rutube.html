@@ -115,10 +115,6 @@
       line-height: 1.2; color: var(--fg);
     }
 
-    /* ── Shared: horizontal-scroll wide image (IA) ── */
-    .wide-track { height: 100%; display: flex; align-items: center; will-change: transform; }
-    .wide-track img { height: 100%; width: auto; display: block; }
-
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
@@ -276,22 +272,13 @@
       line-height: 1.2; color: var(--fg);
     }
 
-    /* ── Slide 9: wide image (IA) ── */
-    .slide-wide { position: relative; height: 100%; }
-    .wide-content {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      display: flex; flex-direction: column;
-    }
-    .wide-head { max-width: 900px; }
-    .wide-viewport { margin-top: 40px; height: 500px; overflow: hidden; }
-
     /* ── Slides 7–8: CJM tables (Контролёр, Прагматик) ── */
     .slide-cjm { position: relative; height: 100%; }
     .cjm-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
       overflow-x: auto; overflow-y: hidden;
     }
-    .cjm-table { border-collapse: collapse; }
+    .cjm-table { border-collapse: separate; border-spacing: 4px; }
     .cjm-table th, .cjm-table td { padding: 10px 20px; vertical-align: middle; text-align: center; min-width: 220px; }
     .cjm-table th {
       background: rgba(79,70,229,0.25);
@@ -305,20 +292,35 @@
     }
     .cjm-table td.row-label .cjm-text { font-size: 16px; }
 
+    /* ── Slide 9: IA (sitemap tree) ── */
+    .slide-ia { position: relative; height: 100%; }
+    .ia-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      overflow-x: auto;
+    }
+    .ia-columns { display: flex; gap: 15px; width: max-content; }
+    .ia-col { display: flex; flex-direction: column; gap: 12px; width: 260px; flex-shrink: 0; }
+    .ia-item {
+      background: rgba(79,70,229,0.05);
+      min-height: 63px; display: flex; align-items: center; justify-content: center;
+      padding: 10px 20px; text-align: center;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+    }
+    .ia-item-title { background: rgba(79,70,229,0.25); }
+    .ia-group { display: flex; flex-direction: column; gap: 5px; }
+    .ia-subgroup { display: flex; flex-direction: column; gap: 8px; }
+    .ia-leaf {
+      padding: 4px 20px; text-align: center;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+    }
+
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap {
+      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap {
         position: static; transform: none; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
-      .wide-content {
-        position: static; transform: none; margin: 90px 24px 140px;
-      }
-      .wide-head { max-width: none; }
       .forces-wrap > * { width: 100%; }
-      .wide-viewport {
-        height: 220px; margin-top: 24px;
-      }
       .competitors-groups { flex-basis: auto; }
       .competitors-table-wrap, .reviews-table-wrap { width: 100%; }
       .moscow-col { flex-basis: auto; }
@@ -950,17 +952,65 @@
       <div class="slide-title">Rutube Subscription</div>
     </section>
 
-    <!-- ── SLIDE 8 — ИНФОРМАЦИОННАЯ АРХИТЕКТУРА ── -->
-    <section class="slide slide-wide">
-      <div class="eyebrow">Информационная архитектура</div>
-      <div class="wide-content">
-        <div class="wide-head">
-          <h2 class="section-heading">Подписка живёт в&nbsp;Настройки → Подписки</h2>
-          <p class="section-body">Success-экран должен явно указывать на&nbsp;этот путь&nbsp;— иначе пользователь не&nbsp;поймёт, как управлять подпиской после оплаты.</p>
-        </div>
-        <div class="wide-viewport">
-          <div class="wide-track">
-            <img src="projects/rutube/IA.png" alt="Информационная архитектура">
+    <!-- ── SLIDE 8 — IA ── -->
+    <section class="slide slide-ia">
+      <div class="eyebrow">IA</div>
+      <div class="ia-wrap">
+        <div class="ia-columns">
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Главная</div>
+            <div class="ia-item">Персонализированный контент</div>
+            <div class="ia-item">Каталог</div>
+            <div class="ia-item">Shorts</div>
+            <div class="ia-item">Подборки</div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Обзор</div>
+            <div class="ia-group">
+              <div class="ia-item">Поиск</div>
+              <div class="ia-subgroup">
+                <div class="ia-leaf">Видео</div>
+                <div class="ia-leaf">Каналы</div>
+                <div class="ia-leaf">Shorts</div>
+                <div class="ia-leaf">Плейлисты</div>
+              </div>
+            </div>
+            <div class="ia-group">
+              <div class="ia-item">Каталог</div>
+              <div class="ia-subgroup">
+                <div class="ia-leaf">Фильмы</div>
+                <div class="ia-leaf">Сериалы</div>
+                <div class="ia-leaf">Телешоу</div>
+                <div class="ia-leaf">Спорт</div>
+                <div class="ia-leaf">Музыка</div>
+                <div class="ia-leaf">Подкасты</div>
+                <div class="ia-leaf">Детям</div>
+              </div>
+            </div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Студия</div>
+            <div class="ia-item">Загрузить видео</div>
+            <div class="ia-item">Загрузить Shorts</div>
+            <div class="ia-item">Создать трансляцию</div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Мое</div>
+            <div class="ia-item">Подписки</div>
+            <div class="ia-item">История просмотра</div>
+            <div class="ia-item">Плейлисты</div>
+            <div class="ia-item">Смотреть позже</div>
+            <div class="ia-item">Комментарии</div>
+            <div class="ia-item">Понравилось</div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Настройки</div>
+            <div class="ia-item">Мои данные</div>
+            <div class="ia-item">Уведомления</div>
+            <div class="ia-item">Устройства</div>
+            <div class="ia-item">Подписки</div>
+            <div class="ia-item">Покупки</div>
+            <div class="ia-item">Способы оплаты</div>
           </div>
         </div>
       </div>
@@ -991,39 +1041,6 @@
       document.querySelector('.viewer-nav a').addEventListener('click', function () {
         try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
       });
-
-      // Horizontal-scroll wide images (research table, both CJMs, IA) — each
-      // only responds to wheel input while its own slide is the active one,
-      // otherwise scrolling elsewhere would silently pile up its offset and
-      // it'd jump ahead the moment you swipe over to it.
-      var wideEls = document.querySelectorAll('.wide-viewport');
-      var wides = Array.prototype.map.call(wideEls, function (viewport) {
-        return {
-          viewport: viewport,
-          track: viewport.querySelector('.wide-track'),
-          slideIdx: Array.prototype.indexOf.call(slides, viewport.closest('.slide')),
-          offset: 0
-        };
-      });
-      function applyWide(w) {
-        var max = Math.max(0, w.track.scrollWidth - w.viewport.clientWidth);
-        if (max === 0) {
-          w.track.style.transform = 'translateX(' + ((w.viewport.clientWidth - w.track.scrollWidth) / 2) + 'px)';
-          return;
-        }
-        w.offset = Math.max(0, Math.min(w.offset, max));
-        w.track.style.transform = 'translateX(' + (-w.offset) + 'px)';
-      }
-      document.addEventListener('wheel', function (e) {
-        wides.forEach(function (w) {
-          if (idx !== w.slideIdx) return;
-          if (w.track.scrollWidth - w.viewport.clientWidth <= 0) return;
-          w.offset += e.deltaY;
-          applyWide(w);
-        });
-      }, { passive: true });
-      window.addEventListener('resize', function () { wides.forEach(applyWide); });
-      wides.forEach(applyWide);
     })();
   </script>
 
