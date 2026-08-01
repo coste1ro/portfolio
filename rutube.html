@@ -179,7 +179,7 @@
       color: var(--fg); padding: 8px; text-align: center; vertical-align: middle;
       line-height: 1.2;
     }
-    .competitors-table td { padding: 14px 4px; text-align: center; vertical-align: middle; height: 64px; }
+    .competitors-table td { padding: 14px 4px; text-align: center; vertical-align: middle; height: min(64px, calc((100vh - 220px) / 8)); }
     .competitors-table tr.group-break td { padding-top: 30px; }
     .competitors-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
     .status-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; }
@@ -208,7 +208,7 @@
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
       color: var(--fg); padding: 8px; text-align: center;
     }
-    .reviews-table td { padding: 10px 8px; vertical-align: middle; height: 68px; }
+    .reviews-table td { padding: 10px 8px; vertical-align: middle; height: min(68px, calc((100vh - 220px) / 8)); }
     .reviews-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
     .reviews-text {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 10px;
@@ -306,7 +306,7 @@
     .ia-col { display: flex; flex-direction: column; gap: 12px; width: 260px; flex-shrink: 0; }
     .ia-item {
       background: rgba(79,70,229,0.05);
-      min-height: 63px; display: flex; align-items: center; justify-content: center;
+      min-height: min(63px, calc((100vh - 220px) / 8)); display: flex; align-items: center; justify-content: center;
       padding: 10px 20px; text-align: center;
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
     }
@@ -375,10 +375,10 @@
 
     /* ── Slide 13: testing ── */
     .slide-testing { position: relative; height: 100%; }
-    .testing-wrap {
+    .testing-viewport {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
-      display: flex; gap: 40px; align-items: stretch;
     }
+    .testing-track { display: flex; gap: 40px; align-items: stretch; width: max-content; }
     .testing-intro { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; }
     .testing-intro-text {
       width: 310px;
@@ -386,7 +386,7 @@
       line-height: 1.2; color: var(--fg);
     }
     .testing-screens { width: 660px; height: auto; display: block; }
-    .testing-table-wrap { flex: 1 1 auto; min-width: 0; }
+    .testing-table-wrap { flex: 0 0 auto; }
     .testing-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 1116px; }
     .testing-table th, .testing-table td { padding: 14px 20px; vertical-align: middle; text-align: center; }
     .testing-table th {
@@ -448,7 +448,7 @@
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
       .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap, .userflow-wrap,
-      .testing-wrap, .insights-wrap, .devprep-wrap, .results-wrap {
+      .insights-wrap, .devprep-wrap, .results-wrap {
         position: static; transform: none; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
@@ -461,7 +461,6 @@
       .jtbd-divider { display: none; }
       .userflow-wrap img { height: 220px; }
       .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e { margin-top: 0; }
-      .testing-intro-text, .testing-screens { width: 100%; height: auto; }
       .insights-grid { grid-template-columns: 1fr; row-gap: 24px; }
       .insights-gap-a, .insights-gap-b, .insights-gap-c { margin-top: 0; }
       .results-quote, .results-done { flex-basis: auto; width: 100%; }
@@ -1243,13 +1242,14 @@
     <!-- ── SLIDE 12 — ТЕСТИРОВАНИЕ ── -->
     <section class="slide slide-testing">
       <div class="eyebrow">Тестирование</div>
-      <div class="testing-wrap">
+      <div class="testing-viewport hscroll-viewport">
+        <div class="testing-track hscroll-track">
         <div class="testing-intro">
           <p class="testing-intro-text">Чтобы проверить, снимает&nbsp;ли новый флоу ключевые боли архетипов, провел модерируемое тестирование на&nbsp;кликабельном прототипе. Респонденты те&nbsp;же, что&nbsp;и на&nbsp;этапе исследования&nbsp;— это позволило им&nbsp;сравнить старый флоу Rutube и&nbsp;новый прототип на&nbsp;собственном опыте.</p>
           <img class="testing-screens" src="projects/rutube/testing-screens.png" alt="Экраны, использованные в тестировании">
         </div>
-        <div class="testing-table-wrap hscroll-viewport">
-          <table class="testing-table hscroll-track">
+        <div class="testing-table-wrap">
+          <table class="testing-table">
             <colgroup>
               <col style="width:61px"><col style="width:181px"><col style="width:138px"><col style="width:134px"><col style="width:213px"><col style="width:389px">
             </colgroup>
@@ -1322,6 +1322,7 @@
               </tr>
             </tbody>
           </table>
+        </div>
         </div>
       </div>
       <div class="slide-title">Rutube Subscription</div>
