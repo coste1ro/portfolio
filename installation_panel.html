@@ -188,24 +188,24 @@
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
+    /* ── Mobile: this is a desktop-only interactive viewer (wheel-pan,
+       keyboard nav) — no attempt to adapt the mechanics, just a plain
+       notice instead. ── */
+    .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .viewer-hint { display: none; }
-      .slide-hero { height: auto; overflow-y: auto; }
-      .hero-grid {
-        position: static; display: flex; flex-direction: column;
-        gap: 24px; padding: 90px 24px 140px;
-        max-height: none; overflow-y: visible;
+      .slides, .viewer-hint, .viewer-prev, .viewer-next { display: none; }
+      .mobile-notice {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 24px; height: 100%; padding: 40px; text-align: center;
       }
-      .hero-heading { margin-bottom: 0; }
-      .hero-col-a, .hero-col-b { grid-column: unset; grid-row: unset; }
-      .slide-portal { height: auto; overflow-y: auto; }
-      .portal-grid {
-        position: static; display: flex; flex-direction: column;
-        gap: 24px; padding: 90px 24px 140px;
-        max-height: none; overflow-y: visible;
+      .mobile-notice-text {
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+        line-height: 1.2; color: var(--fg); max-width: 400px;
       }
-      .portal-callouts { flex-direction: row; justify-content: space-between; gap: 16px; }
-      .eyebrow, .slide-title { left: 24px; }
+      .mobile-notice-link {
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+        text-transform: uppercase; color: var(--fg);
+      }
     }
   </style>
 </head>
@@ -328,6 +328,11 @@
 
   </div>
 
+  <div class="mobile-notice">
+    <p class="mobile-notice-text">Кейс&nbsp;— полноэкранный вьюер с&nbsp;панорамированием колесом и&nbsp;навигацией с&nbsp;клавиатуры, сделан под десктоп.<br>Откройте с&nbsp;компьютера, чтобы увидеть всё как задумано.</p>
+    <a class="mobile-notice-link" href="cases.html">← Ко&nbsp;всем кейсам</a>
+  </div>
+
   <div id="cursor-outer"></div>
 
   <script>
@@ -348,8 +353,10 @@
       nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); maybeShowHint(); } });
       render();
 
-      document.querySelector('.viewer-nav a').addEventListener('click', function () {
-        try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+      document.querySelectorAll('a[href="cases.html"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+        });
       });
 
       document.addEventListener('keydown', function (e) {

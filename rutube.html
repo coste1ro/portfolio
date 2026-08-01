@@ -464,31 +464,25 @@
     .results-list li:last-child { margin-bottom: 0; }
     .results-list li::marker { font-size: 0.4em; }
 
+    /* ── Mobile: this is a desktop-only interactive viewer (wheel-pan,
+       keyboard nav) — no attempt to adapt the mechanics, just a plain
+       notice instead. ── */
+    .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .slide { overflow-y: auto; }
-      .viewer-hint { display: none; }
-      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap, .userflow-wrap,
-      .insights-wrap, .devprep-wrap, .results-wrap {
-        position: static; transform: none; display: flex; flex-direction: column;
-        gap: 24px; padding: 90px 24px 140px;
-        max-height: none; overflow-y: visible;
+      .slides, .viewer-hint, .viewer-prev, .viewer-next { display: none; }
+      .mobile-notice {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 24px; height: 100%; padding: 40px; text-align: center;
       }
-      .forces-wrap > * { width: 100%; }
-      .competitors-groups { flex-basis: auto; }
-      .competitors-table-wrap, .reviews-table-wrap { width: 100%; }
-      .moscow-col { flex-basis: auto; }
-      .eyebrow, .slide-title { left: 24px; }
-      .jtbd-grid { grid-template-columns: 1fr; row-gap: 24px; }
-      .jtbd-divider { display: none; }
-      .userflow-wrap img { height: 220px; }
-      .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e { margin-top: 0; }
-      .insights-grid { grid-template-columns: 1fr; row-gap: 24px; }
-      .insights-gap-a, .insights-gap-b, .insights-gap-c { margin-top: 0; }
-      .results-quote, .results-done { flex-basis: auto; width: 100%; }
-      .results-lists { flex-direction: column; gap: 24px; }
-      .results-list { flex-basis: auto; width: 100%; }
+      .mobile-notice-text {
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+        line-height: 1.2; color: var(--fg); max-width: 400px;
+      }
+      .mobile-notice-link {
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+        text-transform: uppercase; color: var(--fg);
+      }
     }
-
   </style>
 </head>
 <body>
@@ -1411,6 +1405,11 @@
 
   </div>
 
+  <div class="mobile-notice">
+    <p class="mobile-notice-text">Кейс&nbsp;— полноэкранный вьюер с&nbsp;панорамированием колесом и&nbsp;навигацией с&nbsp;клавиатуры, сделан под десктоп.<br>Откройте с&nbsp;компьютера, чтобы увидеть всё как задумано.</p>
+    <a class="mobile-notice-link" href="cases.html">← Ко&nbsp;всем кейсам</a>
+  </div>
+
   <div id="cursor-outer"></div>
 
   <script>
@@ -1430,8 +1429,10 @@
       nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); maybeShowHint(); } });
       render();
 
-      document.querySelector('.viewer-nav a').addEventListener('click', function () {
-        try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+      document.querySelectorAll('a[href="cases.html"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+        });
       });
 
       document.addEventListener('keydown', function (e) {
