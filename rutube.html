@@ -64,12 +64,12 @@
 
     /* ── Slides ── */
     .slides {
-      display: flex; width: 1100%; height: 100%;
+      display: flex; width: 1500%; height: 100%;
       transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
       will-change: transform;
     }
     .slide {
-      flex: 0 0 9.0910%; height: 100%;
+      flex: 0 0 6.6667%; height: 100%;
       position: relative; overflow: hidden;
     }
 
@@ -373,9 +373,82 @@
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
+    /* ── Slide 13: testing ── */
+    .slide-testing { position: relative; height: 100%; }
+    .testing-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      display: flex; gap: 40px; align-items: stretch;
+    }
+    .testing-intro { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; }
+    .testing-intro-text {
+      width: 310px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .testing-screens { width: 660px; height: auto; display: block; }
+    .testing-table-wrap { flex: 1 1 auto; min-width: 0; }
+    .testing-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 1116px; }
+    .testing-table th, .testing-table td { padding: 14px 20px; vertical-align: middle; text-align: center; }
+    .testing-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+    }
+    .testing-table td { background: rgba(79,70,229,0.05); }
+    .testing-table td.row-num { background: rgba(79,70,229,0.25); }
+    .testing-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .testing-table td.row-num .testing-text { font-size: 16px; }
+
+    /* ── Slide 14: insights ── */
+    .slide-insights { position: relative; height: 100%; }
+    .insights-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+    }
+    .insights-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px; }
+    .insights-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .insights-gap-a { margin-top: 226px; }
+    .insights-gap-b { margin-top: 372px; }
+    .insights-gap-c { margin-top: 425px; }
+
+    /* ── Slide 15: dev-prep ── */
+    .slide-devprep { position: relative; height: 100%; }
+    .devprep-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      display: grid; grid-template-columns: 1010fr 310fr; column-gap: 40px; align-items: end;
+    }
+    .devprep-media img { width: 100%; display: block; box-shadow: 8px 8px 88px rgba(0,0,0,0.06); }
+    .devprep-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+
+    /* ── Slide 16: results ── */
+    .slide-results { position: relative; height: 100%; }
+    .results-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 40px;
+    }
+    .results-quote { flex: 0 0 502px; }
+    .results-done { flex: 0 0 660px; display: flex; flex-direction: column; gap: 24px; }
+    .results-lists { display: flex; gap: 40px; }
+    .results-list {
+      list-style: disc; padding-left: 20px; flex: 0 0 310px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      line-height: 1.2; color: var(--fg);
+    }
+    .results-list li { margin-bottom: 8px; }
+    .results-list li:last-child { margin-bottom: 0; }
+    .results-list li::marker { font-size: 0.4em; }
+
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
-      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap, .userflow-wrap {
+      .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap, .userflow-wrap,
+      .testing-wrap, .insights-wrap, .devprep-wrap, .results-wrap {
         position: static; transform: none; display: flex; flex-direction: column;
         gap: 24px; padding: 90px 24px 140px;
       }
@@ -388,6 +461,12 @@
       .jtbd-divider { display: none; }
       .userflow-wrap img { height: 220px; }
       .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e { margin-top: 0; }
+      .testing-intro-text, .testing-screens { width: 100%; height: auto; }
+      .insights-grid { grid-template-columns: 1fr; row-gap: 24px; }
+      .insights-gap-a, .insights-gap-b, .insights-gap-c { margin-top: 0; }
+      .results-quote, .results-done { flex-basis: auto; width: 100%; }
+      .results-lists { flex-direction: column; gap: 24px; }
+      .results-list { flex-basis: auto; width: 100%; }
     }
   </style>
 </head>
@@ -1155,6 +1234,151 @@
             <span class="strip-num">[7]</span>
             <img src="projects/rutube/ui-07.png" alt="Управление подпиской">
             <p class="strip-caption">Управление подпиской</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 12 — ТЕСТИРОВАНИЕ ── -->
+    <section class="slide slide-testing">
+      <div class="eyebrow">Тестирование</div>
+      <div class="testing-wrap">
+        <div class="testing-intro">
+          <p class="testing-intro-text">Чтобы проверить, снимает&nbsp;ли новый флоу ключевые боли архетипов, провел модерируемое тестирование на&nbsp;кликабельном прототипе. Респонденты те&nbsp;же, что&nbsp;и на&nbsp;этапе исследования&nbsp;— это позволило им&nbsp;сравнить старый флоу Rutube и&nbsp;новый прототип на&nbsp;собственном опыте.</p>
+          <img class="testing-screens" src="projects/rutube/testing-screens.png" alt="Экраны, использованные в тестировании">
+        </div>
+        <div class="testing-table-wrap hscroll-viewport">
+          <table class="testing-table hscroll-track">
+            <colgroup>
+              <col style="width:61px"><col style="width:181px"><col style="width:138px"><col style="width:134px"><col style="width:213px"><col style="width:389px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Шаг флоу</th>
+                <th>Прошел?</th>
+                <th>Время</th>
+                <th>Ошибки и застревания</th>
+                <th>Цитаты и наблюдения</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-num"><p class="testing-text">1</p></td>
+                <td><p class="testing-text">Видео и&nbsp;реклама-баннер</p></td>
+                <td><p class="testing-text">Да</p></td>
+                <td><p class="testing-text">28 сек</p></td>
+                <td><p class="testing-text">Потыкал на&nbsp;кнопку лайка, попытался закрыть плашку снизу</p></td>
+                <td><p class="testing-text">«О нет, черт, реклама. Но&nbsp;я&nbsp;хочу ее&nbsp;пропустить, а&nbsp;просто пропустить я&nbsp;ее не&nbsp;могу»</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">2</p></td>
+                <td><p class="testing-text">Выбор тарифа</p></td>
+                <td><p class="testing-text">Да</p></td>
+                <td><p class="testing-text">10 сек</p></td>
+                <td><p class="testing-text">—</p></td>
+                <td><p class="testing-text">«Так удобно, потому&nbsp;что здесь есть выгода для&nbsp;меня». Сразу выбрал годовой тариф, оценил сравнение цен</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">3</p></td>
+                <td><p class="testing-text">Платежная форма</p></td>
+                <td><p class="testing-text">Да</p></td>
+                <td><p class="testing-text">20 сек</p></td>
+                <td><p class="testing-text">—</p></td>
+                <td><p class="testing-text">Сначала выбрал банковскую карту, ввел данные</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">4</p></td>
+                <td><p class="testing-text">Error-экран</p></td>
+                <td><p class="testing-text">Да</p></td>
+                <td><p class="testing-text">5 сек</p></td>
+                <td><p class="testing-text">Не растерялся</p></td>
+                <td><p class="testing-text">«Не удалось обработать данные карты&nbsp;— давайте попробуем еще раз, но&nbsp;уже наверное лучше СБП». Сразу решил сменить способ оплаты</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">5</p></td>
+                <td><p class="testing-text">Повторная оплата</p></td>
+                <td><p class="testing-text">Да</p></td>
+                <td><p class="testing-text">5 сек</p></td>
+                <td><p class="testing-text">—</p></td>
+                <td><p class="testing-text">Через СБП&nbsp;— успешно</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">6</p></td>
+                <td><p class="testing-text">Success-экран</p></td>
+                <td><p class="testing-text">Да</p></td>
+                <td><p class="testing-text">15 сек</p></td>
+                <td><p class="testing-text">—</p></td>
+                <td><p class="testing-text">«Подписка активна, реклама отключена, вижу следующее списание. Даже напоминалка будет&nbsp;— зашибись». Нажал «Продолжить просмотр»</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">7</p></td>
+                <td><p class="testing-text">Управление подпиской</p></td>
+                <td><p class="testing-text">Не перешел</p></td>
+                <td><p class="testing-text">—</p></td>
+                <td><p class="testing-text">—</p></td>
+                <td><p class="testing-text">Заметил кнопку «Управление подпиской», но&nbsp;не&nbsp;перешел: «Я&nbsp;понимаю что&nbsp;собой представляет управление подпиской&nbsp;— мне на&nbsp;данный момент неактуально»</p></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 13 — ИНСАЙТЫ ── -->
+    <section class="slide slide-insights">
+      <div class="eyebrow">Инсайты</div>
+      <div class="insights-wrap">
+        <div class="insights-grid">
+          <div>
+            <p class="insights-text">Флоу подтвердил гипотезу: боли обоих архетипов закрыты, критерии успеха выполнены на&nbsp;100%.</p>
+            <p class="insights-text insights-gap-b">Архетипы работают как&nbsp;рамка, но&nbsp;не&nbsp;жестко: поведение может отличаться от&nbsp;изначальной классификации в&nbsp;зависимости от&nbsp;контекста.</p>
+          </div>
+          <div></div>
+          <div>
+            <p class="insights-text">SEQ 6.3 из&nbsp;7, SUS 91.7 из&nbsp;100&nbsp;— высокая простота и&nbsp;удобство использования.</p>
+            <p class="insights-text insights-gap-a">Найдены две точки роста: error-экран воспринимается как&nbsp;тупик, кнопка отмены на&nbsp;success-экране визуально слабая.</p>
+          </div>
+          <div>
+            <p class="insights-text insights-gap-c">Прозрачность условий и&nbsp;явный контроль над подпиской сняли главный страх&nbsp;— скрытые списания.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 14 — ПОДГОТОВКА К РАЗРАБОТКЕ ── -->
+    <section class="slide slide-devprep">
+      <div class="eyebrow">Подготовка к&nbsp;разработке</div>
+      <div class="devprep-wrap">
+        <div class="devprep-media">
+          <img src="projects/rutube/ui-kit.png" alt="UI kit и система токенов">
+        </div>
+        <p class="devprep-text">Чтобы решение было пригодно для&nbsp;имплементации, собрана двухуровневая система токенов и&nbsp;UI kit.</p>
+      </div>
+      <div class="slide-title">Rutube Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 15 — РЕЗУЛЬТАТЫ ── -->
+    <section class="slide slide-results">
+      <div class="eyebrow">Результаты</div>
+      <div class="results-wrap">
+        <div class="section-heading results-quote">Кейс прошел полный цикл: от&nbsp;исследования до&nbsp;системы, готовой к&nbsp;разработке.</div>
+        <div class="results-done">
+          <div class="section-heading">Что сделано</div>
+          <div class="results-lists">
+            <ul class="results-list">
+              <li>Собрана база исследования: интервью, конкурентный анализ, приоритизация по&nbsp;MoSCoW</li>
+              <li>Сформированы два поведенческих архетипа на&nbsp;основе паттернов</li>
+              <li>Спроектированы информационная архитектура и&nbsp;CJM</li>
+            </ul>
+            <ul class="results-list">
+              <li>Отрисованы ключевые экраны: выбор тарифа, оплата, успех, ошибка, управление подпиской</li>
+              <li>Собрана двухуровневая система токенов и&nbsp;UI kit из&nbsp;7&nbsp;секций</li>
+              <li>Проведено юзабилити-тестирование: гипотеза подтверждена, ключевые боли архетипов закрыты (SUS 91.7, SEQ 6.3)</li>
+            </ul>
           </div>
         </div>
       </div>
