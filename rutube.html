@@ -61,6 +61,15 @@
     }
     .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
     .viewer-nav svg { width: 48px; height: 48px; }
+    .viewer-hint {
+      position: fixed; top: 40px; right: 256px; height: 48px; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      line-height: 1.2; text-align: center; color: var(--fg); white-space: nowrap;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    .viewer-hint.visible { opacity: 1; }
 
     /* ── Slides ── */
     .slides {
@@ -447,6 +456,7 @@
 
     @media (max-width: 900px) {
       .slide { overflow-y: auto; }
+      .viewer-hint { display: none; }
       .hero-grid, .archetypes-grid, .competitors-wrap, .priority-wrap, .cjm-wrap, .forces-wrap, .ia-wrap, .jtbd-wrap, .userflow-wrap,
       .insights-wrap, .devprep-wrap, .results-wrap {
         position: static; transform: none; display: flex; flex-direction: column;
@@ -471,6 +481,7 @@
 </head>
 <body>
 
+  <p class="viewer-hint">переключайтесь между страницами кнопками<br>или клавишами ←&nbsp;и&nbsp;→ на&nbsp;клавиатуре</p>
   <div class="viewer-nav">
     <button type="button" class="viewer-prev" aria-label="Предыдущий экран">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M162.83,205.17a4,4,0,0,1-5.66,5.66l-80-80a4,4,0,0,1,0-5.66l80-80a4,4,0,1,1,5.66,5.66L85.66,128Z"/></svg>
@@ -1403,13 +1414,32 @@
         prevBtn.disabled = idx === 0;
         nextBtn.disabled = idx === total - 1;
       }
-      prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
-      nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); } });
+      prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); maybeShowHint(); } });
+      nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); maybeShowHint(); } });
       render();
 
       document.querySelector('.viewer-nav a').addEventListener('click', function () {
         try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
       });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') prevBtn.click();
+        else if (e.key === 'ArrowRight') nextBtn.click();
+      });
+
+      // Keyboard-nav hint: appears a couple seconds after the first arrow
+      // click, then dissolves away on its own — a one-time nudge, not a
+      // persistent UI element.
+      var hint = document.querySelector('.viewer-hint');
+      var hintShown = false;
+      function maybeShowHint() {
+        if (hintShown) return;
+        hintShown = true;
+        setTimeout(function () {
+          hint.classList.add('visible');
+          setTimeout(function () { hint.classList.remove('visible'); }, 5000);
+        }, 2000);
+      }
 
       // Wheel-driven horizontal pan for wide content (tables, IA, user-flow) —
       // each viewport only responds while its own slide is the active one,
