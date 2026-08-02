@@ -180,6 +180,9 @@
       color: var(--fg);
     }
 
+    /* Mobile-only section heading — see media query below. */
+    .bio-heading { display: none; }
+
     /* ── Stats ── */
     .stats {
       display: grid;
@@ -211,7 +214,12 @@
     /* ── Responsive: collapse multi-column blocks to a single column.
        Fires above the tablet width, so 768 lands in the stacked layout
        (a wider version of mobile) — no separate tablet breakpoint needed.
-       Order: nav/theme → title → photo → manifesto → bio text → stats.
+       Order: nav/theme → title → manifesto → "Bio" heading → photo →
+       bio text → stats. The manifesto and bio content used to run
+       together with no visual break between them (photo sat right under
+       the "Манифест" label, before the manifesto text even resolved),
+       reading as if it all belonged under one heading — the "Bio" label
+       now marks where the bio section actually starts.
        .bio dissolves via display:contents so its photo and the two
        bio-col paragraphs can each get their own position in .page's
        order, instead of moving as one grid block — since stacked content
@@ -226,13 +234,14 @@
       .theme-switch { position: static; justify-content: flex-end; padding: 16px 24px 0; }
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { order: 0; }
+      .manifesto { order: 1; grid-template-columns: 1fr; gap: 28px; }
+      .bio-heading { display: block; order: 2; }
       .bio { display: contents; }
-      .bio > picture { order: 1; display: block; }
+      .bio > picture { order: 3; display: block; }
       .bio-photo { margin: 0 auto; }
-      .manifesto { order: 2; grid-template-columns: 1fr; gap: 28px; }
-      .bio-col:nth-of-type(1) { order: 3; }
-      .bio-col:nth-of-type(2) { order: 4; }
-      .stats { order: 5; grid-template-columns: 1fr; gap: 24px 0; }
+      .bio-col:nth-of-type(1) { order: 4; }
+      .bio-col:nth-of-type(2) { order: 5; }
+      .stats { order: 6; grid-template-columns: 1fr; gap: 24px 0; }
     }
 
     /* ── Preloader ── */
@@ -335,13 +344,15 @@
       <p class="manifesto-text">Хороший дизайн не&nbsp;нуждается в&nbsp;объяснении. Он задевает сразу&nbsp;— ощущением чего-то нового, точного, сделанного с&nbsp;умом. Плохой виден так&nbsp;же&nbsp;мгновенно, даже если все правила соблюдены. Я&nbsp;работаю между этими двумя точками: держусь за&nbsp;систему там, где она помогает, и&nbsp;отпускаю её там, где мешает.</p>
     </div>
 
+    <span class="manifesto-label bio-heading">Bio</span>
+
     <div class="bio">
       <picture>
         <source srcset="photo.webp" type="image/webp">
         <img class="bio-photo" src="photo.jpg" alt="Andrey Beregovoy" decoding="async">
       </picture>
       <p class="bio-col">В&nbsp;дизайне с&nbsp;2023 года. Начинал с&nbsp;веб-дизайна и&nbsp;фронтенда ещё в&nbsp;школе&nbsp;— это объясняет, почему мне одинаково интересно думать головой и&nbsp;руками.</p>
-      <p class="bio-col">Сейчас работаю в&nbsp;GIS IT-компании. За&nbsp;три года&nbsp;— проекты на&nbsp;рынках США, Великобритании, ОАЭ и&nbsp;России: дизайн-системы с&nbsp;нуля, UI-киты под&nbsp;сложные продукты.</p>
+      <p class="bio-col">Три года&nbsp;— проекты на&nbsp;рынках США, Великобритании, ОАЭ и&nbsp;России: дизайн-системы с&nbsp;нуля, UI-киты под&nbsp;сложные продукты. Открыт к&nbsp;новым задачам.</p>
     </div>
 
     <div class="stats">

@@ -189,14 +189,20 @@
     /* ── Mobile: the case grid is a desktop wheel-pan interaction —
        show a plain notice instead of trying to adapt it. Nav and the
        theme switch are untouched, still fully usable. Title stays
-       visible, just pushed clear of the fixed nav/theme in the corner. ── */
+       visible, just pushed clear of the fixed nav/theme in the corner.
+       The notice is a normal (not position:fixed) flex child of .page,
+       pushed to the bottom via margin-top:auto — same trick
+       .cases-viewport uses on desktop — so it's swept up by the exact
+       same .page transform as the title during the intro, instead of
+       being a separately-positioned element that has to independently
+       track a transformed ancestor. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
       .page { padding: 150px 24px 24px; }
       .cases-viewport { display: none; }
       .mobile-notice {
         display: block;
-        position: fixed; left: 24px; right: 24px; bottom: 24px;
+        margin-top: auto;
         text-align: left; font-weight: 300; font-size: 20px;
         line-height: 1.2; color: var(--fg);
       }
@@ -321,7 +327,7 @@
       </div>
     </div>
 
-    <p class="mobile-notice">Этот раздел лучше открыть с&nbsp;компьютера.</p>
+    <p class="mobile-notice">На большом экране это выглядит гораздо интереснее&nbsp;:)</p>
   </main>
 
   <div id="cursor-outer"></div>
