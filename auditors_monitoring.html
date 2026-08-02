@@ -102,8 +102,7 @@
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
-      position: absolute; top: 232px; left: 40px; right: 40px;
-      max-height: calc(100vh - 336px); overflow-y: auto;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scale(var(--fit-scale, 1));
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
@@ -142,24 +141,21 @@
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
     .strip-viewport {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scale(var(--fit-scale, 1));
       overflow: hidden;
     }
     .strip-track {
       display: flex; align-items: flex-start; gap: 40px;
       will-change: transform;
     }
-    .strip-item { flex: 0 0 auto; display: flex; flex-direction: column; }
+    .strip-item { flex: 0 0 880px; display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: 24px;
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 20px;
     }
-    .strip-item img {
-      height: min(550px, calc(100vh - 344px)); width: auto; aspect-ratio: 880 / 550;
-      display: block; object-fit: cover; object-position: top left; margin-bottom: 20px;
-    }
+    .strip-item img { width: 880px; height: 550px; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
     .strip-caption {
       font-family: 'Jost', sans-serif;
       font-weight: 300; font-size: 20px;
@@ -169,8 +165,7 @@
     /* ── Slide 3: callout grid ── */
     .slide-portal { position: relative; height: 100%; }
     .portal-grid {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%);
-      max-height: calc(100vh - 208px); overflow-y: auto;
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scale(var(--fit-scale, 1));
       display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
     }
     .portal-media { grid-column: 2; }
@@ -228,7 +223,7 @@
 
     <!-- ── SLIDE 1 — HERO ── -->
     <section class="slide slide-hero">
-      <div class="hero-grid">
+      <div class="hero-grid fit-wrap">
         <div class="hero-media">
           <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Мониторинг аудиторов — обзорная карта">
         </div>
@@ -254,7 +249,7 @@
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
       <div class="eyebrow">5 экранов&nbsp;— один маршрут менеджера</div>
-      <div class="strip-viewport">
+      <div class="strip-viewport fit-wrap">
         <div class="strip-track">
           <div class="strip-item">
             <span class="strip-num">[1]</span>
@@ -299,7 +294,7 @@
     <!-- ── SLIDE 3 — CALLOUT GRID ── -->
     <section class="slide slide-portal">
       <div class="eyebrow">Один экран вместо десятков звонков</div>
-      <div class="portal-grid">
+      <div class="portal-grid fit-wrap">
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[1]</div>
@@ -378,6 +373,34 @@
           setTimeout(function () { hint.classList.remove('visible'); }, 5000);
         }, 2000);
       }
+
+      // Fit-to-viewport: content must never sit closer than 40px to the
+      // header or footer. Measure their real rendered positions (not a
+      // guessed reserve) and, if a slide's natural content is taller than
+      // the space between them, shrink it uniformly with scale() — never
+      // clips, never overlaps, and the strip's wheel-pan keeps working
+      // since translateX on the inner track composes fine with scale()
+      // on the outer wrapper.
+      var FIT_MARGIN = 40;
+      var fitEls = document.querySelectorAll('.fit-wrap');
+      var sampleEyebrow = document.querySelector('.eyebrow');
+      var sampleTitle = document.querySelector('.slide-title');
+      function applyFit() {
+        if (!sampleEyebrow || !sampleTitle) return;
+        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom;
+        var footerTop = sampleTitle.getBoundingClientRect().top;
+        var available = footerTop - FIT_MARGIN - (headerBottom + FIT_MARGIN);
+        fitEls.forEach(function (el) {
+          el.style.setProperty('--fit-scale', 1);
+          if (available <= 0) return;
+          var natural = el.getBoundingClientRect().height;
+          var ratio = natural > available ? available / natural : 1;
+          el.style.setProperty('--fit-scale', ratio);
+        });
+      }
+      applyFit();
+      window.addEventListener('resize', applyFit);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
 
       // Screens-strip horizontal scroll — only while that slide is the active one,
       // otherwise wheel input on another slide silently piles up as a strip offset
