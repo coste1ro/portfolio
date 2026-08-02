@@ -198,7 +198,15 @@
        track a transformed ancestor. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .page { padding: 150px 24px 24px; }
+      /* min-height:100vh (base rule, above) resolves against the large
+         mobile-Safari viewport (address bar collapsed) even while the bar
+         is actually showing — .page's box then extends below what's
+         currently visible, pushing the margin-top:auto notice off the
+         bottom of the screen with no way to scroll to it, and can jump
+         mid-animation if the bar's state changes right as the page loads.
+         100svh is the small/stable viewport — always matches what's
+         actually on screen. */
+      .page { min-height: 100svh; padding: 150px 24px 24px; }
       .cases-viewport { display: none; }
       .mobile-notice {
         display: block;
