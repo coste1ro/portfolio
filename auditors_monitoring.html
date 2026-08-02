@@ -102,7 +102,7 @@
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
     .hero-grid {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scale(var(--fit-scale, 1));
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
@@ -141,7 +141,7 @@
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
     .strip-viewport {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scale(var(--fit-scale, 1));
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       overflow: hidden;
     }
     .strip-track {
@@ -165,7 +165,7 @@
     /* ── Slide 3: callout grid ── */
     .slide-portal { position: relative; height: 100%; }
     .portal-grid {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scale(var(--fit-scale, 1));
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
     }
     .portal-media { grid-column: 2; }
@@ -356,8 +356,8 @@
       });
 
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') prevBtn.click();
-        else if (e.key === 'ArrowRight') nextBtn.click();
+        if (e.key === 'ArrowLeft') { prevBtn.click(); prevBtn.blur(); }
+        else if (e.key === 'ArrowRight') { nextBtn.click(); nextBtn.blur(); }
       });
 
       // Keyboard-nav hint: appears a couple seconds after the first arrow
