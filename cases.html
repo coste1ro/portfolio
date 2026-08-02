@@ -198,7 +198,11 @@
        title, it's always on screen and moves as one piece with it. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .page { padding: 150px 24px 24px; }
+      /* min-height:auto (not 100vh) — same fix as about.html: mobile vh
+         units don't reliably match the actually-visible viewport, which
+         was the root cause of the slide-in animation jumping mid-flight. */
+      .page { min-height: auto; padding: 150px 24px 24px; }
+      .page-title { font-size: 16vw; }
       .cases-viewport { display: none; }
       .mobile-notice {
         display: block;
