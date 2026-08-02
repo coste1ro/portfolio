@@ -19,6 +19,15 @@
     :root {
       --bg: #ffffff;
       --fg: #000000;
+      /* Responsive type scale — clamp(min, ideal-vw, max), each ideal-vw
+         calibrated so it equals the old fixed px exactly at the 1440px
+         reference width, then scales with the viewport (floor/ceiling
+         keep it sane on narrow desktop windows and ultrawide monitors). */
+      --fs-heading: clamp(20px, 1.6667vw, 32px); /* 24px @ 1440 */
+      --fs-body: clamp(17px, 1.3889vw, 27px);    /* 20px @ 1440 */
+      --fs-nav: clamp(14px, 1.1111vw, 21px);     /* 16px @ 1440 */
+      --fs-small: clamp(10px, 0.8333vw, 16px);   /* 12px @ 1440 */
+      --fs-tiny: clamp(9px, 0.6944vw, 13px);     /* 10px @ 1440 */
     }
     html.dark {
       --bg: #0c0c0c;
@@ -64,7 +73,7 @@
     .viewer-hint {
       position: fixed; top: 40px; right: 256px; height: 48px; z-index: 100;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       line-height: 1.2; text-align: center; color: var(--fg); white-space: nowrap;
       opacity: 0; pointer-events: none;
       transition: opacity 0.6s ease;
@@ -86,7 +95,7 @@
       position: absolute; top: 40px; left: 40px; height: 48px;
       display: flex; align-items: center;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg);
     }
@@ -94,7 +103,7 @@
     .slide-title {
       position: absolute; left: 40px; bottom: 40px;
       font-family: 'Montserrat', sans-serif;
-      font-weight: 200; font-size: 5.5556vw;
+      font-weight: 200; font-size: clamp(48px, 5.5556vw, 100px);
       letter-spacing: 0.03em; line-height: 0.9;
       text-transform: uppercase; font-kerning: none;
     }
@@ -106,25 +115,25 @@
     /* ── Shared: section heading + body (used on every text-led slide) ── */
     .section-heading {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; line-height: 1.3;
       text-transform: uppercase; color: var(--fg);
     }
     .section-body {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
       margin-top: 20px;
     }
     .field-label {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 16px;
     }
     .field-value {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
 
@@ -140,7 +149,7 @@
     .hero-heading {
       grid-column: 2 / span 2; grid-row: 1;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; line-height: normal;
       text-transform: uppercase; color: var(--fg);
       margin-bottom: 40px;
@@ -149,13 +158,13 @@
     .hero-col-b { grid-column: 3; grid-row: 2; }
     .hero-col-label {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 32px;
     }
     .hero-col-body {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
@@ -169,13 +178,13 @@
       flex: 0 0 300px; display: flex; flex-direction: column; gap: 56px;
     }
     .competitors-group-label {
-      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 16px;
     }
     .competitors-group-list {
       list-style: disc; padding-left: 20px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .competitors-group-list li { margin-bottom: 8px; }
@@ -184,7 +193,7 @@
     .competitors-table { border-collapse: collapse; width: 100%; }
     .competitors-table th {
       background: rgba(79,70,229,0.25);
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       color: var(--fg); padding: 8px; text-align: center; vertical-align: middle;
       line-height: 1.2;
     }
@@ -196,11 +205,11 @@
     .status-dot.mid { background: #eab308; }
     .status-dot.lo { background: #ef4444; }
     .status-dot.na {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px; color: var(--fg);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body); color: var(--fg);
     }
     .competitors-legend {
       display: flex; gap: 16px; justify-content: flex-end; margin-top: 12px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px; color: var(--fg);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small); color: var(--fg);
       white-space: nowrap;
     }
 
@@ -214,28 +223,28 @@
     .reviews-table { border-collapse: collapse; width: 100%; }
     .reviews-table th {
       background: rgba(79,70,229,0.25);
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       color: var(--fg); padding: 8px; text-align: center;
     }
     .reviews-table td { padding: 10px 8px; vertical-align: middle; height: 68px; }
     .reviews-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
     .reviews-text {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 10px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-tiny);
       line-height: 1.2; color: var(--fg); text-align: center;
     }
     .moscow-col { flex: 0 0 310px; }
     .moscow-heading {
-      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; line-height: 1.3; text-transform: uppercase; color: var(--fg);
     }
     .moscow-groups { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
     .moscow-group-label {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       color: var(--fg); margin-bottom: 12px;
     }
     .moscow-group-list {
       list-style: disc; padding-left: 20px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .moscow-group-list li { margin-bottom: 4px; }
@@ -255,17 +264,17 @@
       display: flex; flex-direction: column; gap: 24px;
     }
     .archetype-card-title {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .archetype-card-fields { display: flex; flex-direction: column; gap: 12px; }
     .archetype-card-field-label {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       line-height: 1.2; color: var(--fg); margin-bottom: 4px;
     }
     .archetype-card-list {
       list-style: disc; padding-left: 18px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       line-height: 1.2; color: var(--fg);
     }
     .archetype-card-list li { margin-bottom: 2px; }
@@ -281,7 +290,7 @@
     }
     .forces-conclusion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
     .forces-conclusion-list p {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
 
@@ -295,15 +304,15 @@
     .cjm-table th, .cjm-table td { padding: 26px 20px; vertical-align: middle; text-align: center; }
     .cjm-table th {
       background: rgba(79,70,229,0.25);
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
     }
     .cjm-table td { background: rgba(79,70,229,0.05); }
     .cjm-table td.row-label { background: rgba(79,70,229,0.25); }
     .cjm-text {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       line-height: 1.2; color: var(--fg);
     }
-    .cjm-table td.row-label .cjm-text { font-size: 16px; }
+    .cjm-table td.row-label .cjm-text { font-size: var(--fs-nav); }
 
     /* ── Slide 9: IA (sitemap tree) ── */
     .slide-ia { position: relative; height: 100%; }
@@ -317,14 +326,14 @@
       background: rgba(79,70,229,0.05);
       min-height: 63px; display: flex; align-items: center; justify-content: center;
       padding: 10px 20px; text-align: center;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
     }
     .ia-item-title { background: rgba(79,70,229,0.25); }
     .ia-group { display: flex; flex-direction: column; gap: 5px; }
     .ia-subgroup { display: flex; flex-direction: column; gap: 8px; }
     .ia-leaf {
       padding: 4px 20px; text-align: center;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
     }
 
     /* ── Slide 10: JTBD ── */
@@ -341,11 +350,11 @@
       background: var(--fg); opacity: 0.15;
     }
     .jtbd-heading {
-      font-family: 'Jost', sans-serif; font-weight: 200; font-size: 24px;
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
     }
     .jtbd-text {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .jtbd-gap-a { margin-top: 32px; }
@@ -368,17 +377,17 @@
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
     .strip-track { display: flex; align-items: flex-start; gap: 40px; }
-    .strip-item { flex: 0 0 540px; display: flex; flex-direction: column; }
+    .strip-item { flex: 0 0 clamp(500px, 61.111vw, 1100px); display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 20px;
     }
-.strip-item img { width: 540px; height: 384px; display: block; object-fit: cover; margin-bottom: 20px; }
+.strip-item img { width: 100%; aspect-ratio: 880 / 550; display: block; object-fit: cover; object-position: top; margin-bottom: 20px; }
     .strip-caption {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
@@ -391,7 +400,7 @@
     .testing-intro { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; }
     .testing-intro-text {
       width: 310px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .testing-screens { width: 660px; height: auto; display: block; }
@@ -400,15 +409,15 @@
     .testing-table th, .testing-table td { padding: 14px 20px; vertical-align: middle; text-align: center; }
     .testing-table th {
       background: rgba(79,70,229,0.25);
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.2; color: var(--fg);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
     }
     .testing-table td { background: rgba(79,70,229,0.05); }
     .testing-table td.row-num { background: rgba(79,70,229,0.25); }
     .testing-text {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       line-height: 1.2; color: var(--fg);
     }
-    .testing-table td.row-num .testing-text { font-size: 16px; }
+    .testing-table td.row-num .testing-text { font-size: var(--fs-nav); }
 
     /* ── Slide 14: insights ── */
     .slide-insights { position: relative; height: 100%; }
@@ -417,7 +426,7 @@
     }
     .insights-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px; }
     .insights-text {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .insights-gap-a { margin-top: 226px; }
@@ -432,7 +441,7 @@
     }
     .devprep-media img { width: 100%; display: block; box-shadow: 8px 8px 88px rgba(0,0,0,0.06); }
     .devprep-text {
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
 
@@ -447,7 +456,7 @@
     .results-lists { display: flex; gap: 40px; }
     .results-list {
       list-style: disc; padding-left: 20px; flex: 0 0 310px;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
     }
     .results-list li { margin-bottom: 8px; }
@@ -465,11 +474,11 @@
         gap: 24px; height: 100%; padding: 40px; text-align: center;
       }
       .mobile-notice-text {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
         line-height: 1.2; color: var(--fg); max-width: 400px;
       }
       .mobile-notice-link {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav);
         text-transform: uppercase; color: var(--fg);
       }
     }

@@ -19,6 +19,14 @@
     :root {
       --bg: #ffffff;
       --fg: #000000;
+      /* Responsive type scale — clamp(min, ideal-vw, max), each ideal-vw
+         calibrated so it equals the old fixed px exactly at the 1440px
+         reference width, then scales with the viewport (floor/ceiling
+         keep it sane on narrow desktop windows and ultrawide monitors). */
+      --fs-heading: clamp(20px, 1.6667vw, 32px); /* 24px @ 1440 */
+      --fs-body: clamp(17px, 1.3889vw, 27px);    /* 20px @ 1440 */
+      --fs-nav: clamp(14px, 1.1111vw, 21px);     /* 16px @ 1440 */
+      --fs-small: clamp(10px, 0.8333vw, 16px);   /* 12px @ 1440 */
     }
     html.dark {
       --bg: #0c0c0c;
@@ -64,7 +72,7 @@
     .viewer-hint {
       position: fixed; top: 40px; right: 256px; height: 48px; z-index: 100;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
       line-height: 1.2; text-align: center; color: var(--fg); white-space: nowrap;
       opacity: 0; pointer-events: none;
       transition: opacity 0.6s ease;
@@ -86,7 +94,7 @@
       position: absolute; top: 40px; left: 40px; height: 48px;
       display: flex; align-items: center;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg);
     }
@@ -94,7 +102,7 @@
     .slide-title {
       position: absolute; left: 40px; bottom: 40px;
       font-family: 'Montserrat', sans-serif;
-      font-weight: 200; font-size: 5.5556vw;
+      font-weight: 200; font-size: clamp(48px, 5.5556vw, 100px);
       letter-spacing: 0.03em; line-height: 0.9;
       text-transform: uppercase; font-kerning: none;
     }
@@ -111,7 +119,7 @@
     .hero-heading {
       grid-column: 2 / span 2; grid-row: 1;
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; line-height: normal;
       text-transform: uppercase; color: var(--fg);
       margin-bottom: 40px;
@@ -120,19 +128,19 @@
     .hero-col-b { grid-column: 3; grid-row: 2; }
     .hero-col-label {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 32px;
     }
     .hero-col-body {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
     .hero-col-list {
       margin-top: 16px; padding-left: 14px; list-style: none;
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
     .hero-col-list li { position: relative; margin-bottom: 6px; }
@@ -148,17 +156,17 @@
       display: flex; align-items: flex-start; gap: 40px;
       will-change: transform;
     }
-    .strip-item { flex: 0 0 880px; display: flex; flex-direction: column; }
+    .strip-item { flex: 0 0 clamp(500px, 61.111vw, 1100px); display: flex; flex-direction: column; }
     .strip-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 20px;
     }
-    .strip-item img { width: 880px; height: 550px; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
+    .strip-item img { width: 100%; aspect-ratio: 880 / 550; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
     .strip-caption {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
@@ -173,13 +181,13 @@
     .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; }
     .portal-num {
       font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: 24px;
+      font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--fg); margin-bottom: 20px;
     }
     .portal-text {
       font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: 20px;
+      font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
@@ -194,11 +202,11 @@
         gap: 24px; height: 100%; padding: 40px; text-align: center;
       }
       .mobile-notice-text {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 20px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
         line-height: 1.2; color: var(--fg); max-width: 400px;
       }
       .mobile-notice-link {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav);
         text-transform: uppercase; color: var(--fg);
       }
     }
