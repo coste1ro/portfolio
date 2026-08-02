@@ -254,7 +254,7 @@
     .slide-archetypes { position: relative; height: 100%; }
     .archetypes-grid {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
-      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.7778vw;
       align-items: start;
     }
     .archetypes-intro { display: flex; flex-direction: column; gap: 40px; }
@@ -285,7 +285,7 @@
     .slide-forces { position: relative; height: 100%; }
     .forces-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
-      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.7778vw;
       align-items: start;
     }
     .forces-conclusion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
@@ -297,7 +297,7 @@
     /* ── Slides 7–8: CJM tables (Контролёр, Прагматик) ── */
     .slide-cjm { position: relative; height: 100%; }
     .cjm-wrap {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
     }
     .cjm-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 137.5694vw; height: 620px; }
@@ -317,7 +317,7 @@
     /* ── Slide 9: IA (sitemap tree) ── */
     .slide-ia { position: relative; height: 100%; }
     .ia-wrap {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
     }
     .ia-columns { display: flex; gap: 15px; width: max-content; }
@@ -343,7 +343,7 @@
     }
     .jtbd-grid {
       position: relative; display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px;
+      grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 2.7778vw;
     }
     .jtbd-divider {
       position: absolute; top: 0; bottom: 0; left: 50%; width: 1px;
@@ -366,7 +366,7 @@
     /* ── Slide 11: user-flow ── */
     .slide-userflow { position: relative; height: 100%; }
     .userflow-wrap {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
     }
     .userflow-wrap img { height: 620px; width: auto; display: block; }
@@ -374,7 +374,7 @@
     /* ── Slide 12: UI screens strip ── */
     .slide-strip { position: relative; height: 100%; }
     .strip-viewport {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
     }
     .strip-track { display: flex; align-items: flex-start; gap: 40px; }
     .strip-item { flex: 0 0 clamp(500px, 61.111vw, 1100px); display: flex; flex-direction: column; }
@@ -394,7 +394,7 @@
     /* ── Slide 13: testing ── */
     .slide-testing { position: relative; height: 100%; }
     .testing-viewport {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
     }
     .testing-track { display: flex; gap: 40px; align-items: stretch; width: max-content; }
     .testing-intro { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; }
@@ -424,7 +424,7 @@
     .insights-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
-    .insights-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 40px; }
+    .insights-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 2.7778vw; }
     .insights-text {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; color: var(--fg);
@@ -976,7 +976,7 @@
     <!-- ── SLIDE 6 — CJM: КОНТРОЛЁР ── -->
     <section class="slide slide-cjm">
       <div class="eyebrow">CJM (контролёр)</div>
-      <div class="cjm-wrap hscroll-viewport fit-wrap">
+      <div class="cjm-wrap hscroll-viewport pan-fit">
         <table class="cjm-table hscroll-track">
           <thead>
             <tr>
@@ -1044,7 +1044,7 @@
     <!-- ── SLIDE 7 — CJM: ПРАГМАТИК ── -->
     <section class="slide slide-cjm">
       <div class="eyebrow">CJM (прагматик)</div>
-      <div class="cjm-wrap hscroll-viewport fit-wrap">
+      <div class="cjm-wrap hscroll-viewport pan-fit">
         <table class="cjm-table hscroll-track">
           <thead>
             <tr>
@@ -1112,7 +1112,7 @@
     <!-- ── SLIDE 8 — IA ── -->
     <section class="slide slide-ia">
       <div class="eyebrow">IA</div>
-      <div class="ia-wrap hscroll-viewport fit-wrap">
+      <div class="ia-wrap hscroll-viewport pan-fit">
         <div class="ia-columns hscroll-track">
           <div class="ia-col">
             <div class="ia-item ia-item-title">Главная</div>
@@ -1204,7 +1204,7 @@
     <!-- ── SLIDE 10 — USER-FLOW ── -->
     <section class="slide slide-userflow">
       <div class="eyebrow">User-flow</div>
-      <div class="userflow-wrap hscroll-viewport fit-wrap">
+      <div class="userflow-wrap hscroll-viewport pan-fit">
         <img class="hscroll-track" src="projects/rutube/user-flow.svg" alt="User-flow оформления подписки Rutube Premium">
       </div>
       <div class="slide-title">Rutube Subscription</div>
@@ -1213,7 +1213,7 @@
     <!-- ── SLIDE 11 — UI SCREENS STRIP ── -->
     <section class="slide slide-strip">
       <div class="eyebrow">UI</div>
-      <div class="strip-viewport hscroll-viewport fit-wrap">
+      <div class="strip-viewport hscroll-viewport pan-fit">
         <div class="strip-track hscroll-track">
           <div class="strip-item">
             <span class="strip-num">[1]</span>
@@ -1258,7 +1258,7 @@
     <!-- ── SLIDE 12 — ТЕСТИРОВАНИЕ ── -->
     <section class="slide slide-testing">
       <div class="eyebrow">Тестирование</div>
-      <div class="testing-viewport hscroll-viewport fit-wrap">
+      <div class="testing-viewport hscroll-viewport pan-fit">
         <div class="testing-track hscroll-track">
         <div class="testing-intro">
           <p class="testing-intro-text">Чтобы проверить, снимает&nbsp;ли новый флоу ключевые боли архетипов, провел модерируемое тестирование на&nbsp;кликабельном прототипе. Респонденты те&nbsp;же, что&nbsp;и на&nbsp;этапе исследования&nbsp;— это позволило им&nbsp;сравнить старый флоу Rutube и&nbsp;новый прототип на&nbsp;собственном опыте.</p>
@@ -1454,28 +1454,36 @@
       }
 
       // Fit-to-viewport: content must never sit closer than 40px to the
-      // header or footer. Measure their real rendered positions (not a
-      // guessed reserve) and, if a slide's natural content is taller than
-      // the space between them, shrink it uniformly with scale() — never
-      // clips, never overlaps, and pannable content (tables, IA, user-flow)
-      // keeps working since translateX on the inner track composes fine
-      // with scale() on the outer wrapper.
+      // header or footer (100px for pannable "mockup" content — tables,
+      // IA, user-flow, screens — which want visible air around them, not
+      // a tight fit). Measure the header/footer's real rendered positions
+      // (not a guessed reserve) and, if a slide's natural content is
+      // taller than the space that leaves, shrink it uniformly with
+      // scaleY() — never clips, never overlaps. Pannable content keeps
+      // working since translateX on the inner track composes fine with
+      // scaleY() on the outer wrapper.
       var FIT_MARGIN = 40;
+      var PAN_MARGIN = 100;
       var fitEls = document.querySelectorAll('.fit-wrap');
+      var panFitEls = document.querySelectorAll('.pan-fit');
       var sampleEyebrow = document.querySelector('.eyebrow');
       var sampleTitle = document.querySelector('.slide-title');
+      function applyFitTo(els, margin, prop, headerBottom, footerTop) {
+        var available = footerTop - margin - (headerBottom + margin);
+        els.forEach(function (el) {
+          el.style.setProperty(prop, 1);
+          if (available <= 0) return;
+          var natural = el.getBoundingClientRect().height;
+          var ratio = natural > available ? available / natural : 1;
+          el.style.setProperty(prop, ratio);
+        });
+      }
       function applyFit() {
         if (!sampleEyebrow || !sampleTitle) return;
         var headerBottom = sampleEyebrow.getBoundingClientRect().bottom;
         var footerTop = sampleTitle.getBoundingClientRect().top;
-        var available = footerTop - FIT_MARGIN - (headerBottom + FIT_MARGIN);
-        fitEls.forEach(function (el) {
-          el.style.setProperty('--fit-scale', 1);
-          if (available <= 0) return;
-          var natural = el.getBoundingClientRect().height;
-          var ratio = natural > available ? available / natural : 1;
-          el.style.setProperty('--fit-scale', ratio);
-        });
+        applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
+        applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
       }
       applyFit();
       window.addEventListener('resize', applyFit);
@@ -1512,6 +1520,16 @@
         });
       }, { passive: true });
       window.addEventListener('resize', function () { wides.forEach(applyWide); });
+      // scrollWidth is measured before images (SVGs especially) have
+      // finished loading, so the initial centering pass can be wrong until
+      // something re-triggers it — re-run once each track's images are in.
+      wides.forEach(function (w) {
+        w.track.querySelectorAll('img').forEach(function (img) {
+          if (img.complete) return;
+          img.addEventListener('load', function () { applyWide(w); });
+        });
+      });
+      window.addEventListener('load', function () { wides.forEach(applyWide); });
       wides.forEach(applyWide);
     })();
   </script>

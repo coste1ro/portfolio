@@ -149,7 +149,7 @@
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
     .strip-viewport {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
     }
     .strip-track {
@@ -256,7 +256,7 @@
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
       <div class="eyebrow">6 экранов&nbsp;— сквозная навигация</div>
-      <div class="strip-viewport fit-wrap">
+      <div class="strip-viewport pan-fit">
         <div class="strip-track">
           <div class="strip-item">
             <span class="strip-num">[1]</span>
@@ -382,28 +382,36 @@
       }
 
       // Fit-to-viewport: content must never sit closer than 40px to the
-      // header or footer. Measure their real rendered positions (not a
+      // header or footer (100px for pannable "mockup" content — the
+      // screens strip — which wants visible air around it, not a tight
+      // fit). Measure the header/footer's real rendered positions (not a
       // guessed reserve) and, if a slide's natural content is taller than
-      // the space between them, shrink it uniformly with scale() — never
+      // the space that leaves, shrink it uniformly with scaleY() — never
       // clips, never overlaps, and the strip's wheel-pan keeps working
-      // since translateX on the inner track composes fine with scale()
+      // since translateX on the inner track composes fine with scaleY()
       // on the outer wrapper.
       var FIT_MARGIN = 40;
+      var PAN_MARGIN = 100;
       var fitEls = document.querySelectorAll('.fit-wrap');
+      var panFitEls = document.querySelectorAll('.pan-fit');
       var sampleEyebrow = document.querySelector('.eyebrow');
       var sampleTitle = document.querySelector('.slide-title');
+      function applyFitTo(els, margin, prop, headerBottom, footerTop) {
+        var available = footerTop - margin - (headerBottom + margin);
+        els.forEach(function (el) {
+          el.style.setProperty(prop, 1);
+          if (available <= 0) return;
+          var natural = el.getBoundingClientRect().height;
+          var ratio = natural > available ? available / natural : 1;
+          el.style.setProperty(prop, ratio);
+        });
+      }
       function applyFit() {
         if (!sampleEyebrow || !sampleTitle) return;
         var headerBottom = sampleEyebrow.getBoundingClientRect().bottom;
         var footerTop = sampleTitle.getBoundingClientRect().top;
-        var available = footerTop - FIT_MARGIN - (headerBottom + FIT_MARGIN);
-        fitEls.forEach(function (el) {
-          el.style.setProperty('--fit-scale', 1);
-          if (available <= 0) return;
-          var natural = el.getBoundingClientRect().height;
-          var ratio = natural > available ? available / natural : 1;
-          el.style.setProperty('--fit-scale', ratio);
-        });
+        applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
+        applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
       }
       applyFit();
       window.addEventListener('resize', applyFit);
@@ -431,6 +439,14 @@
         applyStrip();
       }, { passive: true });
       window.addEventListener('resize', applyStrip);
+      // scrollWidth is measured before images have finished loading, so
+      // the initial centering pass can be wrong until something
+      // re-triggers it — re-run once the strip's images are actually in.
+      stripTrack.querySelectorAll('img').forEach(function (img) {
+        if (img.complete) return;
+        img.addEventListener('load', applyStrip);
+      });
+      window.addEventListener('load', applyStrip);
       applyStrip();
     })();
   </script>
