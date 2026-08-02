@@ -171,10 +171,9 @@
     /* ── Slide 2: design process ── */
     .slide-process { position: relative; height: 100%; }
     .process-wrap {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
-      overflow: hidden;
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
-    .process-wrap svg { height: 620px; width: auto; display: block; }
+    .process-wrap svg { width: 100%; height: auto; display: block; }
     .process-dot { fill: var(--fg); }
     .process-toplabel {
       font-family: 'Jost', sans-serif; font-weight: 300; font-size: 26px;
@@ -544,8 +543,8 @@
     <!-- ── SLIDE 2 — ДИЗАЙН-ПРОЦЕСС ── -->
     <section class="slide slide-process">
       <div class="eyebrow">Процесс</div>
-      <div class="process-wrap hscroll-viewport pan-fit">
-        <svg class="hscroll-track" viewBox="0 0 2190 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема дизайн-процесса: Discover, Define, Design, Test, Handoff, Design Review">
+      <div class="process-wrap fit-wrap">
+        <svg viewBox="0 0 2190 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема дизайн-процесса: Discover, Define, Design, Test, Handoff, Design Review">
         <defs>
         <linearGradient id="pg-dd" x1="60" x2="600" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#D9125B"/><stop offset="100%" stop-color="#DA471B"/></linearGradient>
         </defs>
