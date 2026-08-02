@@ -190,27 +190,19 @@
        show a plain notice instead of trying to adapt it. Nav and the
        theme switch are untouched, still fully usable. Title stays
        visible, just pushed clear of the fixed nav/theme in the corner.
-       The notice is a normal (not position:fixed) flex child of .page,
-       pushed to the bottom via margin-top:auto — same trick
-       .cases-viewport uses on desktop — so it's swept up by the exact
-       same .page transform as the title during the intro, instead of
-       being a separately-positioned element that has to independently
-       track a transformed ancestor. ── */
+       The notice sits right under the title in normal flow (not pinned
+       to the bottom via 100vh/margin-top:auto) — mobile-Safari's vh units
+       don't reliably match the actually-visible viewport, which pushed
+       it below the fold and made the title's slide-in jump when the
+       browser chrome's state changed mid-animation. Right under the
+       title, it's always on screen and moves as one piece with it. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      /* min-height:100vh (base rule, above) resolves against the large
-         mobile-Safari viewport (address bar collapsed) even while the bar
-         is actually showing — .page's box then extends below what's
-         currently visible, pushing the margin-top:auto notice off the
-         bottom of the screen with no way to scroll to it, and can jump
-         mid-animation if the bar's state changes right as the page loads.
-         100svh is the small/stable viewport — always matches what's
-         actually on screen. */
-      .page { min-height: 100svh; padding: 150px 24px 24px; }
+      .page { padding: 150px 24px 24px; }
       .cases-viewport { display: none; }
       .mobile-notice {
         display: block;
-        margin-top: auto;
+        margin-top: 40px;
         text-align: left; font-weight: 300; font-size: 20px;
         line-height: 1.2; color: var(--fg);
       }
