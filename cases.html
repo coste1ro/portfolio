@@ -494,6 +494,12 @@
       track.style.transform = 'translateX(' + (-offset) + 'px)';
     }
     function layout() {
+      // .cases-viewport is display:none on mobile — clientWidth reads 0
+      // there, and this would still force a layout read/write for nothing.
+      // Skip it: on mobile this can otherwise fire mid-entrance-animation
+      // (a resize event from the browser chrome collapsing right after
+      // load) and cause a visible stutter.
+      if (!viewport.clientWidth) return;
       const w = (viewport.clientWidth - GAP * 2) / VISIBLE;
       items.forEach(function (it) { it.style.flexBasis = w + 'px'; });
       apply();
