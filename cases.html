@@ -192,7 +192,7 @@
        visible, just pushed clear of the fixed nav/theme in the corner. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .page { padding: 110px 24px 24px; }
+      .page { padding: 150px 24px 24px; }
       .cases-viewport { display: none; }
       .mobile-notice {
         display: block;
@@ -419,6 +419,11 @@
         setTimeout(function () {
           document.body.classList.remove('preloading');
           preload.remove();
+          // Drop the transform once settled — leaving it (even at an
+          // identity translateY(0)) makes .page a containing block for any
+          // position:fixed descendant (e.g. .mobile-notice), pinning it to
+          // .page's box instead of the true viewport.
+          pageEl.style.transform = '';
         }, 1000);
       }
 

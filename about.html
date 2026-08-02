@@ -211,15 +211,20 @@
     /* ── Responsive: collapse multi-column blocks to a single column.
        Fires above the tablet width, so 768 lands in the stacked layout
        (a wider version of mobile) — no separate tablet breakpoint needed.
-       Order: title (pushed clear of the fixed nav/theme) → photo →
-       manifesto → bio text → stats. .bio dissolves via display:contents
-       so its photo and the two bio-col paragraphs can each get their own
-       position in .page's order, instead of moving as one grid block —
-       since stacked content usually runs taller than one screen, the
-       page scrolls instead of clipping. ── */
+       Order: nav/theme → title → photo → manifesto → bio text → stats.
+       .bio dissolves via display:contents so its photo and the two
+       bio-col paragraphs can each get their own position in .page's
+       order, instead of moving as one grid block — since stacked content
+       usually runs taller than one screen, the page scrolls instead of
+       clipping. ── */
     @media (max-width: 820px) {
       html, body { overflow-y: auto; }
-      .page { justify-content: flex-start; gap: 40px; padding: 110px 24px 60px; }
+      /* Nav/theme-switch scroll away with the content instead of staying
+         fixed over it — the page is tall enough here that a pinned overlay
+         would end up overlapping whatever scrolls underneath it. */
+      nav { position: static; justify-content: flex-end; padding: 24px 24px 0; }
+      .theme-switch { position: static; justify-content: flex-end; padding: 16px 24px 0; }
+      .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { order: 0; }
       .bio { display: contents; }
       .bio > picture { order: 1; display: block; }
@@ -451,6 +456,11 @@
         setTimeout(function () {
           document.body.classList.remove('preloading');
           preload.remove();
+          // Drop the transform once settled — leaving it (even at an
+          // identity translateY(0)) makes .page a containing block for any
+          // position:fixed descendant, pinning it to .page's box instead
+          // of the true viewport.
+          pageEl.style.transform = '';
         }, 1000);
       }
 
