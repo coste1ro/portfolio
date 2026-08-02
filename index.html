@@ -193,7 +193,8 @@
     }
     body.preloading .theme-switch { opacity: 0; }
 
-    /* ── Mobile header wrapper ── */
+    /* ── Mobile header wrapper (no-op — nav/theme stay top-right like
+       every other page, this is just the pre-existing DOM grouping). ── */
     .mobile-header { display: contents; }
 
     /* ── Internal navigation intro ── */
@@ -203,23 +204,23 @@
     html.no-motion .hero,
     html.no-motion .theme-switch { transition: none !important; }
 
-    /* ── Mobile: nav + theme switch centered as one stack, hero name
-       wraps to 2 lines, everything sharing one 24px spacing unit
-       (top→nav, nav→theme, subtitle→name, name→bottom). ── */
+    /* ── Mobile: hero name wraps to 2 lines (first/last name), left-
+       aligned, pinned a fixed 24px from the true viewport bottom —
+       NOT via flex margin-top:auto, which silently let a taller 2-line
+       name push .hero past 100vh and get clipped by body's
+       overflow:hidden (only "Andrey" stayed visible). Subtitle is a
+       separate fixed block centered on the screen, independent of the
+       name's height. ── */
     @media (max-width: 900px) {
-      .mobile-header {
-        display: flex; flex-direction: column; align-items: center;
-        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-        padding-top: 24px; gap: 24px;
-      }
-      nav, .theme-switch { position: static; top: auto; right: auto; }
-
-      .hero-bottom { padding-bottom: 24px; }
       .hero-subtitle {
-        width: 50%; margin: 0 auto 24px; padding: 0; text-align: center;
+        position: fixed; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
+        width: 50%; margin: 0 auto; padding: 0; text-align: center;
+      }
+      .hero-name {
+        position: fixed; left: 0; right: 0; bottom: 24px;
       }
       .hero-name, #preload-name {
-        white-space: normal; text-align: center; padding: 0 24px;
+        white-space: normal; text-align: left; padding: 0 24px;
       }
     }
 

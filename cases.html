@@ -188,13 +188,16 @@
 
     /* ── Mobile: the case grid is a desktop wheel-pan interaction —
        show a plain notice instead of trying to adapt it. Nav and the
-       theme switch are untouched, still fully usable. ── */
+       theme switch are untouched, still fully usable. Title stays
+       visible, just pushed clear of the fixed nav/theme in the corner. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .page-title, .cases-viewport { display: none; }
+      .page { padding: 110px 24px 24px; }
+      .cases-viewport { display: none; }
       .mobile-notice {
-        display: flex; flex: 1; align-items: center; justify-content: center;
-        text-align: center; font-weight: 300; font-size: 20px;
+        display: block;
+        position: fixed; left: 24px; right: 24px; bottom: 24px;
+        text-align: left; font-weight: 300; font-size: 20px;
         line-height: 1.2; color: var(--fg);
       }
     }
