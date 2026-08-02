@@ -210,11 +210,18 @@
 
     /* ── Responsive: collapse multi-column blocks to a single column.
        Fires above the tablet width, so 768 lands in the stacked layout
-       (a wider version of mobile) — no separate tablet breakpoint needed. */
+       (a wider version of mobile) — no separate tablet breakpoint needed.
+       Reordered so the photo leads (right under the title), text follows —
+       and since stacked content usually runs taller than one screen, the
+       page scrolls instead of clipping. ── */
     @media (max-width: 820px) {
-      .manifesto,
-      .bio { grid-template-columns: 1fr; gap: 28px; }
-      .stats { grid-template-columns: repeat(3, 1fr); }
+      html, body { overflow-y: auto; }
+      .page { justify-content: flex-start; gap: 40px; }
+      .page-title { order: 0; }
+      .bio { order: 1; grid-template-columns: 1fr; gap: 28px; }
+      .bio-photo { margin: 0 auto; }
+      .manifesto { order: 2; grid-template-columns: 1fr; gap: 28px; }
+      .stats { order: 3; grid-template-columns: repeat(3, 1fr); }
     }
 
     /* ── Preloader ── */

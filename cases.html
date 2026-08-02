@@ -186,6 +186,19 @@
     html.no-motion .page,
     html.no-motion .theme-switch { transition: none !important; }
 
+    /* ── Mobile: the case grid is a desktop wheel-pan interaction —
+       show a plain notice instead of trying to adapt it. Nav and the
+       theme switch are untouched, still fully usable. ── */
+    .mobile-notice { display: none; }
+    @media (max-width: 900px) {
+      .page-title, .cases-viewport { display: none; }
+      .mobile-notice {
+        display: flex; flex: 1; align-items: center; justify-content: center;
+        text-align: center; font-weight: 300; font-size: 20px;
+        line-height: 1.2; color: var(--fg);
+      }
+    }
+
     #preload {
       position: fixed;
       inset: 0;
@@ -304,6 +317,8 @@
 
       </div>
     </div>
+
+    <p class="mobile-notice">Этот раздел лучше открыть с&nbsp;компьютера.</p>
   </main>
 
   <div id="cursor-outer"></div>

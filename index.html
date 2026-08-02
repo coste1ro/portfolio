@@ -193,12 +193,35 @@
     }
     body.preloading .theme-switch { opacity: 0; }
 
+    /* ── Mobile header wrapper ── */
+    .mobile-header { display: contents; }
+
     /* ── Internal navigation intro ── */
     .hero { transition: opacity 0.35s ease; }
     html.entering .hero { opacity: 0; }
     html.no-motion nav,
     html.no-motion .hero,
     html.no-motion .theme-switch { transition: none !important; }
+
+    /* ── Mobile: nav + theme switch centered as one stack, hero name
+       wraps to 2 lines, everything sharing one 24px spacing unit
+       (top→nav, nav→theme, subtitle→name, name→bottom). ── */
+    @media (max-width: 900px) {
+      .mobile-header {
+        display: flex; flex-direction: column; align-items: center;
+        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        padding-top: 24px; gap: 24px;
+      }
+      nav, .theme-switch { position: static; top: auto; right: auto; }
+
+      .hero-bottom { padding-bottom: 24px; }
+      .hero-subtitle {
+        width: 50%; margin: 0 auto 24px; padding: 0; text-align: center;
+      }
+      .hero-name, #preload-name {
+        white-space: normal; text-align: center; padding: 0 24px;
+      }
+    }
 
     /* ── Cursor ── */
     * { cursor: none !important; }
@@ -230,16 +253,18 @@
     <span id="preload-count">000</span>
   </div>
 
-  <nav>
-    <a href="index.html" class="nav-link">Index</a>
-    <a href="cases.html" class="nav-link">Cases</a>
-    <a href="about.html" class="nav-link">About</a>
-  </nav>
+  <div class="mobile-header">
+    <nav>
+      <a href="index.html" class="nav-link">Index</a>
+      <a href="cases.html" class="nav-link">Cases</a>
+      <a href="about.html" class="nav-link">About</a>
+    </nav>
 
-  <div class="theme-switch">
-    <button type="button" data-theme="light">LIGHT</button>
-    <span aria-hidden="true">|</span>
-    <button type="button" data-theme="dark">DARK</button>
+    <div class="theme-switch">
+      <button type="button" data-theme="light">LIGHT</button>
+      <span aria-hidden="true">|</span>
+      <button type="button" data-theme="dark">DARK</button>
+    </div>
   </div>
 
   <section class="hero">
@@ -262,8 +287,31 @@
       const switchEl = document.querySelector('.theme-switch');
       const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // Size the name so its text fills the viewport width minus 40px each side.
+      // Size the name so its text fills the viewport width minus margin each
+      // side. On mobile the name wraps to 2 lines (first/last name), so fit
+      // against whichever word is wider instead of the combined string.
       function fitName(el) {
+        const mobile = document.documentElement.clientWidth <= 900;
+        const textNode = el.firstChild;
+        if (mobile && textNode && textNode.nodeType === 3) {
+          const text = textNode.textContent;
+          const spaceIdx = text.indexOf(' ');
+          el.style.fontSize = '200px';
+          let w = 0;
+          if (spaceIdx > -1) {
+            const r1 = document.createRange();
+            r1.setStart(textNode, 0); r1.setEnd(textNode, spaceIdx);
+            const r2 = document.createRange();
+            r2.setStart(textNode, spaceIdx + 1); r2.setEnd(textNode, text.length);
+            w = Math.max(r1.getBoundingClientRect().width, r2.getBoundingClientRect().width);
+          } else {
+            const r = document.createRange();
+            r.selectNodeContents(el);
+            w = r.getBoundingClientRect().width;
+          }
+          if (w > 0) el.style.fontSize = (200 * (document.documentElement.clientWidth - 48) / w) + 'px';
+          return;
+        }
         el.style.fontSize = '200px';
         const range = document.createRange();
         range.selectNodeContents(el);
