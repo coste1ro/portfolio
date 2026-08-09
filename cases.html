@@ -83,20 +83,10 @@
     .theme-switch button:hover::before,
     .theme-switch button:hover::after { opacity: 1; }
 
-    /* ── Contacts ── */
-    .contacts {
-      position: fixed;
-      top: 80px;
-      right: 40px;
-      z-index: 100;
-      display: flex;
-      gap: 20px;
-    }
-
     /* ── Theme switch ── */
     .theme-switch {
       position: fixed;
-      top: 120px;
+      top: 80px;
       right: 40px;
       z-index: 100;
       display: flex;
@@ -211,7 +201,7 @@
       /* min-height:auto (not 100vh) — same fix as about.html: mobile vh
          units don't reliably match the actually-visible viewport, which
          was the root cause of the slide-in animation jumping mid-flight. */
-      .page { min-height: auto; padding: 190px 24px 24px; }
+      .page { min-height: auto; padding: 150px 24px 24px; }
       .page-title { font-size: 16vw; }
       .cases-viewport { display: none; }
       .mobile-notice {
@@ -295,11 +285,6 @@
     <a href="cases.html" class="nav-link">Cases</a>
     <a href="about.html" class="nav-link">About</a>
   </nav>
-
-  <div class="contacts">
-    <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
-    <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
-  </div>
 
   <div class="theme-switch">
     <button type="button" data-theme="light">LIGHT</button>
