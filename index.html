@@ -277,6 +277,7 @@
       <a href="index.html" class="nav-link">Index</a>
       <a href="cases.html" class="nav-link">Cases</a>
       <a href="about.html" class="nav-link">About</a>
+      <a href="cv.pdf" class="nav-link" download>CV</a>
     </nav>
 
     <div class="theme-switch">
@@ -358,6 +359,7 @@
         const here = currentFile();
         const mainEl = document.querySelector('.hero');
         document.querySelectorAll('nav a').forEach(function (a) {
+          if (a.hasAttribute('download')) return;
           const href = a.getAttribute('href');
           if (href.replace(/\.html$/, '') === here) {
             a.addEventListener('click', function (e) { e.preventDefault(); });

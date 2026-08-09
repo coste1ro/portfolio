@@ -340,6 +340,7 @@
     <a href="index.html" class="nav-link">Index</a>
     <a href="cases.html" class="nav-link">Cases</a>
     <a href="about.html" class="nav-link">About</a>
+    <a href="cv.pdf" class="nav-link" download>CV</a>
   </nav>
 
   <div class="theme-switch">
@@ -368,7 +369,6 @@
         <div class="bio-contacts">
           <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
           <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
-          <a href="cv.pdf" class="nav-link" download>CV</a>
         </div>
       </div>
       <p class="bio-col">В&nbsp;дизайне с&nbsp;2023 года. Начинал с&nbsp;веб-дизайна и&nbsp;фронтенда ещё в&nbsp;школе&nbsp;— это объясняет, почему мне одинаково интересно думать головой и&nbsp;руками.</p>
@@ -418,6 +418,7 @@
         const here = currentFile();
         const mainEl = document.querySelector('.page');
         document.querySelectorAll('nav a').forEach(function (a) {
+          if (a.hasAttribute('download')) return;
           const href = a.getAttribute('href');
           if (href.replace(/\.html$/, '') === here) {
             a.addEventListener('click', function (e) { e.preventDefault(); });
