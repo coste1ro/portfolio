@@ -28,7 +28,12 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+    html, body { height: 100%; }
+    /* Native edge-bounce stays on so a scroll attempt reads as "end of
+       page", not a frozen screen. Locked only while the intro plays — the
+       slide-up transform would otherwise briefly expose a scrollable gap. */
+    body.preloading,
+    html.entering body { overflow: hidden; }
 
     :root {
       --bg: #ffffff;
@@ -238,7 +243,6 @@
        usually runs taller than one screen, the page scrolls instead of
        clipping. ── */
     @media (max-width: 820px) {
-      html, body { overflow-y: auto; }
       /* Nav/theme-switch scroll away with the content instead of staying
          fixed over it — the page is tall enough here that a pinned overlay
          would end up overlapping whatever scrolls underneath it. */
