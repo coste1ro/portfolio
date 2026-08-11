@@ -37,12 +37,18 @@
       --fg: #f0f0f0;
     }
 
-    html, body { height: 100%; }
-    /* Native edge-bounce stays on so a scroll attempt reads as "end of
-       page", not a frozen screen. Locked only while the intro plays — the
-       slide-up transform would otherwise briefly expose a scrollable gap. */
-    body.preloading,
-    html.entering body { overflow: hidden; }
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+
+    /* Touch devices get the native edge-bounce so a scroll attempt reads
+       as "end of page" instead of a frozen screen. Desktop stays a hard-
+       locked poster — the bounce fought the horizontal card scrolling
+       there. Re-locked during the intro so the slide-up transform can't
+       flash a scrollable gap. */
+    @media (hover: none) and (pointer: coarse) {
+      html, body { overflow: visible; overscroll-behavior: auto; }
+      body.preloading,
+      html.entering body { overflow: hidden; }
+    }
 
     body {
       background: var(--bg);
