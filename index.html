@@ -95,6 +95,16 @@
     .theme-switch button:hover::before,
     .theme-switch button:hover::after { opacity: 1; }
 
+    /* ── Contacts (top-left, mirrors nav) ── */
+    .contacts {
+      position: fixed;
+      top: 40px;
+      left: 40px;
+      display: flex;
+      gap: 20px;
+      z-index: 100;
+    }
+
     /* ── Hero ── */
     .hero {
       min-height: 100vh;
@@ -296,6 +306,11 @@
       <span aria-hidden="true">|</span>
       <button type="button" data-theme="dark">DARK</button>
     </div>
+  </div>
+
+  <div class="contacts">
+    <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+    <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
   </div>
 
   <section class="hero">
