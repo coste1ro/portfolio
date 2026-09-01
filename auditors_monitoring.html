@@ -16,6 +16,12 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
+    /* Touch gets native scroll + edge-bounce; desktop stays the locked
+       wheel-pan viewer — same split used on index/cases/about. */
+    @media (hover: none) and (pointer: coarse) {
+      html, body { overflow: visible; overscroll-behavior: auto; }
+    }
+
     :root {
       --bg: #ffffff;
       --fg: #000000;
@@ -191,24 +197,57 @@
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
-    /* ── Mobile: this is a desktop-only interactive viewer (wheel-pan,
-       keyboard nav) — no attempt to adapt the mechanics, just a plain
-       notice instead. ── */
-    .mobile-notice { display: none; }
+    /* ── Mobile: same content, reflowed into one continuous scrolling
+       document instead of the desktop wheel-pan slide viewer — the case
+       has to actually be readable on a phone, not hidden behind an
+       "open on a computer" wall. Paging (prev/next) and the keyboard
+       hint don't apply without pages to page through; the close (X)
+       stays. transform: none !important on every axis the desktop JS
+       still (harmlessly) drives keeps it from fighting this layout —
+       simpler than teaching that JS about the breakpoint. ── */
     @media (max-width: 900px) {
-      .slides, .viewer-hint, .viewer-prev, .viewer-next { display: none; }
-      .mobile-notice {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 24px; height: 100%; padding: 40px; text-align: center;
+      .viewer-prev, .viewer-next, .viewer-hint { display: none; }
+
+      .slides {
+        display: block; width: auto; height: auto;
+        transform: none !important;
       }
-      .mobile-notice-text {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
-        line-height: 1.2; color: var(--fg); max-width: 400px;
+      .slide-hero, .slide-strip, .slide-portal { position: static; height: auto; }
+      .slide {
+        height: auto; overflow: visible;
+        padding: 0 24px 72px;
       }
-      .mobile-notice-link {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav);
-        text-transform: uppercase; color: var(--fg);
+      .slide-hero { padding-top: 120px; }
+
+      .eyebrow { position: static; height: auto; margin-bottom: 32px; }
+      .slide-title { position: static; margin-top: 48px; }
+
+      .hero-grid {
+        position: static; transform: none !important;
+        display: block;
       }
+      .hero-media { margin-bottom: 32px; }
+      .hero-heading { margin-bottom: 32px; }
+      .hero-col-a { margin-bottom: 32px; }
+
+      .strip-viewport {
+        position: static; transform: none !important;
+        overflow: visible;
+      }
+      .strip-track {
+        flex-direction: column; gap: 48px;
+        transform: none !important;
+      }
+      .strip-item { flex: none; width: 100%; }
+
+      /* Portal slide: DOM order is callouts[1,2] -> media -> callouts[3,4],
+         which reads fine top-to-bottom stacked as-is. */
+      .portal-grid {
+        position: static; transform: none !important;
+        display: block;
+      }
+      .portal-callouts { gap: 24px; margin-bottom: 32px; }
+      .portal-media { margin-bottom: 32px; }
     }
   </style>
 </head>
@@ -330,11 +369,6 @@
       <div class="slide-title">Audit Monitoring</div>
     </section>
 
-  </div>
-
-  <div class="mobile-notice">
-    <p class="mobile-notice-text">Кейс&nbsp;— полноэкранный вьюер с&nbsp;панорамированием колесом и&nbsp;навигацией с&nbsp;клавиатуры, сделан под десктоп.<br>Откройте с&nbsp;компьютера, чтобы увидеть всё как задумано.</p>
-    <a class="mobile-notice-link" href="cases.html">← Ко&nbsp;всем кейсам</a>
   </div>
 
   <div id="cursor-outer"></div>
