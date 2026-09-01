@@ -233,6 +233,12 @@
        separate fixed block centered on the screen, independent of the
        name's height. ── */
     @media (max-width: 900px) {
+      /* nav (right) grew to 4 items with CV — on narrow screens its left
+         edge now reaches far enough to collide with contacts (left) on
+         the same row. Drop contacts to the theme-switch's row instead;
+         at that row it's alone on the left against theme-switch alone
+         on the right, so the two can't overlap regardless of nav width. */
+      .contacts { top: 80px; }
       .hero-subtitle {
         position: fixed; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
         width: 50%; margin: 0 auto; padding: 0; text-align: center;
