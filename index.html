@@ -10,9 +10,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
   <script>
-    try { if (localStorage.getItem('bvg_theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}
-  </script>
-  <script>
     window.__bvgInternal = false;
     (function () {
       var entry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
@@ -31,10 +28,6 @@
     :root {
       --bg: #ffffff;
       --fg: #000000;
-    }
-    html.dark {
-      --bg: #0c0c0c;
-      --fg: #f0f0f0;
     }
 
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
@@ -79,27 +72,21 @@
       transition: opacity 0.2s;
     }
     .nav-link::before,
-    .nav-link::after,
-    .theme-switch button::before,
-    .theme-switch button::after {
+    .nav-link::after {
       display: inline-block;
       opacity: 0;
       transition: opacity 0.2s ease;
     }
-    .nav-link::before,
-    .theme-switch button::before { content: '['; margin-right: 2px; }
-    .nav-link::after,
-    .theme-switch button::after  { content: ']'; margin-left: 2px; }
+    .nav-link::before { content: '['; margin-right: 2px; }
+    .nav-link::after  { content: ']'; margin-left: 2px; }
     .nav-link:hover::before,
-    .nav-link:hover::after,
-    .theme-switch button:hover::before,
-    .theme-switch button:hover::after { opacity: 1; }
+    .nav-link:hover::after { opacity: 1; }
 
-    /* ── Contacts (top-left, mirrors nav) ── */
+    /* ── Contacts (second row, right — the theme switch's old slot) ── */
     .contacts {
       position: fixed;
-      top: 40px;
-      left: 40px;
+      top: 80px;
+      right: 40px;
       display: flex;
       gap: 20px;
       z-index: 100;
@@ -187,34 +174,7 @@
       transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
-    /* ── Theme switch ── */
-    .theme-switch {
-      position: fixed;
-      top: 80px;
-      right: 40px;
-      z-index: 100;
-      display: flex;
-      gap: 12px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      color: var(--fg);
-      transition: opacity 0.35s ease;
-    }
-    .theme-switch button {
-      background: none;
-      border: 0;
-      padding: 0;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
-      color: inherit;
-      transition: opacity 0.2s ease;
-    }
-    body.preloading .theme-switch { opacity: 0; }
-
-    /* ── Mobile header wrapper (no-op — nav/theme stay top-right like
+    /* ── Mobile header wrapper (no-op — nav/contacts stay top-right like
        every other page, this is just the pre-existing DOM grouping). ── */
     .mobile-header { display: contents; }
 
@@ -222,8 +182,7 @@
     .hero { transition: opacity 0.35s ease; }
     html.entering .hero { opacity: 0; }
     html.no-motion nav,
-    html.no-motion .hero,
-    html.no-motion .theme-switch { transition: none !important; }
+    html.no-motion .hero { transition: none !important; }
 
     /* ── Mobile: hero name wraps to 2 lines (first/last name), left-
        aligned, pinned a fixed 24px from the true viewport bottom —
@@ -233,12 +192,6 @@
        separate fixed block centered on the screen, independent of the
        name's height. ── */
     @media (max-width: 900px) {
-      /* nav (right) grew to 4 items with CV — on narrow screens its left
-         edge now reaches far enough to collide with contacts (left) on
-         the same row. Drop contacts to the theme-switch's row instead;
-         at that row it's alone on the left against theme-switch alone
-         on the right, so the two can't overlap regardless of nav width. */
-      .contacts { top: 80px; }
       .hero-subtitle {
         position: fixed; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
         width: 50%; margin: 0 auto; padding: 0; text-align: center;
@@ -307,16 +260,10 @@
       <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
     </nav>
 
-    <div class="theme-switch">
-      <button type="button" data-theme="light">LIGHT</button>
-      <span aria-hidden="true">|</span>
-      <button type="button" data-theme="dark">DARK</button>
+    <div class="contacts">
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
     </div>
-  </div>
-
-  <div class="contacts">
-    <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
-    <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
   </div>
 
   <section class="hero">
@@ -336,7 +283,6 @@
       const realName = document.querySelector('.hero-name');
       const navEl    = document.querySelector('nav');
       const subEl    = document.querySelector('.hero-subtitle');
-      const switchEl = document.querySelector('.theme-switch');
       const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Size the name so its text fills the viewport width minus margin each
@@ -403,8 +349,8 @@
             navBusy = true;
             try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
-            // Only the page content fades — nav and the theme switch stay
-            // put throughout the whole transition.
+            // Only the page content fades — nav and contacts stay put
+            // throughout the whole transition.
             mainEl.style.transition = 'opacity 0.35s ease';
             mainEl.style.opacity = '0';
             setTimeout(function () { window.location.href = href; }, 350);
@@ -442,7 +388,6 @@
         navEl.style.opacity = '1';
         subEl.style.opacity = '1';
         realName.style.opacity = '1';
-        if (switchEl) switchEl.style.opacity = '1';
         document.body.classList.remove('preloading');
         preload.remove();
       }
@@ -464,7 +409,7 @@
         let navShown = false, subShown = false, moving = true;
         (function pass() {
           const top = nameEl.getBoundingClientRect().top;
-          if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; if (switchEl) switchEl.style.opacity = '1'; }
+          if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; }
           if (!subShown && top >= subLine) { subShown = true; subEl.style.opacity = '1'; }
           if (moving) requestAnimationFrame(pass);
         })();
@@ -501,7 +446,7 @@
       }
 
       if (!canShow) {
-        // Internal nav: nav and the theme switch never hide, they're shown
+        // Internal nav: nav (and contacts, which never hides) is shown
         // right away. Skip the counter, show the name already fully formed
         // at its half-visible top position, then run the same
         // slide-into-place used by the full intro — so there's motion on
@@ -509,7 +454,6 @@
         // page dissolves in.
         clearEnterState();
         navEl.style.opacity = '1';
-        if (switchEl) switchEl.style.opacity = '1';
         fitName(realName);
         copyNameSize(realName, nameEl);
         countEl.remove();
@@ -527,26 +471,6 @@
       } else {
         begin();
       }
-    })();
-  </script>
-
-  <script>
-    (function () {
-      const root = document.documentElement;
-      const btns = document.querySelectorAll('.theme-switch button');
-      function sync() {
-        const dark = root.classList.contains('dark');
-        btns.forEach(function (b) { b.classList.toggle('active', (b.dataset.theme === 'dark') === dark); });
-      }
-      sync();
-      btns.forEach(function (b) {
-        b.addEventListener('click', function () {
-          const dark = b.dataset.theme === 'dark';
-          root.classList.toggle('dark', dark);
-          try { localStorage.setItem('bvg_theme', dark ? 'dark' : 'light'); } catch (e) {}
-          sync();
-        });
-      });
     })();
   </script>
 

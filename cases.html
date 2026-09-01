@@ -10,9 +10,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
   <script>
-    try { if (localStorage.getItem('bvg_theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}
-  </script>
-  <script>
     window.__bvgInternal = false;
     (function () {
       var entry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
@@ -45,10 +42,6 @@
       --bg: #ffffff;
       --fg: #000000;
     }
-    html.dark {
-      --bg: #0c0c0c;
-      --fg: #f0f0f0;
-    }
 
     body {
       background: var(--bg);
@@ -78,48 +71,15 @@
       transition: opacity 0.2s;
     }
     .nav-link::before,
-    .nav-link::after,
-    .theme-switch button::before,
-    .theme-switch button::after {
+    .nav-link::after {
       display: inline-block;
       opacity: 0;
       transition: opacity 0.2s ease;
     }
-    .nav-link::before,
-    .theme-switch button::before { content: '['; margin-right: 2px; }
-    .nav-link::after,
-    .theme-switch button::after  { content: ']'; margin-left: 2px; }
+    .nav-link::before { content: '['; margin-right: 2px; }
+    .nav-link::after  { content: ']'; margin-left: 2px; }
     .nav-link:hover::before,
-    .nav-link:hover::after,
-    .theme-switch button:hover::before,
-    .theme-switch button:hover::after { opacity: 1; }
-
-    /* ── Theme switch ── */
-    .theme-switch {
-      position: fixed;
-      top: 80px;
-      right: 40px;
-      z-index: 100;
-      display: flex;
-      gap: 12px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      color: var(--fg);
-      transition: opacity 0.35s ease;
-    }
-    .theme-switch button {
-      background: none;
-      border: 0;
-      padding: 0;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
-      color: inherit;
-      transition: opacity 0.2s ease;
-    }
-    body.preloading .theme-switch { opacity: 0; }
+    .nav-link:hover::after { opacity: 1; }
 
     /* ── Page ── */
     .page {
@@ -203,24 +163,24 @@
     .page { transition: opacity 0.35s ease; }
     html.entering .page { opacity: 0; }
     html.no-motion nav,
-    html.no-motion .page,
-    html.no-motion .theme-switch { transition: none !important; }
+    html.no-motion .page { transition: none !important; }
 
-    /* ── Mobile: the case grid is a desktop wheel-pan interaction —
-       show a plain notice instead of trying to adapt it. Nav and the
-       theme switch are untouched, still fully usable. Title stays
-       visible, just pushed clear of the fixed nav/theme in the corner.
-       The notice sits right under the title in normal flow (not pinned
-       to the bottom via 100vh/margin-top:auto) — mobile-Safari's vh units
-       don't reliably match the actually-visible viewport, which pushed
-       it below the fold and made the title's slide-in jump when the
-       browser chrome's state changed mid-animation. Right under the
-       title, it's always on screen and moves as one piece with it. ── */
+    /* ── Mobile: the case grid now shows real, stacked content instead of
+       a wheel-pan track (see below) — which means it actually scrolls.
+       Nav stays fixed everywhere else on the site, but pinned over
+       scrolling content here it'd have cards sliding underneath it, so
+       it scrolls away with the page instead, same as about.html. ── */
     @media (max-width: 900px) {
       /* min-height:auto (not 100vh) — same fix as about.html: mobile vh
          units don't reliably match the actually-visible viewport, which
          was the root cause of the slide-in animation jumping mid-flight. */
-      .page { min-height: auto; padding: 150px 24px 24px; }
+      /* Narrow windows (incl. a resized desktop, where the base poster
+         lock still applies outside the touch-only unlock above) now
+         stack taller than the screen — let them scroll instead of
+         clipping, same as about.html. */
+      html, body { overflow-y: auto; }
+      nav { position: static; justify-content: flex-end; padding: 24px 24px 0; }
+      .page { min-height: auto; padding: 40px 24px 24px; }
       .page-title { font-size: 16vw; }
 
       /* Same cards as desktop, stacked in normal flow instead of the
@@ -311,12 +271,6 @@
     <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
   </nav>
 
-  <div class="theme-switch">
-    <button type="button" data-theme="light">LIGHT</button>
-    <span aria-hidden="true">|</span>
-    <button type="button" data-theme="dark">DARK</button>
-  </div>
-
   <main class="page">
     <h1 class="page-title">Cases</h1>
 
@@ -380,7 +334,6 @@
       const titleEl   = document.getElementById('preload-title');
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
-      const switchEl  = document.querySelector('.theme-switch');
       const pageEl    = document.querySelector('.page');
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -409,8 +362,8 @@
             navBusy = true;
             try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
-            // Only the page content fades — nav and the theme switch stay
-            // put throughout the whole transition.
+            // Only the page content fades — nav stays put throughout the
+            // whole transition.
             mainEl.style.transition = 'opacity 0.35s ease';
             mainEl.style.opacity = '0';
             setTimeout(function () { window.location.href = href; }, 350);
@@ -454,7 +407,6 @@
         preload.style.background = 'transparent';
         preload.style.pointerEvents = 'none';
         navEl.style.opacity = '1';
-        if (switchEl) switchEl.style.opacity = '1';
         document.documentElement.classList.remove('entering');
 
         requestAnimationFrame(function () {
@@ -476,10 +428,10 @@
       }
 
       if (!canShow) {
-        // Internal nav: nav and the theme switch never hide, they're shown
-        // right away. No counter, no clone — just slide the real page into
-        // place, so there's motion on screen from the first frame instead
-        // of a blank gap before the page appears.
+        // Internal nav: nav never hides, it's shown right away. No counter,
+        // no clone — just slide the real page into place, so there's
+        // motion on screen from the first frame instead of a blank gap
+        // before the page appears.
         slidePageIn();
         return;
       }
@@ -551,26 +503,6 @@
     }, { passive: true });
     window.addEventListener('resize', layout);
     layout();
-  </script>
-
-  <script>
-    (function () {
-      const root = document.documentElement;
-      const btns = document.querySelectorAll('.theme-switch button');
-      function sync() {
-        const dark = root.classList.contains('dark');
-        btns.forEach(function (b) { b.classList.toggle('active', (b.dataset.theme === 'dark') === dark); });
-      }
-      sync();
-      btns.forEach(function (b) {
-        b.addEventListener('click', function () {
-          const dark = b.dataset.theme === 'dark';
-          root.classList.toggle('dark', dark);
-          try { localStorage.setItem('bvg_theme', dark ? 'dark' : 'light'); } catch (e) {}
-          sync();
-        });
-      });
-    })();
   </script>
 
   <script>
