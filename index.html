@@ -346,7 +346,8 @@
          (NN/g: hidden nav costs discoverability on content-heavy sites,
          but a small flat list here loses nothing by being one tap away). */
       .menu-toggle {
-        display: block;
+        display: flex;
+        align-items: center;
         position: fixed;
         top: 24px; left: 24px;
         z-index: 200;
@@ -360,15 +361,21 @@
         text-transform: uppercase;
         color: var(--fg);
       }
+      .menu-toggle svg { display: block; width: 20px; height: 20px; }
+      /* Frosted glass instead of flat white — the page underneath stays
+         faintly, heavily blurred, so the overlay doesn't feel like a
+         totally separate screen. */
       .menu-overlay {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         gap: 40px;
         position: fixed;
         inset: 0;
-        padding: 0 24px;
-        background: var(--bg);
+        padding: 110px 24px 60px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         z-index: 150;
         opacity: 0;
         pointer-events: none;
@@ -383,6 +390,13 @@
         gap: 20px;
         padding: 0;
       }
+      /* CV reads as a distinct action, not a third page link. */
+      .menu-overlay nav a:last-child { margin-top: 20px; }
+      /* Telegram/Почта sit at the bottom of the overlay (justify-content:
+         space-between above) with more air between them than the page
+         links get — they're being read as individual contacts, not a
+         tight list. */
+      .menu-overlay .contacts { gap: 28px; }
       /* Reuses the site's existing Heading style (24px, weight 200,
          0.08em) for overlay links — not a new size, just applied here
          instead of the usual Nav scale, since these need to read as
@@ -392,7 +406,11 @@
         font-size: 24px;
         letter-spacing: 0.08em;
       }
-      .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
+      /* Was 40px — the toggle now floats independently instead of
+         pushing the page down (nav used to occupy real flow height
+         above it), so the title needs its own clearance below the
+         toggle instead of overlapping it. */
+      .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 100px 24px 60px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
@@ -509,11 +527,11 @@
     <nav>
       <a href="index.html" class="nav-link">Индекс</a>
       <a href="cases.html" class="nav-link">Кейсы</a>
-      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
+      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
     </nav>
 
     <div class="contacts">
-      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">ТГ</a>
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
       <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
     </div>
   </div>
@@ -861,9 +879,14 @@
       const toggle  = document.getElementById('menuToggle');
       const overlay = document.getElementById('menuOverlay');
       if (!toggle || !overlay) return;
+      // Same Phosphor X path already used for the viewer-nav close
+      // button on the case-study pages — reusing it here instead of a
+      // "Закрыть" label.
+      var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>';
       function setOpen(open) {
         document.documentElement.classList.toggle('menu-open', open);
-        toggle.textContent = open ? 'Закрыть' : 'Меню';
+        toggle.innerHTML = open ? closeIcon : 'Меню';
+        toggle.setAttribute('aria-label', open ? 'Закрыть' : 'Меню');
       }
       toggle.addEventListener('click', function () {
         setOpen(!document.documentElement.classList.contains('menu-open'));
