@@ -404,7 +404,11 @@
        the unconditional left: 40px there won (same specificity, later
        source order wins) and silently ate the override. */
     @media (max-width: 900px) {
-      #preload-title { left: 24px; }
+      /* .page-title gets line-height: 1.05 on mobile (0.9 crowds the
+         wrapped second line) but #preload-title is a separate element
+         with its own base 0.9 — never inherited that fix, so the clone
+         and the real title visibly changed line-height on handoff. */
+      #preload-title { left: 24px; line-height: 1.05; }
     }
 
     /* ── Cursor ── */
