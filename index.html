@@ -83,6 +83,7 @@
        wrapper only becomes an actual box on mobile (see media query). */
     .menu-overlay { display: contents; }
     .menu-toggle { display: none; }
+    .scroll-counter { display: none; }
     .nav-link {
       font-weight: 300;
       font-size: 16px;
@@ -365,6 +366,21 @@
         color: var(--fg);
       }
       .menu-toggle svg { display: block; width: 24px; height: 24px; }
+      /* Right side of the same bar — scroll progress, echoing the
+         000→100 intro counter's numeric style (same font). */
+      .scroll-counter {
+        display: block;
+        position: fixed;
+        top: 0; right: 0;
+        z-index: 200;
+        padding: 16px 24px;
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 200;
+        font-size: 16px;
+        letter-spacing: 0.05em;
+        font-variant-numeric: tabular-nums;
+        color: var(--fg);
+      }
       /* Frosted glass instead of flat white — the page underneath stays
          faintly, heavily blurred, so the overlay doesn't feel like a
          totally separate screen. */
@@ -527,6 +543,7 @@
   </div>
 
   <button type="button" id="menuToggle" class="menu-toggle" aria-label="Меню">Меню</button>
+  <span id="scrollCounter" class="scroll-counter" aria-hidden="true">000</span>
 
   <div class="menu-overlay" id="menuOverlay">
     <nav>
@@ -901,6 +918,21 @@
       overlay.addEventListener('click', function (e) {
         if (e.target.closest('a')) setOpen(false);
       });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const counter = document.getElementById('scrollCounter');
+      if (!counter) return;
+      function update() {
+        const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const pct = scrollable > 0 ? Math.round((window.scrollY / scrollable) * 100) : 0;
+        counter.textContent = String(Math.max(0, Math.min(100, pct))).padStart(3, '0');
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
     })();
   </script>
 
