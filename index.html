@@ -343,11 +343,6 @@
       .bio-photo-block { max-width: none; margin: 0; }
       .bio-photo { max-width: none; }
       .cta-cases { display: flex; }
-      /* Not JS-fitted like the real title — a plain conservative clamp
-         instead, small enough to never overflow regardless of font-
-         load timing. It's a 0.7s decorative reveal, not required to
-         pixel-match the real title's size. */
-      #preload-title { font-size: clamp(20px, 7vw, 32px); white-space: normal; }
       /* Desktop forces the parenthetical onto its own line (fine at
          that width); on mobile the same break left "в Teradata"
          orphaned alone mid-block — let it wrap naturally instead, the
@@ -430,7 +425,7 @@
 <body>
 
   <div id="preload">
-    <span id="preload-title">UX / Product дизайнер</span>
+    <span id="preload-title"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">дизайнер</span></span>
     <span id="preload-count">000</span>
   </div>
 
@@ -503,30 +498,32 @@
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
       const pageEl    = document.querySelector('.page');
-      const titleLine1 = realTitle.querySelector('.page-title-line1');
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // "UX / Product" wrapped further than expected at a guessed
-      // 16vw on some phones (cut off past the screen edge) — measure it
-      // for real instead of guessing again, same technique fitName()
-      // used for the old hero name. The preload clone is deliberately
-      // NOT synced to this — it has its own small, static, safe clamp
-      // (see the mobile media query) instead, since syncing it here
-      // depended on font-load timing that proved unreliable in testing
-      // (measuring against not-yet-swapped-in font metrics).
-      function fitMobileTitle() {
+      // "UX / Product" filled the full width edge-to-edge, "дизайнер"
+      // below it at the same size — same technique fitName() used for
+      // the old hero name. Fitted independently for the real title and
+      // the preload clone (each measured in its own box/positioning
+      // context) rather than copying one onto the other, so a metrics
+      // difference between the two contexts can't produce a mismatch.
+      function fitOne(el) {
+        const line1 = el.querySelector('.page-title-line1');
         const mobile = document.documentElement.clientWidth <= 900;
-        if (!mobile || !titleLine1) {
-          realTitle.style.fontSize = '';
+        if (!mobile || !line1) {
+          el.style.fontSize = '';
           return;
         }
-        realTitle.style.fontSize = '16vw';
+        el.style.fontSize = '16vw';
         const avail = document.documentElement.clientWidth - 48;
-        const w = titleLine1.getBoundingClientRect().width;
+        const w = line1.getBoundingClientRect().width;
         if (w > avail) {
-          const current = parseFloat(getComputedStyle(realTitle).fontSize);
-          realTitle.style.fontSize = (current * avail / w) + 'px';
+          const current = parseFloat(getComputedStyle(el).fontSize);
+          el.style.fontSize = (current * avail / w) + 'px';
         }
+      }
+      function fitMobileTitle() {
+        fitOne(realTitle);
+        fitOne(titleEl);
       }
       window.addEventListener('resize', fitMobileTitle);
 
@@ -663,8 +660,18 @@
       // the visible reveal itself was the wrong size, not just the
       // handoff to the real title afterwards.
       function fitThenRun() {
-        fitMobileTitle();
-        run();
+        // document.fonts.ready can resolve a frame or two before the
+        // browser has actually repainted with the swapped-in font —
+        // measuring right on resolve risked reading stale (fallback-
+        // font) metrics, computing a fit that then didn't match once
+        // the real font's glyphs actually rendered. Two rAFs guarantee
+        // at least one real paint has happened first.
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            fitMobileTitle();
+            run();
+          });
+        });
       }
       if (document.fonts && document.fonts.ready) {
         Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(fitThenRun);
