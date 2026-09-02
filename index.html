@@ -282,8 +282,11 @@
 
     /* Closing nudge — the page used to just end after the
        recommendations with no next step besides the small nav link. */
+    /* Desktop already has "Кейсы" in nav one scroll away — mobile is
+       where this actually saves a trip back up after reading the
+       recommendations, so it only shows there. */
     .cta-cases {
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       width: 100px;
@@ -322,6 +325,7 @@
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { font-size: 16vw; padding-right: 0; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
+      .cta-cases { display: flex; }
     }
 
     /* ── Preloader ── */
