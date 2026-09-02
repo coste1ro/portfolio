@@ -197,6 +197,30 @@
       display: block;
     }
 
+    /* Progress pills — one per real recommendation (not the loop clone).
+       Doubles as a scrubber: click one to jump straight to it. */
+    .testimonial-pills {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .testimonial-pill {
+      flex: 1;
+      height: 3px;
+      padding: 0;
+      border: 0;
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: block;
+    }
+    .testimonial-pill-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--fg);
+    }
+
     /* ── Responsive: collapse multi-column blocks to a single column,
        and let .page's own flex gap handle spacing between the stacked
        blocks (title → bio → education → testimonials — already the
@@ -336,6 +360,11 @@
           <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
           <span class="testimonial-name">Илья — тимлид Action Engine</span>
         </div>
+      </div>
+      <div class="testimonial-pills">
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"><span class="testimonial-pill-fill"></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"><span class="testimonial-pill-fill"></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-fill"></span></button>
       </div>
     </div>
 
@@ -493,20 +522,48 @@
       if (!track) return;
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const slides = Array.from(track.children);
-      if (reduce || slides.length < 2) return;
+      const total = slides.length;
+      if (total < 2) return;
+
+      const pillFills = Array.from(document.querySelectorAll('.testimonial-pill-fill'));
+      const DURATION = 6000;
 
       // Loop by cloning the first slide onto the end: slide up to it
       // normally, then snap back to the real first slide with no
       // transition the instant that last slide finishes arriving — the
       // jump is invisible since the clone looks identical to slide 0.
       track.appendChild(slides[0].cloneNode(true));
-      const total = slides.length;
       let index = 0;
+      let timer = null;
 
-      function next() {
-        index++;
-        track.style.transition = 'transform 1s cubic-bezier(0.65,0,0.35,1)';
+      // Pills before the active one sit full (already shown this lap),
+      // the active one animates its own fill over the same DURATION the
+      // autoplay timer runs on, and later ones sit empty.
+      function setPills(active) {
+        pillFills.forEach(function (fill, i) {
+          fill.style.transition = 'none';
+          fill.style.width = i < active ? '100%' : '0%';
+          if (i === active) {
+            if (reduce) {
+              fill.style.width = '100%';
+            } else {
+              void fill.offsetWidth; // commit the 0% before animating to 100%
+              fill.style.transition = 'width ' + DURATION + 'ms linear';
+              fill.style.width = '100%';
+            }
+          }
+        });
+      }
+
+      function render() {
+        track.style.transition = reduce ? 'none' : 'transform 1s cubic-bezier(0.65,0,0.35,1)';
         track.style.transform = 'translateX(-' + (index * 100) + '%)';
+        setPills(index % total);
+      }
+
+      function advance() {
+        index++;
+        render();
         if (index === total) {
           setTimeout(function () {
             track.style.transition = 'none';
@@ -515,7 +572,25 @@
           }, 1050);
         }
       }
-      setInterval(next, 6000);
+
+      function startTimer() {
+        clearInterval(timer);
+        if (!reduce) timer = setInterval(advance, DURATION);
+      }
+
+      // Pills double as a scrubber — jump straight to any recommendation
+      // (including back to a previous one) and restart the autoplay
+      // clock from there.
+      document.querySelectorAll('.testimonial-pill').forEach(function (pill, i) {
+        pill.addEventListener('click', function () {
+          index = i;
+          render();
+          startTimer();
+        });
+      });
+
+      setPills(0);
+      startTimer();
     })();
   </script>
 
