@@ -74,6 +74,10 @@
     .menu-overlay { display: contents; }
     .menu-toggle { display: none; }
     .menu-bar-bg { display: none; }
+    /* Contacts (CV/Telegram/email) live in index.html's footer now — on
+       cases.html they only ever show inside the mobile menu overlay
+       (see media query), never as a standalone desktop block. */
+    .contacts { display: none; }
 
     /* Mobile-only — cases.html has no bio/photo section for this to
        naturally sit under like on index.html, so it only ever shows in
@@ -307,13 +311,15 @@
         transition: opacity 0.3s ease;
       }
       html.menu-open .menu-overlay { opacity: 1; pointer-events: auto; }
-      .menu-overlay nav {
+      .menu-overlay nav,
+      .menu-overlay .contacts {
         position: static;
         flex-direction: column;
         align-items: flex-start;
         gap: 20px;
         padding: 0;
       }
+      .menu-overlay .contacts { display: flex; }
       .menu-overlay .nav-link {
         font-weight: 200;
         font-size: 24px;
@@ -443,6 +449,12 @@
       <a href="index.html" class="nav-link">Индекс</a>
       <a href="cases.html" class="nav-link">Кейсы</a>
     </nav>
+
+    <div class="contacts">
+      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+    </div>
   </div>
 
   <main class="page">
