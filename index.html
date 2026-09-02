@@ -251,8 +251,7 @@
       color: var(--fg);
       display: block;
       max-width: 66ch;
-      margin: 0 auto 16px;
-      text-align: center;
+      margin: 0 0 16px;
     }
 
     .testimonial-name {
@@ -265,15 +264,13 @@
       opacity: 0.5;
       display: block;
       max-width: 66ch;
-      margin: 0 auto;
-      text-align: center;
+      margin: 0;
     }
 
     /* Dots — one per real recommendation (not the loop clone). Click one
        to jump straight to it; the active one is solid, the rest grey. */
     .testimonial-pills {
       display: flex;
-      justify-content: center;
       gap: 10px;
       margin-top: 24px;
     }
@@ -346,7 +343,11 @@
       .bio-photo-block { max-width: none; margin: 0; }
       .bio-photo { max-width: none; }
       .cta-cases { display: flex; }
-      #preload-title { white-space: normal; }
+      /* Not JS-fitted like the real title — a plain conservative clamp
+         instead, small enough to never overflow regardless of font-
+         load timing. It's a 0.7s decorative reveal, not required to
+         pixel-match the real title's size. */
+      #preload-title { font-size: clamp(20px, 7vw, 32px); white-space: normal; }
     }
 
     /* ── Preloader ── */
@@ -423,7 +424,7 @@
 <body>
 
   <div id="preload">
-    <span id="preload-title"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">дизайнер</span></span>
+    <span id="preload-title">UX / Product дизайнер</span>
     <span id="preload-count">000</span>
   </div>
 
@@ -502,12 +503,15 @@
       // "UX / Product" wrapped further than expected at a guessed
       // 16vw on some phones (cut off past the screen edge) — measure it
       // for real instead of guessing again, same technique fitName()
-      // used for the old hero name.
+      // used for the old hero name. The preload clone is deliberately
+      // NOT synced to this — it has its own small, static, safe clamp
+      // (see the mobile media query) instead, since syncing it here
+      // depended on font-load timing that proved unreliable in testing
+      // (measuring against not-yet-swapped-in font metrics).
       function fitMobileTitle() {
         const mobile = document.documentElement.clientWidth <= 900;
         if (!mobile || !titleLine1) {
           realTitle.style.fontSize = '';
-          titleEl.style.fontSize = '';
           return;
         }
         realTitle.style.fontSize = '16vw';
@@ -517,11 +521,6 @@
           const current = parseFloat(getComputedStyle(realTitle).fontSize);
           realTitle.style.fontSize = (current * avail / w) + 'px';
         }
-        // Preload clone copies the exact same size — it used to sit at
-        // its own hardcoded 4.2vw (a desktop value) the whole time it's
-        // visible, then the real title would appear at the fitted
-        // mobile size, reading as a jarring jump between the two.
-        titleEl.style.fontSize = realTitle.style.fontSize;
       }
       window.addEventListener('resize', fitMobileTitle);
 
