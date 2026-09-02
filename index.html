@@ -328,8 +328,14 @@
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
       .page-title-break { display: block; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
-      .bio-photo-block { margin: 0 auto; }
+      /* No cap on mobile — the photo fills the column's full width
+         instead of staying a small 220px box with empty space beside
+         it (that cap existed to keep it modest next to the desktop
+         text columns, which don't apply once everything stacks). */
+      .bio-photo-block { max-width: none; margin: 0; }
+      .bio-photo { max-width: none; }
       .cta-cases { display: flex; }
+      #preload-title { white-space: normal; }
     }
 
     /* ── Preloader ── */
@@ -406,7 +412,7 @@
 <body>
 
   <div id="preload">
-    <span id="preload-title">UX / продакт-дизайнер</span>
+    <span id="preload-title"><span class="page-title-line1">UX / продакт-</span><span class="page-title-break">дизайнер</span></span>
     <span id="preload-count">000</span>
   </div>
 
@@ -490,6 +496,7 @@
         const mobile = document.documentElement.clientWidth <= 900;
         if (!mobile || !titleLine1) {
           realTitle.style.fontSize = '';
+          titleEl.style.fontSize = '';
           return;
         }
         realTitle.style.fontSize = '16vw';
@@ -499,6 +506,11 @@
           const current = parseFloat(getComputedStyle(realTitle).fontSize);
           realTitle.style.fontSize = (current * avail / w) + 'px';
         }
+        // Preload clone copies the exact same size — it used to sit at
+        // its own hardcoded 4.2vw (a desktop value) the whole time it's
+        // visible, then the real title would appear at the fitted
+        // mobile size, reading as a jarring jump between the two.
+        titleEl.style.fontSize = realTitle.style.fontSize;
       }
       window.addEventListener('resize', fitMobileTitle);
 
@@ -630,10 +642,18 @@
         })(start);
       }
 
-      if (document.fonts && document.fonts.ready) {
-        Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(run);
-      } else {
+      // Fit before the clone's clip-path reveal even starts — run() was
+      // being called with the clone still at its unfitted CSS size, so
+      // the visible reveal itself was the wrong size, not just the
+      // handoff to the real title afterwards.
+      function fitThenRun() {
+        fitMobileTitle();
         run();
+      }
+      if (document.fonts && document.fonts.ready) {
+        Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(fitThenRun);
+      } else {
+        fitThenRun();
       }
     })();
   </script>
