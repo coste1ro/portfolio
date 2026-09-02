@@ -134,11 +134,10 @@
       display: block;
       font-weight: 200;
       font-size: 24px;
-      line-height: 1;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--fg);
-      margin-bottom: 16px;
+      padding-top: 3px;
     }
 
     .education-text {
@@ -149,24 +148,13 @@
       color: var(--fg);
     }
 
-    /* The courses paragraph has no label above it — offset it down by
-       the label's own height (24px + 16px margin) so it lines up with
-       the university paragraph next to it, not with the label. */
-    .bio > p.education-text {
-      margin-top: 40px;
-    }
-
-    /* Spans both grid rows so it runs the full height of the text
-       columns beside it, instead of sitting only next to row 1. */
-    .bio-photo-wrap {
-      grid-row: span 2;
-    }
-
-    /* Natural aspect ratio, no object-fit crop — the new photo is
-       already portrait-shaped, so filling the column width tends to
-       roughly match the two-row height on its own. */
+    /* Fluid but capped, and shown at its natural aspect ratio (no
+       object-fit crop) — a small full photo, not a stretched/cropped
+       fill of its column. Kept modest and simple while there's no
+       settled photo yet — no spanning/cropping tricks to chase. */
     .bio-photo {
       width: 100%;
+      max-width: 220px;
       height: auto;
       display: block;
     }
@@ -255,8 +243,6 @@
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { font-size: 16vw; padding-right: 0; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
-      .bio-photo-wrap { grid-row: auto; }
-      .bio > p.education-text { margin-top: 0; }
     }
 
     /* ── Preloader ── */
@@ -353,17 +339,15 @@
     <h1 class="page-title">UX / продакт-дизайнер</h1>
 
     <div class="bio">
-      <picture class="bio-photo-wrap">
+      <picture>
         <source srcset="photo.webp" type="image/webp">
         <img class="bio-photo" src="photo.jpg" alt="Андрей Береговой" decoding="async">
       </picture>
       <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;миддл UX/продакт-дизайнер. В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе, поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками, от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
       <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Английский на&nbsp;уровне C1: веду переговоры и&nbsp;презентации с&nbsp;международными командами. Сейчас открыт к&nbsp;новым задачам.</p>
 
-      <div class="education-cell">
-        <span class="education-label">Образование</span>
-        <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского, специальность «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна, практические навыки получил через курсы и&nbsp;проекты.</p>
-      </div>
+      <span class="education-label">Образование</span>
+      <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского, специальность «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна, практические навыки получил через курсы и&nbsp;проекты.</p>
       <p class="education-text">Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
     </div>
 
