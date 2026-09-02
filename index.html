@@ -515,12 +515,33 @@
         // page dissolves in.
         clearEnterState();
         navEl.style.opacity = '1';
-        fitName(realName);
-        copyNameSize(realName, nameEl);
-        countEl.remove();
-        nameEl.style.transition = 'none';
-        nameEl.style.clipPath = 'inset(0 0% 0 0)';
-        requestAnimationFrame(move);
+        // move() measures realName's target position, which depends on
+        // .hero-intro's rendered height (subtitle + CTA, in Jost) — if
+        // Jost/Montserrat haven't swapped in yet at this exact instant,
+        // that measurement is against fallback-font metrics. The layout
+        // then shifts once the real font loads a moment later, but the
+        // clone's transform is already locked onto the stale position —
+        // the name visibly drifts/lands wrong. Same fonts.ready guard as
+        // the full intro fixes it; the wait is near-instant in practice
+        // since these fonts are already cached from the page just left,
+        // so it doesn't meaningfully undercut the "motion from frame one"
+        // intent above — a short local timeout still caps the worst case.
+        function startFast() {
+          fitName(realName);
+          copyNameSize(realName, nameEl);
+          countEl.remove();
+          nameEl.style.transition = 'none';
+          nameEl.style.clipPath = 'inset(0 0% 0 0)';
+          requestAnimationFrame(move);
+        }
+        if (document.fonts && document.fonts.ready) {
+          Promise.race([
+            document.fonts.ready,
+            new Promise(function (r) { setTimeout(r, 300); })
+          ]).then(startFast);
+        } else {
+          startFast();
+        }
         return;
       }
 
