@@ -349,10 +349,6 @@
          trailing "Action Engine)" landing alone on the last line is
          fine. */
       .testimonial-break { display: none; }
-      /* Clone was hardcoded to the desktop .page padding (40px) — on
-         mobile .page's own left padding is 24px, so the clone sat 16px
-         right of where the real title actually starts. */
-      #preload-title { left: 24px; }
     }
 
     /* ── Preloader ── */
@@ -401,6 +397,14 @@
       font-kerning: none;
       clip-path: inset(0 100% 0 0);
       transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    /* This media block is placed after the rule it overrides on
+       purpose — an earlier attempt put it in the main mobile media
+       query above, which comes before #preload-title in the file, so
+       the unconditional left: 40px there won (same specificity, later
+       source order wins) and silently ate the override. */
+    @media (max-width: 900px) {
+      #preload-title { left: 24px; }
     }
 
     /* ── Cursor ── */
