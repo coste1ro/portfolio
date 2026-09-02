@@ -134,6 +134,7 @@
       display: block;
       font-weight: 200;
       font-size: 24px;
+      line-height: 1;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--fg);
@@ -146,6 +147,13 @@
       line-height: 1.2;
       letter-spacing: 0;
       color: var(--fg);
+    }
+
+    /* The courses paragraph has no label above it — offset it down by
+       the label's own height (24px + 16px margin) so it lines up with
+       the university paragraph next to it, not with the label. */
+    .bio > p.education-text {
+      margin-top: 40px;
     }
 
     /* Spans both grid rows so it runs the full height of the text
@@ -248,6 +256,7 @@
       .page-title { font-size: 16vw; padding-right: 0; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
       .bio-photo-wrap { grid-row: auto; }
+      .bio > p.education-text { margin-top: 0; }
     }
 
     /* ── Preloader ── */
