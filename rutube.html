@@ -481,7 +481,11 @@
        notice instead. ── */
     .mobile-notice { display: none; }
     @media (max-width: 900px) {
-      .slides, .viewer-hint, .viewer-prev, .viewer-next { display: none; }
+      /* !important on prev/next: .viewer-nav button/a's base display:flex
+         is more specific (class+element) than a bare class selector, so
+         it was winning over this rule and the arrows stayed visible. */
+      .slides, .viewer-hint { display: none; }
+      .viewer-prev, .viewer-next { display: none !important; }
       .mobile-notice {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         gap: 24px; height: 100%; padding: 40px; text-align: center;
