@@ -267,24 +267,35 @@
       margin: 0;
     }
 
-    /* Dots — one per real recommendation (not the loop clone). Click one
-       to jump straight to it; the active one is solid, the rest grey. */
+    /* Pills — one per real recommendation (not the loop clone). Each
+       fills in sync with the autoplay timer, like a story progress
+       bar; click one to jump straight to it. The button itself carries
+       10px of transparent top/bottom padding so the tap target is much
+       taller than the 3px visual bar — easy to hit on mobile without
+       making the bar itself look thick. */
     .testimonial-pills {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-top: 24px;
     }
     .testimonial-pill {
-      width: 8px;
-      height: 8px;
-      padding: 0;
+      flex: 1;
+      padding: 10px 0;
       border: 0;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.2);
+      background: none;
       display: block;
-      transition: background 0.2s ease;
     }
-    .testimonial-pill.active {
+    .testimonial-pill-track {
+      display: block;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+    .testimonial-pill-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
       background: var(--fg);
     }
 
@@ -490,9 +501,9 @@
         </div>
       </div>
       <div class="testimonial-pills">
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
       </div>
     </div>
 
@@ -703,6 +714,7 @@
       if (total < 2) return;
 
       const pills = Array.from(document.querySelectorAll('.testimonial-pill'));
+      const fills = Array.from(document.querySelectorAll('.testimonial-pill-fill'));
       const DURATION = 6000;
 
       // Loop by cloning the first slide onto the end: slide up to it
@@ -713,9 +725,22 @@
       let index = 0;
       let timer = null;
 
+      // Pills before the active one sit full (already shown this lap),
+      // the active one animates its own fill over DURATION — the same
+      // span the autoplay timer runs on — and later ones sit empty.
       function setPills(active) {
-        pills.forEach(function (pill, i) {
-          pill.classList.toggle('active', i === active);
+        fills.forEach(function (fill, i) {
+          fill.style.transition = 'none';
+          fill.style.width = i < active ? '100%' : '0%';
+          if (i === active) {
+            if (reduce) {
+              fill.style.width = '100%';
+            } else {
+              void fill.offsetWidth; // commit the 0% before animating to 100%
+              fill.style.transition = 'width ' + DURATION + 'ms linear';
+              fill.style.width = '100%';
+            }
+          }
         });
       }
 
