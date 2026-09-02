@@ -205,7 +205,12 @@
     /* ── Testimonials: one recommendation at a time, sliding smoothly
        into the next — quieter than three full quotes stacked side by
        side. ── */
+    /* 66ch — the classic readable-line-length guideline (Bringhurst:
+       45-75 characters per line, ~66 as the sweet spot) — the quotes
+       were stretching edge-to-edge at full page width otherwise. */
     .testimonials {
+      max-width: 66ch;
+      margin: 0 auto;
       overflow: hidden;
     }
 
@@ -244,6 +249,7 @@
        to jump straight to it; the active one is solid, the rest grey. */
     .testimonial-pills {
       display: flex;
+      justify-content: center;
       gap: 10px;
       margin-top: 24px;
     }
