@@ -125,6 +125,17 @@
       font-kerning: none;
     }
 
+    /* Forces this run onto one line always — without it, on mobile
+       (where it doesn't fit at the base 16vw), the browser wraps it
+       internally before JS ever measures it, so getBoundingClientRect()
+       reports the already-wrapped (narrower) box instead of the true
+       single-line width fitMobileTitle() needs to compute the right
+       scale-down. That under-corrected the size, which still wrapped —
+       to three lines instead of two, overflowing past the edge. */
+    .page-title-line1 {
+      white-space: nowrap;
+    }
+
     /* ── Bio + education: one 3-column grid, two rows. Row 1 is photo /
        name intro / markets paragraph; row 2 continues each column with
        its education counterpart — the "Образование" label under the
