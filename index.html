@@ -234,6 +234,21 @@
        flow inside it instead of each getting its own fixed math, so
        the CTA doesn't need to guess the subtitle's wrapped height. ── */
     @media (max-width: 900px) {
+      /* nav/contacts move off the plain top-right stack and into a
+         centered, fixed header — same top/gap spacing cases.html and
+         about.html use (24px top, 16px between rows), just centered
+         instead of right-aligned and fixed instead of scrolling away
+         (index has no scrolling content to make room for). */
+      .mobile-header {
+        display: flex; flex-direction: column; align-items: center;
+        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        padding: 24px 24px 0;
+      }
+      nav, .contacts {
+        position: static; justify-content: center; padding: 0;
+      }
+      .contacts { margin-top: 16px; }
+
       .hero-intro {
         display: block;
         position: fixed; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
@@ -253,6 +268,10 @@
       }
       .hero-name, #preload-name {
         white-space: normal; text-align: left; padding: 0 24px;
+        /* 0.9 (desktop's single-line value) leaves no room for
+           descenders once the name wraps to 2 stacked word blocks —
+           "Д"'s legs were touching the surname on the line below. */
+        line-height: 1.15;
       }
       /* Each word its own block, both flush against the same left edge —
          guarantees they line up under each other instead of relying on
