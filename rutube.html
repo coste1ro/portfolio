@@ -107,6 +107,12 @@
       text-transform: uppercase; font-kerning: none;
     }
 
+    /* Mobile-only stand-in for .slide-title — shown once, up top, instead
+       of the same name repeating at the bottom of every stacked section. */
+    .mobile-title { display: none; }
+    /* Mobile-only closing link back to the cases grid. */
+    .mobile-back { display: none; }
+
     /* ── Shared: wheel-driven horizontal pan (wide tables, IA, user-flow) ── */
     .hscroll-viewport { overflow: hidden; }
     .hscroll-track { will-change: transform; }
@@ -482,26 +488,177 @@
     .results-list li:last-child { margin-bottom: 0; }
     .results-list li::marker { font-size: 0.4em; }
 
-    /* ── Mobile: this is a desktop-only interactive viewer (wheel-pan,
-       keyboard nav) — no attempt to adapt the mechanics, just a plain
-       notice instead. ── */
-    .mobile-notice { display: none; }
+    /* ── Mobile: same content, reflowed into one continuous scrolling
+       document instead of the desktop wheel-pan slide viewer — same
+       approach as installation_panel.html/auditors_monitoring.html/
+       design_system.html. Spacing system, three sizes: 24px edge
+       padding, 32px between blocks within a section, 64px between
+       whole sections. transform: none !important on every axis the
+       desktop JS still (harmlessly) drives keeps it from fighting this
+       layout — simpler than teaching that JS about the breakpoint.
+       Tables/diagrams too wide to reflow (competitor/reviews/CJM/
+       testing tables, the process SVG, the user-flow diagram) scroll
+       horizontally via native touch scroll instead — same
+       .hscroll-viewport/.hscroll-track classes the desktop wheel-pan
+       already uses. Card-shaped wide content (UI screens strip, IA
+       columns) stacks instead, since it linearizes cleanly. ── */
     @media (max-width: 900px) {
+      html, body { overflow-y: auto; }
+
       /* !important on prev/next: .viewer-nav button/a's base display:flex
          is more specific (class+element) than a bare class selector, so
          it was winning over this rule and the arrows stayed visible. */
-      .slides, .viewer-hint { display: none; }
-      .viewer-prev, .viewer-next { display: none !important; }
-      .mobile-notice {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 24px; height: 100%; padding: 40px; text-align: center;
+      .viewer-prev, .viewer-next, .viewer-hint { display: none !important; }
+      .viewer-nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: var(--bg);
+        padding: 16px 24px;
+        justify-content: flex-start;
       }
-      .mobile-notice-text {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
-        line-height: 1.2; color: var(--fg); max-width: 400px;
+      .viewer-nav svg { width: 24px; height: 24px; }
+
+      .mobile-title {
+        display: block;
+        margin: 80px 0 64px;
+        padding: 0 24px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 200; font-size: clamp(20px, calc(8.66vw - 4.16px), 48px);
+        letter-spacing: 0.03em; line-height: 0.9;
+        text-transform: uppercase; font-kerning: none;
       }
-      .mobile-notice-link {
-        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav);
+      .slide-title { display: none; }
+
+      .slides {
+        display: block; width: auto; height: auto;
+        transform: none !important;
+      }
+      .slide {
+        position: static; height: auto; overflow: visible;
+        padding: 0 24px;
+        margin-bottom: 64px;
+      }
+      .eyebrow { position: static; height: auto; margin-bottom: 32px; }
+
+      /* Hero: heading -> photo -> overview/problem, in reading order —
+         flex+order reorders without touching the DOM (source order is
+         photo first, for desktop's side-by-side grid). */
+      .hero-grid {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch;
+      }
+      .hero-heading { order: 1; margin-bottom: 32px; }
+      .hero-media   { order: 2; margin-bottom: 32px; }
+      .hero-col-a   { order: 3; margin-bottom: 32px; }
+      .hero-col-b   { order: 4; }
+
+      /* Process diagram: its text scales with the SVG's viewBox, so
+         shrinking it to the phone's width would make every label
+         unreadable — keep it at a fixed, legible height and let it
+         scroll horizontally instead. */
+      .process-wrap {
+        position: static; transform: none !important;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+      }
+      .process-wrap svg { width: auto; height: 300px; max-width: none; }
+
+      /* Generic wide-content treatment: every already-pannable table/
+         diagram just swaps the desktop wheel-driven translateX for
+         native touch scroll — same markup, same classes. */
+      .hscroll-viewport {
+        position: static !important; transform: none !important;
+        overflow-x: auto; overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+      }
+      .hscroll-track { transform: none !important; width: max-content; }
+
+      .competitors-wrap {
+        position: static; transform: none !important;
+        flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      .competitors-groups { flex: none; width: 100%; gap: 32px; }
+
+      .priority-wrap {
+        position: static; transform: none !important;
+        flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      .moscow-col { flex: none; width: 100%; }
+
+      .archetypes-grid {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch; gap: 32px;
+      }
+
+      .forces-wrap {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch; gap: 32px;
+      }
+
+      /* CJM/testing use table-layout: fixed, which needs an explicit
+         width to size against — the desktop vw values shrink to
+         nothing on a phone, so give them a fixed px width sized for
+         their column count and let the horizontal scroll above handle
+         the rest. */
+      .cjm-table { width: 1500px; height: auto; }
+      .testing-table { width: 1100px; }
+
+      /* IA columns read fine linearized — each is a self-contained
+         branch of the tree — so stack instead of horizontal-scrolling. */
+      .ia-wrap { overflow: visible; }
+      .ia-columns { flex-direction: column; gap: 32px; width: auto; }
+      .ia-col { width: 100%; flex-shrink: 1; }
+
+      /* JTBD: the interleaved 4-column grid + divider only make sense
+         side by side — stack the four blocks in DOM order (already
+         reads Контролёр pair -> Прагматик pair), drop the vertical
+         divider and the desktop's calibrated cross-column gaps. */
+      .jtbd-wrap { position: static; transform: none !important; }
+      .jtbd-grid { display: flex; flex-direction: column; align-items: stretch; gap: 32px; }
+      .jtbd-divider { display: none; }
+      .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e {
+        margin-top: 16px;
+      }
+
+      /* User-flow: same fixed-height horizontal-scroll treatment as
+         the process SVG, just a bit shorter. */
+      .userflow-wrap img { height: 420px; }
+
+      /* UI screens strip: same card-stack treatment as
+         installation_panel.html's strip. */
+      .strip-viewport { overflow: visible; }
+      .strip-track { flex-direction: column; align-items: stretch; gap: 32px; width: auto; }
+      .strip-item { flex: none; width: 100%; }
+
+      /* Testing: intro text + screenshot scroll alongside the results
+         table as one horizontal strip — give the vw-sized intro column
+         and screenshot fixed widths instead, since vw shrinks to
+         nothing on a phone. */
+      .testing-intro-text { width: 280px; }
+      .testing-screens { width: 320px; }
+
+      .insights-wrap { position: static; transform: none !important; }
+      .insights-grid { display: flex; flex-direction: column; align-items: stretch; gap: 32px; }
+      .insights-grid > div:empty { display: none; }
+      .insights-gap-a, .insights-gap-b, .insights-gap-c { margin-top: 16px; }
+
+      .devprep-wrap {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch; gap: 32px;
+      }
+
+      .results-wrap {
+        position: static; transform: none !important;
+        flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      .results-quote, .results-done { flex: none; width: 100%; }
+      .results-lists { flex-direction: column; align-items: stretch; gap: 24px; }
+      .results-list { flex: none; width: 100%; }
+
+      /* Closing "back to cases" — shown once, at the very end. */
+      .mobile-back {
+        display: block;
+        padding: 0 24px 64px;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300; font-size: 16px;
         text-transform: uppercase; color: var(--fg);
       }
     }
@@ -521,6 +678,8 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
     </a>
   </div>
+
+  <div class="mobile-title">Rutube Premium</div>
 
   <div class="slides">
 
@@ -1486,10 +1645,7 @@
 
   </div>
 
-  <div class="mobile-notice">
-    <p class="mobile-notice-text">Кейс&nbsp;— полноэкранный вьюер с&nbsp;панорамированием колесом и&nbsp;навигацией с&nbsp;клавиатуры, сделан под десктоп.<br>Откройте с&nbsp;компьютера, чтобы увидеть всё как задумано.</p>
-    <a class="mobile-notice-link" href="cases.html">← Ко&nbsp;всем кейсам</a>
-  </div>
+  <a class="mobile-back" href="cases.html">← Ко&nbsp;всем кейсам</a>
 
   <div id="cursor-outer"></div>
 
