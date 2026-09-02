@@ -62,6 +62,16 @@
       gap: 20px;
       z-index: 100;
     }
+
+    /* ── Contacts (second row, right — under nav) ── */
+    .contacts {
+      position: fixed;
+      top: 80px;
+      right: 40px;
+      display: flex;
+      gap: 20px;
+      z-index: 100;
+    }
     .nav-link {
       font-weight: 300;
       font-size: 16px;
@@ -180,6 +190,7 @@
          clipping, same as about.html. */
       html, body { overflow-y: auto; }
       nav { position: static; justify-content: flex-end; padding: 24px 24px 0; }
+      .contacts { position: static; justify-content: flex-end; padding: 16px 24px 0; }
       .page { min-height: auto; padding: 40px 24px 24px; }
       .page-title { font-size: 16vw; }
 
@@ -270,6 +281,11 @@
     <a href="about.html" class="nav-link">About</a>
     <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
   </nav>
+
+  <div class="contacts">
+    <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+    <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
+  </div>
 
   <main class="page">
     <h1 class="page-title">Cases</h1>
