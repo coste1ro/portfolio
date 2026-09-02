@@ -112,14 +112,21 @@
       letter-spacing: 0;
       color: var(--fg);
       padding: 0 40px;
-      margin-bottom: 20px;
+    }
+
+    /* Subtitle (left) and CTA (right) share one row, bottom-aligned,
+       right above the name. */
+    .hero-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
     }
 
     /* CTA — the one explicit "here's where the work is" prompt on the
-       whole site. Reads as the subtitle's next line, same body scale,
-       so it doesn't compete with the name for attention. */
+       whole site. Same body scale as the subtitle, so it doesn't
+       compete with the name for attention. */
     .hero-cta {
-      display: block;
       font-family: 'Jost', sans-serif;
       font-weight: 300;
       font-size: 20px;
@@ -127,7 +134,6 @@
       letter-spacing: 0;
       color: var(--fg);
       padding: 0 40px;
-      margin-bottom: 24px;
       transition: opacity 0.2s ease;
     }
     .hero-cta:hover { opacity: 0.6; }
@@ -213,10 +219,11 @@
        the CTA doesn't need to guess the subtitle's wrapped height. ── */
     @media (max-width: 900px) {
       .hero-intro {
+        display: block;
         position: fixed; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
         width: 50%; margin: 0 auto; text-align: center;
       }
-      .hero-subtitle { padding: 0; }
+      .hero-subtitle { padding: 0; margin-bottom: 20px; }
       .hero-cta { display: inline-block; padding: 0; }
       .hero-name {
         position: fixed; left: 0; right: 0; bottom: 24px;
@@ -341,9 +348,22 @@
       // clone. On mobile each word carries its own independent font-size
       // (not the wrapping element), so copy per word instead of once.
       function copyNameSize(from, to) {
-        const fromWords = from.querySelectorAll('.word');
-        const toWords = to.querySelectorAll('.word');
-        if (fromWords.length && toWords.length) {
+        // .word spans exist in the markup on both desktop and mobile —
+        // only their CSS treatment differs — so their mere presence was
+        // a false signal for "mobile" here. fitName() only sets a
+        // per-word size on the actual mobile path; on desktop it sizes
+        // the whole element instead. Using DOM structure to decide which
+        // branch to copy meant desktop always took the per-word branch,
+        // copying each word's (never-set, empty) inline size onto the
+        // clone — so the clone's own font-size was never set at all and
+        // fell back to its CSS default (8.2vw), which doesn't match the
+        // real name's precisely-fitted size. That mismatch was the
+        // visible jump (and occasional overflow) when the clone handed
+        // off to the real name. Same mobile check fitName() uses instead.
+        const mobile = document.documentElement.clientWidth <= 900;
+        if (mobile) {
+          const fromWords = from.querySelectorAll('.word');
+          const toWords = to.querySelectorAll('.word');
           fromWords.forEach(function (w, i) { if (toWords[i]) toWords[i].style.fontSize = w.style.fontSize; });
           return;
         }
