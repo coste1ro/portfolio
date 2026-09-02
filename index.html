@@ -372,12 +372,24 @@
       const canShow = shouldPreload();
 
       if (reduce) {
-        fitName(realName);
-        if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(function () { fitName(realName); });
+        // Fit once, after the real font is actually ready — not before
+        // and then again. This name is visible immediately (no opacity
+        // hide on the reduced-motion path), so calling fitName twice
+        // meant a real, visible resize: once against fallback-font
+        // metrics, then again once Montserrat loaded.
+        function showReduced() {
+          fitName(realName);
+          preload.remove();
+          clearEnterState();
         }
-        preload.remove();
-        clearEnterState();
+        if (document.fonts && document.fonts.ready) {
+          Promise.race([
+            document.fonts.ready,
+            new Promise(function (r) { setTimeout(r, 1500); })
+          ]).then(showReduced);
+        } else {
+          showReduced();
+        }
         return;
       }
 
