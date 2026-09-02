@@ -111,17 +111,16 @@
       font-kerning: none;
     }
 
-    /* ── Education: sits in just the first of the three bio-grid
-       columns — label, then higher education, then courses, all
-       stacked in that one column rather than spread wide. ── */
-    .education {
+    /* ── Bio + education: one 3-column grid, two rows. Row 1 is photo /
+       name intro / markets paragraph; row 2 continues each column with
+       its education counterpart — the "Образование" label under the
+       photo, university under the name intro, courses under the
+       markets paragraph — instead of a separate block bolted on below. ── */
+    .bio {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 0 40px;
-    }
-
-    .education-col {
-      grid-column: 1;
+      gap: 40px 40px;
+      align-items: start;
     }
 
     .education-label {
@@ -131,7 +130,7 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--fg);
-      margin-bottom: 24px;
+      padding-top: 3px;
     }
 
     .education-text {
@@ -140,20 +139,6 @@
       line-height: 1.2;
       letter-spacing: 0;
       color: var(--fg);
-      margin-bottom: 16px;
-    }
-
-    .education-text:last-child {
-      margin-bottom: 0;
-    }
-
-    /* ── Bio: three equal fluid columns (photo, then two text columns) —
-       not a fixed thumbnail sitting inside an oversized first column. ── */
-    .bio {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0 40px;
-      align-items: start;
     }
 
     /* Fluid but capped, and shown at its natural aspect ratio (no
@@ -229,7 +214,6 @@
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { font-size: 16vw; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
-      .education { grid-template-columns: 1fr; }
     }
 
     /* ── Preloader ── */
@@ -332,14 +316,10 @@
       </picture>
       <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;продуктовый дизайнер. В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе — поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками, от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
       <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Английский&nbsp;— C1, веду переговоры и&nbsp;презентации с&nbsp;международными командами. Сейчас открыт к&nbsp;новым задачам.</p>
-    </div>
 
-    <div class="education">
-      <div class="education-col">
-        <span class="education-label">Образование</span>
-        <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского — «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна: практические навыки&nbsp;— через курсы и&nbsp;проекты.</p>
-        <p class="education-text">Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
-      </div>
+      <span class="education-label">Образование</span>
+      <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского — «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна: практические навыки&nbsp;— через курсы и&nbsp;проекты.</p>
+      <p class="education-text">Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
     </div>
 
     <div class="testimonials">
