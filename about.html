@@ -163,29 +163,30 @@
     /* Mobile-only section heading — see media query below. */
     .bio-heading { display: none; }
 
-    /* ── Stats ── */
-    .stats {
+    /* ── Testimonials (excerpts from written recommendations) ── */
+    .testimonials {
       display: grid;
-      grid-template-columns: 660fr 310fr 310fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 0 40px;
-      align-items: end;
+      align-items: start;
     }
 
-    .stat-num {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      font-size: 8.2vw;
-      line-height: 0.9;
-      letter-spacing: 0.03em;
+    .testimonial-quote {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
       color: var(--fg);
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 16px;
     }
 
-    .stat-label {
-      font-weight: 200;
-      font-size: 24px;
-      letter-spacing: 0.08em;
+    .testimonial-name {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
       text-transform: uppercase;
       color: var(--fg);
       display: block;
@@ -217,7 +218,6 @@
       .contacts { position: static; justify-content: center; padding: 16px 24px 0; }
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { order: 0; font-size: 16vw; }
-      .stat-num { font-size: 14vw; }
       .manifesto { order: 1; grid-template-columns: 1fr; gap: 28px; }
       .bio-heading { display: block; order: 2; }
       .bio { display: contents; }
@@ -225,7 +225,7 @@
       .bio-photo { margin: 0 auto; }
       .bio-col:nth-of-type(1) { order: 4; }
       .bio-col:nth-of-type(2) { order: 5; }
-      .stats { order: 6; grid-template-columns: 1fr; gap: 24px 0; }
+      .testimonials { order: 6; grid-template-columns: 1fr; gap: 24px 0; }
     }
 
     /* ── Preloader ── */
@@ -338,18 +338,18 @@
       <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Сейчас открыт к&nbsp;новым задачам.</p>
     </div>
 
-    <div class="stats">
+    <div class="testimonials">
       <div>
-        <span class="stat-num">3+</span>
-        <span class="stat-label">Лет в&nbsp;профессии</span>
+        <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
+        <span class="testimonial-name">Джонатан Карпентер — руководитель UX в&nbsp;Teradata (экс-CXO/UX-лид Action Engine)</span>
       </div>
       <div>
-        <span class="stat-num">4</span>
-        <span class="stat-label">Рынка</span>
+        <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
+        <span class="testimonial-name">Дмитрий Варзин — генеральный директор Action Engine</span>
       </div>
       <div>
-        <span class="stat-num">#</span>
-        <span class="stat-label">Дизайн + код</span>
+        <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
+        <span class="testimonial-name">Илья — тимлид Action Engine</span>
       </div>
     </div>
 
