@@ -105,8 +105,12 @@
       font-weight: 200;
       /* Smaller than the old single-word titles (8.2vw) — "UX /
          продакт-дизайнер" is a much longer phrase and needs to stay on
-         one line rather than wrap. */
-      font-size: 5.5vw;
+         one line rather than wrap. 5.5vw ran the full width of the
+         page and collided with nav — recalibrated from a screenshot to
+         4.2vw, plus padding-right reserving room for nav's corner so a
+         still-too-generous estimate wraps instead of overlapping it. */
+      font-size: 4.2vw;
+      padding-right: 260px;
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
@@ -236,7 +240,7 @@
       nav { position: static; justify-content: center; padding: 24px 24px 0; }
       .contacts { position: static; justify-content: center; padding: 16px 24px 0; }
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
-      .page-title { font-size: 16vw; }
+      .page-title { font-size: 16vw; padding-right: 0; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
     }
 
