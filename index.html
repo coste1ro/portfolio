@@ -286,7 +286,7 @@
       margin-top: 24px;
     }
     .testimonial-pill {
-      width: 48px;
+      width: 24px;
       flex: none;
       padding: 10px 0;
       border: 0;
@@ -312,23 +312,18 @@
     /* Desktop already has "Кейсы" in nav one scroll away — mobile is
        where this actually saves a trip back up after reading the
        recommendations, so it only shows there. */
-    /* Mobile-only closing CTA — same display-title weight as the hero
-       "UX / Product дизайнер" up top, so the page reads as ending on
-       an equally confident note instead of trailing off into a small
-       button. */
+    /* Mobile-only closing link — same small Nav-scale treatment as the
+       "← Ко всем кейсам" back-link on the case-study pages, just
+       pointing the other way. */
     .cta-cases {
       display: none;
-      align-items: center;
-      gap: 12px;
       margin-top: 32px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      font-size: 12vw;
-      letter-spacing: 0.03em;
-      line-height: 0.9;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
       text-transform: uppercase;
       color: var(--fg);
-      font-kerning: none;
     }
 
     /* ── Responsive: collapse multi-column blocks to a single column,
@@ -462,7 +457,7 @@
          text columns, which don't apply once everything stacks). */
       .bio-photo-block { max-width: none; margin: 0; }
       .bio-photo { max-width: none; }
-      .cta-cases { display: flex; }
+      .cta-cases { display: block; }
       /* Desktop forces the parenthetical onto its own line (fine at
          that width); on mobile the same break left "в Teradata"
          orphaned alone mid-block — let it wrap naturally instead, the
