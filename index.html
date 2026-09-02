@@ -361,7 +361,7 @@
         text-transform: uppercase;
         color: var(--fg);
       }
-      .menu-toggle svg { display: block; width: 20px; height: 20px; }
+      .menu-toggle svg { display: block; width: 16px; height: 16px; }
       /* Frosted glass instead of flat white — the page underneath stays
          faintly, heavily blurred, so the overlay doesn't feel like a
          totally separate screen. */
@@ -390,13 +390,6 @@
         gap: 20px;
         padding: 0;
       }
-      /* CV reads as a distinct action, not a third page link. */
-      .menu-overlay nav a:last-child { margin-top: 20px; }
-      /* Telegram/Почта sit at the bottom of the overlay (justify-content:
-         space-between above) with more air between them than the page
-         links get — they're being read as individual contacts, not a
-         tight list. */
-      .menu-overlay .contacts { gap: 28px; }
       /* Reuses the site's existing Heading style (24px, weight 200,
          0.08em) for overlay links — not a new size, just applied here
          instead of the usual Nav scale, since these need to read as
@@ -527,10 +520,10 @@
     <nav>
       <a href="index.html" class="nav-link">Индекс</a>
       <a href="cases.html" class="nav-link">Кейсы</a>
-      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
     </nav>
 
     <div class="contacts">
+      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
       <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
       <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
     </div>
