@@ -115,6 +115,23 @@
       margin-bottom: 20px;
     }
 
+    /* CTA — the one explicit "here's where the work is" prompt on the
+       whole site. Reads as the subtitle's next line, same body scale,
+       so it doesn't compete with the name for attention. */
+    .hero-cta {
+      display: block;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: var(--fg);
+      padding: 0 40px;
+      margin-bottom: 24px;
+      transition: opacity 0.2s ease;
+    }
+    .hero-cta:hover { opacity: 0.6; }
+
     .hero-name {
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
@@ -133,7 +150,8 @@
     nav { transition: opacity 0.35s ease; }
     .hero-subtitle { transition: opacity 0.8s ease; }
     body.preloading nav,
-    body.preloading .hero-subtitle { opacity: 0; }
+    body.preloading .hero-subtitle,
+    body.preloading .hero-cta { opacity: 0; }
 
     #preload {
       position: fixed;
@@ -188,14 +206,18 @@
        aligned, pinned a fixed 24px from the true viewport bottom —
        NOT via flex margin-top:auto, which silently let a taller 2-line
        name push .hero past 100vh and get clipped by body's
-       overflow:hidden (only "Andrey" stayed visible). Subtitle is a
-       separate fixed block centered on the screen, independent of the
-       name's height. ── */
+       overflow:hidden (only "Andrey" stayed visible). Subtitle+CTA sit
+       together in .hero-intro, a separate fixed block centered on the
+       screen, independent of the name's height — stacked via normal
+       flow inside it instead of each getting its own fixed math, so
+       the CTA doesn't need to guess the subtitle's wrapped height. ── */
     @media (max-width: 900px) {
-      .hero-subtitle {
+      .hero-intro {
         position: fixed; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
-        width: 50%; margin: 0 auto; padding: 0; text-align: center;
+        width: 50%; margin: 0 auto; text-align: center;
       }
+      .hero-subtitle { padding: 0; }
+      .hero-cta { display: inline-block; padding: 0; }
       .hero-name {
         position: fixed; left: 0; right: 0; bottom: 24px;
       }
@@ -268,7 +290,10 @@
 
   <section class="hero">
     <div class="hero-bottom">
-      <p class="hero-subtitle">Дизайнер с&nbsp;фокусом на&nbsp;интерфейсах, которые ощущаются<br>правильно с&nbsp;первого взгляда</p>
+      <div class="hero-intro">
+        <p class="hero-subtitle">Дизайнер с&nbsp;фокусом на&nbsp;интерфейсах, которые ощущаются<br>правильно с&nbsp;первого взгляда</p>
+        <a href="cases.html" class="hero-cta">К&nbsp;работам →</a>
+      </div>
       <span class="hero-name"><span class="word">ANDREY</span> <span class="word">BEREGOVOY</span></span>
     </div>
   </section>
@@ -283,6 +308,7 @@
       const realName = document.querySelector('.hero-name');
       const navEl    = document.querySelector('nav');
       const subEl    = document.querySelector('.hero-subtitle');
+      const ctaEl    = document.querySelector('.hero-cta');
       const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Size the name so its text fills the viewport width minus margin each
@@ -336,7 +362,9 @@
       (function bindNavTransition() {
         const here = currentFile();
         const mainEl = document.querySelector('.hero');
-        document.querySelectorAll('nav a').forEach(function (a) {
+        // .hero-cta included too — same fade-then-navigate treatment as
+        // an actual nav click, since it goes to the same place (cases.html).
+        document.querySelectorAll('nav a, .hero-cta').forEach(function (a) {
           if (a.hasAttribute('download')) return;
           const href = a.getAttribute('href');
           if (href.replace(/\.html$/, '') === here) {
@@ -399,6 +427,7 @@
       function reveal() {
         navEl.style.opacity = '1';
         subEl.style.opacity = '1';
+        if (ctaEl) ctaEl.style.opacity = '1';
         realName.style.opacity = '1';
         document.body.classList.remove('preloading');
         preload.remove();
@@ -422,7 +451,7 @@
         (function pass() {
           const top = nameEl.getBoundingClientRect().top;
           if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; }
-          if (!subShown && top >= subLine) { subShown = true; subEl.style.opacity = '1'; }
+          if (!subShown && top >= subLine) { subShown = true; subEl.style.opacity = '1'; if (ctaEl) ctaEl.style.opacity = '1'; }
           if (moving) requestAnimationFrame(pass);
         })();
 
