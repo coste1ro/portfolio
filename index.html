@@ -141,6 +141,30 @@
       display: block;
     }
 
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 6px 14px;
+      border: 1px solid var(--fg);
+      border-radius: 999px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    .status-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ecc71;
+      flex: none;
+    }
+
     .bio-col {
       font-weight: 300;
       font-size: 20px;
@@ -321,12 +345,15 @@
     <h1 class="page-title">UX / продакт-дизайнер</h1>
 
     <div class="bio">
-      <picture>
-        <source srcset="photo.webp" type="image/webp">
-        <img class="bio-photo" src="photo.jpg" alt="Андрей Береговой" decoding="async">
-      </picture>
-      <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;миддл UX/продакт-дизайнер. В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе, поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками, от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code. Прошёл курсы у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер) и&nbsp;Михаила Розова.</p>
-      <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Английский на&nbsp;уровне C1: веду переговоры и&nbsp;презентации с&nbsp;международными командами. Сейчас открыт к&nbsp;новым задачам.</p>
+      <div class="bio-photo-block">
+        <picture>
+          <source srcset="photo.webp" type="image/webp">
+          <img class="bio-photo" src="photo.jpg" alt="Андрей Береговой" decoding="async">
+        </picture>
+        <span class="status-pill"><span class="status-pill-dot"></span>Открыт к&nbsp;предложениям</span>
+      </div>
+      <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;миддл UX/продакт-дизайнер. В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе, поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками, от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code. Прошёл курсы у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова.</p>
+      <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Английский на&nbsp;уровне C1: веду переговоры и&nbsp;презентации с&nbsp;международными командами.</p>
     </div>
 
     <div class="testimonials">
