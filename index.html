@@ -111,21 +111,22 @@
       font-kerning: none;
     }
 
-    /* ── Education ── */
-    .education {
-      display: grid;
-      grid-template-columns: 310fr 1010fr;
-      gap: 0 40px;
-      align-items: start;
-    }
-
+    /* ── Education: label on its own line, then two fluid columns —
+       higher education, then courses. ── */
     .education-label {
+      display: block;
       font-weight: 200;
       font-size: 24px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--fg);
-      padding-top: 3px;
+      margin-bottom: 24px;
+    }
+
+    .education-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 40px;
     }
 
     .education-text {
@@ -136,17 +137,18 @@
       color: var(--fg);
     }
 
-    /* ── Bio ── */
+    /* ── Bio: three equal fluid columns (photo, then two text columns) —
+       not a fixed thumbnail sitting inside an oversized first column. ── */
     .bio {
       display: grid;
-      grid-template-columns: 660fr 310fr 310fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 0 40px;
       align-items: start;
     }
 
     .bio-photo {
-      width: 170px;
-      height: 170px;
+      width: 100%;
+      aspect-ratio: 4 / 3;
       object-fit: cover;
       object-position: top center;
       display: block;
@@ -160,12 +162,21 @@
       color: var(--fg);
     }
 
-    /* ── Testimonials (excerpts from written recommendations) ── */
+    /* ── Testimonials: one recommendation at a time, sliding smoothly
+       into the next — quieter than three full quotes stacked side by
+       side. ── */
     .testimonials {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0 40px;
-      align-items: start;
+      overflow: hidden;
+    }
+
+    .testimonials-track {
+      display: flex;
+      transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .testimonial-slide {
+      flex: 0 0 100%;
+      min-width: 0;
     }
 
     .testimonial-quote {
@@ -206,9 +217,7 @@
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
       .page-title { font-size: 16vw; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
-      .bio-photo { margin: 0 auto; }
-      .education { grid-template-columns: 1fr; gap: 12px; }
-      .testimonials { grid-template-columns: 1fr; gap: 24px 0; }
+      .education-cols { grid-template-columns: 1fr; gap: 24px; }
     }
 
     /* ── Preloader ── */
@@ -315,21 +324,26 @@
 
     <div class="education">
       <span class="education-label">Образование</span>
-      <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского — «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна: практические навыки&nbsp;— через курсы и&nbsp;проекты. Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
+      <div class="education-cols">
+        <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского — «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна: практические навыки&nbsp;— через курсы и&nbsp;проекты.</p>
+        <p class="education-text">Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
+      </div>
     </div>
 
     <div class="testimonials">
-      <div>
-        <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
-        <span class="testimonial-name">Джонатан Карпентер — руководитель UX в&nbsp;Teradata (экс-CXO/UX-лид Action Engine)</span>
-      </div>
-      <div>
-        <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
-        <span class="testimonial-name">Дмитрий Варзин — генеральный директор Action Engine</span>
-      </div>
-      <div>
-        <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
-        <span class="testimonial-name">Илья — тимлид Action Engine</span>
+      <div class="testimonials-track">
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
+          <span class="testimonial-name">Джонатан Карпентер — руководитель UX в&nbsp;Teradata (экс-CXO/UX-лид Action Engine)</span>
+        </div>
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
+          <span class="testimonial-name">Дмитрий Варзин — генеральный директор Action Engine</span>
+        </div>
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
+          <span class="testimonial-name">Илья — тимлид Action Engine</span>
+        </div>
       </div>
     </div>
 
@@ -478,6 +492,38 @@
       } else {
         run();
       }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const track = document.querySelector('.testimonials-track');
+      if (!track) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const slides = Array.from(track.children);
+      if (reduce || slides.length < 2) return;
+
+      // Loop by cloning the first slide onto the end: slide up to it
+      // normally, then snap back to the real first slide with no
+      // transition the instant that last slide finishes arriving — the
+      // jump is invisible since the clone looks identical to slide 0.
+      track.appendChild(slides[0].cloneNode(true));
+      const total = slides.length;
+      let index = 0;
+
+      function next() {
+        index++;
+        track.style.transition = 'transform 1s cubic-bezier(0.65,0,0.35,1)';
+        track.style.transform = 'translateX(-' + (index * 100) + '%)';
+        if (index === total) {
+          setTimeout(function () {
+            track.style.transition = 'none';
+            track.style.transform = 'translateX(0)';
+            index = 0;
+          }, 1050);
+        }
+      }
+      setInterval(next, 6000);
     })();
   </script>
 
