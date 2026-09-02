@@ -253,7 +253,9 @@
         position: fixed;
         top: 0; left: 0; right: 0;
         height: 56px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         z-index: 190;
       }
       .menu-toggle {
@@ -305,7 +307,11 @@
         background: rgba(255, 255, 255, 0.82);
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
-        z-index: 150;
+        /* Between the bar (190) and the toggle (200) — it needs to
+           paint over the opaque-looking bar when open (same reason the
+           bar now shares its blur/translucency, so there's no seam),
+           while the toggle itself must stay clickable above it. */
+        z-index: 195;
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;

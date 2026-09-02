@@ -360,7 +360,9 @@
         position: fixed;
         top: 0; left: 0; right: 0;
         height: 56px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         z-index: 190;
       }
       .menu-toggle {
@@ -408,7 +410,11 @@
         background: rgba(255, 255, 255, 0.82);
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
-        z-index: 150;
+        /* Between the bar (190) and the toggle (200) — it needs to
+           paint over the opaque-looking bar when open (same reason the
+           bar now shares its blur/translucency, so there's no seam),
+           while the toggle itself must stay clickable above it. */
+        z-index: 195;
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
@@ -628,6 +634,8 @@
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
       const pageEl    = document.querySelector('.page');
+      const statusPill = document.querySelector('.status-pill');
+      const pillHome   = statusPill ? statusPill.parentNode : null;
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // "UX / Product" filled the full width edge-to-edge, "дизайнер"
@@ -722,6 +730,18 @@
         fitMobileTitle();
         const r = realTitle.getBoundingClientRect();
         const startY = window.innerHeight - (r.top + r.height / 2);
+
+        // .status-pill is position:fixed on mobile but DOM-nested inside
+        // .page (under the photo, for desktop's in-flow layout) — while
+        // .page carries the transform below, it becomes the pill's
+        // containing block, so the pill rides up with the slide instead
+        // of sitting still in the bar. Pull it out of .page for the
+        // duration so it renders fixed-to-viewport the whole time, same
+        // as the bar/toggle beside it, then put it back afterwards so
+        // desktop's in-flow position is untouched.
+        const pillMoved = statusPill && document.documentElement.clientWidth <= 900;
+        if (pillMoved) document.body.appendChild(statusPill);
+
         pageEl.style.transition = 'none';
         pageEl.style.transform = 'translateY(' + startY + 'px)';
         void pageEl.offsetHeight; // commit the instant position before animating away from it
@@ -746,6 +766,7 @@
           // position:fixed descendant, pinning it to .page's box instead
           // of the true viewport.
           pageEl.style.transform = '';
+          if (pillMoved) pillHome.appendChild(statusPill);
         }, 1000);
       }
 
