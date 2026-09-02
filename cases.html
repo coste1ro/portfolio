@@ -257,6 +257,15 @@
         font-size: 24px;
         letter-spacing: 0.08em;
       }
+      /* The desktop hover-bracket ::before is invisible (opacity: 0)
+         but still takes up layout width, pushing the visible text right
+         of where it looks like it should start — that's why the X sat
+         further left than "ИНДЕКС" below it. Touch has no hover to
+         reveal it anyway, so just drop it here. */
+      .menu-overlay .nav-link::before,
+      .menu-overlay .nav-link::after {
+        display: none;
+      }
       /* Was 40px — the toggle floats independently of the page's own
          flow, so the title needs its own clearance below it. */
       .page { min-height: auto; padding: 100px 24px 24px; }
