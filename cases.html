@@ -69,17 +69,7 @@
       z-index: 100;
     }
 
-    /* ── Contacts (second row, right — under nav) ── */
-    .contacts {
-      position: fixed;
-      top: 80px;
-      right: 40px;
-      display: flex;
-      gap: 20px;
-      z-index: 100;
-    }
-
-    /* No-op on desktop — nav/contacts render exactly as before, this
+    /* No-op on desktop — nav renders exactly as before, this
        wrapper only becomes an actual box on mobile (see media query). */
     .menu-overlay { display: contents; }
     .menu-toggle { display: none; }
@@ -317,8 +307,7 @@
         transition: opacity 0.3s ease;
       }
       html.menu-open .menu-overlay { opacity: 1; pointer-events: auto; }
-      .menu-overlay nav,
-      .menu-overlay .contacts {
+      .menu-overlay nav {
         position: static;
         flex-direction: column;
         align-items: flex-start;
@@ -454,12 +443,6 @@
       <a href="index.html" class="nav-link">Индекс</a>
       <a href="cases.html" class="nav-link">Кейсы</a>
     </nav>
-
-    <div class="contacts">
-      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
-      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
-      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
-    </div>
   </div>
 
   <main class="page">
