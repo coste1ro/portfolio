@@ -423,7 +423,7 @@
 
   <main class="page">
 
-    <h1 class="page-title">UX / продакт-<span class="page-title-break">дизайнер</span></h1>
+    <h1 class="page-title" id="pageTitle"><span class="page-title-line1">UX / продакт-</span><span class="page-title-break">дизайнер</span></h1>
 
     <div class="bio">
       <div class="bio-photo-block">
@@ -479,7 +479,28 @@
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
       const pageEl    = document.querySelector('.page');
+      const titleLine1 = realTitle.querySelector('.page-title-line1');
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // "UX / продакт-" wrapped further than expected at a guessed
+      // 16vw on some phones (cut off past the screen edge) — measure it
+      // for real instead of guessing again, same technique fitName()
+      // used for the old hero name.
+      function fitMobileTitle() {
+        const mobile = document.documentElement.clientWidth <= 900;
+        if (!mobile || !titleLine1) {
+          realTitle.style.fontSize = '';
+          return;
+        }
+        realTitle.style.fontSize = '16vw';
+        const avail = document.documentElement.clientWidth - 48;
+        const w = titleLine1.getBoundingClientRect().width;
+        if (w > avail) {
+          const current = parseFloat(getComputedStyle(realTitle).fontSize);
+          realTitle.style.fontSize = (current * avail / w) + 'px';
+        }
+      }
+      window.addEventListener('resize', fitMobileTitle);
 
       // Internal nav between here and CASES dissolves the current screen
       // out; the destination page plays a fast version of the entry intro
@@ -529,6 +550,7 @@
       const canShow = shouldPreload();
 
       if (reduce) {
+        fitMobileTitle();
         preload.remove();
         clearEnterState();
         return;
@@ -542,6 +564,7 @@
       // drift out of sync with the title or visually collide with it: it's
       // the exact same transform, not two separately-animated pieces.
       function slidePageIn() {
+        fitMobileTitle();
         const r = realTitle.getBoundingClientRect();
         const startY = window.innerHeight - (r.top + r.height / 2);
         pageEl.style.transition = 'none';
