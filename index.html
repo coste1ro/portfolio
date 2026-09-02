@@ -348,6 +348,12 @@
          load timing. It's a 0.7s decorative reveal, not required to
          pixel-match the real title's size. */
       #preload-title { font-size: clamp(20px, 7vw, 32px); white-space: normal; }
+      /* Desktop forces the parenthetical onto its own line (fine at
+         that width); on mobile the same break left "в Teradata"
+         orphaned alone mid-block — let it wrap naturally instead, the
+         trailing "Action Engine)" landing alone on the last line is
+         fine. */
+      .testimonial-break { display: none; }
     }
 
     /* ── Preloader ── */
@@ -465,7 +471,7 @@
       <div class="testimonials-track">
         <div class="testimonial-slide">
           <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
-          <span class="testimonial-name">Джонатан Карпентер — руководитель UX&nbsp;в&nbsp;Teradata<br>(экс-CXO/UX-лид Action Engine)</span>
+          <span class="testimonial-name">Джонатан Карпентер — руководитель UX&nbsp;в&nbsp;Teradata<br class="testimonial-break">(экс-CXO/UX-лид Action Engine)</span>
         </div>
         <div class="testimonial-slide">
           <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
