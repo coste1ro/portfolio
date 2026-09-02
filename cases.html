@@ -78,6 +78,12 @@
       gap: 20px;
       z-index: 100;
     }
+
+    /* No-op on desktop — nav/contacts render exactly as before, this
+       wrapper only becomes an actual box on mobile (see media query). */
+    .menu-overlay { display: contents; }
+    .menu-toggle { display: none; }
+
     .nav-link {
       font-weight: 300;
       font-size: 16px;
@@ -197,8 +203,53 @@
          stack taller than the screen — let them scroll instead of
          clipping, same as about.html. */
       html, body { overflow-y: auto; }
-      nav { position: static; justify-content: flex-start; padding: 24px 24px 0; }
-      .contacts { position: static; justify-content: flex-start; padding: 16px 24px 0; }
+      /* Same corner-toggle + full-screen-overlay pattern as index.html —
+         two rows of small left-aligned links read cramped next to the
+         page content; a flat 5-item nav on a visual-first portfolio is
+         exactly the case hamburger+overlay is the right call for. */
+      .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 24px; left: 24px;
+        z-index: 200;
+        background: none;
+        border: 0;
+        padding: 0;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300;
+        font-size: 16px;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        color: var(--fg);
+      }
+      .menu-overlay {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 40px;
+        position: fixed;
+        inset: 0;
+        padding: 0 24px;
+        background: var(--bg);
+        z-index: 150;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      html.menu-open .menu-overlay { opacity: 1; pointer-events: auto; }
+      .menu-overlay nav,
+      .menu-overlay .contacts {
+        position: static;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 0;
+      }
+      .menu-overlay .nav-link {
+        font-weight: 200;
+        font-size: 24px;
+        letter-spacing: 0.08em;
+      }
       .page { min-height: auto; padding: 40px 24px 24px; }
       .page-title { font-size: 16vw; }
 
@@ -297,15 +348,19 @@
     <span id="preload-count">000</span>
   </div>
 
-  <nav>
-    <a href="index.html" class="nav-link">Индекс</a>
-    <a href="cases.html" class="nav-link">Кейсы</a>
-    <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
-  </nav>
+  <button type="button" id="menuToggle" class="menu-toggle" aria-label="Меню">Меню</button>
 
-  <div class="contacts">
-    <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">ТГ</a>
-    <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+  <div class="menu-overlay" id="menuOverlay">
+    <nav>
+      <a href="index.html" class="nav-link">Индекс</a>
+      <a href="cases.html" class="nav-link">Кейсы</a>
+      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
+    </nav>
+
+    <div class="contacts">
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">ТГ</a>
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+    </div>
   </div>
 
   <main class="page">
@@ -557,6 +612,24 @@
       scale += (scaleTarget - scale) * 0.2;
       ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
       requestAnimationFrame(loop);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const toggle  = document.getElementById('menuToggle');
+      const overlay = document.getElementById('menuOverlay');
+      if (!toggle || !overlay) return;
+      function setOpen(open) {
+        document.documentElement.classList.toggle('menu-open', open);
+        toggle.textContent = open ? 'Закрыть' : 'Меню';
+      }
+      toggle.addEventListener('click', function () {
+        setOpen(!document.documentElement.classList.contains('menu-open'));
+      });
+      overlay.addEventListener('click', function (e) {
+        if (e.target.closest('a')) setOpen(false);
+      });
     })();
   </script>
 
