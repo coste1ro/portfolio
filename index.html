@@ -323,8 +323,12 @@
       nav { position: static; justify-content: center; padding: 24px 24px 0; }
       .contacts { position: static; justify-content: center; padding: 16px 24px 0; }
       .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
-      .page-title { font-size: 16vw; padding-right: 0; }
+      /* 0.9 (desktop's single-line value) crowds the wrapped second
+         line — same fix as the hero-name issue this had earlier. */
+      .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
+      .page-title-break { display: block; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
+      .bio-photo-block { margin: 0 auto; }
       .cta-cases { display: flex; }
     }
 
@@ -419,7 +423,7 @@
 
   <main class="page">
 
-    <h1 class="page-title">UX / продакт-дизайнер</h1>
+    <h1 class="page-title">UX / продакт-<span class="page-title-break">дизайнер</span></h1>
 
     <div class="bio">
       <div class="bio-photo-block">
