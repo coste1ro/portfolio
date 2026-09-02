@@ -83,7 +83,39 @@
        wrapper only becomes an actual box on mobile (see media query). */
     .menu-overlay { display: contents; }
     .menu-toggle { display: none; }
-    .scroll-counter { display: none; }
+
+    /* Mobile-only — cases.html has no bio/photo section for this to
+       naturally sit under like on index.html, so it only ever shows in
+       the menu bar. Same component/markup as index.html's. */
+    .status-pill { display: none; }
+    @keyframes status-ping {
+      0% { transform: scale(1); opacity: 0.7; }
+      75%, 100% { transform: scale(2.2); opacity: 0; }
+    }
+    .status-pill-dot-wrap {
+      position: relative;
+      display: inline-flex;
+      width: 8px;
+      height: 8px;
+      flex: none;
+    }
+    .status-pill-dot-ping {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #2ecc71;
+      animation: status-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .status-pill-dot-ping { animation: none; opacity: 0; }
+    }
+    .status-pill-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ecc71;
+    }
 
     .nav-link {
       font-weight: 300;
@@ -230,17 +262,18 @@
       .menu-toggle svg { display: block; width: 24px; height: 24px; }
       /* Right side of the same bar — scroll progress, echoing the
          000→100 intro counter's numeric style (same font). */
-      .scroll-counter {
-        display: block;
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         position: fixed;
-        top: 0; right: 0;
+        top: 14px; right: 24px;
         z-index: 200;
-        padding: 16px 24px;
-        font-family: 'Roboto Mono', monospace;
-        font-weight: 200;
-        font-size: 16px;
-        letter-spacing: 0.05em;
-        font-variant-numeric: tabular-nums;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300;
+        font-size: 12px;
+        letter-spacing: 0;
+        text-transform: uppercase;
         color: var(--fg);
       }
       /* Frosted glass instead of flat white — the page underneath stays
@@ -386,7 +419,13 @@
   </div>
 
   <button type="button" id="menuToggle" class="menu-toggle" aria-label="Меню">Меню</button>
-  <span id="scrollCounter" class="scroll-counter" aria-hidden="true">000</span>
+  <span class="status-pill">
+    <span class="status-pill-dot-wrap">
+      <span class="status-pill-dot-ping"></span>
+      <span class="status-pill-dot"></span>
+    </span>
+    Открыт к&nbsp;предложениям
+  </span>
 
   <div class="menu-overlay" id="menuOverlay">
     <nav>
@@ -673,20 +712,6 @@
     })();
   </script>
 
-  <script>
-    (function () {
-      const counter = document.getElementById('scrollCounter');
-      if (!counter) return;
-      function update() {
-        const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const pct = scrollable > 0 ? Math.round((window.scrollY / scrollable) * 100) : 0;
-        counter.textContent = String(Math.max(0, Math.min(100, pct))).padStart(3, '0');
-      }
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-      update();
-    })();
-  </script>
 
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
