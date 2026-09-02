@@ -79,12 +79,12 @@
 
     /* ── Slides ── */
     .slides {
-      display: flex; width: 200%; height: 100%;
+      display: flex; width: 300%; height: 100%;
       transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
       will-change: transform;
     }
     .slide {
-      flex: 0 0 50%; height: 100%;
+      flex: 0 0 33.3334%; height: 100%;
       position: relative; overflow: hidden;
     }
 
@@ -174,6 +174,27 @@
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
 
+    /* ── Slide 3: callout grid ── */
+    .slide-portal { position: relative; height: 100%; }
+    .portal-grid {
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
+    }
+    .portal-media { grid-column: 2; }
+    .portal-media img { width: 100%; display: block; }
+    .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; }
+    .portal-num {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 20px;
+    }
+    .portal-text {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
     /* ── Mobile: same content, reflowed into one continuous scrolling
        document instead of the desktop wheel-pan slide viewer. Spacing
        system, three sizes only: 24px edge padding, 32px between blocks
@@ -226,7 +247,7 @@
         display: block; width: auto; height: auto;
         transform: none !important;
       }
-      .slide-hero, .slide-strip { position: static; height: auto; }
+      .slide-hero, .slide-strip, .slide-portal { position: static; height: auto; }
       .slide {
         height: auto; overflow: visible;
         padding: 0 24px;
@@ -256,6 +277,17 @@
         transform: none !important;
       }
       .strip-item { flex: none; width: 100%; }
+
+      /* Portal: subtitle (eyebrow, above) -> photo -> all five points
+         together — desktop's DOM order is callouts[1,2,3] -> media ->
+         callouts[4,5] for the side-by-side grid, so reorder the same
+         way as hero instead of letting the photo land mid-list. */
+      .portal-grid {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column;
+      }
+      .portal-media { order: 1; margin-bottom: 32px; }
+      .portal-callouts { order: 2; gap: 24px; margin-bottom: 32px; }
 
       /* Closing "back to cases" — shown once, at the very end. */
       .mobile-back {
@@ -296,11 +328,11 @@
         <h1 class="hero-heading">Дизайн-система: единый источник правды для&nbsp;интерфейсов продукта</h1>
         <div class="hero-col-a">
           <div class="hero-col-label">Обзор</div>
-          <p class="hero-col-body">Дизайн-система продукта мониторинга, собранная в&nbsp;Figma на&nbsp;переменных (Variables). Единый источник правды: примитивы, семантические токены, типографика и&nbsp;размеры, из&nbsp;которых строятся 50+&nbsp;компонентов и&nbsp;все экраны интерфейса.</p>
+          <p class="hero-col-body">Дизайн-система для&nbsp;крупного продукта мониторинга дорожных аномалий в&nbsp;ОАЭ, собранная в&nbsp;Figma на&nbsp;переменных (Variables). Единый источник правды: примитивы, семантические токены, типографика и&nbsp;размеры, из&nbsp;которых строятся 50+&nbsp;компонентов и&nbsp;все экраны интерфейса.</p>
         </div>
         <div class="hero-col-b">
           <div class="hero-col-label">Задача</div>
-          <p class="hero-col-body">Задокументировать систему в&nbsp;одном месте и&nbsp;связать всё переменными&nbsp;— чтобы команде было проще пользоваться компонентами и&nbsp;быстрее масштабировать продукт:</p>
+          <p class="hero-col-body">Задокументировать систему в&nbsp;одном месте и&nbsp;связать всё переменными, чтобы команде было проще пользоваться компонентами и&nbsp;быстрее масштабировать продукт:</p>
           <ul class="hero-col-list">
             <li>377 переменных в&nbsp;четырёх коллекциях;</li>
             <li>темы Dark&nbsp;/ Light через семантику;</li>
@@ -340,6 +372,41 @@
             <span class="strip-num">[5]</span>
             <img src="projects/design_system/numbers.png" alt="Числовые токены — радиусы и размеры">
             <p class="strip-caption">Numbers&nbsp;— 26&nbsp;токенов: радиусы, толщины границ, размытие и&nbsp;размерная шкала.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Design System</div>
+    </section>
+
+    <!-- ── SLIDE 3 — CALLOUT GRID ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Почему не&nbsp;атомарный дизайн</div>
+      <div class="portal-grid fit-wrap">
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[1]</div>
+            <p class="portal-text">Старый локальный UI-кит перестал справляться с&nbsp;ростом продукта. Дизайн-лид предложил собрать нормальную дизайн-систему.</p>
+          </div>
+          <div>
+            <div class="portal-num">[2]</div>
+            <p class="portal-text">Начали смотреть в&nbsp;сторону атомарного дизайна, но&nbsp;для&nbsp;одного продукта без&nbsp;множества дочерних это избыточно. Выбрал модель проще: токены и&nbsp;компоненты без&nbsp;лишних уровней.</p>
+          </div>
+          <div>
+            <div class="portal-num">[3]</div>
+            <p class="portal-text">Перед тем как&nbsp;строить систему, изучил, как&nbsp;связаны примитивы и&nbsp;семантика, и&nbsp;взял за&nbsp;основу цветовую систему Tailwind.</p>
+          </div>
+        </div>
+        <div class="portal-media">
+          <img src="projects/design_system/all-comps.png" alt="Дизайн-система — библиотека компонентов">
+        </div>
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[4]</div>
+            <p class="portal-text">Делал систему сам, дизайн-лид только изредка что-то поправлял.</p>
+          </div>
+          <div>
+            <div class="portal-num">[5]</div>
+            <p class="portal-text">Тему стало просто переключать, а&nbsp;систему, в&nbsp;отличие от&nbsp;старого UI-кита, стало легко поддерживать.</p>
           </div>
         </div>
       </div>
