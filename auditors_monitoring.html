@@ -229,8 +229,12 @@
         position: fixed; top: 0; left: 0; right: 0;
         background: var(--bg);
         padding: 16px 24px;
-        justify-content: flex-end;
+        justify-content: flex-start;
       }
+      /* Matches the menu-close icon size on index.html/cases.html —
+         48px (shared with the desktop-only prev/next arrows) was too
+         big once it's the only thing left in the bar on mobile. */
+      .viewer-nav svg { width: 24px; height: 24px; }
 
       /* The one big title, shown once at the very top — not repeated
          per section. One fixed size shared by all three case pages

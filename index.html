@@ -345,15 +345,18 @@
          is exactly the case hamburger+overlay is the right call for
          (NN/g: hidden nav costs discoverability on content-heavy sites,
          but a small flat list here loses nothing by being one tap away). */
+      /* Same fixed, full-width, opaque bar the case-study pages use for
+         their mobile close button — scrolling content passes under it
+         instead of visibly overlapping the toggle. */
       .menu-toggle {
         display: flex;
         align-items: center;
         position: fixed;
-        top: 24px; left: 24px;
+        top: 0; left: 0; right: 0;
         z-index: 200;
-        background: none;
+        background: var(--bg);
         border: 0;
-        padding: 0;
+        padding: 16px 24px;
         font-family: 'Jost', sans-serif;
         font-weight: 300;
         font-size: 16px;
