@@ -204,6 +204,9 @@
       .cases-track { flex-direction: column; gap: 60px; transform: none !important; }
       .case-item { flex: none; width: 100%; }
       .case-item:hover { transform: none; }
+      /* Match the num→photo gap to the photo→title gap (both 24px) —
+         desktop's 40px num→photo gap felt uneven stacked on mobile. */
+      .case-num { padding-bottom: 24px; }
     }
 
     #preload {
