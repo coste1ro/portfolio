@@ -148,21 +148,53 @@
       max-width: 220px;
     }
 
+    /* Neutral badge (shadcn's "secondary" Badge) + a pulsing dot
+       (Tailwind's animate-ping, translated to a plain CSS keyframe) —
+       borrowed look, our copy, no framework. */
+    @keyframes status-ping {
+      0% { transform: scale(1); opacity: 0.7; }
+      75%, 100% { transform: scale(2.2); opacity: 0; }
+    }
     .status-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      width: 100%;
+      gap: 8px;
+      max-width: 100%;
       margin-top: 16px;
-      padding: 8px 14px;
+      padding: 6px 14px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 999px;
-      background: #2ecc71;
+      background: rgba(0, 0, 0, 0.03);
       font-family: 'Jost', sans-serif;
       font-weight: 300;
       font-size: 16px;
       letter-spacing: 0;
       text-transform: uppercase;
-      color: #ffffff;
+      color: var(--fg);
+    }
+    .status-pill-dot-wrap {
+      position: relative;
+      display: inline-flex;
+      width: 8px;
+      height: 8px;
+      flex: none;
+    }
+    .status-pill-dot-ping {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #2ecc71;
+      animation: status-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .status-pill-dot-ping { animation: none; opacity: 0; }
+    }
+    .status-pill-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ecc71;
     }
 
     .bio-col {
@@ -350,7 +382,13 @@
           <source srcset="photo.webp" type="image/webp">
           <img class="bio-photo" src="photo.jpg" alt="Андрей Береговой" decoding="async">
         </picture>
-        <span class="status-pill">Открыт к&nbsp;предложениям</span>
+        <span class="status-pill">
+          <span class="status-pill-dot-wrap">
+            <span class="status-pill-dot-ping"></span>
+            <span class="status-pill-dot"></span>
+          </span>
+          Открыт к&nbsp;предложениям
+        </span>
       </div>
       <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;миддл UX/продакт-дизайнер. В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе, поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками, от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code. Прошёл курсы у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова.</p>
       <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Английский на&nbsp;уровне C1: веду переговоры и&nbsp;презентации с&nbsp;международными командами.</p>
