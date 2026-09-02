@@ -349,6 +349,10 @@
          trailing "Action Engine)" landing alone on the last line is
          fine. */
       .testimonial-break { display: none; }
+      /* Clone was hardcoded to the desktop .page padding (40px) — on
+         mobile .page's own left padding is 24px, so the clone sat 16px
+         right of where the real title actually starts. */
+      #preload-title { left: 24px; }
     }
 
     /* ── Preloader ── */
