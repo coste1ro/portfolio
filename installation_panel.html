@@ -148,6 +148,7 @@
     }
     .hero-col-list li { position: relative; margin-bottom: 6px; }
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
+    .hero-col-note { margin-top: 16px; }
 
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
@@ -337,6 +338,7 @@
             <li>реестр установщиков;</li>
             <li>привязанный транспорт.</li>
           </ul>
+          <p class="hero-col-body hero-col-note">Перед&nbsp;ТЗ поресёрчил паттерны админ-панелей: увидел, что&nbsp;в&nbsp;них по&nbsp;максимуму переиспользуют одни и&nbsp;те&nbsp;же&nbsp;сущности, а&nbsp;консистентность стоит на&nbsp;первом месте, потому что&nbsp;админка обязана быть однородной. Работал в&nbsp;связке с&nbsp;дизайн-лидом, вели проект вместе.</p>
         </div>
       </div>
       <div class="slide-title">Installation Panel</div>
@@ -350,12 +352,12 @@
           <div class="strip-item">
             <span class="strip-num">[1]</span>
             <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" alt="Список групп установок">
-            <p class="strip-caption">Группы установок&nbsp;— сводный список: клиент, тип транспорта, статус, количество единиц. Фильтр по&nbsp;статусу и&nbsp;компании&nbsp;— стартовая точка для&nbsp;менеджера.</p>
+            <p class="strip-caption">Группы установок. Сводный список: клиент, тип транспорта, статус, количество единиц, с&nbsp;фильтром по&nbsp;статусу и&nbsp;компании. Выбрал таблицу: с&nbsp;ней проще агрегировать и&nbsp;фильтровать, а&nbsp;строк может быть сколько угодно, ничего не&nbsp;потеряется.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[2]</span>
             <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки">
-            <p class="strip-caption">Детали установки&nbsp;— из&nbsp;списка сразу в&nbsp;конкретную инсталляцию: установщики, статус по&nbsp;каждому ТС, дата, отдел-заказчик.</p>
+            <p class="strip-caption">Детали установки. Из&nbsp;списка сразу в&nbsp;конкретную инсталляцию: установщики, статус по&nbsp;каждому ТС, дата, отдел-заказчик. Собрал это таймлайном, вытянутым по&nbsp;вертикали: паттерн понятный, этапы идут один за&nbsp;другим, можно проскроллить и&nbsp;увидеть, что уже сделано.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[3]</span>
@@ -380,7 +382,7 @@
           <div class="strip-item">
             <span class="strip-num">[6]</span>
             <img src="projects/installation_panel/Vehicles%20-%20List.png" alt="Список транспортных средств">
-            <p class="strip-caption">Транспортные средства&nbsp;— список ТС: тип, номер, статус установки, назначенный установщик. Единый формат карточки для&nbsp;разных типов транспорта.</p>
+            <p class="strip-caption">Транспортные средства. Список ТС: тип, номер, статус установки, назначенный установщик. Здесь выбрал карточки, а&nbsp;не&nbsp;таблицу: важно узнать модель по&nbsp;картинке, а&nbsp;не&nbsp;читать текст.</p>
           </div>
         </div>
       </div>
@@ -399,6 +401,10 @@
           <div>
             <div class="portal-num">[2]</div>
             <p class="portal-text">Из&nbsp;любой группы&nbsp;— в&nbsp;детали конкретной инсталляции и&nbsp;отдела за&nbsp;один клик, без&nbsp;потери контекста</p>
+          </div>
+          <div>
+            <div class="portal-num">[5]</div>
+            <p class="portal-text">Портал полностью закрыл ТЗ: менеджер видит все группы установок, фильтрует, проваливается в&nbsp;детали любой инсталляции, отдела или установщика. Структура везде одна и&nbsp;та&nbsp;же.</p>
           </div>
         </div>
         <div class="portal-media">
