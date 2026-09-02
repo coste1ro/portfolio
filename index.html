@@ -295,8 +295,8 @@
     }
     .testimonial-pill-track {
       display: block;
-      height: 3px;
-      border-radius: 2px;
+      height: 1px;
+      border-radius: 1px;
       background: rgba(0, 0, 0, 0.15);
       overflow: hidden;
     }
@@ -737,6 +737,7 @@
         const pillMoved = statusPill && document.documentElement.clientWidth <= 900;
         if (pillMoved) document.body.appendChild(statusPill);
 
+        pageEl.style.willChange = 'transform';
         pageEl.style.transition = 'none';
         pageEl.style.transform = 'translateY(' + startY + 'px)';
         void pageEl.offsetHeight; // commit the instant position before animating away from it
@@ -761,6 +762,7 @@
           // position:fixed descendant, pinning it to .page's box instead
           // of the true viewport.
           pageEl.style.transform = '';
+          pageEl.style.willChange = '';
           if (pillMoved) pillHome.appendChild(statusPill);
         }, 1000);
       }

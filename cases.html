@@ -591,6 +591,12 @@
       function slidePageIn() {
         const r = realTitle.getBoundingClientRect();
         const startY = window.innerHeight - (r.top + r.height / 2);
+        // .page carries the four case thumbnails — without this hint the
+        // browser doesn't promote it to its own layer up front, so the
+        // eager-loading images decoding mid-flight can force a main-thread
+        // repaint on the very frames the transform is animating, reading
+        // as a stutter.
+        pageEl.style.willChange = 'transform';
         pageEl.style.transition = 'none';
         pageEl.style.transform = 'translateY(' + startY + 'px)';
         void pageEl.offsetHeight; // commit the instant position before animating away from it
@@ -615,6 +621,7 @@
           // position:fixed descendant, pinning it to .page's box instead
           // of the true viewport.
           pageEl.style.transform = '';
+          pageEl.style.willChange = '';
         }, 1000);
       }
 
