@@ -197,27 +197,24 @@
       display: block;
     }
 
-    /* Progress pills — one per real recommendation (not the loop clone).
-       Doubles as a scrubber: click one to jump straight to it. */
+    /* Dots — one per real recommendation (not the loop clone). Click one
+       to jump straight to it; the active one is solid, the rest grey. */
     .testimonial-pills {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       margin-top: 24px;
     }
     .testimonial-pill {
-      flex: 1;
-      height: 3px;
+      width: 8px;
+      height: 8px;
       padding: 0;
       border: 0;
-      border-radius: 2px;
-      background: rgba(0, 0, 0, 0.15);
-      overflow: hidden;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.2);
       display: block;
+      transition: background 0.2s ease;
     }
-    .testimonial-pill-fill {
-      display: block;
-      height: 100%;
-      width: 0%;
+    .testimonial-pill.active {
       background: var(--fg);
     }
 
@@ -362,9 +359,9 @@
         </div>
       </div>
       <div class="testimonial-pills">
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"><span class="testimonial-pill-fill"></span></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"><span class="testimonial-pill-fill"></span></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-fill"></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"></button>
       </div>
     </div>
 
@@ -525,7 +522,7 @@
       const total = slides.length;
       if (total < 2) return;
 
-      const pillFills = Array.from(document.querySelectorAll('.testimonial-pill-fill'));
+      const pills = Array.from(document.querySelectorAll('.testimonial-pill'));
       const DURATION = 6000;
 
       // Loop by cloning the first slide onto the end: slide up to it
@@ -536,22 +533,9 @@
       let index = 0;
       let timer = null;
 
-      // Pills before the active one sit full (already shown this lap),
-      // the active one animates its own fill over the same DURATION the
-      // autoplay timer runs on, and later ones sit empty.
       function setPills(active) {
-        pillFills.forEach(function (fill, i) {
-          fill.style.transition = 'none';
-          fill.style.width = i < active ? '100%' : '0%';
-          if (i === active) {
-            if (reduce) {
-              fill.style.width = '100%';
-            } else {
-              void fill.offsetWidth; // commit the 0% before animating to 100%
-              fill.style.transition = 'width ' + DURATION + 'ms linear';
-              fill.style.width = '100%';
-            }
-          }
+        pills.forEach(function (pill, i) {
+          pill.classList.toggle('active', i === active);
         });
       }
 
