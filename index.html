@@ -83,6 +83,7 @@
        wrapper only becomes an actual box on mobile (see media query). */
     .menu-overlay { display: contents; }
     .menu-toggle { display: none; }
+    .menu-bar-bg { display: none; }
     .nav-link {
       font-weight: 300;
       font-size: 16px;
@@ -345,18 +346,33 @@
          is exactly the case hamburger+overlay is the right call for
          (NN/g: hidden nav costs discoverability on content-heavy sites,
          but a small flat list here loses nothing by being one tap away). */
-      /* Same fixed, full-width, opaque bar the case-study pages use for
-         their mobile close button — scrolling content passes under it
-         instead of visibly overlapping the toggle. */
+      /* Purely a backdrop — full-width opaque bar behind the toggle and
+         the pill, so scrolling content passes under both instead of
+         visibly overlapping them. The toggle and pill stay independent
+         fixed elements (the pill lives in the DOM under the photo, not
+         next to the toggle) rather than real flex siblings, so they're
+         each given the exact same top/height band below and just
+         center their own content within it — guarantees their content
+         lines up on the same row regardless of the very different font
+         sizes (16px label vs 12px pill). */
+      .menu-bar-bg {
+        display: block;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 56px;
+        background: var(--bg);
+        z-index: 190;
+      }
       .menu-toggle {
         display: flex;
         align-items: center;
         position: fixed;
-        top: 0; left: 0; right: 0;
+        top: 16px; left: 24px;
+        height: 24px;
         z-index: 200;
-        background: var(--bg);
+        background: none;
         border: 0;
-        padding: 16px 24px;
+        padding: 0;
         font-family: 'Jost', sans-serif;
         font-weight: 300;
         font-size: 16px;
@@ -365,17 +381,19 @@
         color: var(--fg);
       }
       .menu-toggle svg { display: block; width: 24px; height: 24px; }
-      /* Right side of the same bar — scroll progress, echoing the
-         000→100 intro counter's numeric style (same font). */
       /* Under the photo on desktop; pulled out of that flow and pinned
-         into the right side of the menu bar here instead — same
-         element, no duplication. */
+         into the bar here instead — same element, no duplication. */
       .status-pill {
         position: fixed;
-        top: 14px; right: 24px;
+        top: 16px; right: 24px;
+        height: 24px;
         z-index: 200;
         margin-top: 0;
+        transition: opacity 0.2s ease;
       }
+      /* Distracting sitting on top of the full-screen menu it's meant
+         to be closing — hide it while open. */
+      html.menu-open .status-pill { opacity: 0; pointer-events: none; }
       /* Frosted glass instead of flat white — the page underneath stays
          faintly, heavily blurred, so the overlay doesn't feel like a
          totally separate screen. */
@@ -537,6 +555,7 @@
     <span id="preload-count">000</span>
   </div>
 
+  <div class="menu-bar-bg"></div>
   <button type="button" id="menuToggle" class="menu-toggle" aria-label="Меню">Меню</button>
   <div class="menu-overlay" id="menuOverlay">
     <nav>
