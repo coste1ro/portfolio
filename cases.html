@@ -244,7 +244,10 @@
       left: 40px; bottom: 0;
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
-      font-size: 8.2vw;
+      /* Matches .page-title (was 8.2vw — never updated when the real
+         title was standardized down to 4.2vw, so the clone showed at
+         roughly double the real title's size on desktop). */
+      font-size: 4.2vw;
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
@@ -254,6 +257,14 @@
       font-kerning: none;
       clip-path: inset(0 100% 0 0);
       transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    /* Placed after #preload-title on purpose — the main mobile media
+       query above comes earlier in the file, so an override placed
+       there would lose to this unconditional rule (same specificity,
+       later source order wins) and silently not apply. Same bug this
+       had on index.html. */
+    @media (max-width: 900px) {
+      #preload-title { font-size: 16vw; left: 24px; }
     }
 
     /* ── Cursor ── */
