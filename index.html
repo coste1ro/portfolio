@@ -275,6 +275,7 @@
        making the bar itself look thick. */
     .testimonial-pills {
       display: flex;
+      justify-content: center;
       gap: 8px;
       margin-top: 24px;
     }
@@ -305,27 +306,23 @@
     /* Desktop already has "Кейсы" in nav one scroll away — mobile is
        where this actually saves a trip back up after reading the
        recommendations, so it only shows there. */
+    /* Mobile-only closing CTA — same display-title weight as the hero
+       "UX / Product дизайнер" up top, so the page reads as ending on
+       an equally confident note instead of trailing off into a small
+       button. */
     .cta-cases {
       display: none;
       align-items: center;
-      justify-content: center;
-      width: 100px;
-      height: 100px;
-      margin: 32px auto 0;
-      border-radius: 50%;
-      border: 1px solid var(--fg);
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 14px;
-      letter-spacing: 0;
+      gap: 12px;
+      margin-top: 32px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 12vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
       text-transform: uppercase;
-      text-align: center;
       color: var(--fg);
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-    .cta-cases:hover {
-      background: var(--fg);
-      color: var(--bg);
+      font-kerning: none;
     }
 
     /* ── Responsive: collapse multi-column blocks to a single column,
@@ -508,7 +505,7 @@
       </div>
     </div>
 
-    <a href="cases.html" class="cta-cases">К&nbsp;кейсам</a>
+    <a href="cases.html" class="cta-cases">К&nbsp;кейсам →</a>
 
   </main>
 
