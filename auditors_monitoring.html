@@ -226,13 +226,18 @@
       }
 
       /* The one big title, shown once at the very top — not repeated
-         per section. Sized to fill edge-to-edge by fitMobileTitle(). */
+         per section. One fixed size shared by all three case pages
+         (not fit per-text) so "Design System" and "Installation Panel"
+         read as the same scale instead of each stretching to its own
+         text length. Calibrated against the longest title across the
+         three cases ("Installation Panel", measured in the real font)
+         so it never overflows down to a 320px-wide phone. */
       .mobile-title {
         display: block;
         margin: 80px 0 64px;
         padding: 0 24px;
         font-family: 'Montserrat', sans-serif;
-        font-weight: 200; font-size: clamp(32px, 13vw, 64px);
+        font-weight: 200; font-size: clamp(20px, calc(8.66vw - 4.16px), 48px);
         letter-spacing: 0.03em; line-height: 0.9;
         text-transform: uppercase; font-kerning: none;
       }
@@ -499,20 +504,6 @@
       applyFit();
       window.addEventListener('resize', applyFit);
       if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
-
-      // Mobile-only: fit the one big title edge-to-edge (24px each side),
-      // same measure-then-scale technique as the hero name on index.html —
-      // deterministic width regardless of how long the case's name is.
-      var mobileTitle = document.querySelector('.mobile-title');
-      function fitMobileTitle() {
-        if (!mobileTitle || document.documentElement.clientWidth > 900) return;
-        mobileTitle.style.fontSize = '200px';
-        var w = mobileTitle.getBoundingClientRect().width;
-        if (w > 0) mobileTitle.style.fontSize = (200 * (document.documentElement.clientWidth - 48) / w) + 'px';
-      }
-      fitMobileTitle();
-      window.addEventListener('resize', fitMobileTitle);
-      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitMobileTitle); }
 
       // Screens-strip horizontal scroll — only while that slide is the active one,
       // otherwise wheel input on another slide silently piles up as a strip offset
