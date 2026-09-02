@@ -205,12 +205,7 @@
     /* ── Testimonials: one recommendation at a time, sliding smoothly
        into the next — quieter than three full quotes stacked side by
        side. ── */
-    /* 66ch — the classic readable-line-length guideline (Bringhurst:
-       45-75 characters per line, ~66 as the sweet spot) — the quotes
-       were stretching edge-to-edge at full page width otherwise. */
     .testimonials {
-      max-width: 66ch;
-      margin: 0 auto;
       overflow: hidden;
     }
 
@@ -224,6 +219,11 @@
       min-width: 0;
     }
 
+    /* 66ch — the classic readable-line-length guideline (Bringhurst:
+       45-75 characters per line, ~66 as the sweet spot). Constrained
+       here on the text itself, not the sliding track — capping the
+       track's own width made it clip mid-slide, since each slide is
+       flex: 0 0 100% of it and the transform math depends on that. */
     .testimonial-quote {
       font-family: 'Jost', sans-serif;
       font-weight: 300;
@@ -232,7 +232,8 @@
       letter-spacing: 0;
       color: var(--fg);
       display: block;
-      margin-bottom: 16px;
+      max-width: 66ch;
+      margin: 0 auto 16px;
     }
 
     .testimonial-name {
@@ -243,6 +244,8 @@
       text-transform: uppercase;
       color: var(--fg);
       display: block;
+      max-width: 66ch;
+      margin: 0 auto;
     }
 
     /* Dots — one per real recommendation (not the loop clone). Click one
