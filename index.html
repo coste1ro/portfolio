@@ -24,19 +24,23 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+
+    /* Touch devices get the native edge-bounce so a scroll attempt reads
+       as "end of page" instead of a frozen screen. Desktop stays a hard-
+       locked poster — the bounce fought the horizontal card scrolling
+       there. Re-locked during the intro so the slide-up transform can't
+       flash a scrollable gap. */
+    @media (hover: none) and (pointer: coarse) {
+      html, body { overflow: visible; overscroll-behavior: auto; }
+      body.preloading,
+      html.entering body { overflow: hidden; }
+    }
+
     :root {
       --bg: #ffffff;
       --fg: #000000;
     }
-
-    /* Unlike the other pages, this one scrolls on desktop too — the hero
-       is only the first screen, About content follows below it. Scroll
-       is locked only during the intro animation (counter/slide), same
-       mechanism the mobile-only lock used to use before every page had
-       real scrollable content. */
-    html, body { height: 100%; overscroll-behavior: none; }
-    body.preloading,
-    html.entering body { overflow: hidden; }
 
     body {
       background: var(--bg);
@@ -57,8 +61,17 @@
       gap: 20px;
       z-index: 100;
     }
+
+    /* ── Contacts (second row, right — under nav) ── */
+    .contacts {
+      position: fixed;
+      top: 80px;
+      right: 40px;
+      display: flex;
+      gap: 20px;
+      z-index: 100;
+    }
     .nav-link {
-      font-family: 'Jost', sans-serif;
       font-weight: 300;
       font-size: 16px;
       letter-spacing: 0;
@@ -77,171 +90,58 @@
     .nav-link:hover::before,
     .nav-link:hover::after { opacity: 1; }
 
-    /* ── Contacts (second row, right — the theme switch's old slot) ── */
-    .contacts {
-      position: fixed;
-      top: 80px;
-      right: 40px;
-      display: flex;
-      gap: 20px;
-      z-index: 100;
-    }
-
-    /* ── Hero ── */
-    .hero {
+    /* ── Page ── */
+    .page {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      position: relative;
+      justify-content: space-between;
+      padding: 40px 40px 60px;
     }
 
-    .hero-bottom {
-      margin-top: auto;
-      padding-bottom: 40px;
+    /* ── Title ── */
+    .page-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 8.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: var(--fg);
+      font-kerning: none;
     }
 
-    .hero-subtitle {
-      font-family: 'Jost', sans-serif;
+    /* ── Education ── */
+    .education {
+      display: grid;
+      grid-template-columns: 310fr 1010fr;
+      gap: 0 40px;
+      align-items: start;
+    }
+
+    .education-label {
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      padding-top: 3px;
+    }
+
+    .education-text {
       font-weight: 300;
       font-size: 20px;
       line-height: 1.2;
       letter-spacing: 0;
       color: var(--fg);
-      padding: 0 40px;
     }
 
-    .hero-intro {
-      margin-bottom: 24px;
-    }
-
-    /* CTA — the one explicit "here's where the work is" prompt on the
-       whole site. A circle dead-center of the hero (that empty space
-       above the name was doing nothing), not a text link that could get
-       lost next to the subtitle. Outline by default, inverts solid on
-       hover — echoes the cursor ring being a circle too. Positioned
-       absolute against .hero (not fixed against the viewport) so it
-       scrolls away with the hero instead of floating over the About
-       content below once the page scrolls. */
-    .hero-cta {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 50;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: 1px solid var(--fg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 16px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 20px;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      color: var(--fg);
-      background: transparent;
-      transition: opacity 0.2s ease, background 0.25s ease, color 0.25s ease;
-    }
-    .hero-cta:hover {
-      background: var(--fg);
-      color: var(--bg);
-    }
-
-    .hero-name {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      font-size: 8.2vw;
-      letter-spacing: 0.03em;
-      line-height: 0.9;
-      text-transform: uppercase;
-      white-space: nowrap;
-      color: var(--fg);
-      padding: 0 40px;
-      display: block;
-      font-kerning: none;
-    }
-
-    /* ── Preloader ── */
-    nav { transition: opacity 0.35s ease; }
-    .hero-subtitle { transition: opacity 0.8s ease; }
-    body.preloading nav,
-    body.preloading .hero-subtitle,
-    body.preloading .hero-cta { opacity: 0; }
-
-    #preload {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 9000;
-      overflow: hidden;
-      transition: background 0.8s ease;
-    }
-    #preload-count {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 200;
-      font-size: 24px;
-      letter-spacing: 0.08em;
-      font-variant-numeric: tabular-nums;
-      color: var(--fg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    #preload-name {
-      position: absolute;
-      left: 0; top: 0;
-      padding: 0 40px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      font-size: 8.2vw;
-      letter-spacing: 0.03em;
-      line-height: 0.9;
-      text-transform: uppercase;
-      white-space: nowrap;
-      color: var(--fg);
-      transform: translateY(-50%);
-      font-kerning: none;
-      clip-path: inset(0 100% 0 0);
-      transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
-    }
-
-    .mobile-header { display: contents; }
-
-    /* ── Internal navigation intro ── */
-    .hero { transition: opacity 0.35s ease; }
-    .about { transition: opacity 0.35s ease; }
-    html.entering .hero { opacity: 0; }
-    html.no-motion nav,
-    html.no-motion .hero,
-    html.no-motion .about { transition: none !important; }
-
-    /* ── About (below the hero — bio, education, recommendations) ── */
-    .about {
-      padding: 120px 40px 80px;
-    }
-
-    .about-label {
-      font-weight: 200;
-      font-size: 24px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--fg);
-      display: block;
-      margin-bottom: 32px;
-    }
-
+    /* ── Bio ── */
     .bio {
       display: grid;
       grid-template-columns: 660fr 310fr 310fr;
       gap: 0 40px;
       align-items: start;
-      margin-bottom: 64px;
     }
 
     .bio-photo {
@@ -258,15 +158,6 @@
       line-height: 1.2;
       letter-spacing: 0;
       color: var(--fg);
-    }
-
-    .education-text {
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.2;
-      letter-spacing: 0;
-      color: var(--fg);
-      margin-bottom: 64px;
     }
 
     /* ── Testimonials (excerpts from written recommendations) ── */
@@ -298,73 +189,74 @@
       display: block;
     }
 
-    /* ── Mobile: hero name wraps to 2 lines (first/last name), left-
-       aligned, pinned a fixed 24px from the hero's own bottom edge.
-       hero-intro/hero-name/mobile-header are position:absolute against
-       .hero (not :fixed against the viewport, unlike the old
-       hero-only index.html) so the whole hero — nav included — scrolls
-       away together once the user scrolls into the About content below,
-       instead of staying permanently plastered over it. ── */
+    /* ── Responsive: collapse multi-column blocks to a single column,
+       and let .page's own flex gap handle spacing between the stacked
+       blocks (title → bio → education → testimonials — already the
+       right reading order in DOM, no reordering needed). ── */
     @media (max-width: 900px) {
-      .mobile-header {
-        display: flex; flex-direction: column; align-items: center;
-        position: absolute; top: 0; left: 0; right: 0; z-index: 100;
-        padding: 24px 24px 0;
-      }
-      nav, .contacts {
-        position: static; justify-content: center; padding: 0;
-      }
-      .contacts { margin-top: 16px; }
-
-      .hero-intro {
-        display: block;
-        position: absolute; top: 50%; left: 24px; right: 24px; transform: translateY(-50%);
-        width: 50%; margin: 0 auto; text-align: center;
-      }
-      .hero-subtitle { padding: 0; margin-bottom: 32px; }
-      .hero-cta {
-        position: static;
-        transform: none;
-        width: 130px;
-        height: 130px;
-        margin: 20px auto 0;
-        padding: 0 16px;
-      }
-      .hero-name {
-        position: absolute; left: 0; right: 0; bottom: 24px;
-      }
-      .hero-name, #preload-name {
-        white-space: normal; text-align: left; padding: 0 24px;
-        /* 0.9 (desktop's single-line value) leaves no room for
-           descenders once the name wraps to 2 stacked word blocks —
-           "Д"'s legs were touching the surname on the line below. */
-        line-height: 1.15;
-      }
-      /* Each word its own block, both flush against the same left edge —
-         guarantees they line up under each other instead of relying on
-         where the browser happens to wrap a single text run. width:
-         fit-content so the box (and getBoundingClientRect measurement in
-         fitName) shrink-wraps the text instead of stretching to the full
-         line width. letter-spacing redeclared here (not just inherited)
-         so the em value resolves against each word's own — independently
-         fit — font-size. */
-      .hero-name .word, #preload-name .word {
-        display: block; width: fit-content; letter-spacing: 0.03em;
-      }
-      /* Small optical correction: a pointed capital ("A") reads as sitting
-         further left than a flat-stemmed one ("B") directly below it even
-         when both boxes start at the same x. Nudge the first line in to
-         compensate. */
-      .hero-name .word:first-child, #preload-name .word:first-child {
-        margin-left: 0.02em;
-      }
-
-      .about { padding: 40px 24px 60px; }
-      .about-label { margin-bottom: 24px; }
-      .bio { grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+      /* Narrow windows (incl. a resized desktop, where the base poster
+         lock still applies) stack taller than the screen — let them
+         scroll instead of clipping. */
+      html, body { overflow-y: auto; }
+      /* Nav scrolls away with the content instead of staying fixed over
+         it — the page is tall enough here that a pinned overlay would
+         end up overlapping whatever scrolls underneath it. */
+      nav { position: static; justify-content: center; padding: 24px 24px 0; }
+      .contacts { position: static; justify-content: center; padding: 16px 24px 0; }
+      .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 40px 24px 60px; }
+      .page-title { font-size: 16vw; }
+      .bio { grid-template-columns: 1fr; gap: 24px; }
       .bio-photo { margin: 0 auto; }
-      .education-text { margin-bottom: 32px; }
+      .education { grid-template-columns: 1fr; gap: 12px; }
       .testimonials { grid-template-columns: 1fr; gap: 24px 0; }
+    }
+
+    /* ── Preloader ── */
+    nav { transition: opacity 0.35s ease; }
+    body.preloading nav { opacity: 0; }
+
+    /* ── Internal navigation intro ── */
+    .page { transition: opacity 0.35s ease; }
+    html.entering .page { opacity: 0; }
+    html.no-motion nav,
+    html.no-motion .page { transition: none !important; }
+
+    #preload {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9000;
+      overflow: hidden;
+      transition: background 0.6s ease;
+    }
+    #preload-count {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+      color: var(--fg);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #preload-title {
+      position: absolute;
+      left: 40px; bottom: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 8.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--fg);
+      transform: translateY(50%);
+      font-kerning: none;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     /* ── Cursor ── */
@@ -393,46 +285,38 @@
 <body>
 
   <div id="preload">
-    <span id="preload-name"><span class="word">АНДРЕЙ</span> <span class="word">БЕРЕГОВОЙ</span></span>
+    <span id="preload-title">Привет!</span>
     <span id="preload-count">000</span>
   </div>
 
-  <section class="hero">
-    <div class="mobile-header">
-      <nav>
-        <a href="index.html" class="nav-link">Обо мне</a>
-        <a href="cases.html" class="nav-link">Кейсы</a>
-      </nav>
+  <nav>
+    <a href="index.html" class="nav-link">Обо мне</a>
+    <a href="cases.html" class="nav-link">Кейсы</a>
+  </nav>
 
-      <div class="contacts">
-        <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Телеграм</a>
-        <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
-        <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
-      </div>
-    </div>
+  <div class="contacts">
+    <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Телеграм</a>
+    <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+    <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>CV</a>
+  </div>
 
-    <div class="hero-bottom">
-      <div class="hero-intro">
-        <p class="hero-subtitle">Дизайнер интерфейсов,<br>которые не&nbsp;нужно объяснять</p>
-        <a href="cases.html" class="hero-cta">К&nbsp;кейсам</a>
-      </div>
-      <span class="hero-name"><span class="word">АНДРЕЙ</span> <span class="word">БЕРЕГОВОЙ</span></span>
-    </div>
-  </section>
+  <main class="page">
 
-  <main class="about">
-    <span class="about-label">О себе</span>
+    <h1 class="page-title">Привет!</h1>
+
     <div class="bio">
       <picture>
         <source srcset="photo.webp" type="image/webp">
         <img class="bio-photo" src="photo.jpg" alt="Андрей Береговой" decoding="async">
       </picture>
-      <p class="bio-col">В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе. Поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками&nbsp;— от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
+      <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;продуктовый дизайнер. В&nbsp;дизайне с&nbsp;2023 года, а&nbsp;веб-дизайном и&nbsp;фронтендом занимался ещё в&nbsp;школе — поэтому одинаково нравится и&nbsp;продумывать логику, и&nbsp;собирать всё руками, от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
       <p class="bio-col">Три года работал над проектами для&nbsp;рынков США, Великобритании, ОАЭ и&nbsp;России: строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Сейчас открыт к&nbsp;новым задачам.</p>
     </div>
 
-    <span class="about-label">Образование</span>
-    <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского — «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна: практические навыки&nbsp;— через курсы и&nbsp;проекты. Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
+    <div class="education">
+      <span class="education-label">Образование</span>
+      <p class="education-text">Нижегородский государственный университет им.&nbsp;Н.И.&nbsp;Лобачевского — «Сервис и&nbsp;туризм / Гостиничное дело», 2021–2025. Не&nbsp;по&nbsp;специальности дизайна: практические навыки&nbsp;— через курсы и&nbsp;проекты. Digital-дизайн в&nbsp;SkyPro, продуктовый дизайн у&nbsp;Илоны Саркисовой (арт-директор VK Мессенджер), менторство Junior&nbsp;→ Middle у&nbsp;Михаила Розова.</p>
+    </div>
 
     <div class="testimonials">
       <div>
@@ -448,65 +332,25 @@
         <span class="testimonial-name">Илья — тимлид Action Engine</span>
       </div>
     </div>
+
   </main>
 
   <div id="cursor-outer"></div>
 
   <script>
     (function () {
-      const preload  = document.getElementById('preload');
-      const countEl  = document.getElementById('preload-count');
-      const nameEl   = document.getElementById('preload-name');
-      const realName = document.querySelector('.hero-name');
-      const navEl    = document.querySelector('nav');
-      const subEl    = document.querySelector('.hero-subtitle');
-      const ctaEl    = document.querySelector('.hero-cta');
-      const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // Size the name so its text fills the viewport width minus margin each
-      // side. On mobile the name splits into two lines (first/last name),
-      // each independently stretched to fill the full width.
-      function fitName(el) {
-        const mobile = document.documentElement.clientWidth <= 900;
-        const words = el.querySelectorAll('.word');
-        if (mobile && words.length) {
-          // Each line independently stretched edge-to-edge — name and
-          // surname get their own font-size rather than sharing one sized
-          // to whichever word is wider.
-          const avail = document.documentElement.clientWidth - 48;
-          words.forEach(function (word) {
-            word.style.fontSize = '200px';
-            const w = word.getBoundingClientRect().width;
-            if (w > 0) word.style.fontSize = (200 * avail / w) + 'px';
-          });
-          return;
-        }
-        el.style.fontSize = '200px';
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const w = range.getBoundingClientRect().width;
-        if (w > 0) el.style.fontSize = (200 * (document.documentElement.clientWidth - 80) / w) + 'px';
-      }
-      window.addEventListener('resize', function () { fitName(realName); });
-
-      // Copies fitted sizing from the real name onto the #preload-name
-      // clone. On mobile each word carries its own independent font-size
-      // (not the wrapping element), so copy per word instead of once.
-      function copyNameSize(from, to) {
-        const mobile = document.documentElement.clientWidth <= 900;
-        if (mobile) {
-          const fromWords = from.querySelectorAll('.word');
-          const toWords = to.querySelectorAll('.word');
-          fromWords.forEach(function (w, i) { if (toWords[i]) toWords[i].style.fontSize = w.style.fontSize; });
-          return;
-        }
-        to.style.fontSize = from.style.fontSize;
-      }
+      const preload   = document.getElementById('preload');
+      const countEl   = document.getElementById('preload-count');
+      const titleEl   = document.getElementById('preload-title');
+      const realTitle = document.querySelector('.page-title');
+      const navEl     = document.querySelector('nav');
+      const pageEl    = document.querySelector('.page');
+      const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Internal nav between here and CASES dissolves the current screen
       // out; the destination page plays a fast version of the entry intro
-      // (name slides into place, no counter). The full intro with counter
-      // only plays on a real entry (external link or reload).
+      // (title slides up into place, no counter). The full intro with
+      // counter only plays on a real entry (external link or reload).
       function currentFile() {
         const p = location.pathname.split('/').pop();
         return (p === '' ? 'index.html' : p).replace(/\.html$/, '');
@@ -514,11 +358,8 @@
       let navBusy = false;
       (function bindNavTransition() {
         const here = currentFile();
-        const heroEl = document.querySelector('.hero');
-        const aboutEl = document.querySelector('.about');
-        // .hero-cta included too — same fade-then-navigate treatment as
-        // an actual nav click, since it goes to the same place (cases.html).
-        document.querySelectorAll('nav a, .hero-cta').forEach(function (a) {
+        const mainEl = document.querySelector('.page');
+        document.querySelectorAll('nav a').forEach(function (a) {
           if (a.hasAttribute('download')) return;
           const href = a.getAttribute('href');
           if (href.replace(/\.html$/, '') === here) {
@@ -531,12 +372,10 @@
             navBusy = true;
             try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
             if (reduce) { window.location.href = href; return; }
-            // Nav and contacts stay put throughout the whole transition;
-            // hero and the About content below both fade.
-            heroEl.style.transition = 'opacity 0.35s ease';
-            heroEl.style.opacity = '0';
-            aboutEl.style.transition = 'opacity 0.35s ease';
-            aboutEl.style.opacity = '0';
+            // Only the page content fades — nav stays put throughout the
+            // whole transition.
+            mainEl.style.transition = 'opacity 0.35s ease';
+            mainEl.style.opacity = '0';
             setTimeout(function () { window.location.href = href; }, 350);
           });
         });
@@ -556,138 +395,88 @@
       const canShow = shouldPreload();
 
       if (reduce) {
-        // Fit once, after the real font is actually ready — not before
-        // and then again. This name is visible immediately (no opacity
-        // hide on the reduced-motion path), so calling fitName twice
-        // meant a real, visible resize: once against fallback-font
-        // metrics, then again once Montserrat loaded.
-        function showReduced() {
-          fitName(realName);
-          preload.remove();
-          clearEnterState();
-        }
-        if (document.fonts && document.fonts.ready) {
-          Promise.race([
-            document.fonts.ready,
-            new Promise(function (r) { setTimeout(r, 1500); })
-          ]).then(showReduced);
-        } else {
-          showReduced();
-        }
+        preload.remove();
+        clearEnterState();
         return;
       }
 
       document.body.classList.add('preloading');
-      realName.style.opacity = '0';
 
-      function reveal() {
-        navEl.style.opacity = '1';
-        subEl.style.opacity = '1';
-        if (ctaEl) ctaEl.style.opacity = '1';
-        realName.style.opacity = '1';
-        document.body.classList.remove('preloading');
-        preload.remove();
-      }
+      // Slides the whole page — title and content together, as one rigid
+      // block — from a half-visible-at-bottom start up into its natural
+      // resting position. Since the content sits inside .page, it can never
+      // drift out of sync with the title or visually collide with it: it's
+      // the exact same transform, not two separately-animated pieces.
+      function slidePageIn() {
+        const r = realTitle.getBoundingClientRect();
+        const startY = window.innerHeight - (r.top + r.height / 2);
+        pageEl.style.transition = 'none';
+        pageEl.style.transform = 'translateY(' + startY + 'px)';
+        void pageEl.offsetHeight; // commit the instant position before animating away from it
 
-      function move() {
         preload.style.background = 'transparent';
         preload.style.pointerEvents = 'none';
+        navEl.style.opacity = '1';
+        document.documentElement.classList.remove('entering');
 
-        const cur = nameEl.getBoundingClientRect();
-        const tgt = realName.getBoundingClientRect();
-        const dx = tgt.left - cur.left;
-        const dy = tgt.top  - cur.top;
-        nameEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
-        nameEl.style.transform = 'translateY(-50%) translate(' + dx + 'px,' + dy + 'px)';
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            pageEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
+            pageEl.style.transform = 'translateY(0)';
+          });
+        });
 
-        // Reveal each element as the descending name sweeps past its position.
-        const navLine = navEl.getBoundingClientRect().bottom;
-        const subLine = subEl.getBoundingClientRect().top;
-        let navShown = false, subShown = false, moving = true;
-        (function pass() {
-          const top = nameEl.getBoundingClientRect().top;
-          if (!navShown && top >= navLine) { navShown = true; navEl.style.opacity = '1'; }
-          if (!subShown && top >= subLine) { subShown = true; subEl.style.opacity = '1'; if (ctaEl) ctaEl.style.opacity = '1'; }
-          if (moving) requestAnimationFrame(pass);
-        })();
-
-        setTimeout(function () { moving = false; reveal(); }, 1000);
+        setTimeout(function () {
+          document.body.classList.remove('preloading');
+          preload.remove();
+          // Drop the transform once settled — leaving it (even at an
+          // identity translateY(0)) makes .page a containing block for any
+          // position:fixed descendant, pinning it to .page's box instead
+          // of the true viewport.
+          pageEl.style.transform = '';
+        }, 1000);
       }
 
+      if (!canShow) {
+        // Internal nav: nav never hides, it's shown right away. No counter,
+        // no clone — just slide the real page into place, so there's
+        // motion on screen from the first frame instead of a blank gap
+        // before the page appears.
+        slidePageIn();
+        return;
+      }
+
+      // Full entry: counter + clone letter-reveal (masked by #preload's
+      // opaque background), then hand off to the same slide as fast-intro.
       function finish() {
         countEl.style.opacity = '0';
-        setTimeout(move, 300);
+        setTimeout(function () {
+          titleEl.style.opacity = '0';
+          slidePageIn();
+        }, 300);
       }
 
       function run() {
         countEl.style.opacity = '1';
         const DURATION = 2200;
         const start = performance.now();
-        let nameShown = false;
+        let titleShown = false;
         (function frame(now) {
           const t = Math.min((now - start) / DURATION, 1);
           countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
-          if (t >= 0.5 && !nameShown) {
-            nameShown = true;
-            nameEl.style.clipPath = 'inset(0 0% 0 0)';
+          if (t >= 0.5 && !titleShown) {
+            titleShown = true;
+            titleEl.style.clipPath = 'inset(0 0% 0 0)';
           }
           if (t < 1) requestAnimationFrame(frame);
           else finish();
         })(start);
       }
 
-      function begin() {
-        fitName(realName);
-        copyNameSize(realName, nameEl);
-        run();
-      }
-
-      if (!canShow) {
-        // Internal nav: nav (and contacts, which never hides) is shown
-        // right away. Skip the counter, show the name already fully formed
-        // at its half-visible top position, then run the same
-        // slide-into-place used by the full intro — so there's motion on
-        // screen from the first frame instead of a blank gap before the
-        // page dissolves in.
-        clearEnterState();
-        navEl.style.opacity = '1';
-        // move() measures realName's target position, which depends on
-        // .hero-intro's rendered height (subtitle + CTA, in Jost) — if
-        // Jost/Montserrat haven't swapped in yet at this exact instant,
-        // that measurement is against fallback-font metrics. The layout
-        // then shifts once the real font loads a moment later, but the
-        // clone's transform is already locked onto the stale position —
-        // the name visibly drifts/lands wrong. Same fonts.ready guard as
-        // the full intro fixes it; the wait is near-instant in practice
-        // since these fonts are already cached from the page just left,
-        // so it doesn't meaningfully undercut the "motion from frame one"
-        // intent above — a short local timeout still caps the worst case.
-        function startFast() {
-          fitName(realName);
-          copyNameSize(realName, nameEl);
-          countEl.remove();
-          nameEl.style.transition = 'none';
-          nameEl.style.clipPath = 'inset(0 0% 0 0)';
-          requestAnimationFrame(move);
-        }
-        if (document.fonts && document.fonts.ready) {
-          Promise.race([
-            document.fonts.ready,
-            new Promise(function (r) { setTimeout(r, 300); })
-          ]).then(startFast);
-        } else {
-          startFast();
-        }
-        return;
-      }
-
       if (document.fonts && document.fonts.ready) {
-        Promise.race([
-          document.fonts.ready,
-          new Promise(function (r) { setTimeout(r, 1500); })
-        ]).then(begin);
+        Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(run);
       } else {
-        begin();
+        run();
       }
     })();
   </script>
