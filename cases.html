@@ -69,15 +69,25 @@
       z-index: 100;
     }
 
-    /* ── Contacts (second row, right — under nav) ── */
+    /* ── Contacts: small footer-style bar pinned to the bottom edge —
+       Telegram left, CV centered, email right. A 3-column grid (not
+       flex + space-between) so the center link sits at the true
+       midpoint regardless of the other two links' differing widths. */
     .contacts {
       position: fixed;
-      top: 80px;
+      left: 40px;
       right: 40px;
-      display: flex;
-      gap: 20px;
+      bottom: 40px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
       z-index: 100;
     }
+    /* DOM order stays Скачать CV / Telegram / Почта (mobile menu reads
+       it in that order) — only the desktop grid position is reordered. */
+    .contacts a:nth-child(1) { order: 2; justify-self: center; }
+    .contacts a:nth-child(2) { order: 1; justify-self: start; }
+    .contacts a:nth-child(3) { order: 3; justify-self: end; }
 
     /* No-op on desktop — nav/contacts render exactly as before, this
        wrapper only becomes an actual box on mobile (see media query). */
@@ -142,7 +152,9 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 40px;
+      /* Bottom padding raised from 40px so the case grid clears the
+         fixed contacts footer instead of sitting right on top of it. */
+      padding: 40px 40px 140px;
     }
 
     .page-title {
@@ -320,10 +332,19 @@
       .menu-overlay nav,
       .menu-overlay .contacts {
         position: static;
+        display: flex;
         flex-direction: column;
         align-items: flex-start;
         gap: 20px;
         padding: 0;
+      }
+      /* .contacts is a 3-column grid on desktop (see base rule) — reset
+         back to plain stacked flex order here instead of inheriting it. */
+      .menu-overlay .contacts a:nth-child(1),
+      .menu-overlay .contacts a:nth-child(2),
+      .menu-overlay .contacts a:nth-child(3) {
+        order: 0;
+        justify-self: auto;
       }
       .menu-overlay .nav-link {
         font-weight: 200;
