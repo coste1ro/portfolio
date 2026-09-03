@@ -164,7 +164,11 @@
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 0 40px;
-      align-items: start;
+      /* Photo+pill (one taller grid item) used to top-align with the
+         two text columns, so the shorter paragraphs read closer to the
+         top of that block than the bottom — center everything on the
+         row instead. */
+      align-items: center;
     }
 
     /* Fluid but capped, and shown at its natural aspect ratio (no
