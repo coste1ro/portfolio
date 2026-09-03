@@ -112,6 +112,14 @@
     .mobile-title { display: none; }
     /* Mobile-only closing link back to the cases grid. */
     .mobile-back { display: none; }
+    /* Mobile-only pinch-to-zoom hint for the two diagram slides
+       (process, user-flow) — native pinch-zoom already works (nothing
+       in this page's viewport meta or CSS blocks it), this just makes
+       that discoverable per Apple's own scroll-view guidance ("let
+       people pinch or double-tap to zoom in and out" — developer.
+       apple.com/design/human-interface-guidelines/components/
+       presentation/scroll-views). */
+    .mobile-zoom-hint { display: none; }
 
     /* ── Shared: wheel-driven horizontal pan (wide tables, IA, user-flow) ── */
     .hscroll-viewport { overflow: hidden; }
@@ -554,22 +562,202 @@
       /* Process diagram: its text scales with the SVG's viewBox, so
          shrinking it to the phone's width would make every label
          unreadable — keep it at a fixed, legible height and let it
-         scroll horizontally instead. */
+         scroll horizontally instead. 500px is calibrated against the
+         smallest real text in the diagram (.process-item, 22px in the
+         SVG's own 720-tall coordinate space): 720 * (15/22) ≈ 491px is
+         the height needed for that label to render at ~15px, Apple's
+         own ~11pt/15px minimum legible size. */
       .process-wrap {
         position: static; transform: none !important;
         overflow-x: auto; -webkit-overflow-scrolling: touch;
       }
-      .process-wrap svg { width: auto; height: 300px; max-width: none; }
+      .process-wrap svg { width: auto; height: 500px; max-width: none; }
+      .mobile-zoom-hint {
+        display: block;
+        margin-bottom: 16px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 13px;
+        color: var(--fg); opacity: 0.5;
+      }
 
-      /* Generic wide-content treatment: every already-pannable table/
-         diagram just swaps the desktop wheel-driven translateX for
-         native touch scroll — same markup, same classes. */
+      /* Generic wide-content treatment: content with no tabular
+         structure (the process/user-flow diagrams) keeps the desktop
+         wheel-driven translateX swapped for native touch scroll — same
+         markup, same classes. Apple's HIG explicitly notes wide tables
+         "can be difficult to read and scan" on small screens and
+         recommends the single-column scrolling-list pattern instead
+         (developer.apple.com/design/human-interface-guidelines/
+         components/layout-and-organization/tables) — so the four real
+         data tables (competitors, reviews, CJM x2, testing) get pulled
+         out of this generic rule below and rebuilt as stacked card
+         lists instead of staying wide+scrollable. */
       .hscroll-viewport {
         position: static !important; transform: none !important;
         overflow-x: auto; overflow-y: visible;
         -webkit-overflow-scrolling: touch;
       }
       .hscroll-track { transform: none !important; width: max-content; }
+
+      /* Tables -> card lists. No horizontal scroll for these four —
+         each becomes a plain-list of grouped cards, one per row, cell
+         values labeled via the data-label attributes added to the
+         markup. Same underlying data, just re-presented so it reads at
+         a glance instead of needing a sideways scroll + zoom. */
+      .competitors-table-wrap,
+      .reviews-table-wrap,
+      .cjm-wrap {
+        overflow: visible;
+      }
+      .competitors-table,
+      .reviews-table,
+      .cjm-table,
+      .testing-table {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        border-collapse: collapse;
+      }
+      .competitors-table thead,
+      .reviews-table thead,
+      .cjm-table thead,
+      .testing-table thead {
+        display: none;
+      }
+      .competitors-table tbody,
+      .reviews-table tbody,
+      .cjm-table tbody,
+      .testing-table tbody {
+        display: block;
+      }
+      .competitors-table tr,
+      .reviews-table tr,
+      .cjm-table tr,
+      .testing-table tr {
+        display: block;
+        background: rgba(79, 70, 229, 0.05);
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      .competitors-table tr:last-child,
+      .reviews-table tr:last-child,
+      .cjm-table tr:last-child,
+      .testing-table tr:last-child {
+        margin-bottom: 0;
+      }
+      .competitors-table td,
+      .reviews-table td,
+      .cjm-table td,
+      .testing-table td {
+        display: block;
+        height: auto;
+        text-align: left;
+        vertical-align: top;
+      }
+      /* Card heading: the row's identity cell (service logo, CJM's
+         aspect name, testing's step number). Real DOM text where it
+         already exists (row-label, row-num); the logo cells only carry
+         an <img alt>, so a data-name attribute (added alongside the
+         data-label ones) supplies visible text via ::after. Fixed
+         mobile-safe sizes throughout this card system rather than the
+         vw-clamped --fs-* scale, which bottoms out at 9-10px on a
+         phone — under Apple's own 11pt (~15px) minimum legible size
+         (developer.apple.com/design/human-interface-guidelines/
+         foundations/typography). */
+      .competitors-table td.logo-cell,
+      .reviews-table td.logo-cell,
+      .cjm-table td.row-label,
+      .testing-table td.row-num {
+        padding: 0 0 16px;
+        border-bottom: 1px solid rgba(79, 70, 229, 0.25);
+        margin-bottom: 16px;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300;
+        font-size: 18px;
+        line-height: 1.2;
+        color: var(--fg);
+      }
+      .competitors-table td.logo-cell img,
+      .reviews-table td.logo-cell img {
+        display: block;
+        width: 32px; height: 32px;
+        object-fit: contain;
+        margin-bottom: 10px;
+      }
+      .competitors-table td.logo-cell::after,
+      .reviews-table td.logo-cell::after {
+        content: attr(data-name);
+      }
+      .cjm-table td.row-label .cjm-text,
+      .testing-table td.row-num .testing-text {
+        font-size: 18px;
+      }
+      /* Targets the paragraph, not the td — a ::before on the td itself
+         (inline by default) would sit on its own line above the
+         nested block-level <p>, instead of reading "Шаг 1" together. */
+      .testing-table td.row-num .testing-text::before { content: 'Шаг '; }
+
+      /* Competitors: short values (a status dot) read fine as a
+         label-left / value-right row, the same shape as an iOS
+         grouped-table cell. */
+      .competitors-table td[data-label] {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+      }
+      .competitors-table td[data-label]:last-child { border-bottom: 0; }
+      .competitors-table td[data-label]::before {
+        content: attr(data-label);
+        font-family: 'Jost', sans-serif;
+        font-weight: 300;
+        font-size: 14px;
+        line-height: 1.3;
+        color: var(--fg);
+        opacity: 0.6;
+        padding-right: 16px;
+      }
+
+      /* Reviews/CJM/testing: values are sentence-length text, so the
+         label sits above it instead of squeezed onto the same line. */
+      .reviews-table td[data-label],
+      .cjm-table td[data-label],
+      .testing-table td[data-label] {
+        padding: 12px 0 0;
+      }
+      /* The identity cell (index 0) is always followed immediately by
+         the first labeled cell at index 1 — :first-of-type doesn't work
+         here since it'd need an element that's both the first <td>
+         sibling *and* carries data-label, which the identity cell never
+         does. */
+      .reviews-table td:nth-of-type(2)[data-label],
+      .cjm-table td:nth-of-type(2)[data-label],
+      .testing-table td:nth-of-type(2)[data-label] {
+        padding-top: 0;
+      }
+      .reviews-table td[data-label]::before,
+      .cjm-table td[data-label]::before,
+      .testing-table td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--fg);
+        opacity: 0.5;
+        margin-bottom: 6px;
+      }
+      .reviews-text, .cjm-text, .testing-text { font-size: 15px; }
+
+      /* Legend: was a single nowrap row justified to the right — wraps
+         to nothing but overflow on a phone. Fixed 15px (not --fs-small,
+         which floors at 10px) for the same 11pt-minimum reason as the
+         table cards above. */
+      .competitors-legend {
+        flex-direction: column; align-items: flex-start;
+        gap: 8px;
+        white-space: normal;
+        font-size: 15px;
+      }
 
       .competitors-wrap {
         position: static; transform: none !important;
@@ -592,19 +780,18 @@
         position: static; transform: none !important;
         display: flex; flex-direction: column; align-items: stretch; gap: 32px;
       }
-
-      /* CJM/testing use table-layout: fixed, which needs an explicit
-         width to size against — the desktop vw values shrink to
-         nothing on a phone, so give them a fixed px width sized for
-         their column count and let the horizontal scroll above handle
-         the rest. */
-      .cjm-table { width: 1500px; height: auto; }
-      .testing-table { width: 1100px; }
+      /* Same --fs-small floor issue as the tables — these cards stay
+         visible on both the archetypes and forces slides. */
+      .archetype-card-field-label, .archetype-card-list { font-size: 15px; }
 
       /* IA columns read fine linearized — each is a self-contained
-         branch of the tree — so stack instead of horizontal-scrolling. */
+         branch of the tree, closer to a nested/grouped list (like
+         Settings.app) than a comparison matrix — so stack instead of
+         horizontal-scrolling, per the same HIG table guidance above. */
       .ia-wrap { overflow: visible; }
       .ia-columns { flex-direction: column; gap: 32px; width: auto; }
+      /* --fs-nav floors at 14px, just under the 11pt/~15px minimum. */
+      .ia-item, .ia-leaf { font-size: 15px; }
       .ia-col { width: 100%; flex-shrink: 1; }
 
       /* JTBD: the interleaved 4-column grid + divider only make sense
@@ -618,9 +805,11 @@
         margin-top: 16px;
       }
 
-      /* User-flow: same fixed-height horizontal-scroll treatment as
-         the process SVG, just a bit shorter. */
-      .userflow-wrap img { height: 420px; }
+      /* User-flow: same horizontal-scroll treatment as the process SVG
+         — no height override needed here, it already inherits the
+         desktop 620px from the unconditional base rule, which is
+         legible; shrinking it for "mobile" was backwards, since the
+         only thing that changes is scroll width, not viewing distance. */
 
       /* UI screens strip: same card-stack treatment as
          installation_panel.html's strip. */
@@ -628,12 +817,19 @@
       .strip-track { flex-direction: column; align-items: stretch; gap: 32px; width: auto; }
       .strip-item { flex: none; width: 100%; }
 
-      /* Testing: intro text + screenshot scroll alongside the results
-         table as one horizontal strip — give the vw-sized intro column
-         and screenshot fixed widths instead, since vw shrinks to
-         nothing on a phone. */
-      .testing-intro-text { width: 280px; }
-      .testing-screens { width: 320px; }
+      /* Testing: was one horizontal strip (intro text + screenshot
+         alongside the results table) — the table's now a card list
+         (see above), so stack the intro above it instead of scrolling
+         both sideways together. */
+      .testing-viewport { overflow: visible; }
+      .testing-track {
+        flex-direction: column; align-items: stretch; gap: 32px;
+        width: auto;
+      }
+      .testing-intro { flex: none; }
+      .testing-intro-text { width: 100%; }
+      .testing-screens { width: 100%; height: auto; }
+      .testing-table-wrap { flex: none; }
 
       .insights-wrap { position: static; transform: none !important; }
       .insights-grid { display: flex; flex-direction: column; align-items: stretch; gap: 32px; }
@@ -705,6 +901,7 @@
     <!-- ── SLIDE 2 — ДИЗАЙН-ПРОЦЕСС ── -->
     <section class="slide slide-process">
       <div class="eyebrow">Процесс</div>
+      <p class="mobile-zoom-hint">Схема шире экрана — разведите пальцы, чтобы приблизить</p>
       <div class="process-wrap fit-wrap">
         <svg viewBox="0 0 2190 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема дизайн-процесса: Discover, Define, Design, Test, Handoff, Design Review">
         <defs>
@@ -802,88 +999,88 @@
             </thead>
             <tbody>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
+                <td class="logo-cell" data-name="YouTube"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
+                <td data-label="Контекст входа"><span class="status-dot hi"></span></td>
+                <td data-label="Навязчивость"><span class="status-dot hi"></span></td>
+                <td data-label="Понятность ценности"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot hi"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot hi"></span></td>
+                <td data-label="Пробный период"><span class="status-dot hi"></span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot hi"></span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot hi"></span></td>
+                <td data-label="Понятность отмены"><span class="status-dot hi"></span></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-vk.png" alt="VK Видео"></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot na">—</span></td>
-                <td><span class="status-dot na">—</span></td>
+                <td class="logo-cell" data-name="VK Видео"><img src="projects/rutube/logo-vk.png" alt="VK Видео"></td>
+                <td data-label="Контекст входа"><span class="status-dot na">—</span></td>
+                <td data-label="Навязчивость"><span class="status-dot na">—</span></td>
+                <td data-label="Понятность ценности"><span class="status-dot na">—</span></td>
+                <td data-label="Free vs Paid"><span class="status-dot hi"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot na">—</span></td>
+                <td data-label="Пробный период"><span class="status-dot na">—</span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot na">—</span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot na">—</span></td>
+                <td data-label="Понятность отмены"><span class="status-dot na">—</span></td>
               </tr>
               <tr class="group-break">
-                <td class="logo-cell"><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск"></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
+                <td class="logo-cell" data-name="Кинопоиск"><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск"></td>
+                <td data-label="Контекст входа"><span class="status-dot hi"></span></td>
+                <td data-label="Навязчивость"><span class="status-dot mid"></span></td>
+                <td data-label="Понятность ценности"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot lo"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot hi"></span></td>
+                <td data-label="Пробный период"><span class="status-dot hi"></span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot mid"></span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot hi"></span></td>
+                <td data-label="Понятность отмены"><span class="status-dot mid"></span></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-ivi.png" alt="Иви"></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
+                <td class="logo-cell" data-name="Иви"><img src="projects/rutube/logo-ivi.png" alt="Иви"></td>
+                <td data-label="Контекст входа"><span class="status-dot hi"></span></td>
+                <td data-label="Навязчивость"><span class="status-dot mid"></span></td>
+                <td data-label="Понятность ценности"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot lo"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot hi"></span></td>
+                <td data-label="Пробный период"><span class="status-dot hi"></span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot hi"></span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot hi"></span></td>
+                <td data-label="Понятность отмены"><span class="status-dot mid"></span></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
+                <td class="logo-cell" data-name="Okko"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
+                <td data-label="Контекст входа"><span class="status-dot hi"></span></td>
+                <td data-label="Навязчивость"><span class="status-dot mid"></span></td>
+                <td data-label="Понятность ценности"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot lo"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot hi"></span></td>
+                <td data-label="Пробный период"><span class="status-dot hi"></span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot hi"></span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot hi"></span></td>
+                <td data-label="Понятность отмены"><span class="status-dot mid"></span></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot hi"></span></td>
-                <td><span class="status-dot hi"></span></td>
+                <td class="logo-cell" data-name="PREMIER"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
+                <td data-label="Контекст входа"><span class="status-dot hi"></span></td>
+                <td data-label="Навязчивость"><span class="status-dot mid"></span></td>
+                <td data-label="Понятность ценности"><span class="status-dot mid"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot mid"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot hi"></span></td>
+                <td data-label="Пробный период"><span class="status-dot hi"></span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot mid"></span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot hi"></span></td>
+                <td data-label="Понятность отмены"><span class="status-dot hi"></span></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-smotrim.png" alt="Смотрим"></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot lo"></span></td>
-                <td><span class="status-dot mid"></span></td>
-                <td><span class="status-dot lo"></span></td>
+                <td class="logo-cell" data-name="Смотрим"><img src="projects/rutube/logo-smotrim.png" alt="Смотрим"></td>
+                <td data-label="Контекст входа"><span class="status-dot lo"></span></td>
+                <td data-label="Навязчивость"><span class="status-dot lo"></span></td>
+                <td data-label="Понятность ценности"><span class="status-dot mid"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot mid"></span></td>
+                <td data-label="Прозрачность цены"><span class="status-dot mid"></span></td>
+                <td data-label="Пробный период"><span class="status-dot lo"></span></td>
+                <td data-label="Кол-во шагов до оформления"><span class="status-dot lo"></span></td>
+                <td data-label="Удобство оплаты"><span class="status-dot mid"></span></td>
+                <td data-label="Понятность отмены"><span class="status-dot lo"></span></td>
               </tr>
             </tbody>
           </table>
@@ -915,53 +1112,53 @@
             </thead>
             <tbody>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
-                <td><p class="reviews-text">огромный выбор контента<br>удобный плеер<br>лучшие рекомендации</p></td>
-                <td><p class="reviews-text">реклама, «дожим на&nbsp;премиум»<br>политика модерации<br>иногда сбоит в&nbsp;РФ</p></td>
-                <td><p class="reviews-text">умные настройки</p></td>
-                <td><p class="reviews-text">ценят за&nbsp;отсутствие рекламы + офлайн-функции</p></td>
+                <td class="logo-cell" data-name="YouTube"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
+                <td data-label="Нравится"><p class="reviews-text">огромный выбор контента<br>удобный плеер<br>лучшие рекомендации</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">реклама, «дожим на&nbsp;премиум»<br>политика модерации<br>иногда сбоит в&nbsp;РФ</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">умные настройки</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">ценят за&nbsp;отсутствие рекламы + офлайн-функции</p></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-vk.png" alt="VK Видео"></td>
-                <td><p class="reviews-text">доступность<br>эксклюзивный ру контент<br>VK экосистема</p></td>
-                <td><p class="reviews-text">нерелевантные рекомендации<br>реклама<br>глюки, баги, лаги</p></td>
-                <td><p class="reviews-text">офлайн-функции</p></td>
-                <td><p class="reviews-text">—</p></td>
+                <td class="logo-cell" data-name="VK Видео"><img src="projects/rutube/logo-vk.png" alt="VK Видео"></td>
+                <td data-label="Нравится"><p class="reviews-text">доступность<br>эксклюзивный ру контент<br>VK экосистема</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">нерелевантные рекомендации<br>реклама<br>глюки, баги, лаги</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">офлайн-функции</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">—</p></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск"></td>
-                <td><p class="reviews-text">кино+всё на&nbsp;свете<br>качество контента<br>удобно яндекс юзерам</p></td>
-                <td><p class="reviews-text">слабый каталог<br>дорогие доп пакеты<br>автопродления/списания</p></td>
-                <td><p class="reviews-text">тонкие настройки плеера<br>подписка ≠ всё включено</p></td>
-                <td><p class="reviews-text">выгодно, если&nbsp;Плюс и&nbsp;так нужен</p></td>
+                <td class="logo-cell" data-name="Кинопоиск"><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск"></td>
+                <td data-label="Нравится"><p class="reviews-text">кино+всё на&nbsp;свете<br>качество контента<br>удобно яндекс юзерам</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">слабый каталог<br>дорогие доп пакеты<br>автопродления/списания</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">тонкие настройки плеера<br>подписка ≠ всё включено</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">выгодно, если&nbsp;Плюс и&nbsp;так нужен</p></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-ivi.png" alt="Иви"></td>
-                <td><p class="reviews-text">большой каталог<br>удобство фильтрации<br>акции/промо</p></td>
-                <td><p class="reviews-text">«неожиданные списания»<br>вторая касса (часть контента платная даже при&nbsp;подписке)</p></td>
-                <td><p class="reviews-text">отключение автопродления</p></td>
-                <td><p class="reviews-text">скидки<br>«ловушка на&nbsp;автоплатёж»</p></td>
+                <td class="logo-cell" data-name="Иви"><img src="projects/rutube/logo-ivi.png" alt="Иви"></td>
+                <td data-label="Нравится"><p class="reviews-text">большой каталог<br>удобство фильтрации<br>акции/промо</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">«неожиданные списания»<br>вторая касса (часть контента платная даже при&nbsp;подписке)</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">отключение автопродления</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">скидки<br>«ловушка на&nbsp;автоплатёж»</p></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
-                <td><p class="reviews-text">качество контента<br>широкие разделы<br>экосистемные пакеты</p></td>
-                <td><p class="reviews-text">вторая касса<br>автозапуск трейлеров<br>«было дёшево, стало дорого» (эффект акции)</p></td>
-                <td><p class="reviews-text">бесплатный контент<br>«подписка + отдельные покупки» — это норм</p></td>
-                <td><p class="reviews-text">ожидание «всё включено»</p></td>
+                <td class="logo-cell" data-name="Okko"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
+                <td data-label="Нравится"><p class="reviews-text">качество контента<br>широкие разделы<br>экосистемные пакеты</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">вторая касса<br>автозапуск трейлеров<br>«было дёшево, стало дорого» (эффект акции)</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">бесплатный контент<br>«подписка + отдельные покупки» — это норм</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">ожидание «всё включено»</p></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
-                <td><p class="reviews-text">дёшево<br>эксклюзивы ТНТ</p></td>
-                <td><p class="reviews-text">узкий контент, подписка ради одного сериала<br>слабый поиск</p></td>
-                <td><p class="reviews-text">нишевый сервис, не&nbsp;универсальный кинотеатр</p></td>
-                <td><p class="reviews-text">качество приложения ≠ цена<br>автопродление раздражает</p></td>
+                <td class="logo-cell" data-name="PREMIER"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
+                <td data-label="Нравится"><p class="reviews-text">дёшево<br>эксклюзивы ТНТ</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">узкий контент, подписка ради одного сериала<br>слабый поиск</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">нишевый сервис, не&nbsp;универсальный кинотеатр</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">качество приложения ≠ цена<br>автопродление раздражает</p></td>
               </tr>
               <tr>
-                <td class="logo-cell"><img src="projects/rutube/logo-smotrim.png" alt="Смотрим"></td>
-                <td><p class="reviews-text">все архивы ТВ в&nbsp;одном месте<br>бесплатно</p></td>
-                <td><p class="reviews-text">плохой UX/UI<br>тонна рекламы<br>поломки</p></td>
-                <td><p class="reviews-text">объём архива<br>доп разделы</p></td>
-                <td><p class="reviews-text">—</p></td>
+                <td class="logo-cell" data-name="Смотрим"><img src="projects/rutube/logo-smotrim.png" alt="Смотрим"></td>
+                <td data-label="Нравится"><p class="reviews-text">все архивы ТВ в&nbsp;одном месте<br>бесплатно</p></td>
+                <td data-label="Не нравится"><p class="reviews-text">плохой UX/UI<br>тонна рекламы<br>поломки</p></td>
+                <td data-label="Игнорят"><p class="reviews-text">объём архива<br>доп разделы</p></td>
+                <td data-label="Про подписку"><p class="reviews-text">—</p></td>
               </tr>
             </tbody>
           </table>
@@ -1233,48 +1430,48 @@
           <tbody>
             <tr>
               <td class="row-label"><p class="cjm-text">Действия пользователя</p></td>
-              <td><p class="cjm-text">Видит рекламу / ограничение</p></td>
-              <td><p class="cjm-text">Изучает условия подписки</p></td>
-              <td><p class="cjm-text">Анализирует доступные тарифы</p></td>
-              <td><p class="cjm-text">Вводит платёжные данные</p></td>
-              <td><p class="cjm-text">Завершает оплату</p></td>
-              <td><p class="cjm-text">Возвращается к&nbsp;просмотру. Получает напоминание о&nbsp;списании. Решает продлевать или&nbsp;нет</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Видит рекламу / ограничение</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Изучает условия подписки</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Анализирует доступные тарифы</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Вводит платёжные данные</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Завершает оплату</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Возвращается к&nbsp;просмотру. Получает напоминание о&nbsp;списании. Решает продлевать или&nbsp;нет</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Мысли</p></td>
-              <td><p class="cjm-text">Надоело. Возможно, стоит оформить подписку</p></td>
-              <td><p class="cjm-text">Что входит? Есть&nbsp;ли подвох?</p></td>
-              <td><p class="cjm-text">Почему мне предлагают именно это?<br>В чём разница?</p></td>
-              <td><p class="cjm-text">Когда спишут? Смогу&nbsp;ли отменить?<br>Не поднимут ли&nbsp;цену?</p></td>
-              <td><p class="cjm-text">Это всё? Где подтверждение?</p></td>
-              <td><p class="cjm-text">Реклама пропала. Когда следующее списание? Стоит&nbsp;ли продлевать?</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Надоело. Возможно, стоит оформить подписку</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Что входит? Есть&nbsp;ли подвох?</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Почему мне предлагают именно это?<br>В чём разница?</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Когда спишут? Смогу&nbsp;ли отменить?<br>Не поднимут ли&nbsp;цену?</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Это всё? Где подтверждение?</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Реклама пропала. Когда следующее списание? Стоит&nbsp;ли продлевать?</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Эмоции</p></td>
-              <td><p class="cjm-text">Раздражение</p></td>
-              <td><p class="cjm-text">Настороженность</p></td>
-              <td><p class="cjm-text">Сомнение</p></td>
-              <td><p class="cjm-text">Тревога, настороженность</p></td>
-              <td><p class="cjm-text">Нейтральность, лёгкое недоумение</p></td>
-              <td><p class="cjm-text">Облегчение в&nbsp;начале. Тревога ближе к&nbsp;дате списания, если&nbsp;нет напоминания</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Раздражение</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Настороженность</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Сомнение</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Тревога, настороженность</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Нейтральность, лёгкое недоумение</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Облегчение в&nbsp;начале. Тревога ближе к&nbsp;дате списания, если&nbsp;нет напоминания</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Боли</p></td>
-              <td><p class="cjm-text">Реклама мешает</p></td>
-              <td><p class="cjm-text">Перегруз текста<br>Нет чёткого сравнения бесплатного и&nbsp;платного<br>Условия описаны неявно</p></td>
-              <td><p class="cjm-text">Нет объяснения различий<br>Нет явной логики выбора<br>Несколько вариантов без&nbsp;приоритета</p></td>
-              <td><p class="cjm-text">Автопродление включено по&nbsp;умолчанию<br>Нет напоминания о&nbsp;списании<br>Нет видимой информации об&nbsp;управлении подпиской</p></td>
-              <td><p class="cjm-text">Нет ощущения завершённости<br>Неочевидно, когда следующее списание<br>Неочевидно, где управлять подпиской</p></td>
-              <td><p class="cjm-text">Нет напоминания о&nbsp;списании. Сложно найти, где отменить. Не&nbsp;понятно, какие плюшки даёт подписка</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Реклама мешает</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Перегруз текста<br>Нет чёткого сравнения бесплатного и&nbsp;платного<br>Условия описаны неявно</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Нет объяснения различий<br>Нет явной логики выбора<br>Несколько вариантов без&nbsp;приоритета</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Автопродление включено по&nbsp;умолчанию<br>Нет напоминания о&nbsp;списании<br>Нет видимой информации об&nbsp;управлении подпиской</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Нет ощущения завершённости<br>Неочевидно, когда следующее списание<br>Неочевидно, где управлять подпиской</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Нет напоминания о&nbsp;списании. Сложно найти, где отменить. Не&nbsp;понятно, какие плюшки даёт подписка</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Возможности для&nbsp;улучшения</p></td>
-              <td><p class="cjm-text">Чётко показать ценность подписки</p></td>
-              <td><p class="cjm-text">Чёткая визуальная иерархия<br>Таблица free vs&nbsp;premium<br>Прозрачная стоимость без&nbsp;мелкого текста</p></td>
-              <td><p class="cjm-text">Обоснование рекомендуемого тарифа<br>Один основной вариант + альтернативы<br>Краткое объяснение «кому подойдёт»</p></td>
-              <td><p class="cjm-text">Явная дата следующего списания<br>Информация о&nbsp;напоминании до&nbsp;списания<br>Видимая ссылка «управлять подпиской»</p></td>
-              <td><p class="cjm-text">Яркий экран подтверждения<br>Дата следующего списания<br>Кнопка управления подпиской</p></td>
-              <td><p class="cjm-text">Push/email с&nbsp;напоминанием за&nbsp;3 дня. Видимая ссылка «управление подпиской». Информация о&nbsp;следующем списании в&nbsp;самом success-экране</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Чётко показать ценность подписки</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Чёткая визуальная иерархия<br>Таблица free vs&nbsp;premium<br>Прозрачная стоимость без&nbsp;мелкого текста</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Обоснование рекомендуемого тарифа<br>Один основной вариант + альтернативы<br>Краткое объяснение «кому подойдёт»</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Явная дата следующего списания<br>Информация о&nbsp;напоминании до&nbsp;списания<br>Видимая ссылка «управлять подпиской»</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Яркий экран подтверждения<br>Дата следующего списания<br>Кнопка управления подпиской</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Push/email с&nbsp;напоминанием за&nbsp;3 дня. Видимая ссылка «управление подпиской». Информация о&nbsp;следующем списании в&nbsp;самом success-экране</p></td>
             </tr>
           </tbody>
         </table>
@@ -1301,48 +1498,48 @@
           <tbody>
             <tr>
               <td class="row-label"><p class="cjm-text">Действия пользователя</p></td>
-              <td><p class="cjm-text">Смотрит видео, сталкивается с&nbsp;рекламой</p></td>
-              <td><p class="cjm-text">Переходит на&nbsp;страницу оформления</p></td>
-              <td><p class="cjm-text">Быстро сканирует варианты</p></td>
-              <td><p class="cjm-text">Вводит карту</p></td>
-              <td><p class="cjm-text">Завершает оплату</p></td>
-              <td><p class="cjm-text">Возвращается к&nbsp;просмотру, про подписку больше не&nbsp;думает</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Смотрит видео, сталкивается с&nbsp;рекламой</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Переходит на&nbsp;страницу оформления</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Быстро сканирует варианты</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Вводит карту</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Завершает оплату</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Возвращается к&nbsp;просмотру, про подписку больше не&nbsp;думает</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Мысли</p></td>
-              <td><p class="cjm-text">Да сколько можно уже</p></td>
-              <td><p class="cjm-text">Где кнопка?</p></td>
-              <td><p class="cjm-text">Мне просто без&nbsp;рекламы, остальное не&nbsp;важно</p></td>
-              <td><p class="cjm-text">Быстрее бы закончить</p></td>
-              <td><p class="cjm-text">Теперь рекламы не&nbsp;будет?</p></td>
-              <td><p class="cjm-text">Наконец без&nbsp;рекламы, красота</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Да сколько можно уже</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Где кнопка?</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Мне просто без&nbsp;рекламы, остальное не&nbsp;важно</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Быстрее бы закончить</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Теперь рекламы не&nbsp;будет?</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Наконец без&nbsp;рекламы, красота</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Эмоции</p></td>
-              <td><p class="cjm-text">Раздражение</p></td>
-              <td><p class="cjm-text">Нетерпение</p></td>
-              <td><p class="cjm-text">Сомнение, если слишком много вариантов</p></td>
-              <td><p class="cjm-text">Раздражение, если шагов больше одного-двух</p></td>
-              <td><p class="cjm-text">Облегчение, если эффект моментальный</p></td>
-              <td><p class="cjm-text">Облегчение, дальше&nbsp;— ноль внимания к&nbsp;теме</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Раздражение</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Нетерпение</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Сомнение, если слишком много вариантов</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Раздражение, если шагов больше одного-двух</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Облегчение, если эффект моментальный</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Облегчение, дальше&nbsp;— ноль внимания к&nbsp;теме</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Боли</p></td>
-              <td><p class="cjm-text">Реклама мешает</p></td>
-              <td><p class="cjm-text">Перегруз текста<br>Несколько тарифов<br>Непонятно, что выбрать</p></td>
-              <td><p class="cjm-text">Избыточный выбор<br>Апселл<br>Сложная структура</p></td>
-              <td><p class="cjm-text">Лишние поля<br>Телефон<br>Подписки сверху<br>Предложения «улучшить тариф»</p></td>
-              <td><p class="cjm-text">Непонятно, активировалась ли&nbsp;подписка<br>Нет явного подтверждения</p></td>
-              <td><p class="cjm-text">Не&nbsp;отслеживает списания, узнает о&nbsp;продлении только по&nbsp;факту в&nbsp;банке, не&nbsp;помнит что и&nbsp;как отменить если&nbsp;понадобится</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Реклама мешает</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Перегруз текста<br>Несколько тарифов<br>Непонятно, что выбрать</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Избыточный выбор<br>Апселл<br>Сложная структура</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Лишние поля<br>Телефон<br>Подписки сверху<br>Предложения «улучшить тариф»</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Непонятно, активировалась ли&nbsp;подписка<br>Нет явного подтверждения</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Не&nbsp;отслеживает списания, узнает о&nbsp;продлении только по&nbsp;факту в&nbsp;банке, не&nbsp;помнит что и&nbsp;как отменить если&nbsp;понадобится</p></td>
             </tr>
             <tr>
               <td class="row-label"><p class="cjm-text">Возможности для&nbsp;улучшения</p></td>
-              <td><p class="cjm-text">Дать быстрый, очевидный переход к&nbsp;подписке без&nbsp;лишнего текста и&nbsp;объяснений</p></td>
-              <td><p class="cjm-text">Один основной тариф, крупная кнопка, минимум второстепенной информации на&nbsp;первом экране</p></td>
-              <td><p class="cjm-text">Чётко обозначить базовый сценарий: «Без&nbsp;рекламы&nbsp;— X&nbsp;₽ в&nbsp;месяц». Всё остальное&nbsp;— вторично</p></td>
-              <td><p class="cjm-text">Минимум полей, линейный процесс, без&nbsp;апселлов на&nbsp;этом этапе</p></td>
-              <td><p class="cjm-text">Мгновенное исчезновение рекламы + короткий, понятный success-экран</p></td>
-              <td><p class="cjm-text">Одно ненавязчивое уведомление сразу после оплаты (без&nbsp;рекламы + где отменить), дальше не&nbsp;трогать</p></td>
+              <td data-label="Триггер"><p class="cjm-text">Дать быстрый, очевидный переход к&nbsp;подписке без&nbsp;лишнего текста и&nbsp;объяснений</p></td>
+              <td data-label="Страница подписки"><p class="cjm-text">Один основной тариф, крупная кнопка, минимум второстепенной информации на&nbsp;первом экране</p></td>
+              <td data-label="Выбор тарифа"><p class="cjm-text">Чётко обозначить базовый сценарий: «Без&nbsp;рекламы&nbsp;— X&nbsp;₽ в&nbsp;месяц». Всё остальное&nbsp;— вторично</p></td>
+              <td data-label="Ввод карты"><p class="cjm-text">Минимум полей, линейный процесс, без&nbsp;апселлов на&nbsp;этом этапе</p></td>
+              <td data-label="Завершение оплаты"><p class="cjm-text">Мгновенное исчезновение рекламы + короткий, понятный success-экран</p></td>
+              <td data-label="После оплаты"><p class="cjm-text">Одно ненавязчивое уведомление сразу после оплаты (без&nbsp;рекламы + где отменить), дальше не&nbsp;трогать</p></td>
             </tr>
           </tbody>
         </table>
@@ -1445,6 +1642,7 @@
     <!-- ── SLIDE 11 — USER-FLOW ── -->
     <section class="slide slide-userflow">
       <div class="eyebrow">User-flow</div>
+      <p class="mobile-zoom-hint">Диаграмма шире экрана — разведите пальцы, чтобы приблизить</p>
       <div class="userflow-wrap hscroll-viewport pan-fit">
         <img class="hscroll-track" src="projects/rutube/user-flow.svg" alt="User-flow оформления подписки Rutube Premium">
       </div>
@@ -1523,59 +1721,59 @@
             <tbody>
               <tr>
                 <td class="row-num"><p class="testing-text">1</p></td>
-                <td><p class="testing-text">Видео и&nbsp;реклама-баннер</p></td>
-                <td><p class="testing-text">Да</p></td>
-                <td><p class="testing-text">28 сек</p></td>
-                <td><p class="testing-text">Потыкал на&nbsp;кнопку лайка, попытался закрыть плашку снизу</p></td>
-                <td><p class="testing-text">«О нет, черт, реклама. Но&nbsp;я&nbsp;хочу ее&nbsp;пропустить, а&nbsp;просто пропустить я&nbsp;ее не&nbsp;могу»</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Видео и&nbsp;реклама-баннер</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Да</p></td>
+                <td data-label="Время"><p class="testing-text">28 сек</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">Потыкал на&nbsp;кнопку лайка, попытался закрыть плашку снизу</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">«О нет, черт, реклама. Но&nbsp;я&nbsp;хочу ее&nbsp;пропустить, а&nbsp;просто пропустить я&nbsp;ее не&nbsp;могу»</p></td>
               </tr>
               <tr>
                 <td class="row-num"><p class="testing-text">2</p></td>
-                <td><p class="testing-text">Выбор тарифа</p></td>
-                <td><p class="testing-text">Да</p></td>
-                <td><p class="testing-text">10 сек</p></td>
-                <td><p class="testing-text">—</p></td>
-                <td><p class="testing-text">«Так удобно, потому&nbsp;что здесь есть выгода для&nbsp;меня». Сразу выбрал годовой тариф, оценил сравнение цен</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Выбор тарифа</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Да</p></td>
+                <td data-label="Время"><p class="testing-text">10 сек</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">—</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">«Так удобно, потому&nbsp;что здесь есть выгода для&nbsp;меня». Сразу выбрал годовой тариф, оценил сравнение цен</p></td>
               </tr>
               <tr>
                 <td class="row-num"><p class="testing-text">3</p></td>
-                <td><p class="testing-text">Платежная форма</p></td>
-                <td><p class="testing-text">Да</p></td>
-                <td><p class="testing-text">20 сек</p></td>
-                <td><p class="testing-text">—</p></td>
-                <td><p class="testing-text">Сначала выбрал банковскую карту, ввел данные</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Платежная форма</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Да</p></td>
+                <td data-label="Время"><p class="testing-text">20 сек</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">—</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">Сначала выбрал банковскую карту, ввел данные</p></td>
               </tr>
               <tr>
                 <td class="row-num"><p class="testing-text">4</p></td>
-                <td><p class="testing-text">Error-экран</p></td>
-                <td><p class="testing-text">Да</p></td>
-                <td><p class="testing-text">5 сек</p></td>
-                <td><p class="testing-text">Не растерялся</p></td>
-                <td><p class="testing-text">«Не удалось обработать данные карты&nbsp;— давайте попробуем еще раз, но&nbsp;уже наверное лучше СБП». Сразу решил сменить способ оплаты</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Error-экран</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Да</p></td>
+                <td data-label="Время"><p class="testing-text">5 сек</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">Не растерялся</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">«Не удалось обработать данные карты&nbsp;— давайте попробуем еще раз, но&nbsp;уже наверное лучше СБП». Сразу решил сменить способ оплаты</p></td>
               </tr>
               <tr>
                 <td class="row-num"><p class="testing-text">5</p></td>
-                <td><p class="testing-text">Повторная оплата</p></td>
-                <td><p class="testing-text">Да</p></td>
-                <td><p class="testing-text">5 сек</p></td>
-                <td><p class="testing-text">—</p></td>
-                <td><p class="testing-text">Через СБП&nbsp;— успешно</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Повторная оплата</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Да</p></td>
+                <td data-label="Время"><p class="testing-text">5 сек</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">—</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">Через СБП&nbsp;— успешно</p></td>
               </tr>
               <tr>
                 <td class="row-num"><p class="testing-text">6</p></td>
-                <td><p class="testing-text">Success-экран</p></td>
-                <td><p class="testing-text">Да</p></td>
-                <td><p class="testing-text">15 сек</p></td>
-                <td><p class="testing-text">—</p></td>
-                <td><p class="testing-text">«Подписка активна, реклама отключена, вижу следующее списание. Даже напоминалка будет&nbsp;— зашибись». Нажал «Продолжить просмотр»</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Success-экран</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Да</p></td>
+                <td data-label="Время"><p class="testing-text">15 сек</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">—</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">«Подписка активна, реклама отключена, вижу следующее списание. Даже напоминалка будет&nbsp;— зашибись». Нажал «Продолжить просмотр»</p></td>
               </tr>
               <tr>
                 <td class="row-num"><p class="testing-text">7</p></td>
-                <td><p class="testing-text">Управление подпиской</p></td>
-                <td><p class="testing-text">Не перешел</p></td>
-                <td><p class="testing-text">—</p></td>
-                <td><p class="testing-text">—</p></td>
-                <td><p class="testing-text">Заметил кнопку «Управление подпиской», но&nbsp;не&nbsp;перешел: «Я&nbsp;понимаю что&nbsp;собой представляет управление подпиской&nbsp;— мне на&nbsp;данный момент неактуально»</p></td>
+                <td data-label="Шаг флоу"><p class="testing-text">Управление подпиской</p></td>
+                <td data-label="Прошел?"><p class="testing-text">Не перешел</p></td>
+                <td data-label="Время"><p class="testing-text">—</p></td>
+                <td data-label="Ошибки и застревания"><p class="testing-text">—</p></td>
+                <td data-label="Цитаты и наблюдения"><p class="testing-text">Заметил кнопку «Управление подпиской», но&nbsp;не&nbsp;перешел: «Я&nbsp;понимаю что&nbsp;собой представляет управление подпиской&nbsp;— мне на&nbsp;данный момент неактуально»</p></td>
               </tr>
             </tbody>
           </table>
