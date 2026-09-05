@@ -186,6 +186,10 @@
     .process-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
+    .process-intro {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg); max-width: 900px; margin-bottom: 32px;
+    }
     .process-wrap svg { width: 100%; height: auto; display: block; }
     .process-dot { fill: var(--fg); }
     .process-toplabel {
@@ -569,6 +573,9 @@
          own ~11pt/15px minimum legible size. */
       .process-wrap {
         position: static; transform: none !important;
+      }
+      .process-intro { max-width: none; margin-bottom: 32px; }
+      .process-diagram {
         overflow-x: auto; -webkit-overflow-scrolling: touch;
       }
       .process-wrap svg { width: auto; height: 500px; max-width: none; }
@@ -903,6 +910,8 @@
       <div class="eyebrow">Процесс</div>
       <p class="mobile-zoom-hint">Схема шире экрана — разведите пальцы, чтобы приблизить</p>
       <div class="process-wrap fit-wrap">
+        <p class="process-intro">Это не разовая схема под этот кейс, а процесс, который я выстроил для себя и повторяю в большинстве проектов. Discover и Define идут до первого эскиза, чтобы решение отвечало на подтверждённую проблему, а не на предположение. Test стоит до Handoff: если гипотеза не подтвердится на прототипе, дешевле вернуться в Design, чем переделывать готовую документацию. Design Review в конце служит контрольной точкой: решение сверяется с командой, прежде чем считать его завершённым.</p>
+        <div class="process-diagram">
         <svg viewBox="0 0 2190 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема дизайн-процесса: Discover, Define, Design, Test, Handoff, Design Review">
         <defs>
         <linearGradient id="pg-dd" x1="60" x2="600" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#D9125B"/><stop offset="100%" stop-color="#DA471B"/></linearGradient>
@@ -954,6 +963,7 @@
         <text class="process-item" x="1560" y="528">UI Kit</text>
         <text class="process-title" x="1820" y="470" fill="#C84163">DESIGN REVIEW</text>
         </svg>
+        </div>
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
