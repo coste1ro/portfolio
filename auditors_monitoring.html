@@ -155,7 +155,6 @@
     }
     .hero-col-list li { position: relative; margin-bottom: 6px; }
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
-    .hero-col-note { margin-top: 16px; }
 
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
@@ -168,6 +167,10 @@
       will-change: transform;
     }
     .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
+    /* A leading text panel in the same pannable strip, ahead of the
+       screenshots — reuses the hero-col-body/-list text styles, just a
+       narrower fixed column instead of an image. */
+    .strip-intro { flex: 0 0 400px; display: flex; flex-direction: column; justify-content: center; }
     .strip-num {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
@@ -288,6 +291,7 @@
         transform: none !important;
       }
       .strip-item { flex: none; width: 100%; }
+      .strip-intro { flex: none; width: 100%; }
 
       /* Portal: subtitle (eyebrow, above) -> photo -> all four points
          together — desktop's DOM order is callouts[1,2] -> media ->
@@ -350,7 +354,6 @@
             <li>смотреть маршрут аудитора за&nbsp;день;</li>
             <li>открывать детали любой точки&nbsp;— из&nbsp;списка или прямо с&nbsp;карты.</li>
           </ul>
-          <p class="hero-col-body hero-col-note">Перед макетами поресёрчил, как обычно группируют статусы на&nbsp;картах, и&nbsp;собрал контекст от&nbsp;техлида: рынок, видение заказчика. Делал фичу один, без&nbsp;дизайн-лида. Всего на&nbsp;этом проекте я так в&nbsp;одиночку сделал около 20&nbsp;фич.</p>
         </div>
       </div>
       <div class="slide-title">Мониторинг аудиторов</div>
@@ -358,9 +361,14 @@
 
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
-      <div class="eyebrow">5 экранов&nbsp;— один маршрут менеджера</div>
+      <div class="eyebrow">Ход работы</div>
       <div class="strip-viewport pan-fit">
         <div class="strip-track">
+          <div class="strip-intro">
+            <p class="hero-col-body">Аудитор работает в&nbsp;поле через мобильное приложение&nbsp;— видит свои задания и&nbsp;маршрут на&nbsp;день. Менеджер&nbsp;— с&nbsp;десктопа, через веб-портал с&nbsp;обзором сразу по&nbsp;всей команде.</p>
+            <p class="hero-col-body" style="margin-top:16px">Перед макетами поресёрчил, как обычно группируют статусы на&nbsp;картах, и&nbsp;собрал контекст от&nbsp;техлида: рынок, видение заказчика. Статусов больше десяти&nbsp;— выбрал цвет вместо иконок, под&nbsp;каждую пришлось&nbsp;бы рисовать отдельный значок, а&nbsp;цвет считывается быстрее.</p>
+            <p class="hero-col-body" style="margin-top:16px">Делал фичу один, без&nbsp;дизайн-лида&nbsp;— всего на&nbsp;этом проекте я так в&nbsp;одиночку закрыл около 20&nbsp;фич.</p>
+          </div>
           <div class="strip-item">
             <span class="strip-num">[1]</span>
             <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Обзорная карта аудиторов">
@@ -403,7 +411,7 @@
 
     <!-- ── SLIDE 3 — CALLOUT GRID ── -->
     <section class="slide slide-portal">
-      <div class="eyebrow">Один экран вместо десятков звонков</div>
+      <div class="eyebrow">Результат</div>
       <div class="portal-grid fit-wrap">
         <div class="portal-callouts">
           <div>
@@ -429,7 +437,7 @@
           </div>
           <div>
             <div class="portal-num">[5]</div>
-            <p class="portal-text">Фичу приняли, она в&nbsp;проде: работает и&nbsp;на&nbsp;десктопе, и&nbsp;на&nbsp;мобильных. Задачи из&nbsp;ТЗ закрыты, менеджеры перестали звонить, стало быстрее находить аудиторов и&nbsp;удобнее следить за&nbsp;их&nbsp;работой.</p>
+            <p class="portal-text">Фичу приняли, она в&nbsp;проде&nbsp;— веб-портал менеджера работает и&nbsp;на&nbsp;десктопе, и&nbsp;на&nbsp;мобильных браузерах. Задачи из&nbsp;ТЗ закрыты: менеджеры перестали звонить аудиторам, чтобы понять, где они и&nbsp;что делают, стало быстрее находить нужного человека и&nbsp;удобнее следить за&nbsp;работой в&nbsp;поле.</p>
           </div>
         </div>
       </div>
