@@ -119,17 +119,16 @@
 
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
-    /* Anchored below the heading (now fixed at top:40, height:48) instead
-       of true-centered in the viewport — with the heading pulled out of
-       this box, centering it could still put the photo's top edge above
-       the heading whenever the photo is tall, since the box's own height
-       shrank without heading in it. transform-origin: top keeps the
-       fit-scale shrink (when content is taller than available space)
-       anchored to this same top edge instead of shrinking from centre. */
+    /* Centered the same way as every other slide's content block
+       (.portal-grid, .strip-viewport) — safe now that .hero-heading is
+       a true sibling instead of living inside this box (see comment
+       on .hero-heading below): the fit-scale JS already shrinks
+       content taller than the header/footer gap before it ever gets
+       close to the heading, the same guarantee those other slides
+       rely on. */
     .hero-grid {
-      position: absolute; top: 128px; left: 40px; right: 40px;
-      transform: scaleY(var(--fit-scale, 1));
-      transform-origin: top;
+      position: absolute; top: 50%; left: 40px; right: 40px;
+      transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
