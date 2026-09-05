@@ -204,6 +204,13 @@
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
+    /* Explicit instead of relying on auto-placement: without a
+       .portal-media in between (the "Ход работы" slide has none), the
+       two .portal-callouts would otherwise auto-place into columns 1
+       and 2, back to back, instead of framing the empty middle column
+       the way they do everywhere a photo occupies it. */
+    .portal-callouts:first-of-type { grid-column: 1; }
+    .portal-callouts:last-of-type { grid-column: 3; }
     /* justify-content:space-between was a no-op here — .portal-grid uses
        align-items:start, so .portal-callouts never stretches taller
        than its own content and there's no free space to distribute.
@@ -392,9 +399,6 @@
             <div class="portal-num">[2]</div>
             <p class="portal-text">Работал в&nbsp;связке с&nbsp;дизайн-лидом, вели проект вместе.</p>
           </div>
-        </div>
-        <div class="portal-media">
-          <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки — таймлайн">
         </div>
         <div class="portal-callouts">
           <div>

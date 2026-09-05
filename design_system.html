@@ -205,6 +205,13 @@
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
+    /* Explicit instead of relying on auto-placement: without a
+       .portal-media in between (the "Ход работы" slide has none), the
+       two .portal-callouts would otherwise auto-place into columns 1
+       and 2, back to back, instead of framing the empty middle column
+       the way they do everywhere a photo occupies it. */
+    .portal-callouts:first-of-type { grid-column: 1; }
+    .portal-callouts:last-of-type { grid-column: 3; }
     /* justify-content:space-between was a no-op here — .portal-grid uses
        align-items:start, so .portal-callouts never stretches taller
        than its own content and there's no free space to distribute.
@@ -398,9 +405,6 @@
             <div class="portal-num">[3]</div>
             <p class="portal-text">Перед тем как&nbsp;строить систему, изучил, как&nbsp;связаны примитивы и&nbsp;семантика, и&nbsp;взял за&nbsp;основу цветовую систему Tailwind.</p>
           </div>
-        </div>
-        <div class="portal-media">
-          <img src="projects/design_system/all-comps.png" alt="Дизайн-система — библиотека компонентов">
         </div>
         <div class="portal-callouts">
           <div>
