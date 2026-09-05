@@ -119,23 +119,32 @@
 
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
+    /* Anchored below the heading (fixed at top:40, height:48) instead of
+       true-centered in the viewport — centering could put the photo's
+       top edge above the heading whenever the photo is tall, since the
+       box's own height shrank without heading in it. transform-origin:
+       top keeps the fit-scale shrink anchored to this same top edge. */
     .hero-grid {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; top: 128px; left: 40px; right: 40px;
+      transform: scaleY(var(--fit-scale, 1));
+      transform-origin: top;
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
-    .hero-media { grid-column: 1; grid-row: 1 / 3; }
+    .hero-media { grid-column: 1; }
     .hero-media img { width: 100%; display: block; }
+    /* Same fixed top-left slot every other slide's .eyebrow sits in —
+       was inline in the grid next to the photo. */
     .hero-heading {
-      grid-column: 2 / span 2; grid-row: 1;
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; line-height: normal;
       text-transform: uppercase; color: var(--fg);
-      margin-bottom: 40px;
     }
-    .hero-col-a { grid-column: 2; grid-row: 2; }
-    .hero-col-b { grid-column: 3; grid-row: 2; }
+    .hero-col-a { grid-column: 2; }
+    .hero-col-b { grid-column: 3; }
     .hero-col-label {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
@@ -273,7 +282,7 @@
         position: static; transform: none !important;
         display: flex; flex-direction: column;
       }
-      .hero-heading { order: 1; margin-bottom: 32px; }
+      .hero-heading { position: static; height: auto; order: 1; margin-bottom: 32px; }
       .hero-media   { order: 2; margin-bottom: 32px; }
       .hero-col-a   { order: 3; margin-bottom: 32px; }
       .hero-col-b   { order: 4; }
@@ -338,11 +347,11 @@
         <h1 class="hero-heading">Административная панель для&nbsp;управления установкой оборудования</h1>
         <div class="hero-col-a">
           <div class="hero-col-label">Обзор</div>
-          <p class="hero-col-body">Продукт&nbsp;— внутренний инструмент для&nbsp;отслеживания процесса монтажа умных камер и&nbsp;устройств на&nbsp;транспортные средства. Менеджеры контролируют статус установок в&nbsp;разрезе компаний-клиентов, типов транспорта и&nbsp;команд установщиков.</p>
+          <p class="hero-col-body">Продукт: внутренний инструмент для&nbsp;отслеживания процесса монтажа умных камер и&nbsp;устройств на&nbsp;транспортные средства. Менеджеры контролируют статус установок в&nbsp;разрезе компаний-клиентов, типов транспорта и&nbsp;команд установщиков.</p>
         </div>
         <div class="hero-col-b">
           <div class="hero-col-label">Задача</div>
-          <p class="hero-col-body">Данные по&nbsp;установкам были раскиданы по&nbsp;разным местам: разделы жили каждый сам по&nbsp;себе. Нужно было собрать всё в&nbsp;единый портал&nbsp;— с&nbsp;тремя связанными модулями:</p>
+          <p class="hero-col-body">Данные по&nbsp;установкам были раскиданы по&nbsp;разным местам: разделы жили каждый сам по&nbsp;себе. Нужно было собрать всё в&nbsp;единый портал с&nbsp;тремя связанными модулями:</p>
           <ul class="hero-col-list">
             <li>группы установок;</li>
             <li>реестр установщиков;</li>
@@ -355,7 +364,7 @@
 
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
-      <div class="eyebrow">6 экранов&nbsp;— сквозная навигация</div>
+      <div class="eyebrow">6 экранов: сквозная навигация</div>
       <div class="strip-viewport pan-fit">
         <div class="strip-track">
           <div class="strip-item">
@@ -371,22 +380,22 @@
           <div class="strip-item">
             <span class="strip-num">[3]</span>
             <img src="projects/installation_panel/Installation%20Groups%20-%20Department.png" alt="Вид по отделу">
-            <p class="strip-caption">Детали отдела&nbsp;— собирает все установки конкретного отдела в&nbsp;одном месте.</p>
+            <p class="strip-caption">Собрал все установки конкретного отдела в&nbsp;одном месте, чтобы не&nbsp;листать их&nbsp;по&nbsp;одной.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[4]</span>
             <img src="projects/installation_panel/Installers.png" alt="Список установщиков">
-            <p class="strip-caption">Реестр установщиков&nbsp;— список монтажников с&nbsp;поиском: имя, статус, число активных заданий, компания. Клик по&nbsp;строке&nbsp;— переход в&nbsp;профиль.</p>
+            <p class="strip-caption">Собрал реестр установщиков с&nbsp;поиском по&nbsp;имени, статусу, числу активных заданий и&nbsp;компании, чтобы находить нужного монтажника за&nbsp;секунды. Клик по&nbsp;строке ведёт в&nbsp;профиль.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[5]</span>
             <img src="projects/installation_panel/Installers%20-%20Person.png" alt="Профиль установщика">
-            <p class="strip-caption">Профиль установщика&nbsp;— вся история и&nbsp;текущая нагрузка: назначенные ТС, группы, контакты.</p>
+            <p class="strip-caption">Собрал в&nbsp;профиле установщика всю историю и&nbsp;текущую нагрузку сразу (назначенные ТС, группы, контакты), чтобы не&nbsp;запрашивать это по&nbsp;частям.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[5.1]</span>
             <img src="projects/installation_panel/Installers%20-%20Create%20New%20Populated.png" alt="Создание установщика">
-            <p class="strip-caption">Создание установщика&nbsp;— форма идентична по&nbsp;структуре профилю: один и&nbsp;тот же&nbsp;паттерн для&nbsp;чтения и&nbsp;записи.</p>
+            <p class="strip-caption">Сделал форму создания идентичной по&nbsp;структуре профилю: один и&nbsp;тот же&nbsp;паттерн для&nbsp;чтения и&nbsp;записи, ничего не&nbsp;нужно запоминать заново.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[6]</span>
@@ -418,11 +427,11 @@
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[3]</div>
-            <p class="portal-text">Формат под&nbsp;тип данных, а&nbsp;не&nbsp;один шаблон на&nbsp;всё: таблица для&nbsp;групп установок&nbsp;— с&nbsp;ней проще агрегировать и&nbsp;фильтровать; карточки для&nbsp;транспорта&nbsp;— модель узнаётся по&nbsp;картинке, а&nbsp;не&nbsp;по&nbsp;тексту.</p>
+            <p class="portal-text">Подобрал формат под&nbsp;тип данных, а&nbsp;не&nbsp;один шаблон на&nbsp;всё: таблица для&nbsp;групп установок, чтобы проще агрегировать и&nbsp;фильтровать; карточки для&nbsp;транспорта, чтобы модель считывалась по&nbsp;картинке, а&nbsp;не&nbsp;по&nbsp;тексту.</p>
           </div>
           <div>
             <div class="portal-num">[4]</div>
-            <p class="portal-text">Консистентность в&nbsp;деле: профиль установщика и&nbsp;форма его создания используют одну и&nbsp;ту&nbsp;же&nbsp;структуру&nbsp;— один паттерн для&nbsp;чтения и&nbsp;записи.</p>
+            <p class="portal-text">Консистентность в&nbsp;деле: профиль установщика и&nbsp;форма его создания используют одну и&nbsp;ту&nbsp;же&nbsp;структуру, один паттерн для&nbsp;чтения и&nbsp;записи.</p>
           </div>
         </div>
       </div>
@@ -440,7 +449,7 @@
           </div>
           <div>
             <div class="portal-num">[2]</div>
-            <p class="portal-text">Из&nbsp;любой группы&nbsp;— в&nbsp;детали конкретной инсталляции и&nbsp;отдела за&nbsp;один клик, без&nbsp;потери контекста</p>
+            <p class="portal-text">Из&nbsp;любой группы переходит в&nbsp;детали конкретной инсталляции и&nbsp;отдела за&nbsp;один клик, без&nbsp;потери контекста</p>
           </div>
           <div>
             <div class="portal-num">[3]</div>
@@ -453,7 +462,7 @@
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[4]</div>
-            <p class="portal-text">Транспортные средства разных типов&nbsp;— в&nbsp;едином формате с&nbsp;визуальным различением по&nbsp;иконке типа</p>
+            <p class="portal-text">Транспортные средства разных типов показаны в&nbsp;едином формате с&nbsp;визуальным различением по&nbsp;иконке типа</p>
           </div>
           <div>
             <div class="portal-num">[5]</div>
