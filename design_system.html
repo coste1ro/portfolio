@@ -205,13 +205,11 @@
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
-    /* Explicit instead of relying on auto-placement: without a
-       .portal-media in between (the "Ход работы" slide has none), the
-       two .portal-callouts would otherwise auto-place into columns 1
-       and 2, back to back, instead of framing the empty middle column
-       the way they do everywhere a photo occupies it. */
-    .portal-callouts:first-of-type { grid-column: 1; }
-    .portal-callouts:last-of-type { grid-column: 3; }
+    /* "Ход работы" has no media, just two even columns of callouts —
+       auto-placement already puts the first .portal-callouts in
+       column 1 and the second in column 2 once there's no media div
+       between them to skip over. */
+    .process-grid { grid-template-columns: 1fr 1fr; }
     /* justify-content:space-between was a no-op here — .portal-grid uses
        align-items:start, so .portal-callouts never stretches taller
        than its own content and there's no free space to distribute.
@@ -391,7 +389,7 @@
     <!-- ── SLIDE 2 — HOW: PROCESS ── -->
     <section class="slide slide-portal">
       <div class="eyebrow">Ход работы</div>
-      <div class="portal-grid fit-wrap">
+      <div class="portal-grid process-grid fit-wrap">
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[1]</div>
@@ -401,12 +399,12 @@
             <div class="portal-num">[2]</div>
             <p class="portal-text">Начали смотреть в&nbsp;сторону атомарного дизайна, но&nbsp;для&nbsp;одного продукта без&nbsp;множества дочерних это избыточно. Выбрал модель проще: токены и&nbsp;компоненты без&nbsp;лишних уровней.</p>
           </div>
+        </div>
+        <div class="portal-callouts">
           <div>
             <div class="portal-num">[3]</div>
             <p class="portal-text">Перед тем как&nbsp;строить систему, изучил, как&nbsp;связаны примитивы и&nbsp;семантика, и&nbsp;взял за&nbsp;основу цветовую систему Tailwind.</p>
           </div>
-        </div>
-        <div class="portal-callouts">
           <div>
             <div class="portal-num">[4]</div>
             <p class="portal-text">Делал систему сам, дизайн-лид только изредка что-то поправлял.</p>
