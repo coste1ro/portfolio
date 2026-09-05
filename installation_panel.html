@@ -155,7 +155,6 @@
     }
     .hero-col-list li { position: relative; margin-bottom: 6px; }
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
-    .hero-col-note { margin-top: 16px; }
 
     /* ── Slide 2: screens strip ── */
     .slide-strip { position: relative; height: 100%; }
@@ -349,7 +348,6 @@
             <li>реестр установщиков;</li>
             <li>привязанный транспорт.</li>
           </ul>
-          <p class="hero-col-body hero-col-note">Перед&nbsp;ТЗ поресёрчил паттерны админ-панелей: увидел, что&nbsp;в&nbsp;них по&nbsp;максимуму переиспользуют одни и&nbsp;те&nbsp;же&nbsp;сущности, а&nbsp;консистентность стоит на&nbsp;первом месте, потому что&nbsp;админка обязана быть однородной. Работал в&nbsp;связке с&nbsp;дизайн-лидом, вели проект вместе.</p>
         </div>
       </div>
       <div class="slide-title">Панель инсталляций</div>
@@ -400,9 +398,40 @@
       <div class="slide-title">Панель инсталляций</div>
     </section>
 
-    <!-- ── SLIDE 3 — CALLOUT GRID ── -->
+    <!-- ── SLIDE 3 — CALLOUT GRID: PROCESS ── -->
     <section class="slide slide-portal">
-      <div class="eyebrow">Единый портал вместо разрозненных таблиц</div>
+      <div class="eyebrow">Ход работы</div>
+      <div class="portal-grid fit-wrap">
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[1]</div>
+            <p class="portal-text">Перед&nbsp;ТЗ поресёрчил паттерны админ-панелей: увидел, что&nbsp;в&nbsp;них по&nbsp;максимуму переиспользуют одни и&nbsp;те&nbsp;же&nbsp;сущности, а&nbsp;консистентность стоит на&nbsp;первом месте, потому что&nbsp;админка обязана быть однородной.</p>
+          </div>
+          <div>
+            <div class="portal-num">[2]</div>
+            <p class="portal-text">Работал в&nbsp;связке с&nbsp;дизайн-лидом, вели проект вместе.</p>
+          </div>
+        </div>
+        <div class="portal-media">
+          <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки — таймлайн">
+        </div>
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[3]</div>
+            <p class="portal-text">Формат под&nbsp;тип данных, а&nbsp;не&nbsp;один шаблон на&nbsp;всё: таблица для&nbsp;групп установок&nbsp;— с&nbsp;ней проще агрегировать и&nbsp;фильтровать; карточки для&nbsp;транспорта&nbsp;— модель узнаётся по&nbsp;картинке, а&nbsp;не&nbsp;по&nbsp;тексту.</p>
+          </div>
+          <div>
+            <div class="portal-num">[4]</div>
+            <p class="portal-text">Консистентность в&nbsp;деле: профиль установщика и&nbsp;форма его создания используют одну и&nbsp;ту&nbsp;же&nbsp;структуру&nbsp;— один паттерн для&nbsp;чтения и&nbsp;записи.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Панель инсталляций</div>
+    </section>
+
+    <!-- ── SLIDE 4 — CALLOUT GRID: RESULT ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Результат</div>
       <div class="portal-grid fit-wrap">
         <div class="portal-callouts">
           <div>

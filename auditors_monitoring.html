@@ -167,10 +167,6 @@
       will-change: transform;
     }
     .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
-    /* A leading text panel in the same pannable strip, ahead of the
-       screenshots — reuses the hero-col-body/-list text styles, just a
-       narrower fixed column instead of an image. */
-    .strip-intro { flex: 0 0 400px; display: flex; flex-direction: column; justify-content: center; }
     .strip-num {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
@@ -291,7 +287,6 @@
         transform: none !important;
       }
       .strip-item { flex: none; width: 100%; }
-      .strip-intro { flex: none; width: 100%; }
 
       /* Portal: subtitle (eyebrow, above) -> photo -> all four points
          together — desktop's DOM order is callouts[1,2] -> media ->
@@ -361,14 +356,9 @@
 
     <!-- ── SLIDE 2 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
-      <div class="eyebrow">Ход работы</div>
+      <div class="eyebrow">5 экранов&nbsp;— один маршрут менеджера</div>
       <div class="strip-viewport pan-fit">
         <div class="strip-track">
-          <div class="strip-intro">
-            <p class="hero-col-body">Аудитор работает в&nbsp;поле через мобильное приложение&nbsp;— видит свои задания и&nbsp;маршрут на&nbsp;день. Менеджер&nbsp;— с&nbsp;десктопа, через веб-портал с&nbsp;обзором сразу по&nbsp;всей команде.</p>
-            <p class="hero-col-body" style="margin-top:16px">Перед макетами поресёрчил, как обычно группируют статусы на&nbsp;картах, и&nbsp;собрал контекст от&nbsp;техлида: рынок, видение заказчика. Статусов больше десяти&nbsp;— выбрал цвет вместо иконок, под&nbsp;каждую пришлось&nbsp;бы рисовать отдельный значок, а&nbsp;цвет считывается быстрее.</p>
-            <p class="hero-col-body" style="margin-top:16px">Делал фичу один, без&nbsp;дизайн-лида&nbsp;— всего на&nbsp;этом проекте я так в&nbsp;одиночку закрыл около 20&nbsp;фич.</p>
-          </div>
           <div class="strip-item">
             <span class="strip-num">[1]</span>
             <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Обзорная карта аудиторов">
@@ -409,7 +399,38 @@
       <div class="slide-title">Мониторинг аудиторов</div>
     </section>
 
-    <!-- ── SLIDE 3 — CALLOUT GRID ── -->
+    <!-- ── SLIDE 3 — HOW: PROCESS ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Ход работы</div>
+      <div class="portal-grid fit-wrap">
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[1]</div>
+            <p class="portal-text">Два разных интерфейса под&nbsp;две роли: аудитор работает в&nbsp;поле через мобильное приложение&nbsp;— видит свои задания и&nbsp;маршрут на&nbsp;день. Менеджер&nbsp;— с&nbsp;десктопа, через веб-портал с&nbsp;обзором сразу по&nbsp;всей команде.</p>
+          </div>
+          <div>
+            <div class="portal-num">[2]</div>
+            <p class="portal-text">Перед макетами поресёрчил, как обычно группируют статусы на&nbsp;картах, и&nbsp;собрал контекст от&nbsp;техлида: рынок, видение заказчика.</p>
+          </div>
+        </div>
+        <div class="portal-media">
+          <img src="projects/auditors_monitoring/pin%20coding%20system.png" alt="Система кодирования пинов">
+        </div>
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[3]</div>
+            <p class="portal-text">Статусов больше десяти&nbsp;— выбрал цвет вместо иконок: под&nbsp;каждую пришлось&nbsp;бы рисовать отдельный значок, а&nbsp;цвет считывается быстрее.</p>
+          </div>
+          <div>
+            <div class="portal-num">[4]</div>
+            <p class="portal-text">Делал фичу один, без&nbsp;дизайн-лида&nbsp;— всего на&nbsp;этом проекте я так в&nbsp;одиночку закрыл около 20&nbsp;фич.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Мониторинг аудиторов</div>
+    </section>
+
+    <!-- ── SLIDE 4 — CALLOUT GRID: RESULT ── -->
     <section class="slide slide-portal">
       <div class="eyebrow">Результат</div>
       <div class="portal-grid fit-wrap">
