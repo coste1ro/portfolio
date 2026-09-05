@@ -124,18 +124,21 @@
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
-    .hero-media { grid-column: 1; grid-row: 1 / 3; }
+    .hero-media { grid-column: 1; }
     .hero-media img { width: 100%; display: block; }
+    /* Same fixed top-left slot every other slide's .eyebrow sits in —
+       was inline in the grid next to the photo, which made the hero
+       slide the one inconsistent slide in the deck. */
     .hero-heading {
-      grid-column: 2 / span 2; grid-row: 1;
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
       letter-spacing: 0.08em; line-height: normal;
       text-transform: uppercase; color: var(--fg);
-      margin-bottom: 40px;
     }
-    .hero-col-a { grid-column: 2; grid-row: 2; }
-    .hero-col-b { grid-column: 3; grid-row: 2; }
+    .hero-col-a { grid-column: 2; }
+    .hero-col-b { grid-column: 3; }
     .hero-col-label {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
@@ -273,7 +276,7 @@
         position: static; transform: none !important;
         display: flex; flex-direction: column;
       }
-      .hero-heading { order: 1; margin-bottom: 32px; }
+      .hero-heading { position: static; height: auto; order: 1; margin-bottom: 32px; }
       .hero-media   { order: 2; margin-bottom: 32px; }
       .hero-col-a   { order: 3; margin-bottom: 32px; }
       .hero-col-b   { order: 4; }
@@ -369,7 +372,7 @@
           </div>
         </div>
         <div class="portal-media">
-          <img src="projects/auditors_monitoring/pin%20coding%20system.png" alt="Система кодирования пинов">
+          <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Мониторинг аудиторов — обзорная карта">
         </div>
         <div class="portal-callouts">
           <div>
@@ -393,7 +396,7 @@
           <div class="strip-item">
             <span class="strip-num">[1]</span>
             <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Обзорная карта аудиторов">
-            <p class="strip-caption">Карта всех аудиторов&nbsp;— каждый пин показывает статус цветом иконки. Фильтры «Группа» и&nbsp;«Статус» сверху&nbsp;— менеджер видит всех сразу, без&nbsp;поисков вручную.</p>
+            <p class="strip-caption">Собрал всех аудиторов на&nbsp;одной карте, чтобы менеджер видел статус каждого одним взглядом, без&nbsp;ручных поисков&nbsp;— каждый пин показывает статус цветом. Фильтры «Группа» и&nbsp;«Статус» вынес наверх, чтобы сузить список, не&nbsp;уходя с&nbsp;карты.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[1.1]</span>
@@ -403,17 +406,17 @@
           <div class="strip-item">
             <span class="strip-num">[2]</span>
             <img src="projects/auditors_monitoring/02%20auditors%20list%20popup.png" alt="Список аудиторов и карточка">
-            <p class="strip-caption">Список + карточка аудитора&nbsp;— клик по&nbsp;строке или по&nbsp;пину на&nbsp;карте ведёт в&nbsp;одну и&nbsp;ту же&nbsp;карточку: статус, устройство, версия приложения, свежесть данных.</p>
+            <p class="strip-caption">Сделал так, чтобы клик по&nbsp;строке в&nbsp;списке и&nbsp;клик по&nbsp;пину на&nbsp;карте вели в&nbsp;одну и&nbsp;ту же&nbsp;карточку аудитора, а&nbsp;не&nbsp;в&nbsp;два разных интерфейса ради одного действия. В&nbsp;карточке&nbsp;— статус, устройство, версия приложения, свежесть данных: всё, что нужно проверить с&nbsp;одного взгляда.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[3]</span>
             <img src="projects/auditors_monitoring/03%20auditors%20route.png" alt="Маршрут аудитора">
-            <p class="strip-caption">Маршрут аудитора за&nbsp;день&nbsp;— путь по&nbsp;посещённым точкам, время в&nbsp;пути между ними видно по&nbsp;клику на&nbsp;отрезок.</p>
+            <p class="strip-caption">Показал маршрут аудитора за&nbsp;день, чтобы менеджер видел прогресс без&nbsp;звонка. Время в&nbsp;пути между точками спрятал за&nbsp;клик на&nbsp;отрезок, а&nbsp;не&nbsp;вывел сразу&nbsp;— чтобы не&nbsp;перегружать карту цифрами.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[4]</span>
             <img src="projects/auditors_monitoring/04%20tt%20details%20list.png" alt="Детали торговой точки — список">
-            <p class="strip-caption">Детали торговой точки&nbsp;— статус сбора, вывеска, назначенные аудиторы, даты плана и&nbsp;визита.</p>
+            <p class="strip-caption">Собрал в&nbsp;одной карточке всё, что раньше приходилось уточнять в&nbsp;разных местах: статус сбора, вывеску, назначенных аудиторов, даты плана и&nbsp;визита&nbsp;— чтобы не&nbsp;переключаться между системами ради одного вопроса.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[4.1]</span>
