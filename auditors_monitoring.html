@@ -119,8 +119,17 @@
 
     /* ── Slide 1: hero ── */
     .slide-hero { position: relative; height: 100%; }
+    /* Anchored below the heading (now fixed at top:40, height:48) instead
+       of true-centered in the viewport — with the heading pulled out of
+       this box, centering it could still put the photo's top edge above
+       the heading whenever the photo is tall, since the box's own height
+       shrank without heading in it. transform-origin: top keeps the
+       fit-scale shrink (when content is taller than available space)
+       anchored to this same top edge instead of shrinking from centre. */
     .hero-grid {
-      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      position: absolute; top: 128px; left: 40px; right: 40px;
+      transform: scaleY(var(--fit-scale, 1));
+      transform-origin: top;
       display: grid; grid-template-columns: 660fr 310fr 310fr;
       column-gap: 40px; align-items: start;
     }
@@ -345,7 +354,7 @@
         </div>
         <div class="hero-col-b">
           <div class="hero-col-label">Проблема</div>
-          <p class="hero-col-body">Менеджер не&nbsp;мог понять, где аудитор и&nbsp;как идёт его день, иначе как по&nbsp;звонку или переписке&nbsp;— с&nbsp;десятками аудиторов в&nbsp;подчинении это не&nbsp;масштабируется, а&nbsp;работа менеджера превращается в&nbsp;непрерывный обзвон вместо контроля. Нужно было:</p>
+          <p class="hero-col-body">Менеджер мог понять, где аудитор и&nbsp;как идёт его день, только по&nbsp;звонку или переписке. С&nbsp;десятками аудиторов в&nbsp;подчинении это не&nbsp;масштабируется: работа менеджера превращается в&nbsp;непрерывный обзвон вместо контроля. Нужно было:</p>
           <ul class="hero-col-list">
             <li>видеть всех аудиторов на&nbsp;карте одновременно, с&nbsp;фильтром по&nbsp;группе и&nbsp;статусу;</li>
             <li>быстро находить нужного человека и&nbsp;открывать его карточку;</li>
@@ -364,7 +373,7 @@
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[1]</div>
-            <p class="portal-text">Два разных интерфейса под&nbsp;две роли: аудитор работает в&nbsp;поле через мобильное приложение&nbsp;— видит свои задания и&nbsp;маршрут на&nbsp;день. Менеджер&nbsp;— с&nbsp;десктопа, через веб-портал с&nbsp;обзором сразу по&nbsp;всей команде.</p>
+            <p class="portal-text">Два разных интерфейса под&nbsp;две роли: аудитор в&nbsp;поле работает с&nbsp;мобильным приложением, видит свои задания и&nbsp;маршрут на&nbsp;день, а&nbsp;менеджер&nbsp;— с&nbsp;десктопа, через веб-портал с&nbsp;обзором сразу по&nbsp;всей команде.</p>
           </div>
           <div>
             <div class="portal-num">[2]</div>
@@ -377,11 +386,11 @@
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[3]</div>
-            <p class="portal-text">Статусов больше десяти&nbsp;— выбрал цвет вместо иконок: под&nbsp;каждую пришлось&nbsp;бы рисовать отдельный значок, а&nbsp;цвет считывается быстрее.</p>
+            <p class="portal-text">Статусов больше десяти, поэтому выбрал цвет вместо иконок: под&nbsp;каждую пришлось&nbsp;бы рисовать отдельный значок, а&nbsp;цвет считывается быстрее.</p>
           </div>
           <div>
             <div class="portal-num">[4]</div>
-            <p class="portal-text">Делал фичу один, без&nbsp;дизайн-лида&nbsp;— всего на&nbsp;этом проекте я так в&nbsp;одиночку закрыл около 20&nbsp;фич.</p>
+            <p class="portal-text">Делал фичу один, без&nbsp;дизайн-лида: всего на&nbsp;этом проекте я так в&nbsp;одиночку закрыл около 20&nbsp;фич.</p>
           </div>
         </div>
       </div>
@@ -390,13 +399,13 @@
 
     <!-- ── SLIDE 3 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
-      <div class="eyebrow">5 экранов&nbsp;— один маршрут менеджера</div>
+      <div class="eyebrow">5 экранов: один маршрут менеджера</div>
       <div class="strip-viewport pan-fit">
         <div class="strip-track">
           <div class="strip-item">
             <span class="strip-num">[1]</span>
             <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Обзорная карта аудиторов">
-            <p class="strip-caption">Собрал всех аудиторов на&nbsp;одной карте, чтобы менеджер видел статус каждого одним взглядом, без&nbsp;ручных поисков&nbsp;— каждый пин показывает статус цветом. Фильтры «Группа» и&nbsp;«Статус» вынес наверх, чтобы сузить список, не&nbsp;уходя с&nbsp;карты.</p>
+            <p class="strip-caption">Собрал всех аудиторов на&nbsp;одной карте, чтобы менеджер видел статус каждого одним взглядом, без&nbsp;ручных поисков: каждый пин показывает статус цветом. Фильтры «Группа» и&nbsp;«Статус» вынес наверх, чтобы сузить список, не&nbsp;уходя с&nbsp;карты.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[1.1]</span>
@@ -406,17 +415,17 @@
           <div class="strip-item">
             <span class="strip-num">[2]</span>
             <img src="projects/auditors_monitoring/02%20auditors%20list%20popup.png" alt="Список аудиторов и карточка">
-            <p class="strip-caption">Сделал так, чтобы клик по&nbsp;строке в&nbsp;списке и&nbsp;клик по&nbsp;пину на&nbsp;карте вели в&nbsp;одну и&nbsp;ту же&nbsp;карточку аудитора, а&nbsp;не&nbsp;в&nbsp;два разных интерфейса ради одного действия. В&nbsp;карточке&nbsp;— статус, устройство, версия приложения, свежесть данных: всё, что нужно проверить с&nbsp;одного взгляда.</p>
+            <p class="strip-caption">Сделал так, чтобы клик по&nbsp;строке в&nbsp;списке и&nbsp;клик по&nbsp;пину на&nbsp;карте вели в&nbsp;одну и&nbsp;ту же&nbsp;карточку аудитора, а&nbsp;не&nbsp;в&nbsp;два разных интерфейса ради одного действия. Карточка показывает статус, устройство, версию приложения и&nbsp;свежесть данных: всё, что нужно проверить с&nbsp;одного взгляда.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[3]</span>
             <img src="projects/auditors_monitoring/03%20auditors%20route.png" alt="Маршрут аудитора">
-            <p class="strip-caption">Показал маршрут аудитора за&nbsp;день, чтобы менеджер видел прогресс без&nbsp;звонка. Время в&nbsp;пути между точками спрятал за&nbsp;клик на&nbsp;отрезок, а&nbsp;не&nbsp;вывел сразу&nbsp;— чтобы не&nbsp;перегружать карту цифрами.</p>
+            <p class="strip-caption">Показал маршрут аудитора за&nbsp;день, чтобы менеджер видел прогресс без&nbsp;звонка. Время в&nbsp;пути между точками спрятал за&nbsp;клик на&nbsp;отрезок, а&nbsp;не&nbsp;вывел сразу: не&nbsp;хотел перегружать карту цифрами.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[4]</span>
             <img src="projects/auditors_monitoring/04%20tt%20details%20list.png" alt="Детали торговой точки — список">
-            <p class="strip-caption">Собрал в&nbsp;одной карточке всё, что раньше приходилось уточнять в&nbsp;разных местах: статус сбора, вывеску, назначенных аудиторов, даты плана и&nbsp;визита&nbsp;— чтобы не&nbsp;переключаться между системами ради одного вопроса.</p>
+            <p class="strip-caption">Собрал в&nbsp;одной карточке всё, что раньше приходилось уточнять в&nbsp;разных местах: статус сбора, вывеску, назначенных аудиторов, даты плана и&nbsp;визита. Так не&nbsp;нужно переключаться между системами ради одного вопроса.</p>
           </div>
           <div class="strip-item">
             <span class="strip-num">[4.1]</span>
@@ -440,11 +449,11 @@
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[1]</div>
-            <p class="portal-text">Менеджер видит всех аудиторов одновременно&nbsp;— фильтрует по&nbsp;группе и&nbsp;статусу.</p>
+            <p class="portal-text">Менеджер видит всех аудиторов одновременно и&nbsp;фильтрует по&nbsp;группе и&nbsp;статусу.</p>
           </div>
           <div>
             <div class="portal-num">[2]</div>
-            <p class="portal-text">Быстро находит конкретного человека через поиск, открывает одну и&nbsp;ту же&nbsp;карточку&nbsp;— с&nbsp;карты или из&nbsp;списка.</p>
+            <p class="portal-text">Быстро находит конкретного человека через поиск и&nbsp;открывает одну и&nbsp;ту же&nbsp;карточку с&nbsp;карты или из&nbsp;списка.</p>
           </div>
           <div>
             <div class="portal-num">[3]</div>
@@ -457,11 +466,11 @@
         <div class="portal-callouts">
           <div>
             <div class="portal-num">[4]</div>
-            <p class="portal-text">Открывает детали торговой точки одинаково&nbsp;— с&nbsp;карты общего вида и&nbsp;с&nbsp;карты конкретного аудитора.</p>
+            <p class="portal-text">Открывает детали торговой точки одинаково с&nbsp;карты общего вида и&nbsp;с&nbsp;карты конкретного аудитора.</p>
           </div>
           <div>
             <div class="portal-num">[5]</div>
-            <p class="portal-text">Фичу приняли, она в&nbsp;проде&nbsp;— веб-портал менеджера работает и&nbsp;на&nbsp;десктопе, и&nbsp;на&nbsp;мобильных браузерах. Задачи из&nbsp;ТЗ закрыты: менеджеры перестали звонить аудиторам, чтобы понять, где они и&nbsp;что делают, стало быстрее находить нужного человека и&nbsp;удобнее следить за&nbsp;работой в&nbsp;поле.</p>
+            <p class="portal-text">Фичу приняли, она в&nbsp;проде: веб-портал менеджера работает и&nbsp;на&nbsp;десктопе, и&nbsp;на&nbsp;мобильных браузерах. Задачи из&nbsp;ТЗ закрыты: менеджеры перестали звонить аудиторам, чтобы понять, где они и&nbsp;что делают, стало быстрее находить нужного человека и&nbsp;удобнее следить за&nbsp;работой в&nbsp;поле.</p>
           </div>
         </div>
       </div>
