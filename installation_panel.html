@@ -134,7 +134,13 @@
     .hero-media { grid-column: 1; }
     .hero-media img { width: 100%; display: block; }
     /* Same fixed top-left slot every other slide's .eyebrow sits in —
-       was inline in the grid next to the photo. */
+       was inline in the grid next to the photo. Must be a SIBLING of
+       .hero-grid, not a child: .hero-grid has its own transform, which
+       makes it the containing block for any absolutely positioned
+       descendant regardless of that descendant's own position value —
+       a heading nested inside it would resolve top:40 against the
+       grid's box (already offset top:128), landing ~168px down
+       instead of 40px, on top of the column labels. */
     .hero-heading {
       position: absolute; top: 40px; left: 40px; height: 48px;
       display: flex; align-items: center;
@@ -197,7 +203,13 @@
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
-    .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; }
+    /* justify-content:space-between was a no-op here — .portal-grid uses
+       align-items:start, so .portal-callouts never stretches taller
+       than its own content and there's no free space to distribute.
+       That left 0px between the two stacked callouts, tighter than
+       the 20px between a callout's own number and its text — backwards
+       hierarchy. gap fixes it directly. */
+    .portal-callouts { display: flex; flex-direction: column; gap: 40px; }
     .portal-num {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
@@ -277,11 +289,15 @@
 
       /* Hero: subtitle (heading) -> photo -> text, in that order —
          flex+order reorders without touching the DOM (source order is
-         photo first, for desktop's side-by-side grid). */
-      .hero-grid {
-        position: static; transform: none !important;
-        display: flex; flex-direction: column;
-      }
+         photo first, for desktop's side-by-side grid). heading is a
+         sibling of .hero-grid now (its containing block on desktop
+         must NOT be the transformed grid — see comment above), so on
+         mobile .hero-grid itself becomes display:contents and
+         .slide-hero is the actual flex container: that folds the
+         grid's children back into one shared order-based sequence
+         together with the heading. */
+      .hero-grid { display: contents; }
+      .slide-hero { display: flex; flex-direction: column; }
       .hero-heading { position: static; height: auto; order: 1; margin-bottom: 32px; }
       .hero-media   { order: 2; margin-bottom: 32px; }
       .hero-col-a   { order: 3; margin-bottom: 32px; }
@@ -340,11 +356,11 @@
 
     <!-- ── SLIDE 1 — HERO ── -->
     <section class="slide slide-hero">
+      <h1 class="hero-heading">Административная панель для&nbsp;управления установкой оборудования</h1>
       <div class="hero-grid fit-wrap">
         <div class="hero-media">
           <img src="projects/installation_panel/Installers.png" alt="Панель инсталляций — реестр установщиков">
         </div>
-        <h1 class="hero-heading">Административная панель для&nbsp;управления установкой оборудования</h1>
         <div class="hero-col-a">
           <div class="hero-col-label">Обзор</div>
           <p class="hero-col-body">Продукт: внутренний инструмент для&nbsp;отслеживания процесса монтажа умных камер и&nbsp;устройств на&nbsp;транспортные средства. Менеджеры контролируют статус установок в&nbsp;разрезе компаний-клиентов, типов транспорта и&nbsp;команд установщиков.</p>
@@ -362,7 +378,38 @@
       <div class="slide-title">Панель инсталляций</div>
     </section>
 
-    <!-- ── SLIDE 2 — SCREENS STRIP ── -->
+    <!-- ── SLIDE 2 — HOW: PROCESS ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Ход работы</div>
+      <div class="portal-grid fit-wrap">
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[1]</div>
+            <p class="portal-text">Перед&nbsp;ТЗ поресёрчил паттерны админ-панелей: увидел, что&nbsp;в&nbsp;них по&nbsp;максимуму переиспользуют одни и&nbsp;те&nbsp;же&nbsp;сущности, а&nbsp;консистентность стоит на&nbsp;первом месте, потому что&nbsp;админка обязана быть однородной.</p>
+          </div>
+          <div>
+            <div class="portal-num">[2]</div>
+            <p class="portal-text">Работал в&nbsp;связке с&nbsp;дизайн-лидом, вели проект вместе.</p>
+          </div>
+        </div>
+        <div class="portal-media">
+          <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки — таймлайн">
+        </div>
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[3]</div>
+            <p class="portal-text">Подобрал формат под&nbsp;тип данных, а&nbsp;не&nbsp;один шаблон на&nbsp;всё: таблица для&nbsp;групп установок, чтобы проще агрегировать и&nbsp;фильтровать; карточки для&nbsp;транспорта, чтобы модель считывалась по&nbsp;картинке, а&nbsp;не&nbsp;по&nbsp;тексту.</p>
+          </div>
+          <div>
+            <div class="portal-num">[4]</div>
+            <p class="portal-text">Консистентность в&nbsp;деле: профиль установщика и&nbsp;форма его создания используют одну и&nbsp;ту&nbsp;же&nbsp;структуру, один паттерн для&nbsp;чтения и&nbsp;записи.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Панель инсталляций</div>
+    </section>
+
+    <!-- ── SLIDE 3 — SCREENS STRIP ── -->
     <section class="slide slide-strip">
       <div class="eyebrow">6 экранов: сквозная навигация</div>
       <div class="strip-viewport pan-fit">
@@ -401,37 +448,6 @@
             <span class="strip-num">[6]</span>
             <img src="projects/installation_panel/Vehicles%20-%20List.png" alt="Список транспортных средств">
             <p class="strip-caption">Транспортные средства. Список ТС: тип, номер, статус установки, назначенный установщик. Здесь выбрал карточки, а&nbsp;не&nbsp;таблицу: важно узнать модель по&nbsp;картинке, а&nbsp;не&nbsp;читать текст.</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide-title">Панель инсталляций</div>
-    </section>
-
-    <!-- ── SLIDE 3 — CALLOUT GRID: PROCESS ── -->
-    <section class="slide slide-portal">
-      <div class="eyebrow">Ход работы</div>
-      <div class="portal-grid fit-wrap">
-        <div class="portal-callouts">
-          <div>
-            <div class="portal-num">[1]</div>
-            <p class="portal-text">Перед&nbsp;ТЗ поресёрчил паттерны админ-панелей: увидел, что&nbsp;в&nbsp;них по&nbsp;максимуму переиспользуют одни и&nbsp;те&nbsp;же&nbsp;сущности, а&nbsp;консистентность стоит на&nbsp;первом месте, потому что&nbsp;админка обязана быть однородной.</p>
-          </div>
-          <div>
-            <div class="portal-num">[2]</div>
-            <p class="portal-text">Работал в&nbsp;связке с&nbsp;дизайн-лидом, вели проект вместе.</p>
-          </div>
-        </div>
-        <div class="portal-media">
-          <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Детали установки — таймлайн">
-        </div>
-        <div class="portal-callouts">
-          <div>
-            <div class="portal-num">[3]</div>
-            <p class="portal-text">Подобрал формат под&nbsp;тип данных, а&nbsp;не&nbsp;один шаблон на&nbsp;всё: таблица для&nbsp;групп установок, чтобы проще агрегировать и&nbsp;фильтровать; карточки для&nbsp;транспорта, чтобы модель считывалась по&nbsp;картинке, а&nbsp;не&nbsp;по&nbsp;тексту.</p>
-          </div>
-          <div>
-            <div class="portal-num">[4]</div>
-            <p class="portal-text">Консистентность в&nbsp;деле: профиль установщика и&nbsp;форма его создания используют одну и&nbsp;ту&nbsp;же&nbsp;структуру, один паттерн для&nbsp;чтения и&nbsp;записи.</p>
           </div>
         </div>
       </div>

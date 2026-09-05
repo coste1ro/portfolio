@@ -137,7 +137,13 @@
     .hero-media img { width: 100%; display: block; }
     /* Same fixed top-left slot every other slide's .eyebrow sits in —
        was inline in the grid next to the photo, which made the hero
-       slide the one inconsistent slide in the deck. */
+       slide the one inconsistent slide in the deck. Must be a SIBLING
+       of .hero-grid, not a child: .hero-grid has its own transform,
+       which makes it the containing block for any absolutely
+       positioned descendant regardless of that descendant's own
+       position value — a heading nested inside it would resolve
+       top:40 against the grid's box (already offset top:128), landing
+       ~168px down instead of 40px, on top of the column labels. */
     .hero-heading {
       position: absolute; top: 40px; left: 40px; height: 48px;
       display: flex; align-items: center;
@@ -200,7 +206,13 @@
     }
     .portal-media { grid-column: 2; }
     .portal-media img { width: 100%; display: block; }
-    .portal-callouts { display: flex; flex-direction: column; justify-content: space-between; }
+    /* justify-content:space-between was a no-op here — .portal-grid uses
+       align-items:start, so .portal-callouts never stretches taller
+       than its own content and there's no free space to distribute.
+       That left 0px between the two stacked callouts, tighter than
+       the 20px between a callout's own number and its text — backwards
+       hierarchy. gap fixes it directly. */
+    .portal-callouts { display: flex; flex-direction: column; gap: 40px; }
     .portal-num {
       font-family: 'Jost', sans-serif;
       font-weight: 200; font-size: var(--fs-heading);
@@ -280,11 +292,15 @@
 
       /* Hero: subtitle (heading) -> photo -> text, in that order —
          flex+order reorders without touching the DOM (source order is
-         photo first, for desktop's side-by-side grid). */
-      .hero-grid {
-        position: static; transform: none !important;
-        display: flex; flex-direction: column;
-      }
+         photo first, for desktop's side-by-side grid). heading is a
+         sibling of .hero-grid now (its containing block on desktop
+         must NOT be the transformed grid — see comment above), so on
+         mobile .hero-grid itself becomes display:contents and
+         .slide-hero is the actual flex container: that folds the
+         grid's children back into one shared order-based sequence
+         together with the heading. */
+      .hero-grid { display: contents; }
+      .slide-hero { display: flex; flex-direction: column; }
       .hero-heading { position: static; height: auto; order: 1; margin-bottom: 32px; }
       .hero-media   { order: 2; margin-bottom: 32px; }
       .hero-col-a   { order: 3; margin-bottom: 32px; }
@@ -343,11 +359,11 @@
 
     <!-- ── SLIDE 1 — HERO ── -->
     <section class="slide slide-hero">
+      <h1 class="hero-heading">Инструмент для&nbsp;менеджера полевого аудита</h1>
       <div class="hero-grid fit-wrap">
         <div class="hero-media">
           <img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Мониторинг аудиторов — обзорная карта">
         </div>
-        <h1 class="hero-heading">Инструмент для&nbsp;менеджера полевого аудита</h1>
         <div class="hero-col-a">
           <div class="hero-col-label">Обзор</div>
           <p class="hero-col-body">Экосистема для&nbsp;полевого аудита розничных точек: мобильное приложение для&nbsp;аудиторов и&nbsp;веб-портал для&nbsp;менеджеров. У&nbsp;менеджера в&nbsp;подчинении десятки аудиторов, каждый день выполняющих задания по&nbsp;разным торговым точкам города.</p>
