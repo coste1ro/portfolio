@@ -357,8 +357,10 @@
       flex-direction: column;
     }
     /* Bleeds to the screen edges (the block has 40px padding) so cards slide
-       off the edge of the screen, not off an invisible line 40px in. */
-    .cases-viewport { margin: auto -40px; overflow: hidden; }
+       off the edge of the screen, not off an invisible line 40px in.
+       Anchored to the bottom of the block; the 100px of top padding is the
+       headroom the hover lift needs so overflow: hidden doesn't clip it. */
+    .cases-viewport { margin: auto -40px 0; padding-top: 100px; overflow: hidden; }
     .cases-track {
       position: relative;
       display: flex;
@@ -367,13 +369,15 @@
       will-change: transform;
     }
     /* Half the screen wide (or less on short windows, where the 16:10
-       image plus number and title must still fit under the label), so
-       the next card always peeks in from the right. */
+       image plus number and title, the label and the hover headroom must
+       still fit), so the next card always peeks in from the right. */
     .case-item {
-      flex: 0 0 clamp(320px, min(50vw, (100vh - 340px) * 1.6), 1200px);
+      flex: 0 0 clamp(320px, min(50vw, (100vh - 370px) * 1.6), 1200px);
       display: flex;
       flex-direction: column;
+      transition: transform 0.4s ease;
     }
+    .case-item:hover { transform: translateY(-12%); }
     .case-num {
       font-weight: 300;
       font-size: 20px;
@@ -395,9 +399,7 @@
       object-fit: cover;
       object-position: top left;
       display: block;
-      transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
     }
-    .case-item:hover .case-img img { transform: scale(1.03); }
     .case-title {
       font-weight: 300;
       font-size: 20px;
@@ -531,9 +533,10 @@
       .hero { min-height: 0; gap: 40px; padding-top: 100px; }
       .cases-scroll { height: auto; }
       .cases { position: static; height: auto; display: block; }
-      .cases-viewport { margin: 0; overflow: visible; }
+      .cases-viewport { margin: 0; padding: 0; overflow: visible; }
       .cases-track { flex-direction: column; gap: 40px; padding: 0; transform: none !important; }
       .case-item { flex: none; width: 100%; }
+      .case-item:hover { transform: none; }
       .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
       .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
