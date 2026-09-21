@@ -67,12 +67,21 @@
     }
 
     /* ── Slides ── */
-    /* Slides stack vertically, one full viewport each — the page scrolls
-       like any other. */
+    /* Each slide pins to the top and the next one slides over it, so
+       scrolling reads as a stack of cards. Opaque background so the one
+       underneath never shows through; the soft top shadow sells the
+       layering. */
     .slide {
+      position: sticky; top: 0;
       height: 100vh;
-      position: relative; overflow: hidden;
+      overflow: hidden;
+      background: var(--bg);
+      box-shadow: 0 -40px 80px rgba(0, 0, 0, 0.07);
     }
+    /* Empty runway after the screens slide: while it scrolls past, that
+       slide stays pinned and its strip pans sideways. Height comes from
+       JS (the strip's overflow). */
+    .strip-spacer { pointer-events: none; }
 
     .eyebrow {
       position: absolute; top: 40px; left: 40px; height: 48px;
@@ -98,7 +107,6 @@
     .mobile-back { display: none; }
 
     /* ── Slide 1: hero ── */
-    .slide-hero { position: relative; }
     /* Centered the same way as every other slide's content block
        (.portal-grid, .strip-viewport) — safe now that .hero-heading is
        a true sibling instead of living inside this box (see comment
@@ -153,15 +161,14 @@
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Slide 2: screens strip ── */
-    .slide-strip { position: relative; }
-    /* Native horizontal scroll (trackpad swipe, shift+wheel, drag) — the
-       vertical wheel stays with the page. */
+    /* Panned by the page scroll (see .strip-spacer), not by its own. */
     .strip-viewport {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
-      overflow-x: auto; overflow-y: hidden; scrollbar-width: thin;
+      overflow: hidden;
     }
     .strip-track {
       display: flex; align-items: flex-start; gap: 40px;
+      will-change: transform;
     }
     .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
     .strip-num {
@@ -178,7 +185,6 @@
     }
 
     /* ── Slide 3: callout grid ── */
-    .slide-portal { position: relative; }
     .portal-grid {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
@@ -258,6 +264,7 @@
         height: auto; overflow: visible;
         padding: 0 24px;
         margin-bottom: 64px;
+        box-shadow: none;
       }
 
       .eyebrow { position: static; height: auto; margin-bottom: 32px; }
@@ -282,6 +289,7 @@
         position: static; transform: none !important;
         overflow: visible;
       }
+      .strip-spacer { display: none; }
       .strip-track {
         flex-direction: column; gap: 32px;
         transform: none !important;
@@ -419,6 +427,8 @@
       <div class="slide-title">Панель инсталляций</div>
     </section>
 
+    <div class="strip-spacer"></div>
+
     <!-- ── SLIDE 4 — CALLOUT GRID: RESULT ── -->
     <section class="slide slide-portal">
       <div class="eyebrow">Результат</div>
@@ -504,26 +514,35 @@
       window.addEventListener('resize', applyFit);
       if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
 
-      // Screens strip scrolls natively (trackpad swipe, shift+wheel); this
-      // adds mouse drag for people with neither.
+      // Screens strip: the slide stays pinned while the page scrolls past
+      // .strip-spacer, and that scroll pans the strip left to right — one
+      // scrolled pixel, one panned pixel, the same feel the wheel had
+      // before the page became a normal scroll.
+      var stripSlide = document.querySelector('.slide-strip');
       var viewport = document.querySelector('.strip-viewport');
-      if (viewport) {
-        var dragging = false, startX = 0, startLeft = 0;
-        viewport.addEventListener('dragstart', function (e) { e.preventDefault(); });
-        viewport.addEventListener('pointerdown', function (e) {
-          if (e.pointerType !== 'mouse' || e.button !== 0) return;
-          dragging = true;
-          startX = e.clientX;
-          startLeft = viewport.scrollLeft;
-          viewport.setPointerCapture(e.pointerId);
-        });
-        viewport.addEventListener('pointermove', function (e) {
-          if (dragging) viewport.scrollLeft = startLeft - (e.clientX - startX);
-        });
-        function stopDrag() { dragging = false; }
-        viewport.addEventListener('pointerup', stopDrag);
-        viewport.addEventListener('pointercancel', stopDrag);
+      var track = document.querySelector('.strip-track');
+      var spacer = document.querySelector('.strip-spacer');
+      var panMax = 0, pinAt = 0, ticking = false;
+      function panStrip() {
+        ticking = false;
+        var p = panMax ? Math.min(1, Math.max(0, (window.scrollY - pinAt) / panMax)) : 0;
+        track.style.transform = 'translateX(' + (-p * panMax) + 'px)';
       }
+      function measureStrip() {
+        panMax = Math.max(0, track.scrollWidth - viewport.clientWidth);
+        spacer.style.height = panMax + 'px';
+        // The spacer starts exactly one slide-height below the slide's
+        // natural top, so that's where the pin (and the pan) begins.
+        pinAt = spacer.getBoundingClientRect().top + window.scrollY - stripSlide.offsetHeight;
+        panStrip();
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(panStrip); }
+      }, { passive: true });
+      window.addEventListener('resize', measureStrip);
+      window.addEventListener('load', measureStrip);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureStrip); }
+      measureStrip();
     })();
   </script>
 
