@@ -80,6 +80,16 @@
        the wrapper ends and the slide scrolls away like any other. */
     .strip-scroll { height: calc(100vh + var(--pan, 0px)); }
     .slide-strip { position: sticky; top: 0; }
+    /* Pages, not one long sheet: on desktop each slide is a white page on
+       a gray canvas with a thin gutter between them (mobile already
+       spaces them with margins). The screens slide sits flush inside its
+       wrapper so the pin lasts exactly as long as the pan. */
+    @media (min-width: 901px) {
+      .slides { background: #e8e8e8; }
+      .slide { background: var(--bg); margin-bottom: 16px; }
+      .strip-scroll { margin-bottom: 16px; }
+      .slide-strip, .slides > :last-child { margin-bottom: 0; }
+    }
 
     .eyebrow {
       position: absolute; top: 40px; left: 40px; height: 48px;
