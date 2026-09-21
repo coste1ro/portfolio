@@ -105,14 +105,16 @@
       nav .nav-link { color: #fff; }
     }
 
-    /* ── Page: three full-width blocks (hero, cases, footer). ── */
+    /* ── Page: three full-width blocks (hero, cases, footer) on white /
+       light gray / white, so the split between them reads at a glance. ── */
     .page { display: flex; flex-direction: column; }
     .block { padding: 40px; }
+    .block-alt { background: var(--bg-alt); }
 
     /* Title, bio and recommendations, spread over the first screen like
        the old poster. The block stops 96px short of the viewport bottom,
-       so the "Кейсы" heading shows under it as a cue that there's more
-       below. */
+       so the top of the cases block (its gray band and heading) shows
+       under it as a cue that there's more below. */
     .hero {
       min-height: calc(100vh - 96px);
       display: flex;
@@ -342,7 +344,7 @@
       background: var(--fg);
     }
 
-    /* ── Cases: 2x2 grid of gray cards on the white page. Each card carries
+    /* ── Cases: 2x2 grid of white cards on the gray block. Each card carries
        the thumbnail, the title (Heading style) and a short overview (Body
        style), so a case reads at a glance without opening it. ── */
     .cases-grid {
@@ -353,7 +355,7 @@
     .case-item {
       display: flex;
       flex-direction: column;
-      background: var(--bg-alt);
+      background: var(--bg);
       transition: transform 0.4s ease;
     }
     /* A small lift, not the old 12%: rows are only 64px apart, a bigger
@@ -697,7 +699,7 @@
 
     </section>
 
-    <section class="block cases" id="cases">
+    <section class="block block-alt cases" id="cases">
       <h2 class="section-label">Кейсы</h2>
       <div class="cases-grid">
 
