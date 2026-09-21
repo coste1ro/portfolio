@@ -434,6 +434,12 @@
       color: var(--fg);
       opacity: 0.5;
     }
+    /* Narrow windows: a label can wrap to two lines in one card and not in
+       its neighbour, which would move that card's hairline. Reserve two
+       lines so the figures block is the same height in every card. */
+    @media (max-width: 1100px) {
+      .stat-label { min-height: 2.4em; }
+    }
 
     /* ── Responsive: collapse multi-column blocks to a single column,
        and let .page's own flex gap handle spacing between the stacked
@@ -755,7 +761,7 @@
           </div>
           <div class="case-body">
             <h3 class="case-title">Редизайн оформления подписки</h3>
-            <p class="case-desc">Редизайн страницы выбора тарифа, оплаты и&nbsp;управления подпиской. Полный цикл от&nbsp;исследования до&nbsp;тестирования.</p>
+            <p class="case-desc">Редизайн выбора тарифа, оплаты и&nbsp;управления подпиской: от&nbsp;исследования до&nbsp;тестирования.</p>
             <div class="case-stats">
               <div class="stat"><span class="stat-num">91.7</span><span class="stat-label">SUS из&nbsp;100</span></div>
               <div class="stat"><span class="stat-num">6.3</span><span class="stat-label">SEQ из&nbsp;7</span></div>
@@ -772,7 +778,7 @@
           </div>
           <div class="case-body">
             <h3 class="case-title">Мониторинг аудиторов</h3>
-            <p class="case-desc">Инструмент для&nbsp;менеджера полевого аудита: карта аудиторов, статусы, маршруты и&nbsp;детали точек в&nbsp;одном интерфейсе.</p>
+            <p class="case-desc">Инструмент менеджера полевого аудита: карта аудиторов, статусы и&nbsp;маршруты.</p>
             <div class="case-stats">
               <div class="stat"><span class="stat-num">40+</span><span class="stat-label">регионов России</span></div>
               <div class="stat"><span class="stat-num">~20</span><span class="stat-label">фич в&nbsp;одиночку</span></div>
@@ -789,7 +795,7 @@
           </div>
           <div class="case-body">
             <h3 class="case-title">Панель инсталляций</h3>
-            <p class="case-desc">Административная панель для&nbsp;управления установкой оборудования: группы установок, установщики, транспорт.</p>
+            <p class="case-desc">Админ-панель управления установкой оборудования: группы, установщики, транспорт.</p>
             <div class="case-stats">
               <div class="stat"><span class="stat-num">3</span><span class="stat-label">модуля в&nbsp;одном портале</span></div>
               <div class="stat"><span class="stat-num">6</span><span class="stat-label">экранов флоу</span></div>
@@ -806,7 +812,7 @@
           </div>
           <div class="case-body">
             <h3 class="case-title">Дизайн-система EchoTwin AI</h3>
-            <p class="case-desc">Дизайн-система для&nbsp;продукта мониторинга дорожных аномалий: 377&nbsp;переменных, 50+&nbsp;компонентов, темы Dark/Light.</p>
+            <p class="case-desc">Дизайн-система для&nbsp;продукта мониторинга дорожных аномалий, темы Dark и&nbsp;Light.</p>
             <div class="case-stats">
               <div class="stat"><span class="stat-num">50+</span><span class="stat-label">компонентов</span></div>
               <div class="stat"><span class="stat-num">377</span><span class="stat-label">переменных</span></div>
