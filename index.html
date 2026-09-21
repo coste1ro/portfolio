@@ -264,6 +264,10 @@
       letter-spacing: 0;
       color: var(--fg);
     }
+    .bio-list { list-style: none; padding-left: 14px; }
+    .bio-list li { position: relative; margin-bottom: 8px; }
+    .bio-list li:last-child { margin-bottom: 0; }
+    .bio-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Testimonials: one recommendation at a time, sliding smoothly
        into the next — quieter than three full quotes stacked side by
@@ -396,6 +400,39 @@
       line-height: 1.2;
       color: var(--fg);
     }
+    /* Two key figures per card, under a hairline: number in the Hero style
+       (the site's stat-num style), label in the Nav style at half
+       opacity. */
+    .case-stats {
+      display: flex;
+      gap: 24px 40px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+    }
+    .stat-num {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 4.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      font-kerning: none;
+      color: var(--fg);
+    }
+    .stat-label {
+      display: block;
+      margin-top: 12px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: var(--fg);
+      opacity: 0.5;
+    }
 
     /* ── Responsive: collapse multi-column blocks to a single column,
        and let .page's own flex gap handle spacing between the stacked
@@ -520,6 +557,7 @@
       .block { padding: 64px 24px; }
       .hero { min-height: 0; gap: 40px; padding-top: 100px; }
       .cases-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stat-num { font-size: 12vw; line-height: 1; }
       .case-item:hover { transform: none; }
       .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
       .site-footer { flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
@@ -676,7 +714,14 @@
         </span>
       </div>
       <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;UX/Product дизайнер. Одинаково легко продумываю логику и&nbsp;собираю интерфейс руками: от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
-      <p class="bio-col">3&nbsp;года на&nbsp;международных проектах: США, Великобритания, ОАЭ, Россия. Строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Учился у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова. English C1.</p>
+      <ul class="bio-col bio-list">
+        <li>3&nbsp;года на&nbsp;международных проектах: США, Великобритания, ОАЭ, Россия</li>
+        <li>Задачи на&nbsp;10+ вебпродуктах, от&nbsp;карты аудиторов до&nbsp;админ-панелей</li>
+        <li>Дизайн-системы и&nbsp;UI-киты с&nbsp;нуля: 50+ компонентов, 377&nbsp;переменных</li>
+        <li>Интерфейс мониторинга аудиторов в&nbsp;проде, платформа на&nbsp;40+ регионов России</li>
+        <li>Учился у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова</li>
+        <li>English C1</li>
+      </ul>
     </div>
 
     <div class="testimonials">
@@ -716,7 +761,11 @@
           </div>
           <div class="case-body">
             <h3 class="case-title">Редизайн оформления подписки</h3>
-            <p class="case-desc">Редизайн страницы выбора тарифа, оплаты и&nbsp;управления подпиской. Полный цикл от&nbsp;исследования до&nbsp;тестирования: SUS&nbsp;91.7, SEQ&nbsp;6.3&nbsp;из&nbsp;7.</p>
+            <p class="case-desc">Редизайн страницы выбора тарифа, оплаты и&nbsp;управления подпиской. Полный цикл от&nbsp;исследования до&nbsp;тестирования.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">91.7</span><span class="stat-label">SUS из&nbsp;100</span></div>
+              <div class="stat"><span class="stat-num">6.3</span><span class="stat-label">SEQ из&nbsp;7</span></div>
+            </div>
           </div>
         </a>
 
@@ -730,6 +779,10 @@
           <div class="case-body">
             <h3 class="case-title">Мониторинг аудиторов</h3>
             <p class="case-desc">Инструмент для&nbsp;менеджера полевого аудита: карта аудиторов, статусы, маршруты и&nbsp;детали точек в&nbsp;одном интерфейсе.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">40+</span><span class="stat-label">регионов России</span></div>
+              <div class="stat"><span class="stat-num">~20</span><span class="stat-label">фич в&nbsp;одиночку</span></div>
+            </div>
           </div>
         </a>
 
@@ -743,6 +796,10 @@
           <div class="case-body">
             <h3 class="case-title">Панель инсталляций</h3>
             <p class="case-desc">Административная панель для&nbsp;управления установкой оборудования: группы установок, установщики, транспорт.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">3</span><span class="stat-label">модуля в&nbsp;одном портале</span></div>
+              <div class="stat"><span class="stat-num">6</span><span class="stat-label">экранов флоу</span></div>
+            </div>
           </div>
         </a>
 
@@ -756,6 +813,10 @@
           <div class="case-body">
             <h3 class="case-title">Дизайн-система EchoTwin AI</h3>
             <p class="case-desc">Дизайн-система для&nbsp;продукта мониторинга дорожных аномалий: 377&nbsp;переменных, 50+&nbsp;компонентов, темы Dark/Light.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">50+</span><span class="stat-label">компонентов</span></div>
+              <div class="stat"><span class="stat-num">377</span><span class="stat-label">переменных</span></div>
+            </div>
           </div>
         </a>
 
