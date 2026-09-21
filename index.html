@@ -32,7 +32,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* Normal vertical scroll on every device — the page is one long
-       canvas now (hero, cases, recommendations). Locked only during the
+       canvas now (hero, cases, footer). Locked only during the
        intro so the slide-up transform can't flash a scrollable gap. */
     body.preloading,
     html.entering body { overflow: hidden; }
@@ -105,41 +105,34 @@
       nav .nav-link { color: #fff; }
     }
 
-    /* ── Page: three full-width blocks on alternating backgrounds (hero,
-       cases, recommendations), so the split between them reads at a
-       glance. ── */
+    /* ── Page: three full-width blocks (hero, cases, footer) on white /
+       light gray / white, so the split between them reads at a glance. ── */
     .page { display: flex; flex-direction: column; }
     .block { padding: 40px; }
     .block-alt { background: var(--bg-alt); }
 
-    /* The first block stops 96px short of the viewport bottom, so the top
-       of the cases block (its gray band and label) shows under it as a
-       cue that there's more below. */
+    /* Title, bio and recommendations, spread over the first screen like
+       the old poster. The block stops 96px short of the viewport bottom,
+       so the top of the cases block (its gray band and label) shows under
+       it as a cue that there's more below. */
     .hero {
       min-height: calc(100vh - 96px);
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       gap: 64px;
     }
 
-    /* Recommendations and the footer fill the last screen; the footer sits
-       at the very end of the page instead of floating over the content,
-       and the quote is centered in the space between label and footer. */
-    .recommendations {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .recommendations .testimonials { margin: auto 0; }
-
-    /* Telegram left, CV centered, email right. A 3-column grid (not flex +
-       space-between) so the center link sits at the true midpoint
-       regardless of the other two links' differing widths. */
+    /* White footer under the gray cases block, at the very end of the page
+       instead of floating over the content. Telegram left, CV centered,
+       email right. A 3-column grid (not flex + space-between) so the
+       center link sits at the true midpoint regardless of the other two
+       links' differing widths. */
     .site-footer {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      padding-top: 64px;
+      padding: 64px 40px;
     }
     .site-footer a:nth-child(1) { justify-self: start; }
     .site-footer a:nth-child(2) { justify-self: center; }
@@ -359,7 +352,7 @@
       background: var(--fg);
     }
 
-    /* ── Cases: two-column grid between the bio and the recommendations.
+    /* ── Cases: two-column grid under the hero.
        Number and title use the Body style. ── */
     .cases-grid {
       display: grid;
@@ -525,10 +518,9 @@
          toggle instead of overlapping it. */
       .block { padding: 64px 24px; }
       .hero { min-height: 0; gap: 40px; padding-top: 100px; }
-      .recommendations { min-height: 0; }
       .cases-grid { grid-template-columns: 1fr; gap: 40px; }
       .section-label { margin-bottom: 32px; }
-      .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+      .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
@@ -685,6 +677,28 @@
       <p class="bio-col">3&nbsp;года на&nbsp;международных проектах: США, Великобритания, ОАЭ, Россия. Строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Учился у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова. English C1.</p>
     </div>
 
+    <div class="testimonials">
+      <div class="testimonials-track">
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
+          <span class="testimonial-name">Джонатан Карпентер — руководитель UX&nbsp;в&nbsp;Teradata<br class="testimonial-break">(экс-CXO/UX-лид Action Engine)</span>
+        </div>
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
+          <span class="testimonial-name">Дмитрий Варзин — генеральный директор Action Engine</span>
+        </div>
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
+          <span class="testimonial-name">Илья — тимлид Action Engine</span>
+        </div>
+      </div>
+      <div class="testimonial-pills">
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+      </div>
+    </div>
+
     </section>
 
     <section class="block block-alt cases" id="cases">
@@ -738,36 +752,11 @@
       </div>
     </section>
 
-    <section class="block recommendations">
-    <h2 class="section-label">Что говорят</h2>
-    <div class="testimonials">
-      <div class="testimonials-track">
-        <div class="testimonial-slide">
-          <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
-          <span class="testimonial-name">Джонатан Карпентер — руководитель UX&nbsp;в&nbsp;Teradata<br class="testimonial-break">(экс-CXO/UX-лид Action Engine)</span>
-        </div>
-        <div class="testimonial-slide">
-          <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
-          <span class="testimonial-name">Дмитрий Варзин — генеральный директор Action Engine</span>
-        </div>
-        <div class="testimonial-slide">
-          <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
-          <span class="testimonial-name">Илья — тимлид Action Engine</span>
-        </div>
-      </div>
-      <div class="testimonial-pills">
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
-      </div>
-    </div>
-
     <footer class="site-footer">
       <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
       <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
       <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
     </footer>
-    </section>
 
   </main>
 
