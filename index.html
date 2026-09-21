@@ -57,8 +57,10 @@
     a { color: inherit; text-decoration: none; }
 
     /* ── Nav ── */
+    /* Pinned to the top-right corner of the page itself, not the screen:
+       it scrolls away with the content. */
     nav {
-      position: fixed;
+      position: absolute;
       top: 40px;
       right: 40px;
       display: flex;
@@ -95,34 +97,10 @@
     .nav-link:hover::before,
     .nav-link:hover::after { opacity: 1; }
 
-    /* The nav is fixed to the corner. Once the page has scrolled (JS sets
-       html.scrolled) an opaque bar comes in behind it, so content passes
-       under a solid strip instead of running through the links. At the very
-       top it stays clear so it doesn't cover the page title. Desktop only:
-       mobile has its own bar (see media query). */
-    @media (min-width: 901px) {
-      .menu-bar-bg {
-        display: block;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        height: 88px;
-        background: var(--bg);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        z-index: 90;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.25s ease;
-      }
-      html.scrolled .menu-bar-bg { opacity: 1; }
-    }
-
     /* ── Page: three full-width blocks (hero, cases, footer) on white /
        light gray / white, so the split between them reads at a glance. ── */
     .page { display: flex; flex-direction: column; }
     .block { padding: 40px; }
-    /* Anchor jumps (the "Кейсы" link, the close button on a case page)
-       land the block below the fixed bar instead of under it. */
-    #cases { scroll-margin-top: 80px; }
     .block-alt { background: var(--bg-alt); }
 
     /* Title, bio and recommendations, spread over the first screen like
@@ -1160,15 +1138,6 @@
       scale += (scaleTarget - scale) * 0.2;
       ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
       requestAnimationFrame(loop);
-    })();
-  </script>
-
-  <script>
-    (function () {
-      var root = document.documentElement;
-      function mark() { root.classList.toggle('scrolled', window.scrollY > 8); }
-      window.addEventListener('scroll', mark, { passive: true });
-      mark();
     })();
   </script>
 
