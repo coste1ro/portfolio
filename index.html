@@ -43,6 +43,7 @@
     :root {
       --bg: #ffffff;
       --fg: #000000;
+      --bg-alt: #f4f4f4;
     }
 
     body {
@@ -65,27 +66,12 @@
       z-index: 100;
     }
 
-    /* ── Contacts: small footer-style bar pinned to the bottom edge —
-       Telegram left, CV centered, email right. A 3-column grid (not
-       flex + space-between) so the center link sits at the true
-       midpoint regardless of the other two links' differing widths. */
-    .contacts {
-      position: fixed;
-      left: 40px;
-      right: 40px;
-      bottom: 40px;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      z-index: 100;
-    }
-    /* DOM order stays Скачать CV / Telegram / Почта (mobile menu reads
-       it in that order) — only the desktop grid position is reordered. */
-    .contacts a:nth-child(1) { order: 2; justify-self: center; }
-    .contacts a:nth-child(2) { order: 1; justify-self: start; }
-    .contacts a:nth-child(3) { order: 3; justify-self: end; }
+    /* Desktop reads the contacts from the footer at the end of the page;
+       this copy only exists for the mobile menu overlay (see media
+       query). */
+    .contacts { display: none; }
 
-    /* No-op on desktop — nav/contacts render exactly as before, this
+    /* No-op on desktop — the nav renders exactly as before, this
        wrapper only becomes an actual box on mobile (see media query). */
     .menu-overlay { display: contents; }
     .menu-toggle { display: none; }
@@ -109,40 +95,58 @@
     .nav-link:hover::before,
     .nav-link:hover::after { opacity: 1; }
 
-    /* Nav and contacts stay fixed over the scrolling page, so they pass
-       over case screenshots now. Difference blend (same trick as the
-       cursor ring) keeps them readable on any background. Desktop only:
-       on mobile they live inside the frosted menu overlay, which is its
-       own stacking context. */
+    /* The nav stays fixed over the scrolling page, so it passes over
+       case screenshots and the gray block. Difference blend (same trick
+       as the cursor ring) keeps it readable on any background. Desktop
+       only: on mobile it lives inside the frosted menu overlay, which is
+       its own stacking context. */
     @media (min-width: 901px) {
-      nav, .contacts { mix-blend-mode: difference; }
-      nav .nav-link, .contacts .nav-link { color: #fff; }
+      nav { mix-blend-mode: difference; }
+      nav .nav-link { color: #fff; }
     }
 
-    /* ── Page ── */
-    .page {
-      display: flex;
-      flex-direction: column;
-      gap: 160px;
-      /* Bottom padding raised from 60px so the last block (testimonials)
-         clears the fixed contacts footer instead of sitting right on
-         top of it. */
-      padding: 40px 40px 140px;
-    }
+    /* ── Page: three full-width blocks on alternating backgrounds (hero,
+       cases, recommendations), so the split between them reads at a
+       glance. ── */
+    .page { display: flex; flex-direction: column; }
+    .block { padding: 40px; }
+    .block-alt { background: var(--bg-alt); }
 
-    /* Title and bio sit together — no stretching to the viewport height,
-       the cases start right after so the first screen already hints at
-       what's below. */
+    /* The first block stops 96px short of the viewport bottom, so the top
+       of the cases block (its gray band and label) shows under it as a
+       cue that there's more below. */
     .hero {
+      min-height: calc(100vh - 96px);
       display: flex;
       flex-direction: column;
       gap: 64px;
     }
 
-    /* ── Title ── shared by the page title and every section title
-       (Кейсы, Что говорят), so they read as one voice. */
-    .page-title,
-    .section-title {
+    /* Recommendations and the footer fill the last screen; the footer sits
+       at the very end of the page instead of floating over the content,
+       and the quote is centered in the space between label and footer. */
+    .recommendations {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .recommendations .testimonials { margin: auto 0; }
+
+    /* Telegram left, CV centered, email right. A 3-column grid (not flex +
+       space-between) so the center link sits at the true midpoint
+       regardless of the other two links' differing widths. */
+    .site-footer {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding-top: 64px;
+    }
+    .site-footer a:nth-child(1) { justify-self: start; }
+    .site-footer a:nth-child(2) { justify-self: center; }
+    .site-footer a:nth-child(3) { justify-self: end; }
+
+    /* ── Title: the one loud heading on the page. ── */
+    .page-title {
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
       /* Smaller than the old single-word titles (8.2vw) — "UX /
@@ -152,16 +156,26 @@
          4.2vw, plus padding-right reserving room for nav's corner so a
          still-too-generous estimate wraps instead of overlapping it. */
       font-size: 4.2vw;
+      padding-right: 260px;
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
       color: var(--fg);
       font-kerning: none;
     }
-    /* Reserves room for the nav in the corner — only the page title
-       shares a row with it. */
-    .page-title { padding-right: 260px; }
-    .section-title { margin-bottom: 40px; }
+
+    /* Section labels use the Heading style, same as the case-study
+       eyebrows — quiet on purpose so the page title stays the only loud
+       thing. */
+    .section-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 40px;
+    }
 
     /* Forces this run onto one line always — without it, on mobile
        (where it doesn't fit at the base 16vw), the browser wraps it
@@ -487,14 +501,6 @@
         gap: 20px;
         padding: 0;
       }
-      /* .contacts is a 3-column grid on desktop (see base rule) — reset
-         back to plain stacked flex order here instead of inheriting it. */
-      .menu-overlay .contacts a:nth-child(1),
-      .menu-overlay .contacts a:nth-child(2),
-      .menu-overlay .contacts a:nth-child(3) {
-        order: 0;
-        justify-self: auto;
-      }
       /* Reuses the site's existing Heading style (24px, weight 200,
          0.08em) for overlay links — not a new size, just applied here
          instead of the usual Nav scale, since these need to read as
@@ -517,12 +523,12 @@
          pushing the page down (nav used to occupy real flow height
          above it), so the title needs its own clearance below the
          toggle instead of overlapping it. */
-      .page { gap: 64px; padding: 100px 24px 60px; }
-      .hero { gap: 40px; }
+      .block { padding: 64px 24px; }
+      .hero { min-height: 0; gap: 40px; padding-top: 100px; }
+      .recommendations { min-height: 0; }
       .cases-grid { grid-template-columns: 1fr; gap: 40px; }
-      /* "ЧТО ГОВОРЯТ" is the longest one — 10vw is what fits a 390px
-         screen in one line. */
-      .section-title { font-size: 10vw; line-height: 1.05; margin-bottom: 32px; }
+      .section-label { margin-bottom: 32px; }
+      .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
@@ -657,7 +663,7 @@
 
   <main class="page">
 
-    <section class="hero">
+    <section class="block hero">
 
     <h1 class="page-title" id="pageTitle"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">дизайнер</span></h1>
 
@@ -681,8 +687,8 @@
 
     </section>
 
-    <section class="cases" id="cases">
-      <h2 class="section-title">Кейсы</h2>
+    <section class="block block-alt cases" id="cases">
+      <h2 class="section-label">Кейсы</h2>
       <div class="cases-grid">
 
         <a href="rutube.html" class="case-item">
@@ -732,8 +738,8 @@
       </div>
     </section>
 
-    <section class="recommendations">
-    <h2 class="section-title">Что говорят</h2>
+    <section class="block recommendations">
+    <h2 class="section-label">Что говорят</h2>
     <div class="testimonials">
       <div class="testimonials-track">
         <div class="testimonial-slide">
@@ -755,6 +761,12 @@
         <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
       </div>
     </div>
+
+    <footer class="site-footer">
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+    </footer>
     </section>
 
   </main>
