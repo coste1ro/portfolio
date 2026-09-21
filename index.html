@@ -130,18 +130,19 @@
       padding: 40px 40px 140px;
     }
 
-    /* First screen stays what it was: title up top, bio at the bottom of
-       the visible area (above the contacts zone), then the cases start
-       below the fold. */
+    /* Title and bio sit together — no stretching to the viewport height,
+       the cases start right after so the first screen already hints at
+       what's below. */
     .hero {
-      min-height: calc(100vh - 180px);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 64px;
     }
 
-    /* ── Title ── */
-    .page-title {
+    /* ── Title ── shared by the page title and every section title
+       (Кейсы, Что говорят), so they read as one voice. */
+    .page-title,
+    .section-title {
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
       /* Smaller than the old single-word titles (8.2vw) — "UX /
@@ -151,13 +152,16 @@
          4.2vw, plus padding-right reserving room for nav's corner so a
          still-too-generous estimate wraps instead of overlapping it. */
       font-size: 4.2vw;
-      padding-right: 260px;
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
       color: var(--fg);
       font-kerning: none;
     }
+    /* Reserves room for the nav in the corner — only the page title
+       shares a row with it. */
+    .page-title { padding-right: 260px; }
+    .section-title { margin-bottom: 40px; }
 
     /* Forces this run onto one line always — without it, on mobile
        (where it doesn't fit at the base 16vw), the browser wraps it
@@ -342,16 +346,7 @@
     }
 
     /* ── Cases: two-column grid between the bio and the recommendations.
-       Label uses the Heading style; number and title the Body style. ── */
-    .cases-label {
-      font-family: 'Jost', sans-serif;
-      font-weight: 200;
-      font-size: 24px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--fg);
-      margin-bottom: 40px;
-    }
+       Number and title use the Body style. ── */
     .cases-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -523,9 +518,11 @@
          above it), so the title needs its own clearance below the
          toggle instead of overlapping it. */
       .page { gap: 64px; padding: 100px 24px 60px; }
-      .hero { min-height: 0; gap: 40px; justify-content: flex-start; }
+      .hero { gap: 40px; }
       .cases-grid { grid-template-columns: 1fr; gap: 40px; }
-      .cases-label { margin-bottom: 32px; }
+      /* "ЧТО ГОВОРЯТ" is the longest one — 10vw is what fits a 390px
+         screen in one line. */
+      .section-title { font-size: 10vw; line-height: 1.05; margin-bottom: 32px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
@@ -685,7 +682,7 @@
     </section>
 
     <section class="cases" id="cases">
-      <h2 class="cases-label">Кейсы</h2>
+      <h2 class="section-title">Кейсы</h2>
       <div class="cases-grid">
 
         <a href="rutube.html" class="case-item">
@@ -735,6 +732,8 @@
       </div>
     </section>
 
+    <section class="recommendations">
+    <h2 class="section-title">Что говорят</h2>
     <div class="testimonials">
       <div class="testimonials-track">
         <div class="testimonial-slide">
@@ -756,6 +755,7 @@
         <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
       </div>
     </div>
+    </section>
 
   </main>
 
