@@ -17,14 +17,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-
-    /* Touch gets native scroll + edge-bounce; desktop stays the locked
-       wheel-pan viewer — same split used on index/cases/about. */
-    @media (hover: none) and (pointer: coarse) {
-      html, body { overflow: visible; overscroll-behavior: auto; }
-    }
-
     :root {
       --bg: #ffffff;
       --fg: #000000;
@@ -62,35 +54,23 @@
       transition: opacity 0.25s ease;
     }
 
-    /* ── Viewer controls ── */
-    .viewer-nav {
-      position: fixed; top: 40px; right: 40px; z-index: 100;
-      display: flex; align-items: center; gap: 24px;
-    }
-    .viewer-nav button, .viewer-nav a {
-      background: none; border: 0; padding: 0; display: flex;
-      color: var(--fg); transition: opacity 0.2s ease;
-    }
-    .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
+    /* ── Close control ── */
+    .viewer-nav { position: fixed; top: 40px; right: 40px; z-index: 100; }
+    .viewer-nav a { display: flex; color: var(--fg); }
     .viewer-nav svg { width: 48px; height: 48px; }
-    .viewer-hint {
-      position: fixed; top: 40px; right: 256px; height: 48px; z-index: 100;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
-      line-height: 1.2; text-align: center; color: var(--fg); white-space: nowrap;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.6s ease;
+    /* Sits over scrolling slides now — same difference blend as the
+       cursor ring. Desktop only: on mobile the bar has its own opaque
+       background. */
+    @media (min-width: 901px) {
+      .viewer-nav { mix-blend-mode: difference; }
+      .viewer-nav a { color: #fff; }
     }
-    .viewer-hint.visible { opacity: 1; }
 
     /* ── Slides ── */
-    .slides {
-      display: flex; width: 400%; height: 100%;
-      transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
-      will-change: transform;
-    }
+    /* Slides stack vertically, one full viewport each — the page scrolls
+       like any other. */
     .slide {
-      flex: 0 0 25%; height: 100%;
+      height: 100vh;
       position: relative; overflow: hidden;
     }
 
@@ -118,7 +98,7 @@
     .mobile-back { display: none; }
 
     /* ── Slide 1: hero ── */
-    .slide-hero { position: relative; height: 100%; }
+    .slide-hero { position: relative; }
     /* Centered the same way as every other slide's content block
        (.portal-grid, .strip-viewport) — safe now that .hero-heading is
        a true sibling instead of living inside this box (see comment
@@ -174,14 +154,15 @@
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Slide 2: screens strip ── */
-    .slide-strip { position: relative; height: 100%; }
+    .slide-strip { position: relative; }
+    /* Native horizontal scroll (trackpad swipe, shift+wheel, drag) — the
+       vertical wheel stays with the page. */
     .strip-viewport {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
-      overflow: hidden;
+      overflow-x: auto; overflow-y: hidden; scrollbar-width: thin;
     }
     .strip-track {
       display: flex; align-items: flex-start; gap: 40px;
-      will-change: transform;
     }
     .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
     .strip-num {
@@ -198,7 +179,7 @@
     }
 
     /* ── Slide 3: callout grid ── */
-    .slide-portal { position: relative; height: 100%; }
+    .slide-portal { position: relative; }
     .portal-grid {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
@@ -230,7 +211,7 @@
     }
 
     /* ── Mobile: same content, reflowed into one continuous scrolling
-       document instead of the desktop wheel-pan slide viewer. Spacing
+       document — single column instead of desktop's full-viewport slides. Spacing
        system, three sizes only: 24px edge padding, 32px between blocks
        within a section (subtitle -> photo -> text), 64px between whole
        sections. Structure repeats: subtitle, photo, text/points — same
@@ -238,18 +219,6 @@
        desktop JS still (harmlessly) drives keeps it from fighting this
        layout — simpler than teaching that JS about the breakpoint. ── */
     @media (max-width: 900px) {
-      /* Narrow windows (incl. a resized desktop, where the base poster
-         lock still applies outside the touch-only unlock above) now
-         stack taller than the screen — let them scroll instead of
-         clipping, same as index/cases/about. */
-      html, body { overflow-y: auto; }
-
-      /* !important: .viewer-nav button/a's base display:flex is more
-         specific (class+element) than a bare .viewer-prev/.viewer-next
-         class selector, so it was winning over this rule and the arrows
-         stayed visible. Paging and the keyboard hint don't apply to a
-         single scrolling document anyway. */
-      .viewer-prev, .viewer-next, .viewer-hint { display: none !important; }
       /* Close stays reachable at all times — fixed, full-width, opaque,
          so scrolling content passes under it instead of through it. */
       .viewer-nav {
@@ -344,15 +313,8 @@
 </head>
 <body>
 
-  <p class="viewer-hint">переключайтесь между страницами кнопками<br>или клавишами ←&nbsp;и&nbsp;→ на&nbsp;клавиатуре</p>
   <div class="viewer-nav">
-    <button type="button" class="viewer-prev" aria-label="Предыдущий экран">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M162.83,205.17a4,4,0,0,1-5.66,5.66l-80-80a4,4,0,0,1,0-5.66l80-80a4,4,0,1,1,5.66,5.66L85.66,128Z"/></svg>
-    </button>
-    <button type="button" class="viewer-next" aria-label="Следующий экран">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M178.83,130.83l-80,80a4,4,0,0,1-5.66-5.66L170.34,128,93.17,50.83a4,4,0,0,1,5.66-5.66l80,80A4,4,0,0,1,178.83,130.83Z"/></svg>
-    </button>
-    <a href="cases.html" aria-label="Закрыть">
+    <a href="index.html#cases" aria-label="Закрыть">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
     </a>
   </div>
@@ -496,68 +458,33 @@
 
   </div>
 
-  <a class="mobile-back" href="cases.html">← Ко&nbsp;всем кейсам</a>
+  <a class="mobile-back" href="index.html#cases">← Ко&nbsp;всем кейсам</a>
 
   <div id="cursor-outer"></div>
 
   <script>
     (function () {
-      var track = document.querySelector('.slides');
-      var slides = document.querySelectorAll('.slide');
-      var prevBtn = document.querySelector('.viewer-prev');
-      var nextBtn = document.querySelector('.viewer-next');
-      var idx = 0;
-      var total = slides.length;
-      var stripIdx = Array.prototype.indexOf.call(slides, document.querySelector('.slide-strip'));
-      function render() {
-        track.style.transform = 'translateX(-' + (idx * 100 / total) + '%)';
-        prevBtn.disabled = idx === 0;
-        nextBtn.disabled = idx === total - 1;
-      }
-      prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); maybeShowHint(); } });
-      nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); maybeShowHint(); } });
-      render();
-
-      document.querySelectorAll('a[href="cases.html"]').forEach(function (a) {
+      document.querySelectorAll('a[href="index.html#cases"]').forEach(function (a) {
         a.addEventListener('click', function () {
           try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
         });
       });
 
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') { prevBtn.click(); prevBtn.blur(); }
-        else if (e.key === 'ArrowRight') { nextBtn.click(); nextBtn.blur(); }
-      });
-
-      // Keyboard-nav hint: appears a couple seconds after the first arrow
-      // click, then dissolves away on its own — a one-time nudge, not a
-      // persistent UI element.
-      var hint = document.querySelector('.viewer-hint');
-      var hintShown = false;
-      function maybeShowHint() {
-        if (hintShown) return;
-        hintShown = true;
-        setTimeout(function () {
-          hint.classList.add('visible');
-          setTimeout(function () { hint.classList.remove('visible'); }, 5000);
-        }, 2000);
-      }
-
       // Fit-to-viewport: content must never sit closer than 40px to the
       // header or footer (100px for pannable "mockup" content — the
       // screens strip — which wants visible air around it, not a tight
-      // fit). Measure the header/footer's real rendered positions (not a
-      // guessed reserve) and, if a slide's natural content is taller than
-      // the space that leaves, shrink it uniformly with scaleY() — never
-      // clips, never overlaps, and the strip's wheel-pan keeps working
-      // since translateX on the inner track composes fine with scaleY()
-      // on the outer wrapper.
+      // fit). Header/footer positions are measured against each slide's
+      // own top edge, so the result holds wherever the page happens to
+      // be scrolled. If a slide's natural content is taller than the
+      // space that leaves, shrink it uniformly with scaleY() — never
+      // clips, never overlaps.
       var FIT_MARGIN = 40;
       var PAN_MARGIN = 100;
       var fitEls = document.querySelectorAll('.fit-wrap');
       var panFitEls = document.querySelectorAll('.pan-fit');
       var sampleEyebrow = document.querySelector('.eyebrow');
       var sampleTitle = document.querySelector('.slide-title');
+      function slideTop(el) { return el.closest('.slide').getBoundingClientRect().top; }
       function applyFitTo(els, margin, prop, headerBottom, footerTop) {
         var available = footerTop - margin - (headerBottom + margin);
         els.forEach(function (el) {
@@ -570,8 +497,8 @@
       }
       function applyFit() {
         if (!sampleEyebrow || !sampleTitle) return;
-        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom;
-        var footerTop = sampleTitle.getBoundingClientRect().top;
+        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom - slideTop(sampleEyebrow);
+        var footerTop = sampleTitle.getBoundingClientRect().top - slideTop(sampleTitle);
         applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
         applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
       }
@@ -579,37 +506,26 @@
       window.addEventListener('resize', applyFit);
       if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
 
-      // Screens-strip horizontal scroll — only while that slide is the active one,
-      // otherwise wheel input on another slide silently piles up as a strip offset
-      // and the strip jumps ahead the moment you swipe over to it.
+      // Screens strip scrolls natively (trackpad swipe, shift+wheel); this
+      // adds mouse drag for people with neither.
       var viewport = document.querySelector('.strip-viewport');
-      var stripTrack = document.querySelector('.strip-track');
-      var offset = 0;
-      function applyStrip() {
-        var max = Math.max(0, stripTrack.scrollWidth - viewport.clientWidth);
-        if (max === 0) {
-          stripTrack.style.transform = 'translateX(' + ((viewport.clientWidth - stripTrack.scrollWidth) / 2) + 'px)';
-          return;
-        }
-        offset = Math.max(0, Math.min(offset, max));
-        stripTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+      if (viewport) {
+        var dragging = false, startX = 0, startLeft = 0;
+        viewport.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        viewport.addEventListener('pointerdown', function (e) {
+          if (e.pointerType !== 'mouse' || e.button !== 0) return;
+          dragging = true;
+          startX = e.clientX;
+          startLeft = viewport.scrollLeft;
+          viewport.setPointerCapture(e.pointerId);
+        });
+        viewport.addEventListener('pointermove', function (e) {
+          if (dragging) viewport.scrollLeft = startLeft - (e.clientX - startX);
+        });
+        function stopDrag() { dragging = false; }
+        viewport.addEventListener('pointerup', stopDrag);
+        viewport.addEventListener('pointercancel', stopDrag);
       }
-      document.addEventListener('wheel', function (e) {
-        if (idx !== stripIdx) return;
-        if (stripTrack.scrollWidth - viewport.clientWidth <= 0) return;
-        offset += e.deltaY;
-        applyStrip();
-      }, { passive: true });
-      window.addEventListener('resize', applyStrip);
-      // scrollWidth is measured before images have finished loading, so
-      // the initial centering pass can be wrong until something
-      // re-triggers it — re-run once the strip's images are actually in.
-      stripTrack.querySelectorAll('img').forEach(function (img) {
-        if (img.complete) return;
-        img.addEventListener('load', applyStrip);
-      });
-      window.addEventListener('load', applyStrip);
-      applyStrip();
     })();
   </script>
 
