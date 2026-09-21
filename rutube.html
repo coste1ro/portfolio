@@ -17,8 +17,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300;700&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-
     :root {
       --bg: #ffffff;
       --fg: #000000;
@@ -58,36 +56,39 @@
       transition: opacity 0.25s ease;
     }
 
-    /* ── Viewer controls ── */
-    .viewer-nav {
-      position: fixed; top: 40px; right: 40px; z-index: 100;
-      display: flex; align-items: center; gap: 24px;
-    }
-    .viewer-nav button, .viewer-nav a {
-      background: none; border: 0; padding: 0; display: flex;
-      color: var(--fg); transition: opacity 0.2s ease;
-    }
-    .viewer-nav button:disabled { opacity: 0.25; pointer-events: none; }
+    /* ── Close control ── */
+    .viewer-nav { position: fixed; top: 40px; right: 40px; z-index: 100; }
+    .viewer-nav a { display: flex; color: var(--fg); }
     .viewer-nav svg { width: 48px; height: 48px; }
-    .viewer-hint {
-      position: fixed; top: 40px; right: 256px; height: 48px; z-index: 100;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
-      line-height: 1.2; text-align: center; color: var(--fg); white-space: nowrap;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.6s ease;
+    /* Sits over scrolling slides — same difference blend as the cursor
+       ring. Desktop only: on mobile the bar has its own opaque background. */
+    @media (min-width: 901px) {
+      .viewer-nav { mix-blend-mode: difference; }
+      .viewer-nav a { color: #fff; }
     }
-    .viewer-hint.visible { opacity: 1; }
 
-    /* ── Slides ── */
-    .slides {
-      display: flex; width: 1600%; height: 100%;
-      transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
-      will-change: transform;
-    }
+    /* ── Slides: full-viewport pages, one under another. ── */
     .slide {
-      flex: 0 0 6.25%; height: 100%;
-      position: relative; overflow: hidden;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* A slide with a wide, horizontally panned widget (tables, IA,
+       user-flow, screens) pins while the page scrolls through this wrapper
+       (one viewport plus the widget's overflow, --pan set from JS), and that
+       scroll pans the widget sideways. Once it reaches its end the wrapper
+       ends and the slide scrolls away like any other. */
+    .pin-scroll { height: calc(100vh + var(--pan, 0px)); }
+    .pin-scroll > .slide { position: sticky; top: 0; }
+    /* Pages, not one long sheet: on desktop each slide is a white page on a
+       gray canvas with a thin gutter between them (mobile spaces them with
+       margins). Pinned slides sit flush inside their wrapper so the pin lasts
+       exactly as long as the pan. */
+    @media (min-width: 901px) {
+      .slides { background: #e8e8e8; }
+      .slide { background: var(--bg); margin-bottom: 16px; }
+      .pin-scroll { margin-bottom: 16px; }
+      .pin-scroll > .slide, .slides > :last-child { margin-bottom: 0; }
     }
 
     .eyebrow {
@@ -121,7 +122,7 @@
        presentation/scroll-views). */
     .mobile-zoom-hint { display: none; }
 
-    /* ── Shared: wheel-driven horizontal pan (wide tables, IA, user-flow) ── */
+    /* ── Shared: scroll-driven horizontal pan (wide tables, IA, user-flow) ── */
     .hscroll-viewport { overflow: hidden; }
     .hscroll-track { will-change: transform; }
 
@@ -151,7 +152,7 @@
     }
 
     /* ── Slide 1: hero ── */
-    .slide-hero { position: relative; height: 100%; }
+    .slide-hero { position: relative; }
     .hero-grid {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 660fr 310fr 310fr;
@@ -182,7 +183,7 @@
     }
 
     /* ── Slide 2: design process ── */
-    .slide-process { position: relative; height: 100%; }
+    .slide-process { position: relative; }
     .process-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
@@ -206,7 +207,7 @@
     }
 
     /* ── Slide 3: research (list + table) ── */
-    .slide-research { position: relative; height: 100%; }
+    .slide-research { position: relative; }
     .competitors-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: flex; gap: 40px; align-items: flex-start;
@@ -251,7 +252,7 @@
     }
 
     /* ── Slide 4: priority (reviews + moscow) ── */
-    .slide-priority { position: relative; height: 100%; }
+    .slide-priority { position: relative; }
     .priority-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: flex; gap: 40px; align-items: flex-start;
@@ -288,7 +289,7 @@
     .moscow-group-list li::marker { font-size: 0.4em; }
 
     /* ── Slide 5: archetypes ── */
-    .slide-archetypes { position: relative; height: 100%; }
+    .slide-archetypes { position: relative; }
     .archetypes-grid {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.7778vw;
@@ -319,7 +320,7 @@
     .archetype-card-list li::marker { font-size: 0.4em; }
 
     /* ── Slide 6: 4 forces ── */
-    .slide-forces { position: relative; height: 100%; }
+    .slide-forces { position: relative; }
     .forces-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.7778vw;
@@ -332,7 +333,7 @@
     }
 
     /* ── Slides 8–9: CJM tables (Контролёр, Прагматик) ── */
-    .slide-cjm { position: relative; height: 100%; }
+    .slide-cjm { position: relative; }
     .cjm-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
@@ -352,7 +353,7 @@
     .cjm-table td.row-label .cjm-text { font-size: var(--fs-nav); }
 
     /* ── Slide 10: IA (sitemap tree) ── */
-    .slide-ia { position: relative; height: 100%; }
+    .slide-ia { position: relative; }
     .ia-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
@@ -374,7 +375,7 @@
     }
 
     /* ── Slide 11: JTBD ── */
-    .slide-jtbd { position: relative; height: 100%; }
+    .slide-jtbd { position: relative; }
     .jtbd-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
@@ -401,7 +402,7 @@
     .jtbd-gap-e { margin-top: 192px; }
 
     /* ── Slide 12: user-flow ── */
-    .slide-userflow { position: relative; height: 100%; }
+    .slide-userflow { position: relative; }
     .userflow-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
@@ -409,7 +410,7 @@
     .userflow-wrap img { height: 620px; width: auto; display: block; }
 
     /* ── Slide 13: UI screens strip ── */
-    .slide-strip { position: relative; height: 100%; }
+    .slide-strip { position: relative; }
     .strip-viewport {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
     }
@@ -429,7 +430,7 @@
     }
 
     /* ── Slide 14: testing ── */
-    .slide-testing { position: relative; height: 100%; }
+    .slide-testing { position: relative; }
     .testing-viewport {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
     }
@@ -457,7 +458,7 @@
     .testing-table td.row-num .testing-text { font-size: var(--fs-nav); }
 
     /* ── Slide 15: insights ── */
-    .slide-insights { position: relative; height: 100%; }
+    .slide-insights { position: relative; }
     .insights-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
     }
@@ -471,7 +472,7 @@
     .insights-gap-c { margin-top: 425px; }
 
     /* ── Slide 16: dev-prep ── */
-    .slide-devprep { position: relative; height: 100%; }
+    .slide-devprep { position: relative; }
     .devprep-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: grid; grid-template-columns: 1010fr 310fr; column-gap: 40px; align-items: end;
@@ -483,7 +484,7 @@
     }
 
     /* ── Slide 17: results ── */
-    .slide-results { position: relative; height: 100%; }
+    .slide-results { position: relative; }
     .results-wrap {
       position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
       display: flex; justify-content: space-between; align-items: flex-start; gap: 40px;
@@ -515,12 +516,6 @@
        already uses. Card-shaped wide content (UI screens strip, IA
        columns) stacks instead, since it linearizes cleanly. ── */
     @media (max-width: 900px) {
-      html, body { overflow-y: auto; }
-
-      /* !important on prev/next: .viewer-nav button/a's base display:flex
-         is more specific (class+element) than a bare class selector, so
-         it was winning over this rule and the arrows stayed visible. */
-      .viewer-prev, .viewer-next, .viewer-hint { display: none !important; }
       .viewer-nav {
         position: fixed; top: 0; left: 0; right: 0;
         background: var(--bg);
@@ -549,6 +544,8 @@
         padding: 0 24px;
         margin-bottom: 64px;
       }
+      .pin-scroll { height: auto; }
+      .pin-scroll > .slide { position: static; }
       .eyebrow { position: static; height: auto; margin-bottom: 32px; }
 
       /* Hero: heading -> photo -> overview/problem, in reading order —
@@ -869,15 +866,8 @@
 </head>
 <body>
 
-  <p class="viewer-hint">переключайтесь между страницами кнопками<br>или клавишами ←&nbsp;и&nbsp;→ на&nbsp;клавиатуре</p>
   <div class="viewer-nav">
-    <button type="button" class="viewer-prev" aria-label="Предыдущий экран">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M162.83,205.17a4,4,0,0,1-5.66,5.66l-80-80a4,4,0,0,1,0-5.66l80-80a4,4,0,1,1,5.66,5.66L85.66,128Z"/></svg>
-    </button>
-    <button type="button" class="viewer-next" aria-label="Следующий экран">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M178.83,130.83l-80,80a4,4,0,0,1-5.66-5.66L170.34,128,93.17,50.83a4,4,0,0,1,5.66-5.66l80,80A4,4,0,0,1,178.83,130.83Z"/></svg>
-    </button>
-    <a href="cases.html" aria-label="Закрыть">
+    <a href="index.html#cases" aria-label="Закрыть">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
     </a>
   </div>
@@ -969,6 +959,7 @@
     </section>
 
     <!-- ── SLIDE 3 — ИССЛЕДОВАНИЕ ── -->
+    <div class="pin-scroll">
     <section class="slide slide-research">
       <div class="eyebrow">Конкуренты</div>
       <div class="competitors-wrap fit-wrap">
@@ -1104,8 +1095,10 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 4 — ОТЗЫВЫ + ПРИОРИТИЗАЦИЯ (MoSCoW) ── -->
+    <div class="pin-scroll">
     <section class="slide slide-priority">
       <div class="eyebrow">Отзывы</div>
       <div class="priority-wrap fit-wrap">
@@ -1205,6 +1198,7 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 5 — АРХЕТИПЫ ── -->
     <section class="slide slide-archetypes">
@@ -1422,6 +1416,7 @@
     </section>
 
     <!-- ── SLIDE 7 — CJM: КОНТРОЛЁР ── -->
+    <div class="pin-scroll">
     <section class="slide slide-cjm">
       <div class="eyebrow">CJM (контролёр)</div>
       <div class="cjm-wrap hscroll-viewport pan-fit">
@@ -1488,8 +1483,10 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 8 — CJM: ПРАГМАТИК ── -->
+    <div class="pin-scroll">
     <section class="slide slide-cjm">
       <div class="eyebrow">CJM (прагматик)</div>
       <div class="cjm-wrap hscroll-viewport pan-fit">
@@ -1556,8 +1553,10 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 9 — IA ── -->
+    <div class="pin-scroll">
     <section class="slide slide-ia">
       <div class="eyebrow">IA</div>
       <div class="ia-wrap hscroll-viewport pan-fit">
@@ -1621,6 +1620,7 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 10 — JTBD ── -->
     <section class="slide slide-jtbd">
@@ -1650,6 +1650,7 @@
     </section>
 
     <!-- ── SLIDE 11 — USER-FLOW ── -->
+    <div class="pin-scroll">
     <section class="slide slide-userflow">
       <div class="eyebrow">User-flow</div>
       <p class="mobile-zoom-hint">Диаграмма шире экрана — разведите пальцы, чтобы приблизить</p>
@@ -1658,8 +1659,10 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 12 — UI SCREENS STRIP ── -->
+    <div class="pin-scroll">
     <section class="slide slide-strip">
       <div class="eyebrow">UI</div>
       <div class="strip-viewport hscroll-viewport pan-fit">
@@ -1703,8 +1706,10 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 13 — ТЕСТИРОВАНИЕ ── -->
+    <div class="pin-scroll">
     <section class="slide slide-testing">
       <div class="eyebrow">Тестирование</div>
       <div class="testing-viewport hscroll-viewport pan-fit">
@@ -1793,6 +1798,7 @@
       </div>
       <div class="slide-title">Rutube: подписка</div>
     </section>
+    </div>
 
     <!-- ── SLIDE 14 — ИНСАЙТЫ ── -->
     <section class="slide slide-insights">
@@ -1854,67 +1860,35 @@
 
   </div>
 
-  <a class="mobile-back" href="cases.html">← Ко&nbsp;всем кейсам</a>
+  <a class="mobile-back" href="index.html#cases">← Ко&nbsp;всем кейсам</a>
 
   <div id="cursor-outer"></div>
 
   <script>
     (function () {
-      var track = document.querySelector('.slides');
-      var slides = document.querySelectorAll('.slide');
-      var prevBtn = document.querySelector('.viewer-prev');
-      var nextBtn = document.querySelector('.viewer-next');
-      var idx = 0;
-      var total = slides.length;
-      function render() {
-        track.style.transform = 'translateX(-' + (idx * 100 / total) + '%)';
-        prevBtn.disabled = idx === 0;
-        nextBtn.disabled = idx === total - 1;
-      }
-      prevBtn.addEventListener('click', function () { if (idx > 0) { idx--; render(); maybeShowHint(); } });
-      nextBtn.addEventListener('click', function () { if (idx < total - 1) { idx++; render(); maybeShowHint(); } });
-      render();
-
-      document.querySelectorAll('a[href="cases.html"]').forEach(function (a) {
+      document.querySelectorAll('a[href="index.html#cases"]').forEach(function (a) {
         a.addEventListener('click', function () {
           try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
         });
       });
 
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') { prevBtn.click(); prevBtn.blur(); }
-        else if (e.key === 'ArrowRight') { nextBtn.click(); nextBtn.blur(); }
-      });
-
-      // Keyboard-nav hint: appears a couple seconds after the first arrow
-      // click, then dissolves away on its own — a one-time nudge, not a
-      // persistent UI element.
-      var hint = document.querySelector('.viewer-hint');
-      var hintShown = false;
-      function maybeShowHint() {
-        if (hintShown) return;
-        hintShown = true;
-        setTimeout(function () {
-          hint.classList.add('visible');
-          setTimeout(function () { hint.classList.remove('visible'); }, 5000);
-        }, 2000);
-      }
-
       // Fit-to-viewport: content must never sit closer than 40px to the
       // header or footer (100px for pannable "mockup" content — tables,
       // IA, user-flow, screens — which want visible air around them, not
-      // a tight fit). Measure the header/footer's real rendered positions
-      // (not a guessed reserve) and, if a slide's natural content is
-      // taller than the space that leaves, shrink it uniformly with
-      // scaleY() — never clips, never overlaps. Pannable content keeps
-      // working since translateX on the inner track composes fine with
-      // scaleY() on the outer wrapper.
+      // a tight fit). Header/footer positions are measured against each
+      // slide's own top edge, so the result holds wherever the page happens
+      // to be scrolled. If a slide's natural content is taller than the
+      // space that leaves, shrink it uniformly with scaleY() — never
+      // clips, never overlaps. Pannable content keeps working since
+      // translateX on the inner track composes fine with scaleY() on the
+      // outer wrapper.
       var FIT_MARGIN = 40;
       var PAN_MARGIN = 100;
       var fitEls = document.querySelectorAll('.fit-wrap');
       var panFitEls = document.querySelectorAll('.pan-fit');
       var sampleEyebrow = document.querySelector('.eyebrow');
       var sampleTitle = document.querySelector('.slide-title');
+      function slideTop(el) { return el.closest('.slide').getBoundingClientRect().top; }
       function applyFitTo(els, margin, prop, headerBottom, footerTop) {
         var available = footerTop - margin - (headerBottom + margin);
         els.forEach(function (el) {
@@ -1927,8 +1901,8 @@
       }
       function applyFit() {
         if (!sampleEyebrow || !sampleTitle) return;
-        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom;
-        var footerTop = sampleTitle.getBoundingClientRect().top;
+        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom - slideTop(sampleEyebrow);
+        var footerTop = sampleTitle.getBoundingClientRect().top - slideTop(sampleTitle);
         applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
         applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
       }
@@ -1936,48 +1910,66 @@
       window.addEventListener('resize', applyFit);
       if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
 
-      // Wheel-driven horizontal pan for wide content (tables, IA, user-flow) —
-      // each viewport only responds while its own slide is the active one,
-      // otherwise scrolling elsewhere would silently pile up its offset and
-      // it'd jump ahead the moment you swipe over to it.
-      var wideEls = document.querySelectorAll('.hscroll-viewport');
-      var wides = Array.prototype.map.call(wideEls, function (viewport) {
+      // Wide content (tables, IA, user-flow, screens): the slide stays
+      // pinned while the page scrolls through its .pin-scroll wrapper, and
+      // that scroll pans the content left to right — one scrolled pixel,
+      // one panned pixel, the same feel the wheel had before the page
+      // became a normal scroll. Content narrower than its viewport is just
+      // centered.
+      var desktop = window.matchMedia('(min-width: 901px)');
+      var wides = Array.prototype.map.call(document.querySelectorAll('.hscroll-viewport'), function (viewport) {
         return {
           viewport: viewport,
           track: viewport.querySelector('.hscroll-track'),
-          slideIdx: Array.prototype.indexOf.call(slides, viewport.closest('.slide')),
-          offset: 0
+          wrap: viewport.closest('.pin-scroll'),
+          panMax: 0,
+          pinAt: 0
         };
       });
-      function applyWide(w) {
-        var max = Math.max(0, w.track.scrollWidth - w.viewport.clientWidth);
-        if (max === 0) {
+      function panWide(w) {
+        if (!desktop.matches) { w.track.style.transform = ''; return; }
+        if (w.panMax === 0) {
           w.track.style.transform = 'translateX(' + ((w.viewport.clientWidth - w.track.scrollWidth) / 2) + 'px)';
           return;
         }
-        w.offset = Math.max(0, Math.min(w.offset, max));
-        w.track.style.transform = 'translateX(' + (-w.offset) + 'px)';
+        var p = Math.min(1, Math.max(0, (window.scrollY - w.pinAt) / w.panMax));
+        w.track.style.transform = 'translateX(' + (-p * w.panMax) + 'px)';
       }
-      document.addEventListener('wheel', function (e) {
+      // Two passes: every wrapper's height has to be set before any pin
+      // position is read, since each one shifts everything below it.
+      function measureWides() {
         wides.forEach(function (w) {
-          if (idx !== w.slideIdx) return;
-          if (w.track.scrollWidth - w.viewport.clientWidth <= 0) return;
-          w.offset += e.deltaY;
-          applyWide(w);
+          if (!desktop.matches) {
+            w.panMax = 0;
+            w.wrap.style.removeProperty('--pan');
+            return;
+          }
+          w.panMax = Math.max(0, w.track.scrollWidth - w.viewport.clientWidth);
+          w.wrap.style.setProperty('--pan', w.panMax + 'px');
         });
+        wides.forEach(function (w) {
+          w.pinAt = w.wrap.getBoundingClientRect().top + window.scrollY;
+          panWide(w);
+        });
+      }
+      var ticking = false;
+      function panAll() { ticking = false; wides.forEach(panWide); }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(panAll); }
       }, { passive: true });
-      window.addEventListener('resize', function () { wides.forEach(applyWide); });
+      window.addEventListener('resize', measureWides);
       // scrollWidth is measured before images (SVGs especially) have
-      // finished loading, so the initial centering pass can be wrong until
-      // something re-triggers it — re-run once each track's images are in.
+      // finished loading, so the first pass can be wrong until something
+      // re-triggers it — re-run once each track's images are in.
       wides.forEach(function (w) {
         w.track.querySelectorAll('img').forEach(function (img) {
           if (img.complete) return;
-          img.addEventListener('load', function () { applyWide(w); });
+          img.addEventListener('load', measureWides);
         });
       });
-      window.addEventListener('load', function () { wides.forEach(applyWide); });
-      wides.forEach(applyWide);
+      window.addEventListener('load', measureWides);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureWides); }
+      measureWides();
     })();
   </script>
 
