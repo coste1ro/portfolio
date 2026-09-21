@@ -352,7 +352,7 @@
       background: var(--fg);
     }
 
-    /* ── Cases: one row of small cards. On desktop the gray block pins to
+    /* ── Cases: one row of large cards. On desktop the gray block pins to
        the screen while the page scrolls through .cases-scroll (one
        viewport plus the row's overflow, --pan set from JS), and that
        scroll pans the row left to right — the same move the screens strip
@@ -374,8 +374,11 @@
       padding: 0 40px;
       will-change: transform;
     }
+    /* Sized to the screen: as wide as the height left under the label
+       allows (16:10 image plus number and title), capped at 70vw so the
+       next card always peeks in from the right. */
     .case-item {
-      flex: 0 0 clamp(320px, 26vw, 460px);
+      flex: 0 0 clamp(320px, min(70vw, (100vh - 250px) * 1.6), 1600px);
       display: flex;
       flex-direction: column;
     }
