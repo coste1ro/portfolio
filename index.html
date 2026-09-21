@@ -124,22 +124,23 @@
     }
 
     /* White footer under the gray cases block, at the very end of the page
-       instead of floating over the content. Telegram left, CV centered,
-       email right. A 3-column grid (not flex + space-between) so the
-       center link sits at the true midpoint regardless of the other two
-       links' differing widths. */
+       instead of floating over the content. The email on the left and the
+       Telegram link on the right, both written out. */
     .site-footer {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      /* Half the page wide: exactly the left column of the cases grid
-         (40px margin + (100% - 120px) / 2). */
-      width: calc(50% + 20px);
       padding: 40px;
     }
-    .site-footer a:nth-child(1) { justify-self: start; }
-    .site-footer a:nth-child(2) { justify-self: center; }
-    .site-footer a:nth-child(3) { justify-self: end; }
+    /* Addresses read as typed, at the Body size, not in the uppercase Nav
+       style. */
+    .site-footer .nav-link { position: relative; font-size: 20px; text-transform: none; }
+    /* The hover brackets sit outside the text instead of taking layout
+       width, so the addresses line up exactly with the page margins. */
+    .site-footer .nav-link::before,
+    .site-footer .nav-link::after { position: absolute; top: 0; margin: 0; }
+    .site-footer .nav-link::before { right: 100%; padding-right: 2px; }
+    .site-footer .nav-link::after { left: 100%; padding-left: 2px; }
 
     /* ── Title: the page title and the "Кейсы" heading share one display
        style. ── */
@@ -521,7 +522,7 @@
       .cases-grid { grid-template-columns: 1fr; gap: 40px; }
       .case-item:hover { transform: none; }
       .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
-      .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; width: auto; padding: 40px 24px 64px; }
+      .site-footer { flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
@@ -762,9 +763,8 @@
     </section>
 
     <footer class="site-footer">
-      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
-      <a href="Beregovoy_Andrey_Designer.pdf" class="nav-link" download>Скачать CV</a>
-      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">beregovoy.designs@gmail.com</a>
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">t.me/sa1nteau</a>
     </footer>
 
   </main>
