@@ -31,17 +31,13 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-
-    /* Touch devices get the native edge-bounce so a scroll attempt reads
-       as "end of page" instead of a frozen screen. Desktop stays a hard-
-       locked poster — the bounce fought the horizontal card scrolling
-       there. Re-locked during the intro so the slide-up transform can't
-       flash a scrollable gap. */
-    @media (hover: none) and (pointer: coarse) {
-      html, body { overflow: visible; overscroll-behavior: auto; }
-      body.preloading,
-      html.entering body { overflow: hidden; }
+    /* Normal vertical scroll on every device — the page is one long
+       canvas now (hero, cases, recommendations). Locked only during the
+       intro so the slide-up transform can't flash a scrollable gap. */
+    body.preloading,
+    html.entering body { overflow: hidden; }
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
     }
 
     :root {
@@ -113,16 +109,35 @@
     .nav-link:hover::before,
     .nav-link:hover::after { opacity: 1; }
 
+    /* Nav and contacts stay fixed over the scrolling page, so they pass
+       over case screenshots now. Difference blend (same trick as the
+       cursor ring) keeps them readable on any background. Desktop only:
+       on mobile they live inside the frosted menu overlay, which is its
+       own stacking context. */
+    @media (min-width: 901px) {
+      nav, .contacts { mix-blend-mode: difference; }
+      nav .nav-link, .contacts .nav-link { color: #fff; }
+    }
+
     /* ── Page ── */
     .page {
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 160px;
       /* Bottom padding raised from 60px so the last block (testimonials)
          clears the fixed contacts footer instead of sitting right on
          top of it. */
       padding: 40px 40px 140px;
+    }
+
+    /* First screen stays what it was: title up top, bio at the bottom of
+       the visible area (above the contacts zone), then the cases start
+       below the fold. */
+    .hero {
+      min-height: calc(100vh - 180px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     /* ── Title ── */
@@ -326,23 +341,57 @@
       background: var(--fg);
     }
 
-    /* Closing nudge — the page used to just end after the
-       recommendations with no next step besides the small nav link. */
-    /* Desktop already has "Кейсы" in nav one scroll away — mobile is
-       where this actually saves a trip back up after reading the
-       recommendations, so it only shows there. */
-    /* Mobile-only closing link — same small Nav-scale treatment as the
-       "← Ко всем кейсам" back-link on the case-study pages, just
-       pointing the other way. */
-    .cta-cases {
-      display: none;
-      margin-top: 32px;
+    /* ── Cases: two-column grid between the bio and the recommendations.
+       Label uses the Heading style; number and title the Body style. ── */
+    .cases-label {
       font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--fg);
+      margin-bottom: 40px;
+    }
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px 40px;
+    }
+    .case-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .case-num {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      color: var(--fg);
+      display: block;
+      padding-bottom: 20px;
+    }
+    .case-img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+    }
+    .case-img picture { display: block; width: 100%; height: 100%; }
+    .case-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top left;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .case-item:hover .case-img img { transform: scale(1.03); }
+    .case-title {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      color: var(--fg);
+      display: block;
+      padding-top: 20px;
     }
 
     /* ── Responsive: collapse multi-column blocks to a single column,
@@ -473,7 +522,10 @@
          pushing the page down (nav used to occupy real flow height
          above it), so the title needs its own clearance below the
          toggle instead of overlapping it. */
-      .page { min-height: auto; justify-content: flex-start; gap: 40px; padding: 100px 24px 60px; }
+      .page { gap: 64px; padding: 100px 24px 60px; }
+      .hero { min-height: 0; gap: 40px; justify-content: flex-start; }
+      .cases-grid { grid-template-columns: 1fr; gap: 40px; }
+      .cases-label { margin-bottom: 32px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
@@ -485,7 +537,6 @@
          text columns, which don't apply once everything stacks). */
       .bio-photo-block { max-width: none; margin: 0; }
       .bio-photo { max-width: none; }
-      .cta-cases { display: block; }
       /* Desktop forces the parenthetical onto its own line (fine at
          that width); on mobile the same break left "в Teradata"
          orphaned alone mid-block — let it wrap naturally instead, the
@@ -597,7 +648,7 @@
   <div class="menu-overlay" id="menuOverlay">
     <nav>
       <a href="index.html" class="nav-link">Главная</a>
-      <a href="cases.html" class="nav-link">Кейсы</a>
+      <a href="#cases" class="nav-link">Кейсы</a>
     </nav>
 
     <div class="contacts">
@@ -608,6 +659,8 @@
   </div>
 
   <main class="page">
+
+    <section class="hero">
 
     <h1 class="page-title" id="pageTitle"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">дизайнер</span></h1>
 
@@ -628,6 +681,59 @@
       <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;UX/Product дизайнер из&nbsp;Нижнего Новгорода. Одинаково легко продумываю логику и&nbsp;собираю интерфейс руками: от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
       <p class="bio-col">3&nbsp;года на&nbsp;международных проектах: США, Великобритания, ОАЭ, Россия. Строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Учился у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова. English C1.</p>
     </div>
+
+    </section>
+
+    <section class="cases" id="cases">
+      <h2 class="cases-label">Кейсы</h2>
+      <div class="cases-grid">
+
+        <a href="rutube.html" class="case-item">
+          <span class="case-num">[1]</span>
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/rutube.webp" type="image/webp">
+              <img src="projects/rutube.png" alt="Rutube — Редизайн подписки" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <span class="case-title">Редизайн оформления подписки</span>
+        </a>
+
+        <a href="auditors_monitoring.html" class="case-item">
+          <span class="case-num">[2]</span>
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/auditors_monitoring.webp" type="image/webp">
+              <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <span class="case-title">Мониторинг аудиторов</span>
+        </a>
+
+        <a href="installation_panel.html" class="case-item">
+          <span class="case-num">[3]</span>
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/installation_panel.webp" type="image/webp">
+              <img src="projects/installation_panel.png" alt="Панель инсталляций" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <span class="case-title">Панель инсталляций</span>
+        </a>
+
+        <a href="design_system.html" class="case-item">
+          <span class="case-num">[4]</span>
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/design_system.webp" type="image/webp">
+              <img src="projects/design_system.png" alt="Дизайн-система" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <span class="case-title">Дизайн-система</span>
+        </a>
+
+      </div>
+    </section>
 
     <div class="testimonials">
       <div class="testimonials-track">
@@ -650,8 +756,6 @@
         <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
       </div>
     </div>
-
-    <a href="cases.html" class="cta-cases">К&nbsp;кейсам →</a>
 
   </main>
 
@@ -708,11 +812,16 @@
       (function bindNavTransition() {
         const here = currentFile();
         const mainEl = document.querySelector('.page');
-        document.querySelectorAll('nav a, .cta-cases').forEach(function (a) {
+        document.querySelectorAll('nav a, .case-item').forEach(function (a) {
           if (a.hasAttribute('download')) return;
           const href = a.getAttribute('href');
+          // In-page anchors ("Кейсы") scroll natively — no page transition.
+          if (href.charAt(0) === '#') return;
           if (href.replace(/\.html$/, '') === here) {
-            a.addEventListener('click', function (e) { e.preventDefault(); });
+            a.addEventListener('click', function (e) {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
             return;
           }
           a.addEventListener('click', function (e) {
@@ -743,10 +852,17 @@
 
       const canShow = shouldPreload();
 
-      if (reduce) {
+      // Arriving with #cases (the close button on a case page) means
+      // "put me back where I was" — skip the title intro entirely and
+      // land on the block instead of sliding in from the top.
+      let hashTarget = null;
+      try { hashTarget = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch (err) {}
+
+      if (reduce || hashTarget) {
         fitMobileTitle();
         preload.remove();
         clearEnterState();
+        if (hashTarget) hashTarget.scrollIntoView({ behavior: 'instant', block: 'start' });
         return;
       }
 
