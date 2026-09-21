@@ -138,8 +138,10 @@
     .site-footer a:nth-child(2) { justify-self: center; }
     .site-footer a:nth-child(3) { justify-self: end; }
 
-    /* ── Title: the one loud heading on the page. ── */
-    .page-title {
+    /* ── Title: the page title and the "Кейсы" heading share one display
+       style. ── */
+    .page-title,
+    .section-label {
       font-family: 'Montserrat', sans-serif;
       font-weight: 200;
       /* Smaller than the old single-word titles (8.2vw) — "UX /
@@ -149,26 +151,16 @@
          4.2vw, plus padding-right reserving room for nav's corner so a
          still-too-generous estimate wraps instead of overlapping it. */
       font-size: 4.2vw;
-      padding-right: 260px;
       letter-spacing: 0.03em;
       line-height: 0.9;
       text-transform: uppercase;
       color: var(--fg);
       font-kerning: none;
     }
-
-    /* Section labels use the Heading style, same as the case-study
-       eyebrows — quiet on purpose so the page title stays the only loud
-       thing. */
-    .section-label {
-      font-family: 'Jost', sans-serif;
-      font-weight: 200;
-      font-size: 24px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--fg);
-      margin-bottom: 40px;
-    }
+    /* Reserves room for the nav in the corner — only the page title
+       shares a row with it. */
+    .page-title { padding-right: 260px; }
+    .section-label { margin-bottom: 40px; }
 
     /* Forces this run onto one line always — without it, on mobile
        (where it doesn't fit at the base 16vw), the browser wraps it
@@ -374,11 +366,11 @@
       padding: 0 40px;
       will-change: transform;
     }
-    /* Sized to the screen: as wide as the height left under the label
-       allows (16:10 image plus number and title), capped at 70vw so the
-       next card always peeks in from the right. */
+    /* Half the screen wide (or less on short windows, where the 16:10
+       image plus number and title must still fit under the label), so
+       the next card always peeks in from the right. */
     .case-item {
-      flex: 0 0 clamp(320px, min(70vw, (100vh - 250px) * 1.6), 1600px);
+      flex: 0 0 clamp(320px, min(50vw, (100vh - 340px) * 1.6), 1200px);
       display: flex;
       flex-direction: column;
     }
@@ -542,7 +534,7 @@
       .cases-viewport { margin: 0; overflow: visible; }
       .cases-track { flex-direction: column; gap: 40px; padding: 0; transform: none !important; }
       .case-item { flex: none; width: 100%; }
-      .section-label { margin-bottom: 32px; }
+      .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
       .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
          line — same fix as the hero-name issue this had earlier. */
