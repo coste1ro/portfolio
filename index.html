@@ -105,16 +105,14 @@
       nav .nav-link { color: #fff; }
     }
 
-    /* ── Page: three full-width blocks (hero, cases, footer) on white /
-       light gray / white, so the split between them reads at a glance. ── */
+    /* ── Page: three full-width blocks (hero, cases, footer). ── */
     .page { display: flex; flex-direction: column; }
     .block { padding: 40px; }
-    .block-alt { background: var(--bg-alt); }
 
     /* Title, bio and recommendations, spread over the first screen like
        the old poster. The block stops 96px short of the viewport bottom,
-       so the top of the cases block (its gray band and label) shows under
-       it as a cue that there's more below. */
+       so the "Кейсы" heading shows under it as a cue that there's more
+       below. */
     .hero {
       min-height: calc(100vh - 96px);
       display: flex;
@@ -344,48 +342,23 @@
       background: var(--fg);
     }
 
-    /* ── Cases: one row of large cards. On desktop the gray block pins to
-       the screen while the page scrolls through .cases-scroll (one
-       viewport plus the row's overflow, --pan set from JS), and that
-       scroll pans the row left to right — the same move the screens strip
-       makes inside a case. Number and title use the Body style. ── */
-    .cases-scroll { height: calc(100vh + var(--pan, 0px)); }
-    .cases {
-      position: sticky; top: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+    /* ── Cases: 2x2 grid of gray cards on the white page. Each card carries
+       the thumbnail, the title (Heading style) and a short overview (Body
+       style), so a case reads at a glance without opening it. ── */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px 40px;
     }
-    /* Bleeds to the screen edges (the block has 40px padding) so cards slide
-       off the edge of the screen, not off an invisible line 40px in.
-       Anchored to the bottom of the block; the 100px of top padding is the
-       headroom the hover lift needs so overflow: hidden doesn't clip it. */
-    .cases-viewport { margin: auto -40px 0; padding-top: 100px; overflow: hidden; }
-    .cases-track {
-      position: relative;
-      display: flex;
-      gap: 40px;
-      padding: 0 40px;
-      will-change: transform;
-    }
-    /* Half the screen wide (or less on short windows, where the 16:10
-       image plus number and title, the label and the hover headroom must
-       still fit), so the next card always peeks in from the right. */
     .case-item {
-      flex: 0 0 clamp(320px, min(50vw, (100vh - 370px) * 1.6), 1200px);
       display: flex;
       flex-direction: column;
+      background: var(--bg-alt);
       transition: transform 0.4s ease;
     }
-    .case-item:hover { transform: translateY(-12%); }
-    .case-num {
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.2;
-      color: var(--fg);
-      display: block;
-      padding-bottom: 20px;
-    }
+    /* A small lift, not the old 12%: rows are only 64px apart, a bigger
+       one would slide the card over the row above. */
+    .case-item:hover { transform: translateY(-12px); }
     .case-img {
       display: block;
       width: 100%;
@@ -400,13 +373,22 @@
       object-position: top left;
       display: block;
     }
+    .case-body { padding: 24px 24px 32px; }
     .case-title {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 12px;
+    }
+    .case-desc {
       font-weight: 300;
       font-size: 20px;
       line-height: 1.2;
       color: var(--fg);
-      display: block;
-      padding-top: 20px;
     }
 
     /* ── Responsive: collapse multi-column blocks to a single column,
@@ -531,11 +513,7 @@
          toggle instead of overlapping it. */
       .block { padding: 64px 24px; }
       .hero { min-height: 0; gap: 40px; padding-top: 100px; }
-      .cases-scroll { height: auto; }
-      .cases { position: static; height: auto; display: block; }
-      .cases-viewport { margin: 0; padding: 0; overflow: visible; }
-      .cases-track { flex-direction: column; gap: 40px; padding: 0; transform: none !important; }
-      .case-item { flex: none; width: 100%; }
+      .cases-grid { grid-template-columns: 1fr; gap: 40px; }
       .case-item:hover { transform: none; }
       .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
       .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
@@ -719,60 +697,64 @@
 
     </section>
 
-    <div class="cases-scroll">
-    <section class="block block-alt cases" id="cases">
+    <section class="block cases" id="cases">
       <h2 class="section-label">Кейсы</h2>
-      <div class="cases-viewport">
-      <div class="cases-track">
+      <div class="cases-grid">
 
         <a href="rutube.html" class="case-item">
-          <span class="case-num">[1]</span>
           <div class="case-img">
             <picture>
               <source srcset="projects/rutube.webp" type="image/webp">
               <img src="projects/rutube.png" alt="Rutube — Редизайн подписки" loading="lazy" decoding="async">
             </picture>
           </div>
-          <span class="case-title">Редизайн оформления подписки</span>
+          <div class="case-body">
+            <h3 class="case-title">Редизайн оформления подписки</h3>
+            <p class="case-desc">Редизайн страницы выбора тарифа, оплаты и&nbsp;управления подпиской. Полный цикл от&nbsp;исследования до&nbsp;тестирования: SUS&nbsp;91.7, SEQ&nbsp;6.3&nbsp;из&nbsp;7.</p>
+          </div>
         </a>
 
         <a href="auditors_monitoring.html" class="case-item">
-          <span class="case-num">[2]</span>
           <div class="case-img">
             <picture>
               <source srcset="projects/auditors_monitoring.webp" type="image/webp">
               <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов" loading="lazy" decoding="async">
             </picture>
           </div>
-          <span class="case-title">Мониторинг аудиторов</span>
+          <div class="case-body">
+            <h3 class="case-title">Мониторинг аудиторов</h3>
+            <p class="case-desc">Инструмент для&nbsp;менеджера полевого аудита: карта аудиторов, статусы, маршруты и&nbsp;детали точек в&nbsp;одном интерфейсе.</p>
+          </div>
         </a>
 
         <a href="installation_panel.html" class="case-item">
-          <span class="case-num">[3]</span>
           <div class="case-img">
             <picture>
               <source srcset="projects/installation_panel.webp" type="image/webp">
               <img src="projects/installation_panel.png" alt="Панель инсталляций" loading="lazy" decoding="async">
             </picture>
           </div>
-          <span class="case-title">Панель инсталляций</span>
+          <div class="case-body">
+            <h3 class="case-title">Панель инсталляций</h3>
+            <p class="case-desc">Административная панель для&nbsp;управления установкой оборудования: группы установок, установщики, транспорт.</p>
+          </div>
         </a>
 
         <a href="design_system.html" class="case-item">
-          <span class="case-num">[4]</span>
           <div class="case-img">
             <picture>
               <source srcset="projects/design_system.webp" type="image/webp">
               <img src="projects/design_system.png" alt="Дизайн-система" loading="lazy" decoding="async">
             </picture>
           </div>
-          <span class="case-title">Дизайн-система</span>
+          <div class="case-body">
+            <h3 class="case-title">Дизайн-система</h3>
+            <p class="case-desc">Дизайн-система для&nbsp;продукта мониторинга дорожных аномалий: 377&nbsp;переменных, 50+&nbsp;компонентов, темы Dark/Light.</p>
+          </div>
         </a>
 
       </div>
-      </div>
     </section>
-    </div>
 
     <footer class="site-footer">
       <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
@@ -1080,45 +1062,6 @@
 
       setPills(0);
       startTimer();
-    })();
-  </script>
-
-  <script>
-    (function () {
-      var wrap = document.querySelector('.cases-scroll');
-      var viewport = document.querySelector('.cases-viewport');
-      var track = document.querySelector('.cases-track');
-      if (!wrap || !viewport || !track) return;
-      var desktop = window.matchMedia('(min-width: 901px)');
-      var panMax = 0, pinAt = 0, ticking = false;
-      function pan() {
-        ticking = false;
-        var p = panMax ? Math.min(1, Math.max(0, (window.scrollY - pinAt) / panMax)) : 0;
-        track.style.transform = 'translateX(' + (-p * panMax) + 'px)';
-      }
-      // Pin geometry comes from layout (offsetTop / offsetLeft), not from
-      // getBoundingClientRect(), so it stays right while the intro slide-in
-      // has .page transformed.
-      function measure() {
-        if (!desktop.matches) {
-          panMax = 0;
-          wrap.style.removeProperty('--pan');
-          track.style.transform = '';
-          return;
-        }
-        var last = track.lastElementChild;
-        panMax = Math.max(0, last.offsetLeft + last.offsetWidth - (viewport.clientWidth - 40));
-        wrap.style.setProperty('--pan', panMax + 'px');
-        pinAt = wrap.offsetTop;
-        pan();
-      }
-      window.addEventListener('scroll', function () {
-        if (!ticking) { ticking = true; requestAnimationFrame(pan); }
-      }, { passive: true });
-      window.addEventListener('resize', measure);
-      window.addEventListener('load', measure);
-      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measure); }
-      measure();
     })();
   </script>
 
