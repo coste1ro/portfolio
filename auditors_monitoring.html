@@ -160,6 +160,26 @@
       font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
+
+    /* Key figures under the overview: the number in the Hero style (the
+       site's stat-num style), its label in the Nav style at half opacity
+       (same treatment as the recommendation names on the main page). */
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 24px 40px; margin-top: 32px; }
+    .stat-num {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 4.2vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+      color: var(--fg);
+    }
+    .stat-label {
+      display: block; margin-top: 12px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-nav);
+      letter-spacing: 0; line-height: 1.2; text-transform: uppercase;
+      color: var(--fg); opacity: 0.5;
+    }
     .hero-col-list {
       margin-top: 16px; padding-left: 14px; list-style: none;
       font-family: 'Jost', sans-serif;
@@ -276,6 +296,7 @@
       }
 
       .eyebrow { position: static; height: auto; margin-bottom: 32px; }
+      .stat-num { font-size: 12vw; line-height: 1; }
 
       /* Hero: subtitle (heading) -> photo -> text, in that order —
          flex+order reorders without touching the DOM (source order is
@@ -348,6 +369,10 @@
         <div class="hero-col-a">
           <div class="hero-col-label">Обзор</div>
           <p class="hero-col-body">Экосистема для&nbsp;полевого аудита розничных точек: мобильное приложение для&nbsp;аудиторов и&nbsp;веб-портал для&nbsp;менеджеров. У&nbsp;менеджера в&nbsp;подчинении десятки аудиторов, каждый день выполняющих задания по&nbsp;разным торговым точкам города.</p>
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num">40+</span><span class="stat-label">регионов России</span></div>
+            <div class="stat"><span class="stat-num">~20</span><span class="stat-label">фич в&nbsp;одиночку</span></div>
+          </div>
         </div>
         <div class="hero-col-b">
           <div class="hero-col-label">Проблема</div>

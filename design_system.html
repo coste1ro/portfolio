@@ -160,6 +160,26 @@
       font-weight: 300; font-size: var(--fs-body);
       line-height: 1.2; letter-spacing: 0; color: var(--fg);
     }
+
+    /* Key figures under the overview: the number in the Hero style (the
+       site's stat-num style), its label in the Nav style at half opacity
+       (same treatment as the recommendation names on the main page). */
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 24px 40px; margin-top: 32px; }
+    .stat-num {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 4.2vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+      color: var(--fg);
+    }
+    .stat-label {
+      display: block; margin-top: 12px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-nav);
+      letter-spacing: 0; line-height: 1.2; text-transform: uppercase;
+      color: var(--fg); opacity: 0.5;
+    }
     .hero-col-list {
       margin-top: 16px; padding-left: 14px; list-style: none;
       font-family: 'Jost', sans-serif;
@@ -276,6 +296,7 @@
       }
 
       .eyebrow { position: static; height: auto; margin-bottom: 32px; }
+      .stat-num { font-size: 12vw; line-height: 1; }
 
       /* Hero: subtitle (heading) -> photo -> text, in that order —
          flex+order reorders without touching the DOM (source order is
@@ -348,6 +369,10 @@
         <div class="hero-col-a">
           <div class="hero-col-label">Обзор</div>
           <p class="hero-col-body">Дизайн-система для&nbsp;крупного продукта мониторинга дорожных аномалий в&nbsp;ОАЭ, собранная в&nbsp;Figma на&nbsp;переменных (Variables). Единый источник правды: примитивы, семантические токены, типографика и&nbsp;размеры, из&nbsp;которых строятся 50+&nbsp;компонентов и&nbsp;все экраны интерфейса.</p>
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num">50+</span><span class="stat-label">компонентов</span></div>
+            <div class="stat"><span class="stat-num">377</span><span class="stat-label">переменных</span></div>
+          </div>
         </div>
         <div class="hero-col-b">
           <div class="hero-col-label">Задача</div>
