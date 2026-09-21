@@ -26,6 +26,29 @@
         window.__bvgInternal = true;
         document.documentElement.classList.add('entering');
       }
+      // A reload always starts from the top: no restored scroll position
+      // (the intro measures its slide-in from the top of the page, so a
+      // restored one made it play over the cases block) and no leftover
+      // #cases from the "Кейсы" link. Chrome restores the position during
+      // load, so it is pushed back to 0 right after (instantly: the page
+      // has smooth scrolling, which would show as a scroll up) until the
+      // first real input. Only reloads: the back button keeps restoring.
+      if (navType === 'reload') {
+        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+        var touched = false;
+        function toTop() {
+          if (!touched) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }
+        ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
+          window.addEventListener(ev, function () { touched = true; }, { passive: true, once: true });
+        });
+        toTop();
+        document.addEventListener('DOMContentLoaded', toTop);
+        window.addEventListener('load', function () {
+          toTop();
+          [30, 80, 200, 500].forEach(function (ms) { setTimeout(toTop, ms); });
+        });
+      }
     })();
   </script>
   <style>
