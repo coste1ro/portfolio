@@ -352,14 +352,30 @@
       background: var(--fg);
     }
 
-    /* ── Cases: two-column grid under the hero.
-       Number and title use the Body style. ── */
-    .cases-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px 40px;
+    /* ── Cases: one row of small cards. On desktop the gray block pins to
+       the screen while the page scrolls through .cases-scroll (one
+       viewport plus the row's overflow, --pan set from JS), and that
+       scroll pans the row left to right — the same move the screens strip
+       makes inside a case. Number and title use the Body style. ── */
+    .cases-scroll { height: calc(100vh + var(--pan, 0px)); }
+    .cases {
+      position: sticky; top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Bleeds to the screen edges (the block has 40px padding) so cards slide
+       off the edge of the screen, not off an invisible line 40px in. */
+    .cases-viewport { margin: auto -40px; overflow: hidden; }
+    .cases-track {
+      position: relative;
+      display: flex;
+      gap: 40px;
+      padding: 0 40px;
+      will-change: transform;
     }
     .case-item {
+      flex: 0 0 clamp(320px, 26vw, 460px);
       display: flex;
       flex-direction: column;
     }
@@ -518,7 +534,11 @@
          toggle instead of overlapping it. */
       .block { padding: 64px 24px; }
       .hero { min-height: 0; gap: 40px; padding-top: 100px; }
-      .cases-grid { grid-template-columns: 1fr; gap: 40px; }
+      .cases-scroll { height: auto; }
+      .cases { position: static; height: auto; display: block; }
+      .cases-viewport { margin: 0; overflow: visible; }
+      .cases-track { flex-direction: column; gap: 40px; padding: 0; transform: none !important; }
+      .case-item { flex: none; width: 100%; }
       .section-label { margin-bottom: 32px; }
       .site-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 24px 64px; }
       /* 0.9 (desktop's single-line value) crowds the wrapped second
@@ -701,9 +721,11 @@
 
     </section>
 
+    <div class="cases-scroll">
     <section class="block block-alt cases" id="cases">
       <h2 class="section-label">Кейсы</h2>
-      <div class="cases-grid">
+      <div class="cases-viewport">
+      <div class="cases-track">
 
         <a href="rutube.html" class="case-item">
           <span class="case-num">[1]</span>
@@ -750,7 +772,9 @@
         </a>
 
       </div>
+      </div>
     </section>
+    </div>
 
     <footer class="site-footer">
       <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
@@ -1058,6 +1082,45 @@
 
       setPills(0);
       startTimer();
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var wrap = document.querySelector('.cases-scroll');
+      var viewport = document.querySelector('.cases-viewport');
+      var track = document.querySelector('.cases-track');
+      if (!wrap || !viewport || !track) return;
+      var desktop = window.matchMedia('(min-width: 901px)');
+      var panMax = 0, pinAt = 0, ticking = false;
+      function pan() {
+        ticking = false;
+        var p = panMax ? Math.min(1, Math.max(0, (window.scrollY - pinAt) / panMax)) : 0;
+        track.style.transform = 'translateX(' + (-p * panMax) + 'px)';
+      }
+      // Pin geometry comes from layout (offsetTop / offsetLeft), not from
+      // getBoundingClientRect(), so it stays right while the intro slide-in
+      // has .page transformed.
+      function measure() {
+        if (!desktop.matches) {
+          panMax = 0;
+          wrap.style.removeProperty('--pan');
+          track.style.transform = '';
+          return;
+        }
+        var last = track.lastElementChild;
+        panMax = Math.max(0, last.offsetLeft + last.offsetWidth - (viewport.clientWidth - 40));
+        wrap.style.setProperty('--pan', panMax + 'px');
+        pinAt = wrap.offsetTop;
+        pan();
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(pan); }
+      }, { passive: true });
+      window.addEventListener('resize', measure);
+      window.addEventListener('load', measure);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measure); }
+      measure();
     })();
   </script>
 
