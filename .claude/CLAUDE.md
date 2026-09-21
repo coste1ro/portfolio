@@ -4,12 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal portfolio site for Andrey Beregovoy (designer). Six static HTML pages, no build step, no bundler, no npm, no package.json — open any `.html` file directly or serve statically.
+Personal portfolio site for Andrey Beregovoy (UX/Product designer). Five static HTML pages, no build step, no bundler, no npm, no package.json — open any `.html` file directly or serve statically.
 
-- `index.html` — landing page: full-viewport hero with name + subtitle only
-- `cases.html` — case grid (`Cases` in nav), horizontally-scrolling `.case-item` cards linking to the three case study pages
-- `about.html` — bio page (`About` in nav): manifesto, photo + two-column bio text, stats row
-- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html` — case study detail pages
+- `index.html` — the one landing page, a single vertical scroll of three full-width blocks: hero (page title, photo + bio, recommendations carousel), cases (gray block, 2x2 grid of white `.case-item` cards: thumbnail, title, short overview, two key figures) and a footer (email left, Telegram right). `Кейсы` in the nav is the in-page anchor `#cases`
+- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case study pages, see "Case study pages" below
+- `/cases` redirects to `/#cases` (`vercel.json`); `cases.html` and `about.html` no longer exist
 - `favicon.svg` — orange rounded square with cursor ring + dot; `favicon-light.png`/`favicon-dark.png` swap via `prefers-color-scheme`
 - `projects/` — images organised per case study (`rutube/`, `auditors_monitoring/`, `installation_panel/`); some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Thumbnails/photos ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**, the `.webp` is what most browsers actually load
 - `logos/` — third-party tool logos (Claude, Figma, Lovable, Manus) used in the skills/tools section
@@ -19,7 +18,7 @@ Personal portfolio site for Andrey Beregovoy (designer). Six static HTML pages, 
 - Pure HTML + CSS + vanilla JS, all inline in each `.html` file — no shared JS/CSS files, so a fix usually needs to be applied per-page
 - Tailwind CSS via CDN (only on `index.html`)
 - Fonts: Jost, Montserrat, Roboto Mono from Google Fonts (see Typography below) — `rutube.html` is the one exception, still on an older Archivo/Space Grotesk/Fira Code system pending its own rework
-- Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`. `vercel.json` sets `cleanUrls: true` (site serves `/cases` not `/cases.html`; internal links still use the `.html` filename and are matched extension-agnostically by the nav JS, see below)
+- Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`; other branches get a preview deploy. `vercel.json` sets `cleanUrls: true` (site serves `/rutube` not `/rutube.html`; internal links still use the `.html` filename and are matched extension-agnostically by the nav JS, see below) and the `/cases` → `/#cases` redirect
 
 ## Commands
 
@@ -50,25 +49,28 @@ Light theme is the default (`:root`). Dark theme applied via `html.dark`, toggle
 ### Responsive
 Breakpoint: `@media (max-width: 720px)`. Skills grid uses `display: contents` on `.skills-col` at mobile to collapse 3-col → 1-col.
 
-### Case study pages — shared patterns
-- Meta-bar: CSS Grid `grid-template-columns: 1fr 1fr`, borders via `nth-child(2n)` / `nth-child(n+3)`
-- Hero title: `white-space: normal; font-size: clamp(28px, 8vw, 48px)` at mobile
-- Scroll reveal: `animation-timeline: view()` with `animation-range: entry 0% entry 45%`
+### Case study pages
+The four case pages share one vertical-scroll layout, duplicated inline per file (no shared CSS/JS, so a fix is applied four times):
+
+- Each `<section class="slide">` is a full-viewport (`100vh`) page, one under another. On desktop they are white pages on a gray (`#e8e8e8`) canvas with a 16px gutter; mobile (`max-width: 900px`) is one stacked column instead.
+- Slides with a wide widget (the screens strip, and on rutube also the tables, IA, user-flow) sit inside a `.strip-scroll` / `.pin-scroll` wrapper of `100vh + var(--pan)`. The slide is `position: sticky; top: 0`, so it pins while the page scrolls through the wrapper, and JS translates the inner track by the scrolled distance (one scrolled px = one panned px). `--pan` is the widget's overflow, set from JS; on rutube every wrapper is measured in two passes (all heights first, then all pin offsets) because each wrapper shifts the ones below it.
+- The hero slide: `.hero-heading` is a **sibling** of `.hero-grid`, never a child. `.hero-grid` has its own `transform`, which makes it the containing block for absolutely positioned descendants, so a nested heading resolves `top:40px` against the grid, not the slide.
+- Fit-to-viewport: content that is taller than the space between `.eyebrow` and `.slide-title` is shrunk with `scaleY(var(--fit-scale))`; positions are measured against each slide's own top edge so it holds at any scroll position.
+- The close button (`.viewer-nav`) returns to `index.html#cases`; it is fixed top-right with `mix-blend-mode: difference`.
+- Each case shows its two key figures (`.hero-stats`: number in the Hero style, label in the Nav style at half opacity) under the Обзор text and again on its card on the main page. Every figure must already exist in the case or the resume, never invented.
 
 ## Page navigation & transitions
 
-`index.html`, `cases.html`, `about.html` share a hand-rolled intro/transition system, duplicated inline per page (no shared JS file). Understanding it requires reading the same block in all three:
+`index.html` and the case pages are linked by a fade-out / fast-intro handshake, duplicated inline:
 
-- **Reload/direct-visit** plays the full intro: a counter (`#preload-count`, 000→100), then the title/name reveals, driven by `run()`.
-- **Internal nav clicks** (nav-link → another of these 3 pages) skip the counter. A click handler sets `sessionStorage['bvg_nav'] = '1'` before navigating; an early `<head>` script on the destination page reads and clears that flag into `window.__bvgInternal`, and `shouldPreload()` (`return !window.__bvgInternal`) decides which path to take.
-- **`cases.html`/`about.html`** use `slidePageIn()`: the entire `.page` — title *and* content together, as literal sibling DOM, not separate clones — is rigid-transformed up from off-screen in one `translateY` animation. This replaced an earlier design where title and content animated separately (via measured clone landing) and visibly collided — don't reintroduce separate clone/landing animations for title vs. content on these two pages.
-- **`index.html`** intentionally still uses the older mechanic: a `#preload-name` clone measures `dx`/`dy` and slides onto `.hero-name` (`move()`), while `nav`/`.hero-subtitle`/`.theme-switch` reveal via a sweep check against the clone's position (`reveal()`). This was left as-is because the subtitle reveal is opacity-only with no competing transform, so it never had the collision bug that motivated `slidePageIn()` on the other two pages — don't unify it with `slidePageIn()` without a reason.
-- `html.entering .page`/`.hero { opacity: 0 }` is the **only** pre-paint hide rule — `nav` and `.theme-switch` are deliberately *not* in it, so they render at natural opacity from the first frame and never flicker/disappear during navigation. Don't add them back to that selector.
-- `html.no-motion` (set via `clearEnterState()`) forces `transition: none !important` on nav/.page(or .hero)/.theme-switch — this is the `prefers-reduced-motion` / instant-reveal path.
-- Exit animation (leaving the current page) only fades the main content element (`opacity 0.35s ease`) — nav and `.theme-switch` are never faded on exit either.
-- Nav self-clicks (link to the page you're already on) must call `e.preventDefault()` and no-op — otherwise it falls through to a real browser navigation that skips the `bvg_nav` flag and replays the full counter intro.
-
-If you change this system on one page, check whether the same fix applies on the other two — there is no shared module to edit once, and (per above) `index.html` deliberately diverges from `cases.html`/`about.html`.
+- **Reload/direct-visit** of `index.html` plays the full intro: a counter (`#preload-count`, 000→100), then the page title reveals via a clone (`#preload-title`) and the whole `.page` slides up (`slidePageIn()`).
+- **Internal nav clicks** (a `.case-item` or a nav link to another page) skip the counter. The click handler fades `.page` out (`opacity 0.35s`), sets `sessionStorage['bvg_nav'] = '1'`, then navigates; an early `<head>` script on the destination reads and clears that flag into `window.__bvgInternal` (and adds `html.entering`), and `shouldPreload()` (`return !window.__bvgInternal`) picks the path. Case pages set the flag on their close link too.
+- **Arriving with `#cases`** (the close button on a case page) skips the intro entirely and scrolls the block into view.
+- **A reload always starts at the top.** Chrome restores the old scroll position during load (and jumps to a leftover `#cases`), which made the intro play over the cases block. The head script clears the hash and forces `scrollTo(0)` (`behavior: 'instant'`, since `html` has `scroll-behavior: smooth`) right after load, until the first real input. Only `navType === 'reload'` is touched, so the back button restores position as usual.
+- `html.entering .page { opacity: 0 }` is the **only** pre-paint hide rule — `nav` is deliberately *not* in it, so it renders from the first frame and never flickers during navigation.
+- `html.no-motion` (set via `clearEnterState()`) forces `transition: none !important` — the `prefers-reduced-motion` / instant-reveal path.
+- Nav self-clicks (link to the page you're already on) must call `e.preventDefault()`; in-page anchors (`#cases`) are left to the browser.
+- The nav is `position: absolute` in the top-right corner of the page, so it scrolls away with the content (on mobile it is the fixed frosted bar + menu toggle). Don't make it fixed again: the owner wants nothing floating over the content.
 
 ## Do NOT touch
 
@@ -78,6 +80,6 @@ If you change this system on one page, check whether the same fix applies on the
 
 ## User preferences
 
-- Do not open the browser automatically — the user opens it themselves
+- Verify UI changes by rendering them headless and reading the screenshots yourself (see `.claude/rules/workflow.md`); don't open a visible browser window
 - Do not add comments explaining what code does — only add comments for non-obvious constraints or workarounds
 - Commit after each logical change, push is separate
