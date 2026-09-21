@@ -67,21 +67,19 @@
     }
 
     /* ── Slides ── */
-    /* Each slide pins to the top and the next one slides over it, so
-       scrolling reads as a stack of cards. Opaque background so the one
-       underneath never shows through; the soft top shadow sells the
-       layering. */
+    /* Slides stack vertically, one full viewport each — the page scrolls
+       like any other, no overlap between them. */
     .slide {
-      position: sticky; top: 0;
+      position: relative;
       height: 100vh;
       overflow: hidden;
-      background: var(--bg);
-      box-shadow: 0 -40px 80px rgba(0, 0, 0, 0.07);
     }
-    /* Empty runway after the screens slide: while it scrolls past, that
-       slide stays pinned and its strip pans sideways. Height comes from
-       JS (the strip's overflow). */
-    .strip-spacer { pointer-events: none; }
+    /* The screens slide pins while the page scrolls through this wrapper
+       (one viewport plus the strip's overflow, --pan set from JS), and
+       that scroll pans the strip sideways. Once the strip reaches its end
+       the wrapper ends and the slide scrolls away like any other. */
+    .strip-scroll { height: calc(100vh + var(--pan, 0px)); }
+    .slide-strip { position: sticky; top: 0; }
 
     .eyebrow {
       position: absolute; top: 40px; left: 40px; height: 48px;
@@ -162,7 +160,7 @@
     .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
 
     /* ── Slide 2: screens strip ── */
-    /* Panned by the page scroll (see .strip-spacer), not by its own. */
+    /* Panned by the page scroll (see .strip-scroll), not by its own. */
     .strip-viewport {
       position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
       overflow: hidden;
@@ -265,7 +263,6 @@
         height: auto; overflow: visible;
         padding: 0 24px;
         margin-bottom: 64px;
-        box-shadow: none;
       }
 
       .eyebrow { position: static; height: auto; margin-bottom: 32px; }
@@ -290,7 +287,7 @@
         position: static; transform: none !important;
         overflow: visible;
       }
-      .strip-spacer { display: none; }
+      .strip-scroll { height: auto; }
       .strip-track {
         flex-direction: column; gap: 32px;
         transform: none !important;
@@ -385,6 +382,7 @@
     </section>
 
     <!-- ── SLIDE 3 — SCREENS STRIP ── -->
+    <div class="strip-scroll">
     <section class="slide slide-strip">
       <div class="eyebrow">5 экранов: один маршрут менеджера</div>
       <div class="strip-viewport pan-fit">
@@ -428,8 +426,7 @@
       </div>
       <div class="slide-title">Мониторинг аудиторов</div>
     </section>
-
-    <div class="strip-spacer"></div>
+    </div>
 
     <!-- ── SLIDE 4 — CALLOUT GRID: RESULT ── -->
     <section class="slide slide-portal">
@@ -516,14 +513,13 @@
       window.addEventListener('resize', applyFit);
       if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
 
-      // Screens strip: the slide stays pinned while the page scrolls past
-      // .strip-spacer, and that scroll pans the strip left to right — one
-      // scrolled pixel, one panned pixel, the same feel the wheel had
-      // before the page became a normal scroll.
-      var stripSlide = document.querySelector('.slide-strip');
+      // Screens strip: the slide stays pinned while the page scrolls
+      // through .strip-scroll, and that scroll pans the strip left to
+      // right — one scrolled pixel, one panned pixel, the same feel the
+      // wheel had before the page became a normal scroll.
+      var stripScroll = document.querySelector('.strip-scroll');
       var viewport = document.querySelector('.strip-viewport');
       var track = document.querySelector('.strip-track');
-      var spacer = document.querySelector('.strip-spacer');
       var panMax = 0, pinAt = 0, ticking = false;
       function panStrip() {
         ticking = false;
@@ -532,10 +528,8 @@
       }
       function measureStrip() {
         panMax = Math.max(0, track.scrollWidth - viewport.clientWidth);
-        spacer.style.height = panMax + 'px';
-        // The spacer starts exactly one slide-height below the slide's
-        // natural top, so that's where the pin (and the pan) begins.
-        pinAt = spacer.getBoundingClientRect().top + window.scrollY - stripSlide.offsetHeight;
+        stripScroll.style.setProperty('--pan', panMax + 'px');
+        pinAt = stripScroll.getBoundingClientRect().top + window.scrollY;
         panStrip();
       }
       window.addEventListener('scroll', function () {
