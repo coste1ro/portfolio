@@ -609,6 +609,21 @@
         overflow-x: auto; -webkit-overflow-scrolling: touch;
       }
       .process-wrap svg { width: auto; height: 500px; max-width: none; }
+      /* The wave connectors (every <path> in the diagram — dots and text
+         are <circle>/<text>) carry most of the visual weight but none of
+         the information; flattened to 55% of their amplitude around the
+         shared y=210 baseline all of them share (every .process-dot sits
+         on it), so the endpoints where a wave meets a dot land exactly
+         where they did before — nothing disconnects. transform-box:
+         view-box makes that origin a coordinate in the SVG's own 720-tall
+         space rather than each path's individual bounding box. Height
+         stays at 500px (text can't shrink further, see above), so this
+         only calms the graphic down, it doesn't shorten the slide. */
+      .process-wrap svg path {
+        transform-box: view-box;
+        transform-origin: 0 210px;
+        transform: scaleY(0.55);
+      }
       .mobile-zoom-hint {
         display: block;
         margin-bottom: 16px;
@@ -650,12 +665,13 @@
          testing's table isn't its own hscroll-track (on desktop it pans
          together with the intro text and screenshot beside it, see
          .testing-track), so it gets its own scroll container below
-         instead. Cell padding also shrinks on the two densest tables,
-         CJM and IA — see their own comments. */
+         instead. Cell padding also shrinks on all three of the denser
+         tables — CJM and IA below, testing right here. */
       .testing-table-wrap {
         overflow-x: auto; -webkit-overflow-scrolling: touch;
       }
       .testing-table { width: max-content; }
+      .testing-table th, .testing-table td { padding: 8px 10px; }
       /* CJM's cells were the single biggest thing on the slide even after
          it stopped needing to share vertical space with a heading inside
          it (see .hero-heading above) — cut the desktop padding roughly in
@@ -818,7 +834,6 @@
     <!-- ── SLIDE 2 — ДИЗАЙН-ПРОЦЕСС ── -->
     <section class="slide slide-process">
       <div class="eyebrow">Процесс</div>
-      <p class="mobile-zoom-hint">Схема шире экрана — разведите пальцы, чтобы приблизить</p>
       <div class="process-wrap fit-wrap">
         <p class="process-intro">Это не разовая схема под этот кейс, а процесс, который я выстроил для себя и повторяю в большинстве проектов. Discover и Define идут до первого эскиза, чтобы решение отвечало на подтверждённую проблему, а не на предположение. Test стоит до Handoff: если гипотеза не подтвердится на прототипе, дешевле вернуться в Design, чем переделывать готовую документацию. Design Review в конце служит контрольной точкой: решение сверяется с командой, прежде чем считать его завершённым.</p>
         <div class="process-diagram">
