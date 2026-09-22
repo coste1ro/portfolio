@@ -529,12 +529,13 @@
        whole sections. transform: none !important on every axis the
        desktop JS still (harmlessly) drives keeps it from fighting this
        layout — simpler than teaching that JS about the breakpoint.
-       Tables/diagrams too wide to reflow (competitor/reviews/CJM/
-       testing tables, the process SVG, the user-flow diagram) scroll
-       horizontally via native touch scroll instead — same
+       Content that only reads correctly as a grid or a tree (CJM, IA,
+       the process SVG, the user-flow diagram) scrolls horizontally via
+       native touch scroll instead of reflowing — same
        .hscroll-viewport/.hscroll-track classes the desktop wheel-pan
-       already uses. Card-shaped wide content (UI screens strip, IA
-       columns) stacks instead, since it linearizes cleanly. ── */
+       already uses. Competitor/reviews/testing tables convert to
+       stacked cards (one row's cells linearize cleanly, unlike a CJM's
+       or IA's cross-references); the UI screens strip stacks too. ── */
     @media (max-width: 900px) {
       .viewer-nav {
         position: fixed; top: 0; left: 0; right: 0;
@@ -614,6 +615,12 @@
         font-family: 'Jost', sans-serif; font-weight: 300; font-size: 13px;
         color: var(--fg); opacity: 0.5;
       }
+      /* Desktop's 620px (shared with .cjm-table/.userflow-wrap img) left
+         barely any of the viewport free before the diagram even starts
+         scrolling sideways. The flow is exported to flattened paths, not
+         live text, so shrinking it further has no legibility floor to
+         respect the way the process diagram's real <text> does. */
+      .userflow-wrap img { height: 400px; }
 
       /* Generic wide-content treatment: content with no tabular
          structure (the process/user-flow diagrams) keeps the desktop
@@ -633,19 +640,28 @@
       }
       .hscroll-track { transform: none !important; width: max-content; }
 
-      /* Tables -> card lists. No horizontal scroll for these four —
+      /* CJM stays a real table with horizontal scroll (its .cjm-wrap
+         already carries .hscroll-viewport, its <table> already carries
+         .hscroll-track) instead of joining the card-list conversion
+         below — a 7-column table read fine sideways, but flattened into
+         one long stack of 35 cards it lost the structure that makes a
+         CJM legible: which row is which stage, which column is which
+         aspect. Only its width needs a mobile-specific fixed value
+         (.hscroll-track's width: max-content above already overrides the
+         desktop 137.5694vw, which would otherwise shrink to near
+         nothing) — height stays the desktop 620px. */
+
+      /* Tables -> card lists. No horizontal scroll for these three —
          each becomes a plain-list of grouped cards, one per row, cell
          values labeled via the data-label attributes added to the
          markup. Same underlying data, just re-presented so it reads at
          a glance instead of needing a sideways scroll + zoom. */
       .competitors-table-wrap,
-      .reviews-table-wrap,
-      .cjm-wrap {
+      .reviews-table-wrap {
         overflow: visible;
       }
       .competitors-table,
       .reviews-table,
-      .cjm-table,
       .testing-table {
         display: block;
         width: 100% !important;
@@ -654,19 +670,16 @@
       }
       .competitors-table thead,
       .reviews-table thead,
-      .cjm-table thead,
       .testing-table thead {
         display: none;
       }
       .competitors-table tbody,
       .reviews-table tbody,
-      .cjm-table tbody,
       .testing-table tbody {
         display: block;
       }
       .competitors-table tr,
       .reviews-table tr,
-      .cjm-table tr,
       .testing-table tr {
         display: block;
         background: rgba(79, 70, 229, 0.05);
@@ -675,13 +688,11 @@
       }
       .competitors-table tr:last-child,
       .reviews-table tr:last-child,
-      .cjm-table tr:last-child,
       .testing-table tr:last-child {
         margin-bottom: 0;
       }
       .competitors-table td,
       .reviews-table td,
-      .cjm-table td,
       .testing-table td {
         display: block;
         height: auto;
@@ -700,7 +711,6 @@
          foundations/typography). */
       .competitors-table td.logo-cell,
       .reviews-table td.logo-cell,
-      .cjm-table td.row-label,
       .testing-table td.row-num {
         padding: 0 0 16px;
         border-bottom: 1px solid rgba(79, 70, 229, 0.25);
@@ -722,7 +732,6 @@
       .reviews-table td.logo-cell::after {
         content: attr(data-name);
       }
-      .cjm-table td.row-label .cjm-text,
       .testing-table td.row-num .testing-text {
         font-size: 18px;
       }
@@ -751,10 +760,9 @@
         padding-right: 16px;
       }
 
-      /* Reviews/CJM/testing: values are sentence-length text, so the
-         label sits above it instead of squeezed onto the same line. */
+      /* Reviews/testing: values are sentence-length text, so the label
+         sits above it instead of squeezed onto the same line. */
       .reviews-table td[data-label],
-      .cjm-table td[data-label],
       .testing-table td[data-label] {
         padding: 12px 0 0;
       }
@@ -764,12 +772,10 @@
          sibling *and* carries data-label, which the identity cell never
          does. */
       .reviews-table td:nth-of-type(2)[data-label],
-      .cjm-table td:nth-of-type(2)[data-label],
       .testing-table td:nth-of-type(2)[data-label] {
         padding-top: 0;
       }
       .reviews-table td[data-label]::before,
-      .cjm-table td[data-label]::before,
       .testing-table td[data-label]::before {
         content: attr(data-label);
         display: block;
@@ -820,15 +826,15 @@
          visible on both the archetypes and forces slides. */
       .archetype-card-field-label, .archetype-card-list { font-size: 15px; }
 
-      /* IA columns read fine linearized — each is a self-contained
-         branch of the tree, closer to a nested/grouped list (like
-         Settings.app) than a comparison matrix — so stack instead of
-         horizontal-scrolling, per the same HIG table guidance above. */
-      .ia-wrap { overflow: visible; }
-      .ia-columns { flex-direction: column; gap: 32px; width: auto; }
-      /* --fs-nav floors at 14px, just under the 11pt/~15px minimum. */
+      /* IA stays the horizontally-scrolling tree (its .ia-wrap already
+         carries .hscroll-viewport): linearizing it into one stacked
+         column lost which branch belonged under which parent — a tree
+         only reads as a tree side by side. .ia-col's desktop width
+         (18.0556vw) shrinks to near nothing on a phone, so it gets a
+         fixed comfortable one instead. --fs-nav floors at 14px, just
+         under the 11pt/~15px minimum. */
       .ia-item, .ia-leaf { font-size: 15px; }
-      .ia-col { width: 100%; flex-shrink: 1; }
+      .ia-col { width: 200px; }
 
       /* JTBD: the interleaved 4-column grid + divider only make sense
          side by side — stack the four blocks in DOM order (already
