@@ -288,14 +288,25 @@
         transform: none !important;
       }
       .slide-hero, .slide-strip, .slide-portal { position: static; height: auto; }
+      /* Hairline between stacked slides — without it, adjacent slides
+         (same white background, no gutter like desktop's gray canvas)
+         read as one continuous block. */
       .slide {
         height: auto; overflow: visible;
-        padding: 0 24px;
+        padding: 24px 24px 0;
         margin-bottom: 64px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
       }
+      /* .slide-hero, not :first-child — the screens-strip slide is
+         wrapped in its own .strip-scroll/.pin-scroll div, making it
+         :first-child of THAT wrapper too. */
+      .slide-hero { padding-top: 0; border-top: 0; }
 
       .eyebrow { position: static; height: auto; margin-bottom: 32px; }
-      .stat-num { font-size: 12vw; line-height: 1; }
+      /* The card on the main page already carries these figures — inside the
+         case itself the same numbers repeated at hero size read as noise
+         next to text that already says them. */
+      .hero-stats { display: none; }
 
       /* Hero: subtitle (heading) -> photo -> text, in that order —
          flex+order reorders without touching the DOM (source order is
