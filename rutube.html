@@ -640,77 +640,54 @@
       }
       .hscroll-track { transform: none !important; width: max-content; }
 
-      /* CJM stays a real table with horizontal scroll (its .cjm-wrap
-         already carries .hscroll-viewport, its <table> already carries
-         .hscroll-track) instead of joining the card-list conversion
-         below — a 7-column table read fine sideways, but flattened into
-         one long stack of 35 cards it lost the structure that makes a
-         CJM legible: which row is which stage, which column is which
-         aspect. Only its width needs a mobile-specific fixed value
-         (.hscroll-track's width: max-content above already overrides the
-         desktop 137.5694vw, which would otherwise shrink to near
-         nothing) — height stays the desktop 620px. */
+      /* CJM (see above), and now competitors/reviews too, stay real
+         tables with horizontal scroll instead of joining the card-list
+         conversion below — their .*-wrap already carries
+         .hscroll-viewport, their <table> already carries .hscroll-track.
+         Both are comparison grids (service × criterion), which need the
+         row and column in view together the way flattened cards can't
+         give them; neither is critical content, so a swipe to browse a
+         wide table is a fine tradeoff. Only .cjm-table needed a width
+         fix (above) — competitors/reviews already use width: 100%,
+         which .hscroll-track's width: max-content overrides the same
+         way. */
 
-      /* Tables -> card lists. No horizontal scroll for these three —
-         each becomes a plain-list of grouped cards, one per row, cell
-         values labeled via the data-label attributes added to the
-         markup. Same underlying data, just re-presented so it reads at
-         a glance instead of needing a sideways scroll + zoom. */
-      .competitors-table-wrap,
-      .reviews-table-wrap {
-        overflow: visible;
-      }
-      .competitors-table,
-      .reviews-table,
+      /* Tables -> card list. Testing is the one left: a log of
+         usability-test steps, one per row, cell values labeled via the
+         data-label attributes added to the markup — reads at a glance
+         as a card instead of needing a sideways scroll + zoom. */
       .testing-table {
         display: block;
         width: 100% !important;
         height: auto !important;
         border-collapse: collapse;
       }
-      .competitors-table thead,
-      .reviews-table thead,
       .testing-table thead {
         display: none;
       }
-      .competitors-table tbody,
-      .reviews-table tbody,
       .testing-table tbody {
         display: block;
       }
-      .competitors-table tr,
-      .reviews-table tr,
       .testing-table tr {
         display: block;
         background: rgba(79, 70, 229, 0.05);
         padding: 20px;
         margin-bottom: 16px;
       }
-      .competitors-table tr:last-child,
-      .reviews-table tr:last-child,
       .testing-table tr:last-child {
         margin-bottom: 0;
       }
-      .competitors-table td,
-      .reviews-table td,
       .testing-table td {
         display: block;
         height: auto;
         text-align: left;
         vertical-align: top;
       }
-      /* Card heading: the row's identity cell (service logo, CJM's
-         aspect name, testing's step number). Real DOM text where it
-         already exists (row-label, row-num); the logo cells only carry
-         an <img alt>, so a data-name attribute (added alongside the
-         data-label ones) supplies visible text via ::after. Fixed
-         mobile-safe sizes throughout this card system rather than the
-         vw-clamped --fs-* scale, which bottoms out at 9-10px on a
-         phone — under Apple's own 11pt (~15px) minimum legible size
+      /* Card heading: the step number. Fixed mobile-safe size rather
+         than the vw-clamped --fs-* scale, which bottoms out at 9-10px on
+         a phone — under Apple's own 11pt (~15px) minimum legible size
          (developer.apple.com/design/human-interface-guidelines/
          foundations/typography). */
-      .competitors-table td.logo-cell,
-      .reviews-table td.logo-cell,
       .testing-table td.row-num {
         padding: 0 0 16px;
         border-bottom: 1px solid rgba(79, 70, 229, 0.25);
@@ -721,17 +698,6 @@
         line-height: 1.2;
         color: var(--fg);
       }
-      .competitors-table td.logo-cell img,
-      .reviews-table td.logo-cell img {
-        display: block;
-        width: 32px; height: 32px;
-        object-fit: contain;
-        margin-bottom: 10px;
-      }
-      .competitors-table td.logo-cell::after,
-      .reviews-table td.logo-cell::after {
-        content: attr(data-name);
-      }
       .testing-table td.row-num .testing-text {
         font-size: 18px;
       }
@@ -740,29 +706,8 @@
          nested block-level <p>, instead of reading "Шаг 1" together. */
       .testing-table td.row-num .testing-text::before { content: 'Шаг '; }
 
-      /* Competitors: short values (a status dot) read fine as a
-         label-left / value-right row, the same shape as an iOS
-         grouped-table cell. */
-      .competitors-table td[data-label] {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(79, 70, 229, 0.1);
-      }
-      .competitors-table td[data-label]:last-child { border-bottom: 0; }
-      .competitors-table td[data-label]::before {
-        content: attr(data-label);
-        font-family: 'Jost', sans-serif;
-        font-weight: 300;
-        font-size: 14px;
-        line-height: 1.3;
-        color: var(--fg);
-        opacity: 0.6;
-        padding-right: 16px;
-      }
-
-      /* Reviews/testing: values are sentence-length text, so the label
-         sits above it instead of squeezed onto the same line. */
-      .reviews-table td[data-label],
+      /* Values are sentence-length text, so the label sits above it
+         instead of squeezed onto the same line. */
       .testing-table td[data-label] {
         padding: 12px 0 0;
       }
@@ -771,11 +716,9 @@
          here since it'd need an element that's both the first <td>
          sibling *and* carries data-label, which the identity cell never
          does. */
-      .reviews-table td:nth-of-type(2)[data-label],
       .testing-table td:nth-of-type(2)[data-label] {
         padding-top: 0;
       }
-      .reviews-table td[data-label]::before,
       .testing-table td[data-label]::before {
         content: attr(data-label);
         display: block;
@@ -1209,7 +1152,7 @@
           </table>
         </div>
         <div class="moscow-col">
-          <h2 class="moscow-heading">Приоритизация<br>по&nbsp;MoSCoW</h2>
+          <h2 class="moscow-heading">Приоритизация критериев<br>по&nbsp;MoSCoW</h2>
           <div class="moscow-groups">
             <div>
               <div class="moscow-group-label">Must Have</div>
