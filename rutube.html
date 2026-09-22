@@ -640,103 +640,37 @@
       }
       .hscroll-track { transform: none !important; width: max-content; }
 
-      /* CJM (see above), and now competitors/reviews too, stay real
-         tables with horizontal scroll instead of joining the card-list
-         conversion below — their .*-wrap already carries
-         .hscroll-viewport, their <table> already carries .hscroll-track.
-         Both are comparison grids (service × criterion), which need the
-         row and column in view together the way flattened cards can't
-         give them; neither is critical content, so a swipe to browse a
-         wide table is a fine tradeoff. Only .cjm-table needed a width
-         fix (above) — competitors/reviews already use width: 100%,
-         which .hscroll-track's width: max-content overrides the same
-         way. */
-
-      /* Tables -> card list. Testing is the one left: a log of
-         usability-test steps, one per row, cell values labeled via the
-         data-label attributes added to the markup — reads at a glance
-         as a card instead of needing a sideways scroll + zoom. */
-      .testing-table {
-        display: block;
-        width: 100% !important;
-        height: auto !important;
-        border-collapse: collapse;
+      /* CJM, competitors, reviews and testing all stay real tables with
+         horizontal scroll rather than reflowing into cards — every one
+         of them is a comparison grid (service/step × criterion), which
+         needs the row and column in view together the way flattened
+         cards can't give them. CJM/competitors/reviews already have
+         .hscroll-viewport on their wrap and .hscroll-track on the
+         <table> itself, so removing the old card-list CSS was enough;
+         testing's table isn't its own hscroll-track (on desktop it pans
+         together with the intro text and screenshot beside it, see
+         .testing-track), so it gets its own scroll container below
+         instead. Cell padding also shrinks on the two densest tables,
+         CJM and IA — see their own comments. */
+      .testing-table-wrap {
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
       }
-      .testing-table thead {
-        display: none;
-      }
-      .testing-table tbody {
-        display: block;
-      }
-      .testing-table tr {
-        display: block;
-        background: rgba(79, 70, 229, 0.05);
-        padding: 20px;
-        margin-bottom: 16px;
-      }
-      .testing-table tr:last-child {
-        margin-bottom: 0;
-      }
-      .testing-table td {
-        display: block;
-        height: auto;
-        text-align: left;
-        vertical-align: top;
-      }
-      /* Card heading: the step number. Fixed mobile-safe size rather
-         than the vw-clamped --fs-* scale, which bottoms out at 9-10px on
-         a phone — under Apple's own 11pt (~15px) minimum legible size
-         (developer.apple.com/design/human-interface-guidelines/
-         foundations/typography). */
-      .testing-table td.row-num {
-        padding: 0 0 16px;
-        border-bottom: 1px solid rgba(79, 70, 229, 0.25);
-        margin-bottom: 16px;
-        font-family: 'Jost', sans-serif;
-        font-weight: 300;
-        font-size: 18px;
-        line-height: 1.2;
-        color: var(--fg);
-      }
-      .testing-table td.row-num .testing-text {
-        font-size: 18px;
-      }
-      /* Targets the paragraph, not the td — a ::before on the td itself
-         (inline by default) would sit on its own line above the
-         nested block-level <p>, instead of reading "Шаг 1" together. */
-      .testing-table td.row-num .testing-text::before { content: 'Шаг '; }
-
-      /* Values are sentence-length text, so the label sits above it
-         instead of squeezed onto the same line. */
-      .testing-table td[data-label] {
-        padding: 12px 0 0;
-      }
-      /* The identity cell (index 0) is always followed immediately by
-         the first labeled cell at index 1 — :first-of-type doesn't work
-         here since it'd need an element that's both the first <td>
-         sibling *and* carries data-label, which the identity cell never
-         does. */
-      .testing-table td:nth-of-type(2)[data-label] {
-        padding-top: 0;
-      }
-      .testing-table td[data-label]::before {
-        content: attr(data-label);
-        display: block;
-        font-family: 'Jost', sans-serif;
-        font-weight: 300;
-        font-size: 11px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--fg);
-        opacity: 0.5;
-        margin-bottom: 6px;
-      }
+      .testing-table { width: max-content; }
+      /* CJM's cells were the single biggest thing on the slide even after
+         it stopped needing to share vertical space with a heading inside
+         it (see .hero-heading above) — cut the desktop padding roughly in
+         half and the table's own fixed height along with it. */
+      .cjm-table th, .cjm-table td { padding: 14px 14px; }
+      .cjm-table { height: 420px; }
+      /* --fs-small (the vw-clamped scale these three normally use)
+         bottoms out at 10px on a phone, under Apple's 11pt (~15px)
+         minimum legible size — same reasoning as the legend below. */
       .reviews-text, .cjm-text, .testing-text { font-size: 15px; }
 
       /* Legend: was a single nowrap row justified to the right — wraps
          to nothing but overflow on a phone. Fixed 15px (not --fs-small,
          which floors at 10px) for the same 11pt-minimum reason as the
-         table cards above. */
+         table text above. */
       .competitors-legend {
         flex-direction: column; align-items: flex-start;
         gap: 8px;
@@ -774,10 +708,15 @@
          column lost which branch belonged under which parent — a tree
          only reads as a tree side by side. .ia-col's desktop width
          (18.0556vw) shrinks to near nothing on a phone, so it gets a
-         fixed comfortable one instead. --fs-nav floors at 14px, just
-         under the 11pt/~15px minimum. */
+         fixed comfortable one instead, smaller than the first pass at
+         this (200px) — the item boxes were the biggest thing on the
+         slide. --fs-nav floors at 14px, just under the 11pt/~15px
+         minimum, so the text itself stays put; only the box around it
+         shrinks. */
       .ia-item, .ia-leaf { font-size: 15px; }
-      .ia-col { width: 200px; }
+      .ia-col { width: 150px; gap: 8px; }
+      .ia-item { min-height: 48px; padding: 8px 12px; }
+      .ia-leaf { padding: 4px 12px; }
 
       /* JTBD: the interleaved 4-column grid + divider only make sense
          side by side — stack the four blocks in DOM order (already
@@ -790,12 +729,6 @@
         margin-top: 16px;
       }
 
-      /* User-flow: same horizontal-scroll treatment as the process SVG
-         — no height override needed here, it already inherits the
-         desktop 620px from the unconditional base rule, which is
-         legible; shrinking it for "mobile" was backwards, since the
-         only thing that changes is scroll width, not viewing distance. */
-
       /* UI screens strip: same card-stack treatment as
          installation_panel.html's strip. */
       .strip-viewport { overflow: visible; }
@@ -803,9 +736,11 @@
       .strip-item { flex: none; width: 100%; }
 
       /* Testing: was one horizontal strip (intro text + screenshot
-         alongside the results table) — the table's now a card list
-         (see above), so stack the intro above it instead of scrolling
-         both sideways together. */
+         alongside the results table, all panning together) — the intro
+         reads better full-width and stacked, so it splits off the pan:
+         .testing-track stops scrolling itself, and .testing-table-wrap
+         (above) becomes its own horizontal-scroll container for just
+         the table. */
       .testing-viewport { overflow: visible; }
       .testing-track {
         flex-direction: column; align-items: stretch; gap: 32px;
