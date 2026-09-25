@@ -588,12 +588,12 @@
       .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
       .page-title-break { display: block; }
       .bio { grid-template-columns: 1fr; gap: 24px; }
-      /* No cap on mobile — the photo fills the column's full width
-         instead of staying a small 220px box with empty space beside
-         it (that cap existed to keep it modest next to the desktop
-         text columns, which don't apply once everything stacks). */
-      .bio-photo-block { max-width: none; margin: 0; }
-      .bio-photo { max-width: none; }
+      /* Full column width (342px on a 390px phone) read as an oversized
+         portrait once it had the whole row to itself instead of sharing
+         it with the desktop text columns — capped back down to about
+         half that instead, centered in the stacked column. */
+      .bio-photo-block { max-width: 170px; margin: 0 auto; }
+      .bio-photo { max-width: 170px; }
       /* Desktop forces the parenthetical onto its own line (fine at
          that width); on mobile the same break left "в Teradata"
          orphaned alone mid-block — let it wrap naturally instead, the
