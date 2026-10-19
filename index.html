@@ -120,6 +120,28 @@
     .nav-link:hover::before,
     .nav-link:hover::after { opacity: 1; }
 
+    /* ── Language switch: RUS | ENG, under nav on desktop. Lives at the
+       top level (outside .page) like nav, not inside .bio where the
+       status pill used to sit — so it's never caught by .page's
+       transform during the intro slide and needs no JS pull-out, unlike
+       the pill used to. */
+    .lang-switch {
+      position: absolute;
+      top: 76px;
+      right: 40px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+    .lang-switch-current { opacity: 0.4; }
+
     /* ── Page: three full-width blocks (hero, cases, footer) on white /
        light gray / white, so the split between them reads at a glance. ── */
     .page { display: flex; flex-direction: column; }
@@ -508,19 +530,20 @@
         color: var(--fg);
       }
       .menu-toggle svg { display: block; width: 24px; height: 24px; }
-      /* Under the photo on desktop; pulled out of that flow and pinned
-         into the bar here instead — same element, no duplication. */
-      .status-pill {
+      /* The language switch takes the pill's old spot in the bar; the
+         pill itself just stays in its normal place under the photo
+         (same as desktop) instead of being pulled up here — matches the
+         "Меню" label's font exactly (16px/300/Jost), not the pill's
+         own 12px. */
+      .lang-switch {
         position: fixed;
         top: 16px; right: 24px;
         height: 24px;
         z-index: 200;
-        margin-top: 0;
-        transition: opacity 0.2s ease;
       }
       /* Distracting sitting on top of the full-screen menu it's meant
          to be closing — hide it while open. */
-      html.menu-open .status-pill { opacity: 0; pointer-events: none; }
+      html.menu-open .lang-switch { opacity: 0; pointer-events: none; }
       /* Frosted glass instead of flat white — the page underneath stays
          faintly, heavily blurred, so the overlay doesn't feel like a
          totally separate screen. */
@@ -611,13 +634,14 @@
     }
 
     /* ── Preloader ── */
-    nav { transition: opacity 0.35s ease; }
-    body.preloading nav { opacity: 0; }
+    nav, .lang-switch { transition: opacity 0.35s ease; }
+    body.preloading nav, body.preloading .lang-switch { opacity: 0; }
 
     /* ── Internal navigation intro ── */
     .page { transition: opacity 0.35s ease; }
     html.entering .page { opacity: 0; }
     html.no-motion nav,
+    html.no-motion .lang-switch,
     html.no-motion .page { transition: none !important; }
 
     #preload {
@@ -712,6 +736,12 @@
       <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
       <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
     </div>
+  </div>
+
+  <div class="lang-switch">
+    <span class="lang-switch-current">RUS</span>
+    <span aria-hidden="true">|</span>
+    <a href="index-en.html" class="nav-link">ENG</a>
   </div>
 
   <main class="page">
@@ -853,9 +883,8 @@
       const titleEl   = document.getElementById('preload-title');
       const realTitle = document.querySelector('.page-title');
       const navEl     = document.querySelector('nav');
+      const langSwitchEl = document.querySelector('.lang-switch');
       const pageEl    = document.querySelector('.page');
-      const statusPill = document.querySelector('.status-pill');
-      const pillHome   = statusPill ? statusPill.parentNode : null;
       const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // "UX / Product" filled the full width edge-to-edge, "дизайнер"
@@ -963,17 +992,6 @@
         const r = realTitle.getBoundingClientRect();
         const startY = window.innerHeight - (r.top + r.height / 2);
 
-        // .status-pill is position:fixed on mobile but DOM-nested inside
-        // .page (under the photo, for desktop's in-flow layout) — while
-        // .page carries the transform below, it becomes the pill's
-        // containing block, so the pill rides up with the slide instead
-        // of sitting still in the bar. Pull it out of .page for the
-        // duration so it renders fixed-to-viewport the whole time, same
-        // as the bar/toggle beside it, then put it back afterwards so
-        // desktop's in-flow position is untouched.
-        const pillMoved = statusPill && document.documentElement.clientWidth <= 900;
-        if (pillMoved) document.body.appendChild(statusPill);
-
         pageEl.style.willChange = 'transform';
         pageEl.style.transition = 'none';
         pageEl.style.transform = 'translateY(' + startY + 'px)';
@@ -982,6 +1000,7 @@
         preload.style.background = 'transparent';
         preload.style.pointerEvents = 'none';
         navEl.style.opacity = '1';
+        if (langSwitchEl) langSwitchEl.style.opacity = '1';
         document.documentElement.classList.remove('entering');
 
         requestAnimationFrame(function () {
@@ -1000,7 +1019,6 @@
           // of the true viewport.
           pageEl.style.transform = '';
           pageEl.style.willChange = '';
-          if (pillMoved) pillHome.appendChild(statusPill);
         }, 1000);
       }
 
