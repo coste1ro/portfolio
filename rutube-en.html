@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon-light.png">
+  <link rel="apple-touch-icon" href="favicon-light.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rutube subscription checkout redesign: full cycle from research to testing. SUS 91.7, SEQ 6.3 out of 7.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Rutube: subscription redesign — Andrey Beregovoy">
+  <meta property="og:description" content="Rutube subscription checkout redesign: full cycle from research to testing. SUS 91.7, SEQ 6.3 out of 7.">
+  <meta property="og:url" content="https://beregovoy.design/rutube-en">
+  <meta property="og:image" content="https://beregovoy.design/projects/rutube.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Rutube: subscription redesign&nbsp;— Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300;700&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --fg: #000000;
+      /* Responsive type scale — clamp(min, ideal-vw, max), each ideal-vw
+         calibrated so it equals the old fixed px exactly at the 1440px
+         reference width, then scales with the viewport (floor/ceiling
+         keep it sane on narrow desktop windows and ultrawide monitors). */
+      --fs-heading: clamp(20px, 1.6667vw, 32px); /* 24px @ 1440 */
+      --fs-body: clamp(17px, 1.3889vw, 27px);    /* 20px @ 1440 */
+      --fs-nav: clamp(14px, 1.1111vw, 21px);     /* 16px @ 1440 */
+      --fs-small: clamp(10px, 0.8333vw, 16px);   /* 12px @ 1440 */
+      --fs-tiny: clamp(9px, 0.6944vw, 13px);     /* 10px @ 1440 */
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Jost', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+    a { color: inherit; text-decoration: none; }
+    * { cursor: none !important; }
+
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-outer { display: none !important; }
+      * { cursor: auto !important; }
+    }
+    #cursor-outer {
+      position: fixed; top: 0; left: 0;
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1px solid #fff;
+      pointer-events: none; z-index: 99999;
+      will-change: transform;
+      mix-blend-mode: difference;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    /* ── Close control ── */
+    .viewer-nav { position: fixed; top: 40px; right: 40px; z-index: 100; }
+    .viewer-nav a { display: flex; color: var(--fg); }
+    .viewer-nav svg { width: 48px; height: 48px; }
+    /* Sits over scrolling slides — same difference blend as the cursor
+       ring. Desktop only: on mobile the bar has its own opaque background. */
+    @media (min-width: 901px) {
+      .viewer-nav { mix-blend-mode: difference; }
+      .viewer-nav a { color: #fff; }
+    }
+
+    /* ── Slides: full-viewport pages, one under another. ── */
+    .slide {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* A slide with a wide, horizontally panned widget (tables, IA,
+       user-flow, screens) pins while the page scrolls through this wrapper
+       (one viewport plus the widget's overflow, --pan set from JS), and that
+       scroll pans the widget sideways. Once it reaches its end the wrapper
+       ends and the slide scrolls away like any other. */
+    .pin-scroll { height: calc(100vh + var(--pan, 0px)); }
+    .pin-scroll > .slide { position: sticky; top: 0; }
+    /* Pages, not one long sheet: on desktop each slide is a white page on a
+       gray canvas with a thin gutter between them (mobile spaces them with
+       margins). Pinned slides sit flush inside their wrapper so the pin lasts
+       exactly as long as the pan. */
+    @media (min-width: 901px) {
+      .slides { background: #e8e8e8; }
+      .slide { background: var(--bg); margin-bottom: 16px; }
+      .pin-scroll { margin-bottom: 16px; }
+      .pin-scroll > .slide, .slides > :last-child { margin-bottom: 0; }
+    }
+
+    .eyebrow {
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    .slide-title {
+      position: absolute; left: 40px; bottom: 40px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 4.2vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+    }
+
+    /* Mobile-only stand-in for .slide-title — shown once, up top, instead
+       of the same name repeating at the bottom of every stacked section. */
+    .mobile-title { display: none; }
+    /* Mobile-only closing link back to the cases grid. */
+    .mobile-back { display: none; }
+    /* Mobile-only pinch-to-zoom hint for the two diagram slides
+       (process, user-flow) — native pinch-zoom already works (nothing
+       in this page's viewport meta or CSS blocks it), this just makes
+       that discoverable per Apple's own scroll-view guidance ("let
+       people pinch or double-tap to zoom in and out" — developer.
+       apple.com/design/human-interface-guidelines/components/
+       presentation/scroll-views). */
+    .mobile-zoom-hint { display: none; }
+
+    /* ── Shared: scroll-driven horizontal pan (wide tables, IA, user-flow) ── */
+    .hscroll-viewport { overflow: hidden; }
+    .hscroll-track { will-change: transform; }
+
+    /* ── Shared: section heading + body (used on every text-led slide) ── */
+    .section-heading {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; line-height: 1.3;
+      text-transform: uppercase; color: var(--fg);
+    }
+    .section-body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+      margin-top: 20px;
+    }
+    .field-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 16px;
+    }
+    .field-value {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+
+    /* ── Slide 1: hero ── */
+    .slide-hero { position: relative; }
+    .hero-grid {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 660fr 310fr 310fr;
+      column-gap: 40px; align-items: start;
+    }
+    /* TL;DR row: Проблема -> Решение -> Результат, scannable before the
+       full case unfolds below — every value is a compressed restatement
+       of something the case already says further down (the hero problem
+       text, the testing hypothesis, the final Результаты slide), never
+       a new fact. Everything below it drops one grid row to make room. */
+    .hero-tldr {
+      grid-column: 1 / -1; grid-row: 1;
+      display: flex; gap: 40px;
+      margin-bottom: 40px; padding-bottom: 40px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .hero-tldr-item { flex: 1 1 0; }
+    .hero-tldr-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 8px;
+    }
+    .hero-tldr-value {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .hero-media { grid-column: 1; grid-row: 2 / 4; }
+    .hero-media img { width: 100%; display: block; }
+    .hero-heading {
+      grid-column: 2 / span 2; grid-row: 2;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; line-height: normal;
+      text-transform: uppercase; color: var(--fg);
+      margin-bottom: 40px;
+    }
+    .hero-col-a { grid-column: 2; grid-row: 3; }
+    .hero-col-b { grid-column: 3; grid-row: 3; }
+    .hero-col-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 32px;
+    }
+    .hero-col-body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
+    /* Key figures under the overview: the number in the Hero style (the
+       site's stat-num style), its label in the Nav style at half opacity
+       (same treatment as the recommendation names on the main page). */
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 24px 40px; margin-top: 32px; }
+    .stat-num {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 4.2vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+      color: var(--fg);
+    }
+    .stat-label {
+      display: block; margin-top: 12px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-nav);
+      letter-spacing: 0; line-height: 1.2; text-transform: uppercase;
+      color: var(--fg); opacity: 0.5;
+    }
+
+    /* ── Slide 2: design process ── */
+    .slide-process { position: relative; }
+    .process-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+    }
+    .process-intro {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg); max-width: 900px; margin-bottom: 32px;
+    }
+    .process-wrap svg { width: 100%; height: auto; display: block; }
+    .process-dot { fill: var(--fg); }
+    .process-toplabel {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 26px;
+      letter-spacing: 0.06em; fill: var(--fg);
+    }
+    .process-title {
+      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 40px;
+      letter-spacing: 0.02em;
+    }
+    .process-item {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: 22px;
+      fill: var(--fg); fill-opacity: 0.62;
+    }
+    /* Mobile-only stand-in for the graphic — see its mobile media query
+       block for layout. */
+    .process-mobile { display: none; }
+
+    /* ── Slide 3: research (list + table) ── */
+    .slide-research { position: relative; }
+    .competitors-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: flex; gap: 40px; align-items: flex-start;
+    }
+    .competitors-groups {
+      flex: 0 0 300px; display: flex; flex-direction: column; gap: 56px;
+    }
+    .competitors-group-label {
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 16px;
+    }
+    .competitors-group-list {
+      list-style: disc; padding-left: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .competitors-group-list li { margin-bottom: 8px; }
+    .competitors-group-list li::marker { font-size: 0.4em; }
+    .competitors-table-wrap { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+    .competitors-table { border-collapse: collapse; width: 100%; }
+    .competitors-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
+      color: var(--fg); padding: 8px; text-align: center; vertical-align: middle;
+      line-height: 1.2;
+    }
+    .competitors-table td { padding: 14px 4px; text-align: center; vertical-align: middle; height: 64px; }
+    .competitors-table tr.group-break td { padding-top: 30px; }
+    .competitors-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
+    .status-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; }
+    .status-dot.hi { background: #22c55e; }
+    .status-dot.mid { background: #eab308; }
+    .status-dot.lo { background: #ef4444; }
+    .status-dot.na {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body); color: var(--fg);
+    }
+    .competitors-legend {
+      display: flex; gap: 16px; justify-content: flex-end; margin-top: 12px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small); color: var(--fg);
+      white-space: nowrap;
+    }
+
+    /* ── Slide 4: priority (reviews + moscow) ── */
+    .slide-priority { position: relative; }
+    .priority-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: flex; gap: 40px; align-items: flex-start;
+    }
+    .reviews-table-wrap { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+    .reviews-table { border-collapse: collapse; width: 100%; }
+    .reviews-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
+      color: var(--fg); padding: 8px; text-align: center;
+    }
+    .reviews-table td { padding: 10px 8px; vertical-align: middle; height: 68px; }
+    .reviews-table .logo-cell img { width: 32px; height: 32px; object-fit: contain; display: block; margin: 0 auto; }
+    .reviews-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-tiny);
+      line-height: 1.2; color: var(--fg); text-align: center;
+    }
+    .moscow-col { flex: 0 0 310px; }
+    .moscow-heading {
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; line-height: 1.3; text-transform: uppercase; color: var(--fg);
+    }
+    .moscow-groups { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
+    .moscow-group-label {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      color: var(--fg); margin-bottom: 12px;
+    }
+    .moscow-group-list {
+      list-style: disc; padding-left: 20px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .moscow-group-list li { margin-bottom: 4px; }
+    .moscow-group-list li::marker { font-size: 0.4em; }
+
+    /* ── Slide 5: archetypes ── */
+    .slide-archetypes { position: relative; }
+    .archetypes-grid {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.7778vw;
+      align-items: start;
+    }
+    .archetypes-intro { display: flex; flex-direction: column; gap: 40px; }
+    .archetypes-intro-block { display: flex; flex-direction: column; gap: 24px; }
+    .archetype-card {
+      background: rgba(79,70,229,0.05); padding: 24px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+    .archetype-card-title {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .archetype-card-fields { display: flex; flex-direction: column; gap: 12px; }
+    .archetype-card-field-label {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
+      line-height: 1.2; color: var(--fg); margin-bottom: 4px;
+    }
+    .archetype-card-list {
+      list-style: disc; padding-left: 18px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
+      line-height: 1.2; color: var(--fg);
+    }
+    .archetype-card-list li { margin-bottom: 2px; }
+    .archetype-card-list li:last-child { margin-bottom: 0; }
+    .archetype-card-list li::marker { font-size: 0.4em; }
+
+    /* ── Slide 6: 4 forces ── */
+    .slide-forces { position: relative; }
+    .forces-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.7778vw;
+      align-items: start;
+    }
+    .forces-conclusion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .forces-conclusion-list p {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+
+    /* ── Slides 8–9: CJM tables (Контролёр, Прагматик) ── */
+    .slide-cjm { position: relative; }
+    .cjm-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
+      overflow: hidden;
+    }
+    .cjm-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 137.5694vw; height: 620px; }
+    .cjm-table th, .cjm-table td { padding: 26px 20px; vertical-align: middle; text-align: center; }
+    .cjm-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
+    }
+    .cjm-table td { background: rgba(79,70,229,0.05); }
+    .cjm-table td.row-label { background: rgba(79,70,229,0.25); }
+    .cjm-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
+      line-height: 1.2; color: var(--fg);
+    }
+    .cjm-table td.row-label .cjm-text { font-size: var(--fs-nav); }
+
+    /* ── Slide 10: IA (sitemap tree) ── */
+    .slide-ia { position: relative; }
+    .ia-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
+      overflow: hidden;
+    }
+    .ia-columns { display: flex; gap: 15px; width: max-content; }
+    .ia-col { display: flex; flex-direction: column; gap: 12px; width: 18.0556vw; flex-shrink: 0; }
+    .ia-item {
+      background: rgba(79,70,229,0.05);
+      min-height: 63px; display: flex; align-items: center; justify-content: center;
+      padding: 10px 20px; text-align: center;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
+    }
+    .ia-item-title { background: rgba(79,70,229,0.25); }
+    .ia-group { display: flex; flex-direction: column; gap: 5px; }
+    .ia-subgroup { display: flex; flex-direction: column; gap: 8px; }
+    .ia-leaf {
+      padding: 4px 20px; text-align: center;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
+    }
+
+    /* ── Slide 11: JTBD ── */
+    .slide-jtbd { position: relative; }
+    .jtbd-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+    }
+    .jtbd-grid {
+      position: relative; display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 2.7778vw;
+    }
+    .jtbd-divider {
+      position: absolute; top: 0; bottom: 0; left: 50%; width: 1px;
+      background: var(--fg); opacity: 0.15;
+    }
+    .jtbd-heading {
+      font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
+    }
+    .jtbd-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .jtbd-gap-a { margin-top: 32px; }
+    .jtbd-gap-b { margin-top: 216px; }
+    .jtbd-gap-c { margin-top: 215px; }
+    .jtbd-gap-d { margin-top: 59px; }
+    .jtbd-gap-e { margin-top: 192px; }
+
+    /* ── Slide 12: user-flow ── */
+    .slide-userflow { position: relative; }
+    .userflow-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
+      overflow: hidden;
+    }
+    .userflow-wrap img { height: 620px; width: auto; display: block; }
+
+    /* ── Slide 13: UI screens strip ── */
+    .slide-strip { position: relative; }
+    .strip-viewport {
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
+    }
+    .strip-track { display: flex; align-items: flex-start; gap: 40px; }
+    .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
+    .strip-num {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 20px;
+    }
+.strip-item img { width: 100%; aspect-ratio: 880 / 550; display: block; object-fit: cover; object-position: top; margin-bottom: 20px; }
+    .strip-caption {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
+    /* ── Slide 14: testing ── */
+    .slide-testing { position: relative; }
+    .testing-viewport {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
+    }
+    .testing-track { display: flex; gap: 40px; align-items: stretch; width: max-content; }
+    .testing-intro { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; }
+    .testing-intro-text {
+      width: 21.5278vw;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .testing-screens { width: 45.8333vw; height: auto; display: block; }
+    .testing-table-wrap { flex: 0 0 auto; }
+    .testing-table { border-collapse: separate; border-spacing: 4px; table-layout: fixed; width: 77.5vw; }
+    .testing-table th, .testing-table td { padding: 14px 20px; vertical-align: middle; text-align: center; }
+    .testing-table th {
+      background: rgba(79,70,229,0.25);
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-nav); line-height: 1.2; color: var(--fg);
+    }
+    .testing-table td { background: rgba(79,70,229,0.05); }
+    .testing-table td.row-num { background: rgba(79,70,229,0.25); }
+    .testing-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-small);
+      line-height: 1.2; color: var(--fg);
+    }
+    .testing-table td.row-num .testing-text { font-size: var(--fs-nav); }
+
+    /* ── Slide 15: insights ── */
+    .slide-insights { position: relative; }
+    .insights-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+    }
+    .insights-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; column-gap: 2.7778vw; }
+    .insights-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .insights-gap-a { margin-top: 226px; }
+    .insights-gap-b { margin-top: 372px; }
+    .insights-gap-c { margin-top: 425px; }
+
+    /* ── Slide 16: dev-prep ── */
+    .slide-devprep { position: relative; }
+    .devprep-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 1010fr 310fr; column-gap: 40px; align-items: end;
+    }
+    .devprep-media img { width: 100%; display: block; box-shadow: 8px 8px 88px rgba(0,0,0,0.06); }
+    .devprep-text {
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+
+    /* ── Slide 17: results ── */
+    .slide-results { position: relative; }
+    .results-wrap {
+      position: absolute; top: 50%; left: 40px; right: 40px; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 40px;
+    }
+    .results-quote { flex: 0 0 502px; }
+    .results-done { flex: 0 0 660px; display: flex; flex-direction: column; gap: 24px; }
+    .results-lists { display: flex; gap: 40px; }
+    .results-list {
+      list-style: disc; padding-left: 20px; flex: 0 0 310px;
+      font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .results-list li { margin-bottom: 8px; }
+    .results-list li:last-child { margin-bottom: 0; }
+    .results-list li::marker { font-size: 0.4em; }
+
+    /* ── Mobile: same content, reflowed into one continuous scrolling
+       document instead of the desktop wheel-pan slide viewer — same
+       approach as installation_panel.html/auditors_monitoring.html/
+       design_system.html. Spacing system, three sizes: 24px edge
+       padding, 32px between blocks within a section, 64px between
+       whole sections. transform: none !important on every axis the
+       desktop JS still (harmlessly) drives keeps it from fighting this
+       layout — simpler than teaching that JS about the breakpoint.
+       Content that only reads correctly as a grid or a tree (CJM, IA,
+       the process SVG, the user-flow diagram) scrolls horizontally via
+       native touch scroll instead of reflowing — same
+       .hscroll-viewport/.hscroll-track classes the desktop wheel-pan
+       already uses. Competitor/reviews/testing tables convert to
+       stacked cards (one row's cells linearize cleanly, unlike a CJM's
+       or IA's cross-references); the UI screens strip stacks too. ── */
+    @media (max-width: 900px) {
+      .viewer-nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: var(--bg);
+        padding: 16px 24px;
+        justify-content: flex-start;
+      }
+      .viewer-nav svg { width: 24px; height: 24px; }
+
+      .mobile-title {
+        display: block;
+        margin: 80px 0 64px;
+        padding: 0 24px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 200; font-size: clamp(20px, calc(8.66vw - 4.16px), 48px);
+        letter-spacing: 0.03em; line-height: 0.9;
+        text-transform: uppercase; font-kerning: none;
+      }
+      .slide-title { display: none; }
+
+      .slides {
+        display: block; width: auto; height: auto;
+        transform: none !important;
+      }
+      /* Hairline between stacked slides — without it, adjacent slides
+         (same white background, no gutter like desktop's gray canvas)
+         read as one continuous block. */
+      .slide {
+        position: static; height: auto; overflow: visible;
+        padding: 24px 24px 0;
+        margin-bottom: 64px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      /* .slide-hero, not :first-child — the screens-strip slide is
+         wrapped in its own .strip-scroll/.pin-scroll div, making it
+         :first-child of THAT wrapper too. */
+      .slide-hero { padding-top: 0; border-top: 0; }
+      .pin-scroll { height: auto; }
+      .pin-scroll > .slide { position: static; }
+      .eyebrow { position: static; height: auto; margin-bottom: 32px; }
+      /* The card on the main page already carries these figures — inside the
+         case itself the same numbers repeated at hero size read as noise
+         next to text that already says them. */
+      .hero-stats { display: none; }
+
+      /* Hero: heading -> photo -> overview/problem, in reading order —
+         flex+order reorders without touching the DOM (source order is
+         photo first, for desktop's side-by-side grid). */
+      .hero-grid {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch;
+      }
+      .hero-tldr { order: 0; flex-direction: column; gap: 24px; margin-bottom: 32px; }
+      .hero-heading { order: 1; margin-bottom: 32px; }
+      .hero-media   { order: 2; margin-bottom: 32px; }
+      .hero-col-a   { order: 3; margin-bottom: 32px; }
+      .hero-col-b   { order: 4; }
+
+      /* Process: the graphic (wave, top row of stage-outcome labels,
+         Design Review — which has no items to list anyway) is desktop
+         only; a plain label + list stand-in replaces it below instead of
+         shrinking a diagram built around a wide SVG viewBox down to
+         phone width. */
+      .process-wrap {
+        position: static; transform: none !important;
+      }
+      .process-intro { max-width: none; margin-bottom: 32px; }
+      .process-diagram { display: none; }
+      .process-mobile {
+        display: flex; flex-direction: column; gap: 32px;
+      }
+      .process-mobile-row {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+      }
+      .process-mobile-label {
+        font-family: 'Jost', sans-serif; font-weight: 200; font-size: var(--fs-heading);
+        letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg);
+        margin-bottom: 16px;
+      }
+      .process-mobile-list {
+        list-style: disc; padding-left: 20px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: var(--fs-body);
+        line-height: 1.2; color: var(--fg);
+      }
+      .process-mobile-list li { margin-bottom: 4px; }
+      .process-mobile-list li::marker { font-size: 0.4em; }
+      .mobile-zoom-hint {
+        display: block;
+        margin-bottom: 16px;
+        font-family: 'Jost', sans-serif; font-weight: 300; font-size: 13px;
+        color: var(--fg); opacity: 0.5;
+      }
+      /* Desktop's 620px (shared with .cjm-table/.userflow-wrap img) left
+         barely any of the viewport free before the diagram even starts
+         scrolling sideways. The flow is exported to flattened paths, not
+         live text, so shrinking it further has no legibility floor to
+         respect the way the process diagram's real <text> does. */
+      .userflow-wrap img { height: 400px; }
+
+      /* Generic wide-content treatment: content with no tabular
+         structure (the process/user-flow diagrams) keeps the desktop
+         wheel-driven translateX swapped for native touch scroll — same
+         markup, same classes. Apple's HIG explicitly notes wide tables
+         "can be difficult to read and scan" on small screens and
+         recommends the single-column scrolling-list pattern instead
+         (developer.apple.com/design/human-interface-guidelines/
+         components/layout-and-organization/tables) — so the four real
+         data tables (competitors, reviews, CJM x2, testing) get pulled
+         out of this generic rule below and rebuilt as stacked card
+         lists instead of staying wide+scrollable. */
+      .hscroll-viewport {
+        position: static !important; transform: none !important;
+        overflow-x: auto; overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+      }
+      .hscroll-track { transform: none !important; width: max-content; }
+
+      /* CJM, competitors, reviews and testing all stay real tables with
+         horizontal scroll rather than reflowing into cards — every one
+         of them is a comparison grid (service/step × criterion), which
+         needs the row and column in view together the way flattened
+         cards can't give them. CJM/competitors/reviews already have
+         .hscroll-viewport on their wrap and .hscroll-track on the
+         <table> itself, so removing the old card-list CSS was enough;
+         testing's table isn't its own hscroll-track (on desktop it pans
+         together with the intro text and screenshot beside it, see
+         .testing-track), so it gets its own scroll container below
+         instead. Cell padding also shrinks on all three of the denser
+         tables — CJM and IA below, testing right here. */
+      .testing-table-wrap {
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+      }
+      .testing-table { width: max-content; }
+      .testing-table th, .testing-table td { padding: 8px 10px; }
+      /* CJM's cells were the single biggest thing on the slide even after
+         it stopped needing to share vertical space with a heading inside
+         it (see .hero-heading above) — cut the desktop padding roughly in
+         half and the table's own fixed height along with it. */
+      .cjm-table th, .cjm-table td { padding: 14px 14px; }
+      .cjm-table { height: 420px; }
+      /* --fs-small (the vw-clamped scale these three normally use)
+         bottoms out at 10px on a phone, under Apple's 11pt (~15px)
+         minimum legible size — same reasoning as the legend below. */
+      .reviews-text, .cjm-text, .testing-text { font-size: 15px; }
+
+      /* Legend: was a single nowrap row justified to the right — wraps
+         to nothing but overflow on a phone. Fixed 15px (not --fs-small,
+         which floors at 10px) for the same 11pt-minimum reason as the
+         table text above. */
+      .competitors-legend {
+        flex-direction: column; align-items: flex-start;
+        gap: 8px;
+        white-space: normal;
+        font-size: 15px;
+      }
+
+      .competitors-wrap {
+        position: static; transform: none !important;
+        flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      .competitors-groups { flex: none; width: 100%; gap: 32px; }
+
+      .priority-wrap {
+        position: static; transform: none !important;
+        flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      .moscow-col { flex: none; width: 100%; }
+
+      .archetypes-grid {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch; gap: 32px;
+      }
+
+      .forces-wrap {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      /* Same --fs-small floor issue as the tables — these cards stay
+         visible on both the archetypes and forces slides. */
+      .archetype-card-field-label, .archetype-card-list { font-size: 15px; }
+
+      /* IA stays the horizontally-scrolling tree (its .ia-wrap already
+         carries .hscroll-viewport): linearizing it into one stacked
+         column lost which branch belonged under which parent — a tree
+         only reads as a tree side by side. .ia-col's desktop width
+         (18.0556vw) shrinks to near nothing on a phone, so it gets a
+         fixed comfortable one instead, smaller than the first pass at
+         this (200px) — the item boxes were the biggest thing on the
+         slide. --fs-nav floors at 14px, just under the 11pt/~15px
+         minimum, so the text itself stays put; only the box around it
+         shrinks. */
+      .ia-item, .ia-leaf { font-size: 15px; }
+      .ia-col { width: 150px; gap: 8px; }
+      .ia-item { min-height: 48px; padding: 8px 12px; }
+      .ia-leaf { padding: 4px 12px; }
+
+      /* JTBD: the interleaved 4-column grid + divider only make sense
+         side by side — stack the four blocks in DOM order (already
+         reads Контролёр pair -> Прагматик pair), drop the vertical
+         divider and the desktop's calibrated cross-column gaps. */
+      .jtbd-wrap { position: static; transform: none !important; }
+      .jtbd-grid { display: flex; flex-direction: column; align-items: stretch; gap: 32px; }
+      .jtbd-divider { display: none; }
+      .jtbd-gap-a, .jtbd-gap-b, .jtbd-gap-c, .jtbd-gap-d, .jtbd-gap-e {
+        margin-top: 16px;
+      }
+
+      /* UI screens strip: same card-stack treatment as
+         installation_panel.html's strip. */
+      .strip-viewport { overflow: visible; }
+      .strip-track { flex-direction: column; align-items: stretch; gap: 32px; width: auto; }
+      .strip-item { flex: none; width: 100%; }
+
+      /* Testing: was one horizontal strip (intro text + screenshot
+         alongside the results table, all panning together) — the intro
+         reads better full-width and stacked, so it splits off the pan:
+         .testing-track stops scrolling itself, and .testing-table-wrap
+         (above) becomes its own horizontal-scroll container for just
+         the table. */
+      .testing-viewport { overflow: visible; }
+      .testing-track {
+        flex-direction: column; align-items: stretch; gap: 32px;
+        width: auto;
+      }
+      .testing-intro { flex: none; }
+      .testing-intro-text { width: 100%; }
+      .testing-screens { width: 100%; height: auto; }
+      .testing-table-wrap { flex: none; }
+
+      .insights-wrap { position: static; transform: none !important; }
+      .insights-grid { display: flex; flex-direction: column; align-items: stretch; gap: 32px; }
+      .insights-grid > div:empty { display: none; }
+      .insights-gap-a, .insights-gap-b, .insights-gap-c { margin-top: 16px; }
+
+      .devprep-wrap {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column; align-items: stretch; gap: 32px;
+      }
+
+      .results-wrap {
+        position: static; transform: none !important;
+        flex-direction: column; align-items: stretch; gap: 32px;
+      }
+      .results-quote, .results-done { flex: none; width: 100%; }
+      .results-lists { flex-direction: column; align-items: stretch; gap: 24px; }
+      .results-list { flex: none; width: 100%; }
+
+      /* Closing "back to cases" — shown once, at the very end. */
+      .mobile-back {
+        display: block;
+        padding: 0 24px 64px;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300; font-size: 16px;
+        text-transform: uppercase; color: var(--fg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewer-nav">
+    <a href="index-en.html#cases" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
+    </a>
+  </div>
+
+  <div class="mobile-title">Rutube Premium</div>
+
+  <div class="slides">
+
+    <!-- ── SLIDE 1 — HERO (Overview + Problem) ── -->
+    <section class="slide slide-hero">
+      <div class="hero-grid fit-wrap">
+        <div class="hero-tldr">
+          <div class="hero-tldr-item">
+            <div class="hero-tldr-label">Problem</div>
+            <p class="hero-tldr-value">Users were abandoning subscription checkout before&nbsp;reaching payment.</p>
+          </div>
+          <div class="hero-tldr-item">
+            <div class="hero-tldr-label">Solution</div>
+            <p class="hero-tldr-value">A&nbsp;redesign of&nbsp;plan selection, payment, and&nbsp;subscription management, validated through usability testing.</p>
+          </div>
+          <div class="hero-tldr-item">
+            <div class="hero-tldr-label">Result</div>
+            <p class="hero-tldr-value">Hypothesis confirmed, key pain points closed: SUS&nbsp;91.7 out&nbsp;of&nbsp;100, SEQ&nbsp;6.3 out&nbsp;of&nbsp;7.</p>
+          </div>
+        </div>
+        <div class="hero-media">
+          <img src="projects/rutube/hero.png" alt="Rutube Premium — plan selection">
+        </div>
+        <h1 class="hero-heading">Rutube&nbsp;Premium subscription checkout flow</h1>
+        <div class="hero-col-a">
+          <div class="hero-col-label">Overview</div>
+          <p class="hero-col-body">A&nbsp;redesign of&nbsp;the&nbsp;plan selection, payment, and&nbsp;subscription management pages for&nbsp;a&nbsp;service with a&nbsp;million-strong audience.</p>
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num">91.7</span><span class="stat-label">SUS out&nbsp;of&nbsp;100</span></div>
+            <div class="stat"><span class="stat-num">6.3</span><span class="stat-label">SEQ out&nbsp;of&nbsp;7</span></div>
+          </div>
+        </div>
+        <div class="hero-col-b">
+          <div class="hero-col-label">Problem</div>
+          <p class="hero-col-body">Users were abandoning subscription checkout before&nbsp;reaching payment: plans were described vaguely, auto-renewal terms were hidden in&nbsp;fine print, and&nbsp;there was no&nbsp;sense of&nbsp;completion after&nbsp;payment.</p>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 2 — DESIGN PROCESS ── -->
+    <section class="slide slide-process">
+      <div class="eyebrow">Process</div>
+      <div class="process-wrap fit-wrap">
+        <p class="process-intro">This isn't a one-off diagram made for&nbsp;this case — it's the process I've built for myself and repeat on most projects. Discover and Define come before the first sketch, so the solution answers a confirmed problem rather than an assumption. Test sits before Handoff: if the hypothesis doesn't hold up on the prototype, it's cheaper to go back to Design than to redo finished documentation. Design Review at the end serves as a checkpoint: the solution is checked against the team before being considered done.</p>
+        <div class="process-diagram">
+        <svg viewBox="0 0 2190 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Design process diagram: Discover, Define, Design, Test, Handoff, Design Review">
+        <defs>
+        <linearGradient id="pg-dd" x1="60" x2="600" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#D9125B"/><stop offset="100%" stop-color="#DA471B"/></linearGradient>
+        </defs>
+        <path d="M 60.0,210.0 L 68.4,207.2 L 76.9,204.5 L 85.3,201.8 L 93.8,199.1 L 102.2,196.4 L 110.6,193.7 L 119.1,191.1 L 127.5,188.5 L 135.9,186.0 L 144.4,183.6 L 152.8,181.2 L 161.2,178.8 L 169.7,176.6 L 178.1,174.4 L 186.6,172.3 L 195.0,170.3 L 203.4,168.4 L 211.9,166.6 L 220.3,164.9 L 228.8,163.4 L 237.2,161.9 L 245.6,160.5 L 254.1,159.3 L 262.5,158.2 L 270.9,157.2 L 279.4,156.3 L 287.8,155.6 L 296.2,155.0 L 304.7,154.5 L 313.1,154.2 L 321.6,154.0 L 330.0,153.9 L 338.4,154.0 L 346.9,154.2 L 355.3,154.5 L 363.8,155.0 L 372.2,155.6 L 380.6,156.3 L 389.1,157.2 L 397.5,158.2 L 405.9,159.3 L 414.4,160.5 L 422.8,161.9 L 431.2,163.4 L 439.7,164.9 L 448.1,166.6 L 456.6,168.4 L 465.0,170.3 L 473.4,172.3 L 481.9,174.4 L 490.3,176.6 L 498.8,178.8 L 507.2,181.2 L 515.6,183.6 L 524.1,186.0 L 532.5,188.5 L 540.9,191.1 L 549.4,193.7 L 557.8,196.4 L 566.2,199.1 L 574.7,201.8 L 583.1,204.5 L 591.6,207.2 L 600.0,210.0 L 600.0,210.0 L 591.6,212.8 L 583.1,215.5 L 574.7,218.2 L 566.2,220.9 L 557.8,223.6 L 549.4,226.3 L 540.9,228.9 L 532.5,231.5 L 524.1,234.0 L 515.6,236.4 L 507.2,238.8 L 498.8,241.2 L 490.3,243.4 L 481.9,245.6 L 473.4,247.7 L 465.0,249.7 L 456.6,251.6 L 448.1,253.4 L 439.7,255.1 L 431.2,256.6 L 422.8,258.1 L 414.4,259.5 L 405.9,260.7 L 397.5,261.8 L 389.1,262.8 L 380.6,263.7 L 372.2,264.4 L 363.8,265.0 L 355.3,265.5 L 346.9,265.8 L 338.4,266.0 L 330.0,266.1 L 321.6,266.0 L 313.1,265.8 L 304.7,265.5 L 296.2,265.0 L 287.8,264.4 L 279.4,263.7 L 270.9,262.8 L 262.5,261.8 L 254.1,260.7 L 245.6,259.5 L 237.2,258.1 L 228.8,256.6 L 220.3,255.1 L 211.9,253.4 L 203.4,251.6 L 195.0,249.7 L 186.6,247.7 L 178.1,245.6 L 169.7,243.4 L 161.2,241.2 L 152.8,238.8 L 144.4,236.4 L 135.9,234.0 L 127.5,231.5 L 119.1,228.9 L 110.6,226.3 L 102.2,223.6 L 93.8,220.9 L 85.3,218.2 L 76.9,215.5 L 68.4,212.8 L 60.0,210.0 Z" fill="none" stroke="url(#pg-dd)" stroke-width="2.5" stroke-opacity="0.16"/>
+        <path d="M 60.0,210.0 L 68.4,205.5 L 76.9,200.9 L 85.3,196.4 L 93.8,192.0 L 102.2,187.5 L 110.6,183.2 L 119.1,178.9 L 127.5,174.6 L 135.9,170.5 L 144.4,166.4 L 152.8,162.5 L 161.2,158.7 L 169.7,155.0 L 178.1,151.4 L 186.6,147.9 L 195.0,144.7 L 203.4,141.5 L 211.9,138.6 L 220.3,135.8 L 228.8,133.2 L 237.2,130.7 L 245.6,128.5 L 254.1,126.5 L 262.5,124.6 L 270.9,123.0 L 279.4,121.6 L 287.8,120.4 L 296.2,119.4 L 304.7,118.6 L 313.1,118.0 L 321.6,117.7 L 330.0,117.6 L 338.4,117.7 L 346.9,118.0 L 355.3,118.6 L 363.8,119.4 L 372.2,120.4 L 380.6,121.6 L 389.1,123.0 L 397.5,124.6 L 405.9,126.5 L 414.4,128.5 L 422.8,130.7 L 431.2,133.2 L 439.7,135.8 L 448.1,138.6 L 456.6,141.5 L 465.0,144.7 L 473.4,147.9 L 481.9,151.4 L 490.3,155.0 L 498.8,158.7 L 507.2,162.5 L 515.6,166.4 L 524.1,170.5 L 532.5,174.6 L 540.9,178.9 L 549.4,183.2 L 557.8,187.5 L 566.2,192.0 L 574.7,196.4 L 583.1,200.9 L 591.6,205.5 L 600.0,210.0 L 600.0,210.0 L 591.6,214.5 L 583.1,219.1 L 574.7,223.6 L 566.2,228.0 L 557.8,232.5 L 549.4,236.8 L 540.9,241.1 L 532.5,245.4 L 524.1,249.5 L 515.6,253.6 L 507.2,257.5 L 498.8,261.3 L 490.3,265.0 L 481.9,268.6 L 473.4,272.1 L 465.0,275.3 L 456.6,278.5 L 448.1,281.4 L 439.7,284.2 L 431.2,286.8 L 422.8,289.3 L 414.4,291.5 L 405.9,293.5 L 397.5,295.4 L 389.1,297.0 L 380.6,298.4 L 372.2,299.6 L 363.8,300.6 L 355.3,301.4 L 346.9,302.0 L 338.4,302.3 L 330.0,302.4 L 321.6,302.3 L 313.1,302.0 L 304.7,301.4 L 296.2,300.6 L 287.8,299.6 L 279.4,298.4 L 270.9,297.0 L 262.5,295.4 L 254.1,293.5 L 245.6,291.5 L 237.2,289.3 L 228.8,286.8 L 220.3,284.2 L 211.9,281.4 L 203.4,278.5 L 195.0,275.3 L 186.6,272.1 L 178.1,268.6 L 169.7,265.0 L 161.2,261.3 L 152.8,257.5 L 144.4,253.6 L 135.9,249.5 L 127.5,245.4 L 119.1,241.1 L 110.6,236.8 L 102.2,232.5 L 93.8,228.0 L 85.3,223.6 L 76.9,219.1 L 68.4,214.5 L 60.0,210.0 Z" fill="none" stroke="url(#pg-dd)" stroke-width="2.5" stroke-opacity="0.3"/>
+        <path d="M 60.0,210.0 L 68.4,203.7 L 76.9,197.4 L 85.3,191.1 L 93.8,184.9 L 102.2,178.7 L 110.6,172.6 L 119.1,166.6 L 127.5,160.7 L 135.9,155.0 L 144.4,149.3 L 152.8,143.8 L 161.2,138.5 L 169.7,133.3 L 178.1,128.4 L 186.6,123.6 L 195.0,119.0 L 203.4,114.6 L 211.9,110.5 L 220.3,106.6 L 228.8,103.0 L 237.2,99.6 L 245.6,96.5 L 254.1,93.7 L 262.5,91.1 L 270.9,88.8 L 279.4,86.8 L 287.8,85.2 L 296.2,83.8 L 304.7,82.7 L 313.1,81.9 L 321.6,81.5 L 330.0,81.3 L 338.4,81.5 L 346.9,81.9 L 355.3,82.7 L 363.8,83.8 L 372.2,85.2 L 380.6,86.8 L 389.1,88.8 L 397.5,91.1 L 405.9,93.7 L 414.4,96.5 L 422.8,99.6 L 431.2,103.0 L 439.7,106.6 L 448.1,110.5 L 456.6,114.6 L 465.0,119.0 L 473.4,123.6 L 481.9,128.4 L 490.3,133.3 L 498.8,138.5 L 507.2,143.8 L 515.6,149.3 L 524.1,155.0 L 532.5,160.7 L 540.9,166.6 L 549.4,172.6 L 557.8,178.7 L 566.2,184.9 L 574.7,191.1 L 583.1,197.4 L 591.6,203.7 L 600.0,210.0 L 600.0,210.0 L 591.6,216.3 L 583.1,222.6 L 574.7,228.9 L 566.2,235.1 L 557.8,241.3 L 549.4,247.4 L 540.9,253.4 L 532.5,259.3 L 524.1,265.0 L 515.6,270.7 L 507.2,276.2 L 498.8,281.5 L 490.3,286.7 L 481.9,291.6 L 473.4,296.4 L 465.0,301.0 L 456.6,305.4 L 448.1,309.5 L 439.7,313.4 L 431.2,317.0 L 422.8,320.4 L 414.4,323.5 L 405.9,326.3 L 397.5,328.9 L 389.1,331.2 L 380.6,333.2 L 372.2,334.8 L 363.8,336.2 L 355.3,337.3 L 346.9,338.1 L 338.4,338.5 L 330.0,338.7 L 321.6,338.5 L 313.1,338.1 L 304.7,337.3 L 296.2,336.2 L 287.8,334.8 L 279.4,333.2 L 270.9,331.2 L 262.5,328.9 L 254.1,326.3 L 245.6,323.5 L 237.2,320.4 L 228.8,317.0 L 220.3,313.4 L 211.9,309.5 L 203.4,305.4 L 195.0,301.0 L 186.6,296.4 L 178.1,291.6 L 169.7,286.7 L 161.2,281.5 L 152.8,276.2 L 144.4,270.7 L 135.9,265.0 L 127.5,259.3 L 119.1,253.4 L 110.6,247.4 L 102.2,241.3 L 93.8,235.1 L 85.3,228.9 L 76.9,222.6 L 68.4,216.3 L 60.0,210.0 Z" fill="none" stroke="url(#pg-dd)" stroke-width="2.5" stroke-opacity="0.5"/>
+        <path d="M 60.0,210.0 L 68.4,201.9 L 76.9,193.8 L 85.3,185.8 L 93.8,177.8 L 102.2,169.9 L 110.6,162.1 L 119.1,154.4 L 127.5,146.9 L 135.9,139.5 L 144.4,132.2 L 152.8,125.2 L 161.2,118.3 L 169.7,111.7 L 178.1,105.3 L 186.6,99.2 L 195.0,93.3 L 203.4,87.7 L 211.9,82.5 L 220.3,77.5 L 228.8,72.8 L 237.2,68.5 L 245.6,64.5 L 254.1,60.8 L 262.5,57.6 L 270.9,54.6 L 279.4,52.1 L 287.8,49.9 L 296.2,48.2 L 304.7,46.8 L 313.1,45.8 L 321.6,45.2 L 330.0,45.0 L 338.4,45.2 L 346.9,45.8 L 355.3,46.8 L 363.8,48.2 L 372.2,49.9 L 380.6,52.1 L 389.1,54.6 L 397.5,57.6 L 405.9,60.8 L 414.4,64.5 L 422.8,68.5 L 431.2,72.8 L 439.7,77.5 L 448.1,82.5 L 456.6,87.7 L 465.0,93.3 L 473.4,99.2 L 481.9,105.3 L 490.3,111.7 L 498.8,118.3 L 507.2,125.2 L 515.6,132.2 L 524.1,139.5 L 532.5,146.9 L 540.9,154.4 L 549.4,162.1 L 557.8,169.9 L 566.2,177.8 L 574.7,185.8 L 583.1,193.8 L 591.6,201.9 L 600.0,210.0 L 600.0,210.0 L 591.6,218.1 L 583.1,226.2 L 574.7,234.2 L 566.2,242.2 L 557.8,250.1 L 549.4,257.9 L 540.9,265.6 L 532.5,273.1 L 524.1,280.5 L 515.6,287.8 L 507.2,294.8 L 498.8,301.7 L 490.3,308.3 L 481.9,314.7 L 473.4,320.8 L 465.0,326.7 L 456.6,332.3 L 448.1,337.5 L 439.7,342.5 L 431.2,347.2 L 422.8,351.5 L 414.4,355.5 L 405.9,359.2 L 397.5,362.4 L 389.1,365.4 L 380.6,367.9 L 372.2,370.1 L 363.8,371.8 L 355.3,373.2 L 346.9,374.2 L 338.4,374.8 L 330.0,375.0 L 321.6,374.8 L 313.1,374.2 L 304.7,373.2 L 296.2,371.8 L 287.8,370.1 L 279.4,367.9 L 270.9,365.4 L 262.5,362.4 L 254.1,359.2 L 245.6,355.5 L 237.2,351.5 L 228.8,347.2 L 220.3,342.5 L 211.9,337.5 L 203.4,332.3 L 195.0,326.7 L 186.6,320.8 L 178.1,314.7 L 169.7,308.3 L 161.2,301.7 L 152.8,294.8 L 144.4,287.8 L 135.9,280.5 L 127.5,273.1 L 119.1,265.6 L 110.6,257.9 L 102.2,250.1 L 93.8,242.2 L 85.3,234.2 L 76.9,226.2 L 68.4,218.1 L 60.0,210.0 Z" fill="none" stroke="url(#pg-dd)" stroke-width="3.5" stroke-opacity="1.0"/>
+        <path d="M 600.0,210.0 L 608.4,207.2 L 616.9,204.5 L 625.3,201.8 L 633.8,199.1 L 642.2,196.4 L 650.6,193.7 L 659.1,191.1 L 667.5,188.5 L 675.9,186.0 L 684.4,183.6 L 692.8,181.2 L 701.2,178.8 L 709.7,176.6 L 718.1,174.4 L 726.6,172.3 L 735.0,170.3 L 743.4,168.4 L 751.9,166.6 L 760.3,164.9 L 768.8,163.4 L 777.2,161.9 L 785.6,160.5 L 794.1,159.3 L 802.5,158.2 L 810.9,157.2 L 819.4,156.3 L 827.8,155.6 L 836.2,155.0 L 844.7,154.5 L 853.1,154.2 L 861.6,154.0 L 870.0,153.9 L 878.4,154.0 L 886.9,154.2 L 895.3,154.5 L 903.8,155.0 L 912.2,155.6 L 920.6,156.3 L 929.1,157.2 L 937.5,158.2 L 945.9,159.3 L 954.4,160.5 L 962.8,161.9 L 971.2,163.4 L 979.7,164.9 L 988.1,166.6 L 996.6,168.4 L 1005.0,170.3 L 1013.4,172.3 L 1021.9,174.4 L 1030.3,176.6 L 1038.8,178.8 L 1047.2,181.2 L 1055.6,183.6 L 1064.1,186.0 L 1072.5,188.5 L 1080.9,191.1 L 1089.4,193.7 L 1097.8,196.4 L 1106.2,199.1 L 1114.7,201.8 L 1123.1,204.5 L 1131.6,207.2 L 1140.0,210.0 L 1140.0,210.0 L 1131.6,212.8 L 1123.1,215.5 L 1114.7,218.2 L 1106.2,220.9 L 1097.8,223.6 L 1089.4,226.3 L 1080.9,228.9 L 1072.5,231.5 L 1064.1,234.0 L 1055.6,236.4 L 1047.2,238.8 L 1038.8,241.2 L 1030.3,243.4 L 1021.9,245.6 L 1013.4,247.7 L 1005.0,249.7 L 996.6,251.6 L 988.1,253.4 L 979.7,255.1 L 971.2,256.6 L 962.8,258.1 L 954.4,259.5 L 945.9,260.7 L 937.5,261.8 L 929.1,262.8 L 920.6,263.7 L 912.2,264.4 L 903.8,265.0 L 895.3,265.5 L 886.9,265.8 L 878.4,266.0 L 870.0,266.1 L 861.6,266.0 L 853.1,265.8 L 844.7,265.5 L 836.2,265.0 L 827.8,264.4 L 819.4,263.7 L 810.9,262.8 L 802.5,261.8 L 794.1,260.7 L 785.6,259.5 L 777.2,258.1 L 768.8,256.6 L 760.3,255.1 L 751.9,253.4 L 743.4,251.6 L 735.0,249.7 L 726.6,247.7 L 718.1,245.6 L 709.7,243.4 L 701.2,241.2 L 692.8,238.8 L 684.4,236.4 L 675.9,234.0 L 667.5,231.5 L 659.1,228.9 L 650.6,226.3 L 642.2,223.6 L 633.8,220.9 L 625.3,218.2 L 616.9,215.5 L 608.4,212.8 L 600.0,210.0 Z" fill="none" stroke="#97700C" stroke-width="2.5" stroke-opacity="0.16"/>
+        <path d="M 600.0,210.0 L 608.4,205.5 L 616.9,200.9 L 625.3,196.4 L 633.8,192.0 L 642.2,187.5 L 650.6,183.2 L 659.1,178.9 L 667.5,174.6 L 675.9,170.5 L 684.4,166.4 L 692.8,162.5 L 701.2,158.7 L 709.7,155.0 L 718.1,151.4 L 726.6,147.9 L 735.0,144.7 L 743.4,141.5 L 751.9,138.6 L 760.3,135.8 L 768.8,133.2 L 777.2,130.7 L 785.6,128.5 L 794.1,126.5 L 802.5,124.6 L 810.9,123.0 L 819.4,121.6 L 827.8,120.4 L 836.2,119.4 L 844.7,118.6 L 853.1,118.0 L 861.6,117.7 L 870.0,117.6 L 878.4,117.7 L 886.9,118.0 L 895.3,118.6 L 903.8,119.4 L 912.2,120.4 L 920.6,121.6 L 929.1,123.0 L 937.5,124.6 L 945.9,126.5 L 954.4,128.5 L 962.8,130.7 L 971.2,133.2 L 979.7,135.8 L 988.1,138.6 L 996.6,141.5 L 1005.0,144.7 L 1013.4,147.9 L 1021.9,151.4 L 1030.3,155.0 L 1038.8,158.7 L 1047.2,162.5 L 1055.6,166.4 L 1064.1,170.5 L 1072.5,174.6 L 1080.9,178.9 L 1089.4,183.2 L 1097.8,187.5 L 1106.2,192.0 L 1114.7,196.4 L 1123.1,200.9 L 1131.6,205.5 L 1140.0,210.0 L 1140.0,210.0 L 1131.6,214.5 L 1123.1,219.1 L 1114.7,223.6 L 1106.2,228.0 L 1097.8,232.5 L 1089.4,236.8 L 1080.9,241.1 L 1072.5,245.4 L 1064.1,249.5 L 1055.6,253.6 L 1047.2,257.5 L 1038.8,261.3 L 1030.3,265.0 L 1021.9,268.6 L 1013.4,272.1 L 1005.0,275.3 L 996.6,278.5 L 988.1,281.4 L 979.7,284.2 L 971.2,286.8 L 962.8,289.3 L 954.4,291.5 L 945.9,293.5 L 937.5,295.4 L 929.1,297.0 L 920.6,298.4 L 912.2,299.6 L 903.8,300.6 L 895.3,301.4 L 886.9,302.0 L 878.4,302.3 L 870.0,302.4 L 861.6,302.3 L 853.1,302.0 L 844.7,301.4 L 836.2,300.6 L 827.8,299.6 L 819.4,298.4 L 810.9,297.0 L 802.5,295.4 L 794.1,293.5 L 785.6,291.5 L 777.2,289.3 L 768.8,286.8 L 760.3,284.2 L 751.9,281.4 L 743.4,278.5 L 735.0,275.3 L 726.6,272.1 L 718.1,268.6 L 709.7,265.0 L 701.2,261.3 L 692.8,257.5 L 684.4,253.6 L 675.9,249.5 L 667.5,245.4 L 659.1,241.1 L 650.6,236.8 L 642.2,232.5 L 633.8,228.0 L 625.3,223.6 L 616.9,219.1 L 608.4,214.5 L 600.0,210.0 Z" fill="none" stroke="#97700C" stroke-width="2.5" stroke-opacity="0.3"/>
+        <path d="M 600.0,210.0 L 608.4,203.7 L 616.9,197.4 L 625.3,191.1 L 633.8,184.9 L 642.2,178.7 L 650.6,172.6 L 659.1,166.6 L 667.5,160.7 L 675.9,155.0 L 684.4,149.3 L 692.8,143.8 L 701.2,138.5 L 709.7,133.3 L 718.1,128.4 L 726.6,123.6 L 735.0,119.0 L 743.4,114.6 L 751.9,110.5 L 760.3,106.6 L 768.8,103.0 L 777.2,99.6 L 785.6,96.5 L 794.1,93.7 L 802.5,91.1 L 810.9,88.8 L 819.4,86.8 L 827.8,85.2 L 836.2,83.8 L 844.7,82.7 L 853.1,81.9 L 861.6,81.5 L 870.0,81.3 L 878.4,81.5 L 886.9,81.9 L 895.3,82.7 L 903.8,83.8 L 912.2,85.2 L 920.6,86.8 L 929.1,88.8 L 937.5,91.1 L 945.9,93.7 L 954.4,96.5 L 962.8,99.6 L 971.2,103.0 L 979.7,106.6 L 988.1,110.5 L 996.6,114.6 L 1005.0,119.0 L 1013.4,123.6 L 1021.9,128.4 L 1030.3,133.3 L 1038.8,138.5 L 1047.2,143.8 L 1055.6,149.3 L 1064.1,155.0 L 1072.5,160.7 L 1080.9,166.6 L 1089.4,172.6 L 1097.8,178.7 L 1106.2,184.9 L 1114.7,191.1 L 1123.1,197.4 L 1131.6,203.7 L 1140.0,210.0 L 1140.0,210.0 L 1131.6,216.3 L 1123.1,222.6 L 1114.7,228.9 L 1106.2,235.1 L 1097.8,241.3 L 1089.4,247.4 L 1080.9,253.4 L 1072.5,259.3 L 1064.1,265.0 L 1055.6,270.7 L 1047.2,276.2 L 1038.8,281.5 L 1030.3,286.7 L 1021.9,291.6 L 1013.4,296.4 L 1005.0,301.0 L 996.6,305.4 L 988.1,309.5 L 979.7,313.4 L 971.2,317.0 L 962.8,320.4 L 954.4,323.5 L 945.9,326.3 L 937.5,328.9 L 929.1,331.2 L 920.6,333.2 L 912.2,334.8 L 903.8,336.2 L 895.3,337.3 L 886.9,338.1 L 878.4,338.5 L 870.0,338.7 L 861.6,338.5 L 853.1,338.1 L 844.7,337.3 L 836.2,336.2 L 827.8,334.8 L 819.4,333.2 L 810.9,331.2 L 802.5,328.9 L 794.1,326.3 L 785.6,323.5 L 777.2,320.4 L 768.8,317.0 L 760.3,313.4 L 751.9,309.5 L 743.4,305.4 L 735.0,301.0 L 726.6,296.4 L 718.1,291.6 L 709.7,286.7 L 701.2,281.5 L 692.8,276.2 L 684.4,270.7 L 675.9,265.0 L 667.5,259.3 L 659.1,253.4 L 650.6,247.4 L 642.2,241.3 L 633.8,235.1 L 625.3,228.9 L 616.9,222.6 L 608.4,216.3 L 600.0,210.0 Z" fill="none" stroke="#97700C" stroke-width="2.5" stroke-opacity="0.5"/>
+        <path d="M 600.0,210.0 L 608.4,201.9 L 616.9,193.8 L 625.3,185.8 L 633.8,177.8 L 642.2,169.9 L 650.6,162.1 L 659.1,154.4 L 667.5,146.9 L 675.9,139.5 L 684.4,132.2 L 692.8,125.2 L 701.2,118.3 L 709.7,111.7 L 718.1,105.3 L 726.6,99.2 L 735.0,93.3 L 743.4,87.7 L 751.9,82.5 L 760.3,77.5 L 768.8,72.8 L 777.2,68.5 L 785.6,64.5 L 794.1,60.8 L 802.5,57.6 L 810.9,54.6 L 819.4,52.1 L 827.8,49.9 L 836.2,48.2 L 844.7,46.8 L 853.1,45.8 L 861.6,45.2 L 870.0,45.0 L 878.4,45.2 L 886.9,45.8 L 895.3,46.8 L 903.8,48.2 L 912.2,49.9 L 920.6,52.1 L 929.1,54.6 L 937.5,57.6 L 945.9,60.8 L 954.4,64.5 L 962.8,68.5 L 971.2,72.8 L 979.7,77.5 L 988.1,82.5 L 996.6,87.7 L 1005.0,93.3 L 1013.4,99.2 L 1021.9,105.3 L 1030.3,111.7 L 1038.8,118.3 L 1047.2,125.2 L 1055.6,132.2 L 1064.1,139.5 L 1072.5,146.9 L 1080.9,154.4 L 1089.4,162.1 L 1097.8,169.9 L 1106.2,177.8 L 1114.7,185.8 L 1123.1,193.8 L 1131.6,201.9 L 1140.0,210.0 L 1140.0,210.0 L 1131.6,218.1 L 1123.1,226.2 L 1114.7,234.2 L 1106.2,242.2 L 1097.8,250.1 L 1089.4,257.9 L 1080.9,265.6 L 1072.5,273.1 L 1064.1,280.5 L 1055.6,287.8 L 1047.2,294.8 L 1038.8,301.7 L 1030.3,308.3 L 1021.9,314.7 L 1013.4,320.8 L 1005.0,326.7 L 996.6,332.3 L 988.1,337.5 L 979.7,342.5 L 971.2,347.2 L 962.8,351.5 L 954.4,355.5 L 945.9,359.2 L 937.5,362.4 L 929.1,365.4 L 920.6,367.9 L 912.2,370.1 L 903.8,371.8 L 895.3,373.2 L 886.9,374.2 L 878.4,374.8 L 870.0,375.0 L 861.6,374.8 L 853.1,374.2 L 844.7,373.2 L 836.2,371.8 L 827.8,370.1 L 819.4,367.9 L 810.9,365.4 L 802.5,362.4 L 794.1,359.2 L 785.6,355.5 L 777.2,351.5 L 768.8,347.2 L 760.3,342.5 L 751.9,337.5 L 743.4,332.3 L 735.0,326.7 L 726.6,320.8 L 718.1,314.7 L 709.7,308.3 L 701.2,301.7 L 692.8,294.8 L 684.4,287.8 L 675.9,280.5 L 667.5,273.1 L 659.1,265.6 L 650.6,257.9 L 642.2,250.1 L 633.8,242.2 L 625.3,234.2 L 616.9,226.2 L 608.4,218.1 L 600.0,210.0 Z" fill="none" stroke="#97700C" stroke-width="3.5" stroke-opacity="1.0"/>
+        <path d="M 1140.0,210.0 L 1146.6,207.2 L 1153.1,204.5 L 1159.7,201.8 L 1166.2,199.1 L 1172.8,196.4 L 1179.4,193.7 L 1185.9,191.1 L 1192.5,188.5 L 1199.1,186.0 L 1205.6,183.6 L 1212.2,181.2 L 1218.8,178.8 L 1225.3,176.6 L 1231.9,174.4 L 1238.4,172.3 L 1245.0,170.3 L 1251.6,168.4 L 1258.1,166.6 L 1264.7,164.9 L 1271.2,163.4 L 1277.8,161.9 L 1284.4,160.5 L 1290.9,159.3 L 1297.5,158.2 L 1304.1,157.2 L 1310.6,156.3 L 1317.2,155.6 L 1323.8,155.0 L 1330.3,154.5 L 1336.9,154.2 L 1343.4,154.0 L 1350.0,153.9 L 1356.6,154.0 L 1363.1,154.2 L 1369.7,154.5 L 1376.2,155.0 L 1382.8,155.6 L 1389.4,156.3 L 1395.9,157.2 L 1402.5,158.2 L 1409.1,159.3 L 1415.6,160.5 L 1422.2,161.9 L 1428.8,163.4 L 1435.3,164.9 L 1441.9,166.6 L 1448.4,168.4 L 1455.0,170.3 L 1461.6,172.3 L 1468.1,174.4 L 1474.7,176.6 L 1481.2,178.8 L 1487.8,181.2 L 1494.4,183.6 L 1500.9,186.0 L 1507.5,188.5 L 1514.1,191.1 L 1520.6,193.7 L 1527.2,196.4 L 1533.8,199.1 L 1540.3,201.8 L 1546.9,204.5 L 1553.4,207.2 L 1560.0,210.0 L 1560.0,210.0 L 1553.4,212.8 L 1546.9,215.5 L 1540.3,218.2 L 1533.8,220.9 L 1527.2,223.6 L 1520.6,226.3 L 1514.1,228.9 L 1507.5,231.5 L 1500.9,234.0 L 1494.4,236.4 L 1487.8,238.8 L 1481.2,241.2 L 1474.7,243.4 L 1468.1,245.6 L 1461.6,247.7 L 1455.0,249.7 L 1448.4,251.6 L 1441.9,253.4 L 1435.3,255.1 L 1428.8,256.6 L 1422.2,258.1 L 1415.6,259.5 L 1409.1,260.7 L 1402.5,261.8 L 1395.9,262.8 L 1389.4,263.7 L 1382.8,264.4 L 1376.2,265.0 L 1369.7,265.5 L 1363.1,265.8 L 1356.6,266.0 L 1350.0,266.1 L 1343.4,266.0 L 1336.9,265.8 L 1330.3,265.5 L 1323.8,265.0 L 1317.2,264.4 L 1310.6,263.7 L 1304.1,262.8 L 1297.5,261.8 L 1290.9,260.7 L 1284.4,259.5 L 1277.8,258.1 L 1271.2,256.6 L 1264.7,255.1 L 1258.1,253.4 L 1251.6,251.6 L 1245.0,249.7 L 1238.4,247.7 L 1231.9,245.6 L 1225.3,243.4 L 1218.8,241.2 L 1212.2,238.8 L 1205.6,236.4 L 1199.1,234.0 L 1192.5,231.5 L 1185.9,228.9 L 1179.4,226.3 L 1172.8,223.6 L 1166.2,220.9 L 1159.7,218.2 L 1153.1,215.5 L 1146.6,212.8 L 1140.0,210.0 Z" fill="none" stroke="#238B45" stroke-width="2.5" stroke-opacity="0.16"/>
+        <path d="M 1140.0,210.0 L 1146.6,205.5 L 1153.1,200.9 L 1159.7,196.4 L 1166.2,192.0 L 1172.8,187.5 L 1179.4,183.2 L 1185.9,178.9 L 1192.5,174.6 L 1199.1,170.5 L 1205.6,166.4 L 1212.2,162.5 L 1218.8,158.7 L 1225.3,155.0 L 1231.9,151.4 L 1238.4,147.9 L 1245.0,144.7 L 1251.6,141.5 L 1258.1,138.6 L 1264.7,135.8 L 1271.2,133.2 L 1277.8,130.7 L 1284.4,128.5 L 1290.9,126.5 L 1297.5,124.6 L 1304.1,123.0 L 1310.6,121.6 L 1317.2,120.4 L 1323.8,119.4 L 1330.3,118.6 L 1336.9,118.0 L 1343.4,117.7 L 1350.0,117.6 L 1356.6,117.7 L 1363.1,118.0 L 1369.7,118.6 L 1376.2,119.4 L 1382.8,120.4 L 1389.4,121.6 L 1395.9,123.0 L 1402.5,124.6 L 1409.1,126.5 L 1415.6,128.5 L 1422.2,130.7 L 1428.8,133.2 L 1435.3,135.8 L 1441.9,138.6 L 1448.4,141.5 L 1455.0,144.7 L 1461.6,147.9 L 1468.1,151.4 L 1474.7,155.0 L 1481.2,158.7 L 1487.8,162.5 L 1494.4,166.4 L 1500.9,170.5 L 1507.5,174.6 L 1514.1,178.9 L 1520.6,183.2 L 1527.2,187.5 L 1533.8,192.0 L 1540.3,196.4 L 1546.9,200.9 L 1553.4,205.5 L 1560.0,210.0 L 1560.0,210.0 L 1553.4,214.5 L 1546.9,219.1 L 1540.3,223.6 L 1533.8,228.0 L 1527.2,232.5 L 1520.6,236.8 L 1514.1,241.1 L 1507.5,245.4 L 1500.9,249.5 L 1494.4,253.6 L 1487.8,257.5 L 1481.2,261.3 L 1474.7,265.0 L 1468.1,268.6 L 1461.6,272.1 L 1455.0,275.3 L 1448.4,278.5 L 1441.9,281.4 L 1435.3,284.2 L 1428.8,286.8 L 1422.2,289.3 L 1415.6,291.5 L 1409.1,293.5 L 1402.5,295.4 L 1395.9,297.0 L 1389.4,298.4 L 1382.8,299.6 L 1376.2,300.6 L 1369.7,301.4 L 1363.1,302.0 L 1356.6,302.3 L 1350.0,302.4 L 1343.4,302.3 L 1336.9,302.0 L 1330.3,301.4 L 1323.8,300.6 L 1317.2,299.6 L 1310.6,298.4 L 1304.1,297.0 L 1297.5,295.4 L 1290.9,293.5 L 1284.4,291.5 L 1277.8,289.3 L 1271.2,286.8 L 1264.7,284.2 L 1258.1,281.4 L 1251.6,278.5 L 1245.0,275.3 L 1238.4,272.1 L 1231.9,268.6 L 1225.3,265.0 L 1218.8,261.3 L 1212.2,257.5 L 1205.6,253.6 L 1199.1,249.5 L 1192.5,245.4 L 1185.9,241.1 L 1179.4,236.8 L 1172.8,232.5 L 1166.2,228.0 L 1159.7,223.6 L 1153.1,219.1 L 1146.6,214.5 L 1140.0,210.0 Z" fill="none" stroke="#238B45" stroke-width="2.5" stroke-opacity="0.3"/>
+        <path d="M 1140.0,210.0 L 1146.6,203.7 L 1153.1,197.4 L 1159.7,191.1 L 1166.2,184.9 L 1172.8,178.7 L 1179.4,172.6 L 1185.9,166.6 L 1192.5,160.7 L 1199.1,155.0 L 1205.6,149.3 L 1212.2,143.8 L 1218.8,138.5 L 1225.3,133.3 L 1231.9,128.4 L 1238.4,123.6 L 1245.0,119.0 L 1251.6,114.6 L 1258.1,110.5 L 1264.7,106.6 L 1271.2,103.0 L 1277.8,99.6 L 1284.4,96.5 L 1290.9,93.7 L 1297.5,91.1 L 1304.1,88.8 L 1310.6,86.8 L 1317.2,85.2 L 1323.8,83.8 L 1330.3,82.7 L 1336.9,81.9 L 1343.4,81.5 L 1350.0,81.3 L 1356.6,81.5 L 1363.1,81.9 L 1369.7,82.7 L 1376.2,83.8 L 1382.8,85.2 L 1389.4,86.8 L 1395.9,88.8 L 1402.5,91.1 L 1409.1,93.7 L 1415.6,96.5 L 1422.2,99.6 L 1428.8,103.0 L 1435.3,106.6 L 1441.9,110.5 L 1448.4,114.6 L 1455.0,119.0 L 1461.6,123.6 L 1468.1,128.4 L 1474.7,133.3 L 1481.2,138.5 L 1487.8,143.8 L 1494.4,149.3 L 1500.9,155.0 L 1507.5,160.7 L 1514.1,166.6 L 1520.6,172.6 L 1527.2,178.7 L 1533.8,184.9 L 1540.3,191.1 L 1546.9,197.4 L 1553.4,203.7 L 1560.0,210.0 L 1560.0,210.0 L 1553.4,216.3 L 1546.9,222.6 L 1540.3,228.9 L 1533.8,235.1 L 1527.2,241.3 L 1520.6,247.4 L 1514.1,253.4 L 1507.5,259.3 L 1500.9,265.0 L 1494.4,270.7 L 1487.8,276.2 L 1481.2,281.5 L 1474.7,286.7 L 1468.1,291.6 L 1461.6,296.4 L 1455.0,301.0 L 1448.4,305.4 L 1441.9,309.5 L 1435.3,313.4 L 1428.8,317.0 L 1422.2,320.4 L 1415.6,323.5 L 1409.1,326.3 L 1402.5,328.9 L 1395.9,331.2 L 1389.4,333.2 L 1382.8,334.8 L 1376.2,336.2 L 1369.7,337.3 L 1363.1,338.1 L 1356.6,338.5 L 1350.0,338.7 L 1343.4,338.5 L 1336.9,338.1 L 1330.3,337.3 L 1323.8,336.2 L 1317.2,334.8 L 1310.6,333.2 L 1304.1,331.2 L 1297.5,328.9 L 1290.9,326.3 L 1284.4,323.5 L 1277.8,320.4 L 1271.2,317.0 L 1264.7,313.4 L 1258.1,309.5 L 1251.6,305.4 L 1245.0,301.0 L 1238.4,296.4 L 1231.9,291.6 L 1225.3,286.7 L 1218.8,281.5 L 1212.2,276.2 L 1205.6,270.7 L 1199.1,265.0 L 1192.5,259.3 L 1185.9,253.4 L 1179.4,247.4 L 1172.8,241.3 L 1166.2,235.1 L 1159.7,228.9 L 1153.1,222.6 L 1146.6,216.3 L 1140.0,210.0 Z" fill="none" stroke="#238B45" stroke-width="2.5" stroke-opacity="0.5"/>
+        <path d="M 1140.0,210.0 L 1146.6,201.9 L 1153.1,193.8 L 1159.7,185.8 L 1166.2,177.8 L 1172.8,169.9 L 1179.4,162.1 L 1185.9,154.4 L 1192.5,146.9 L 1199.1,139.5 L 1205.6,132.2 L 1212.2,125.2 L 1218.8,118.3 L 1225.3,111.7 L 1231.9,105.3 L 1238.4,99.2 L 1245.0,93.3 L 1251.6,87.7 L 1258.1,82.5 L 1264.7,77.5 L 1271.2,72.8 L 1277.8,68.5 L 1284.4,64.5 L 1290.9,60.8 L 1297.5,57.6 L 1304.1,54.6 L 1310.6,52.1 L 1317.2,49.9 L 1323.8,48.2 L 1330.3,46.8 L 1336.9,45.8 L 1343.4,45.2 L 1350.0,45.0 L 1356.6,45.2 L 1363.1,45.8 L 1369.7,46.8 L 1376.2,48.2 L 1382.8,49.9 L 1389.4,52.1 L 1395.9,54.6 L 1402.5,57.6 L 1409.1,60.8 L 1415.6,64.5 L 1422.2,68.5 L 1428.8,72.8 L 1435.3,77.5 L 1441.9,82.5 L 1448.4,87.7 L 1455.0,93.3 L 1461.6,99.2 L 1468.1,105.3 L 1474.7,111.7 L 1481.2,118.3 L 1487.8,125.2 L 1494.4,132.2 L 1500.9,139.5 L 1507.5,146.9 L 1514.1,154.4 L 1520.6,162.1 L 1527.2,169.9 L 1533.8,177.8 L 1540.3,185.8 L 1546.9,193.8 L 1553.4,201.9 L 1560.0,210.0 L 1560.0,210.0 L 1553.4,218.1 L 1546.9,226.2 L 1540.3,234.2 L 1533.8,242.2 L 1527.2,250.1 L 1520.6,257.9 L 1514.1,265.6 L 1507.5,273.1 L 1500.9,280.5 L 1494.4,287.8 L 1487.8,294.8 L 1481.2,301.7 L 1474.7,308.3 L 1468.1,314.7 L 1461.6,320.8 L 1455.0,326.7 L 1448.4,332.3 L 1441.9,337.5 L 1435.3,342.5 L 1428.8,347.2 L 1422.2,351.5 L 1415.6,355.5 L 1409.1,359.2 L 1402.5,362.4 L 1395.9,365.4 L 1389.4,367.9 L 1382.8,370.1 L 1376.2,371.8 L 1369.7,373.2 L 1363.1,374.2 L 1356.6,374.8 L 1350.0,375.0 L 1343.4,374.8 L 1336.9,374.2 L 1330.3,373.2 L 1323.8,371.8 L 1317.2,370.1 L 1310.6,367.9 L 1304.1,365.4 L 1297.5,362.4 L 1290.9,359.2 L 1284.4,355.5 L 1277.8,351.5 L 1271.2,347.2 L 1264.7,342.5 L 1258.1,337.5 L 1251.6,332.3 L 1245.0,326.7 L 1238.4,320.8 L 1231.9,314.7 L 1225.3,308.3 L 1218.8,301.7 L 1212.2,294.8 L 1205.6,287.8 L 1199.1,280.5 L 1192.5,273.1 L 1185.9,265.6 L 1179.4,257.9 L 1172.8,250.1 L 1166.2,242.2 L 1159.7,234.2 L 1153.1,226.2 L 1146.6,218.1 L 1140.0,210.0 Z" fill="none" stroke="#238B45" stroke-width="3.5" stroke-opacity="1.0"/>
+        <path d="M 1560.0,210.0 L 1562.6,216.1 L 1565.2,221.8 L 1567.8,226.5 L 1570.4,229.9 L 1573.0,231.7 L 1575.6,231.8 L 1578.2,230.2 L 1580.8,227.0 L 1583.4,222.4 L 1586.0,216.8 L 1588.6,210.7 L 1591.2,204.5 L 1593.8,198.8 L 1596.4,194.0 L 1599.0,190.4 L 1601.6,188.4 L 1604.2,188.1 L 1606.8,189.5 L 1609.4,192.6 L 1612.0,197.1 L 1614.6,202.5 L 1617.2,208.6 L 1619.8,214.8 L 1622.4,220.6 L 1625.0,225.6 L 1627.6,229.3 L 1630.2,231.5 L 1632.8,232.0 L 1635.4,230.7 L 1638.0,227.8 L 1640.6,223.5 L 1643.2,218.1 L 1645.8,212.1 L 1648.4,205.9 L 1651.0,200.0 L 1653.6,194.9 L 1656.2,191.1 L 1658.8,188.7 L 1661.4,188.0 L 1664.0,189.1 L 1666.6,191.8 L 1669.2,196.0 L 1671.8,201.3 L 1674.4,207.2 L 1677.0,213.4 L 1679.6,219.4 L 1682.2,224.5 L 1684.8,228.6 L 1687.4,231.1 L 1690.0,232.0 L 1692.6,231.1 L 1695.2,228.6 L 1697.8,224.5 L 1700.4,219.4 L 1703.0,213.4 L 1705.6,207.2 L 1708.2,201.3 L 1710.8,196.0 L 1713.4,191.8 L 1716.0,189.1 L 1718.6,188.0 L 1721.2,188.7 L 1723.8,191.1 L 1726.4,194.9 L 1729.0,200.0 L 1731.6,205.9 L 1734.2,212.1 L 1736.8,218.1 L 1739.4,223.5 L 1742.0,227.8 L 1744.6,230.7 L 1747.2,232.0 L 1749.8,231.5 L 1752.4,229.3 L 1755.0,225.6 L 1757.6,220.6 L 1760.2,214.8 L 1762.8,208.6 L 1765.4,202.5 L 1768.0,197.1 L 1770.6,192.6 L 1773.2,189.5 L 1775.8,188.1 L 1778.4,188.4 L 1781.0,190.4 L 1783.6,194.0 L 1786.2,198.8 L 1788.8,204.5 L 1791.4,210.7 L 1794.0,216.8 L 1796.6,222.4 L 1799.2,227.0 L 1801.8,230.2 L 1804.4,231.8 L 1807.0,231.7 L 1809.6,229.9 L 1812.2,226.5 L 1814.8,221.8 L 1817.4,216.1 L 1820.0,210.0" fill="none" stroke="#D32289" stroke-width="3.5"/>
+        <path d="M 1820.0,210.0 L 1822.6,215.6 L 1825.2,220.7 L 1827.8,225.0 L 1830.4,228.1 L 1833.0,229.8 L 1835.6,229.8 L 1838.2,228.4 L 1840.8,225.4 L 1843.4,221.2 L 1846.0,216.2 L 1848.6,210.6 L 1851.2,205.0 L 1853.8,199.8 L 1856.4,195.4 L 1859.0,192.2 L 1861.6,190.4 L 1864.2,190.1 L 1866.8,191.4 L 1869.4,194.2 L 1872.0,198.2 L 1874.6,203.2 L 1877.2,208.7 L 1879.8,214.4 L 1882.4,219.6 L 1885.0,224.1 L 1887.6,227.5 L 1890.2,229.5 L 1892.8,230.0 L 1895.4,228.8 L 1898.0,226.2 L 1900.6,222.3 L 1903.2,217.4 L 1905.8,211.9 L 1908.4,206.3 L 1911.0,200.9 L 1913.6,196.3 L 1916.2,192.8 L 1918.8,190.6 L 1921.4,190.0 L 1924.0,191.0 L 1926.6,193.5 L 1929.2,197.3 L 1931.8,202.1 L 1934.4,207.5 L 1937.0,213.1 L 1939.6,218.5 L 1942.2,223.2 L 1944.8,226.9 L 1947.4,229.2 L 1950.0,230.0 L 1952.6,229.2 L 1955.2,226.9 L 1957.8,223.2 L 1960.4,218.5 L 1963.0,213.1 L 1965.6,207.5 L 1968.2,202.1 L 1970.8,197.3 L 1973.4,193.5 L 1976.0,191.0 L 1978.6,190.0 L 1981.2,190.6 L 1983.8,192.8 L 1986.4,196.3 L 1989.0,200.9 L 1991.6,206.3 L 1994.2,211.9 L 1996.8,217.4 L 1999.4,222.3 L 2002.0,226.2 L 2004.6,228.8 L 2007.2,230.0 L 2009.8,229.5 L 2012.4,227.5 L 2015.0,224.1 L 2017.6,219.6 L 2020.2,214.4 L 2022.8,208.7 L 2025.4,203.2 L 2028.0,198.2 L 2030.6,194.2 L 2033.2,191.4 L 2035.8,190.1 L 2038.4,190.4 L 2041.0,192.2 L 2043.6,195.4 L 2046.2,199.8 L 2048.8,205.0 L 2051.4,210.6 L 2054.0,216.2 L 2056.6,221.2 L 2059.2,225.4 L 2061.8,228.4 L 2064.4,229.8 L 2067.0,229.8 L 2069.6,228.1 L 2072.2,225.0 L 2074.8,220.7 L 2077.4,215.6 L 2080.0,210.0" fill="none" stroke="#C84163" stroke-width="3.5"/>
+        <circle class="process-dot" cx="60" cy="210" r="7"/>
+        <circle class="process-dot" cx="600" cy="210" r="7"/>
+        <circle class="process-dot" cx="1140" cy="210" r="7"/>
+        <circle class="process-dot" cx="1560" cy="210" r="7"/>
+        <circle class="process-dot" cx="1820" cy="210" r="7"/>
+        <circle class="process-dot" cx="2080" cy="210" r="7"/>
+        <text class="process-toplabel" x="60" y="22">PROBLEM</text>
+        <text class="process-toplabel" x="600" y="22">TASK</text>
+        <text class="process-toplabel" x="1140" y="22">MOCKUPS</text>
+        <text class="process-toplabel" x="1560" y="22">SOLUTION</text>
+        <text class="process-toplabel" x="1820" y="22">DOCUMENTATION</text>
+        <text class="process-toplabel" x="2080" y="22">FEATURE</text>
+        <text class="process-title" x="60" y="470" fill="#D9125B">DISCOVER</text>
+        <text class="process-item" x="60" y="528">Competitor analysis</text>
+        <text class="process-item" x="60" y="560">Review analysis</text>
+        <text class="process-item" x="60" y="592">MoSCoW</text>
+        <text class="process-item" x="60" y="624">In-depth interviews</text>
+        <text class="process-title" x="345" y="470" fill="#DA471B">DEFINE</text>
+        <text class="process-item" x="345" y="528">Archetypes</text>
+        <text class="process-item" x="345" y="560">4 Forces</text>
+        <text class="process-item" x="345" y="592">CJM</text>
+        <text class="process-item" x="345" y="624">IA</text>
+        <text class="process-item" x="345" y="656">JTBD</text>
+        <text class="process-title" x="600" y="470" fill="#97700C">DESIGN</text>
+        <text class="process-item" x="600" y="528">UserFlow</text>
+        <text class="process-item" x="600" y="560">Low/High Fidelity</text>
+        <text class="process-item" x="600" y="592">Prototype</text>
+        <text class="process-title" x="1140" y="470" fill="#238B45">TEST</text>
+        <text class="process-item" x="1140" y="528">Usability test</text>
+        <text class="process-title" x="1560" y="470" fill="#D32289">HANDOFF</text>
+        <text class="process-item" x="1560" y="528">UI Kit</text>
+        <text class="process-title" x="1820" y="470" fill="#C84163">DESIGN REVIEW</text>
+        </svg>
+        </div>
+        <!-- Mobile-only stand-in for the graphic above: plain labels and
+             lists, no wave, no top row, no Design Review (it has no items
+             to list anyway). -->
+        <div class="process-mobile">
+          <div class="process-mobile-row">
+            <div>
+              <div class="process-mobile-label">Discover</div>
+              <ul class="process-mobile-list">
+                <li>Competitor analysis</li>
+                <li>Review analysis</li>
+                <li>MoSCoW</li>
+                <li>In-depth interviews</li>
+              </ul>
+            </div>
+            <div>
+              <div class="process-mobile-label">Define</div>
+              <ul class="process-mobile-list">
+                <li>Archetypes</li>
+                <li>4 Forces</li>
+                <li>CJM</li>
+                <li>IA</li>
+                <li>JTBD</li>
+              </ul>
+            </div>
+          </div>
+          <div class="process-mobile-row">
+            <div>
+              <div class="process-mobile-label">Design</div>
+              <ul class="process-mobile-list">
+                <li>UserFlow</li>
+                <li>Low/High Fidelity</li>
+                <li>Prototype</li>
+              </ul>
+            </div>
+            <div>
+              <div class="process-mobile-label">Test</div>
+              <ul class="process-mobile-list">
+                <li>Usability test</li>
+              </ul>
+            </div>
+          </div>
+          <div class="process-mobile-row">
+            <div>
+              <div class="process-mobile-label">Handoff</div>
+              <ul class="process-mobile-list">
+                <li>UI Kit</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 3 — RESEARCH ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-research">
+      <div class="eyebrow">Competitors</div>
+      <div class="competitors-wrap fit-wrap">
+        <div class="competitors-groups">
+          <div>
+            <div class="competitors-group-label">Direct</div>
+            <ul class="competitors-group-list">
+              <li>video hosting</li>
+              <li>User Generated Content</li>
+              <li>viewing without&nbsp;a&nbsp;subscription</li>
+              <li>subscription&nbsp;= ad-free + perks</li>
+            </ul>
+          </div>
+          <div>
+            <div class="competitors-group-label">Indirect</div>
+            <ul class="competitors-group-list">
+              <li>OTT (Over-The-Top) / SVOD (Subscription Video On Demand)</li>
+              <li>non-UGC</li>
+              <li>subscription&nbsp;= mandatory login</li>
+            </ul>
+          </div>
+        </div>
+        <div class="competitors-table-wrap hscroll-viewport">
+          <table class="competitors-table hscroll-track">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Entry context</th>
+                <th>Intrusiveness</th>
+                <th>Value clarity</th>
+                <th>Free vs Paid</th>
+                <th>Price transparency</th>
+                <th>Trial period</th>
+                <th>Steps<br>to&nbsp;checkout</th>
+                <th>Payment ease</th>
+                <th>Cancellation clarity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="logo-cell" data-name="YouTube"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
+                <td data-label="Entry context"><span class="status-dot hi"></span></td>
+                <td data-label="Intrusiveness"><span class="status-dot hi"></span></td>
+                <td data-label="Value clarity"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot hi"></span></td>
+                <td data-label="Price transparency"><span class="status-dot hi"></span></td>
+                <td data-label="Trial period"><span class="status-dot hi"></span></td>
+                <td data-label="Steps to checkout"><span class="status-dot hi"></span></td>
+                <td data-label="Payment ease"><span class="status-dot hi"></span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot hi"></span></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="VK Видео"><img src="projects/rutube/logo-vk.png" alt="VK Video"></td>
+                <td data-label="Entry context"><span class="status-dot na">—</span></td>
+                <td data-label="Intrusiveness"><span class="status-dot na">—</span></td>
+                <td data-label="Value clarity"><span class="status-dot na">—</span></td>
+                <td data-label="Free vs Paid"><span class="status-dot hi"></span></td>
+                <td data-label="Price transparency"><span class="status-dot na">—</span></td>
+                <td data-label="Trial period"><span class="status-dot na">—</span></td>
+                <td data-label="Steps to checkout"><span class="status-dot na">—</span></td>
+                <td data-label="Payment ease"><span class="status-dot na">—</span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot na">—</span></td>
+              </tr>
+              <tr class="group-break">
+                <td class="logo-cell" data-name="Кинопоиск"><img src="projects/rutube/logo-kinopoisk.png" alt="Kinopoisk"></td>
+                <td data-label="Entry context"><span class="status-dot hi"></span></td>
+                <td data-label="Intrusiveness"><span class="status-dot mid"></span></td>
+                <td data-label="Value clarity"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot lo"></span></td>
+                <td data-label="Price transparency"><span class="status-dot hi"></span></td>
+                <td data-label="Trial period"><span class="status-dot hi"></span></td>
+                <td data-label="Steps to checkout"><span class="status-dot mid"></span></td>
+                <td data-label="Payment ease"><span class="status-dot hi"></span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot mid"></span></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Иви"><img src="projects/rutube/logo-ivi.png" alt="Ivi"></td>
+                <td data-label="Entry context"><span class="status-dot hi"></span></td>
+                <td data-label="Intrusiveness"><span class="status-dot mid"></span></td>
+                <td data-label="Value clarity"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot lo"></span></td>
+                <td data-label="Price transparency"><span class="status-dot hi"></span></td>
+                <td data-label="Trial period"><span class="status-dot hi"></span></td>
+                <td data-label="Steps to checkout"><span class="status-dot hi"></span></td>
+                <td data-label="Payment ease"><span class="status-dot hi"></span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot mid"></span></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Okko"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
+                <td data-label="Entry context"><span class="status-dot hi"></span></td>
+                <td data-label="Intrusiveness"><span class="status-dot mid"></span></td>
+                <td data-label="Value clarity"><span class="status-dot hi"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot lo"></span></td>
+                <td data-label="Price transparency"><span class="status-dot hi"></span></td>
+                <td data-label="Trial period"><span class="status-dot hi"></span></td>
+                <td data-label="Steps to checkout"><span class="status-dot hi"></span></td>
+                <td data-label="Payment ease"><span class="status-dot hi"></span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot mid"></span></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="PREMIER"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
+                <td data-label="Entry context"><span class="status-dot hi"></span></td>
+                <td data-label="Intrusiveness"><span class="status-dot mid"></span></td>
+                <td data-label="Value clarity"><span class="status-dot mid"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot mid"></span></td>
+                <td data-label="Price transparency"><span class="status-dot hi"></span></td>
+                <td data-label="Trial period"><span class="status-dot hi"></span></td>
+                <td data-label="Steps to checkout"><span class="status-dot mid"></span></td>
+                <td data-label="Payment ease"><span class="status-dot hi"></span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot hi"></span></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Смотрим"><img src="projects/rutube/logo-smotrim.png" alt="Smotrim"></td>
+                <td data-label="Entry context"><span class="status-dot lo"></span></td>
+                <td data-label="Intrusiveness"><span class="status-dot lo"></span></td>
+                <td data-label="Value clarity"><span class="status-dot mid"></span></td>
+                <td data-label="Free vs Paid"><span class="status-dot mid"></span></td>
+                <td data-label="Price transparency"><span class="status-dot mid"></span></td>
+                <td data-label="Trial period"><span class="status-dot lo"></span></td>
+                <td data-label="Steps to checkout"><span class="status-dot lo"></span></td>
+                <td data-label="Payment ease"><span class="status-dot mid"></span></td>
+                <td data-label="Cancellation clarity"><span class="status-dot lo"></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="competitors-legend">
+            <span><span class="status-dot hi" style="vertical-align:middle;"></span> implemented well</span>
+            <span><span class="status-dot mid" style="vertical-align:middle;"></span> acceptable, but&nbsp;with caveats</span>
+            <span><span class="status-dot lo" style="vertical-align:middle;"></span> poor or&nbsp;missing</span>
+            <span>— not&nbsp;applicable (no subscription as such)</span>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 4 — REVIEWS + PRIORITIZATION (MoSCoW) ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-priority">
+      <div class="eyebrow">Reviews</div>
+      <div class="priority-wrap fit-wrap">
+        <div class="reviews-table-wrap hscroll-viewport">
+          <table class="reviews-table hscroll-track">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Like</th>
+                <th>Dislike</th>
+                <th>Ignored</th>
+                <th>About the subscription</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="logo-cell" data-name="YouTube"><img src="projects/rutube/logo-youtube.png" alt="YouTube"></td>
+                <td data-label="Like"><p class="reviews-text">huge content selection<br>convenient player<br>best recommendations</p></td>
+                <td data-label="Dislike"><p class="reviews-text">ads, "push toward premium"<br>moderation policy<br>sometimes glitches in&nbsp;Russia</p></td>
+                <td data-label="Ignored"><p class="reviews-text">smart settings</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">valued for&nbsp;no ads + offline features</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="VK Видео"><img src="projects/rutube/logo-vk.png" alt="VK Video"></td>
+                <td data-label="Like"><p class="reviews-text">accessibility<br>exclusive RU content<br>VK ecosystem</p></td>
+                <td data-label="Dislike"><p class="reviews-text">irrelevant recommendations<br>ads<br>glitches, bugs, lag</p></td>
+                <td data-label="Ignored"><p class="reviews-text">offline features</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">—</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Кинопоиск"><img src="projects/rutube/logo-kinopoisk.png" alt="Kinopoisk"></td>
+                <td data-label="Like"><p class="reviews-text">movies + everything else<br>content quality<br>convenient for&nbsp;Yandex users</p></td>
+                <td data-label="Dislike"><p class="reviews-text">weak catalog<br>expensive add-on packs<br>auto-renewals/charges</p></td>
+                <td data-label="Ignored"><p class="reviews-text">fine-grained player settings<br>subscription ≠ all-inclusive</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">good value if&nbsp;you already need Plus</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Иви"><img src="projects/rutube/logo-ivi.png" alt="Ivi"></td>
+                <td data-label="Like"><p class="reviews-text">large catalog<br>convenient filtering<br>promos/deals</p></td>
+                <td data-label="Dislike"><p class="reviews-text">"unexpected charges"<br>second checkout (some content paid even with&nbsp;a&nbsp;subscription)</p></td>
+                <td data-label="Ignored"><p class="reviews-text">turning off auto-renewal</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">discounts<br>"auto-payment trap"</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Okko"><img src="projects/rutube/logo-okko.png" alt="Okko"></td>
+                <td data-label="Like"><p class="reviews-text">content quality<br>broad sections<br>ecosystem bundles</p></td>
+                <td data-label="Dislike"><p class="reviews-text">second checkout<br>trailers auto-play<br>"was cheap, became expensive" (promo effect)</p></td>
+                <td data-label="Ignored"><p class="reviews-text">free content<br>"subscription + separate purchases" is fine</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">expectation of&nbsp;"all-inclusive"</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="PREMIER"><img src="projects/rutube/logo-premier.png" alt="PREMIER"></td>
+                <td data-label="Like"><p class="reviews-text">cheap<br>TNT exclusives</p></td>
+                <td data-label="Dislike"><p class="reviews-text">narrow content, subscribing for&nbsp;just one show<br>weak search</p></td>
+                <td data-label="Ignored"><p class="reviews-text">niche service, not&nbsp;a&nbsp;universal streaming hub</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">app quality ≠ price<br>auto-renewal is annoying</p></td>
+              </tr>
+              <tr>
+                <td class="logo-cell" data-name="Смотрим"><img src="projects/rutube/logo-smotrim.png" alt="Smotrim"></td>
+                <td data-label="Like"><p class="reviews-text">all TV archives in&nbsp;one place<br>free</p></td>
+                <td data-label="Dislike"><p class="reviews-text">poor UX/UI<br>tons of&nbsp;ads<br>breakages</p></td>
+                <td data-label="Ignored"><p class="reviews-text">archive size<br>extra sections</p></td>
+                <td data-label="About the subscription"><p class="reviews-text">—</p></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="moscow-col">
+          <h2 class="moscow-heading">Prioritizing criteria<br>with&nbsp;MoSCoW</h2>
+          <div class="moscow-groups">
+            <div>
+              <div class="moscow-group-label">Must Have</div>
+              <ul class="moscow-group-list">
+                <li>Value clarity</li>
+                <li>Free vs Paid</li>
+                <li>Price transparency</li>
+                <li>Cancellation clarity</li>
+              </ul>
+            </div>
+            <div>
+              <div class="moscow-group-label">Should Have</div>
+              <ul class="moscow-group-list">
+                <li>Entry context</li>
+                <li>Intrusiveness</li>
+                <li>Steps to&nbsp;checkout</li>
+              </ul>
+            </div>
+            <div>
+              <div class="moscow-group-label">Could Have</div>
+              <ul class="moscow-group-list">
+                <li>Trial period</li>
+                <li>Payment ease</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 5 — ARCHETYPES ── -->
+    <section class="slide slide-archetypes">
+      <div class="eyebrow">Archetypes</div>
+      <div class="archetypes-grid fit-wrap">
+        <div class="archetypes-intro">
+          <div class="archetypes-intro-block">
+            <div class="field-label">Target audience</div>
+            <p class="field-value">Core audience&nbsp;— 25–34: has disposable income, mature with&nbsp;digital products, already used to&nbsp;living on&nbsp;subscriptions. But&nbsp;within it&nbsp;— not&nbsp;one single behavior pattern.</p>
+          </div>
+          <div class="archetypes-intro-block">
+            <div class="field-label">Method</div>
+            <p class="field-value">In-depth interviews with&nbsp;audience representatives showed: the&nbsp;same action&nbsp;— subscribing&nbsp;— hides different motives, fears, and&nbsp;expectations.</p>
+          </div>
+        </div>
+        <div class="archetype-card">
+          <div class="archetype-card-title">The Rational Controller</div>
+          <div class="archetype-card-fields">
+          <div>
+            <div class="archetype-card-field-label">Context</div>
+            <ul class="archetype-card-list">
+              <li>Uses video services regularly</li>
+              <li>Digitally literate</li>
+              <li>Notices interface logic</li>
+              <li>Tracks spending</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Motivation</div>
+            <ul class="archetype-card-list">
+              <li>Wants to&nbsp;use the&nbsp;subscription deliberately, with&nbsp;full control</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Key need</div>
+            <ul class="archetype-card-list">
+              <li>Transparency and&nbsp;manageability</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Fear</div>
+            <ul class="archetype-card-list">
+              <li>Auto-charge without&nbsp;notice</li>
+              <li>Price increase without&nbsp;notice</li>
+              <li>Hidden terms</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Behavior pattern</div>
+            <ul class="archetype-card-list">
+              <li>Partially reads the&nbsp;interface</li>
+              <li>Notices inconsistencies</li>
+              <li>Gets annoyed when logic is missing</li>
+              <li>Compares free and&nbsp;paid</li>
+              <li>Looks for&nbsp;confirmation of&nbsp;value</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Success criteria</div>
+            <ul class="archetype-card-list">
+              <li>Understands what&nbsp;they're paying for</li>
+              <li>Sees the&nbsp;charge date</li>
+              <li>Can cancel in&nbsp;1–2 clicks</li>
+              <li>Sees a&nbsp;clear plan comparison</li>
+            </ul>
+          </div>
+          </div>
+        </div>
+        <div class="archetype-card">
+          <div class="archetype-card-title">The "No-Frills" Pragmatist</div>
+          <div class="archetype-card-fields">
+          <div>
+            <div class="archetype-card-field-label">Context</div>
+            <ul class="archetype-card-list">
+              <li>Video&nbsp;= evening downtime</li>
+              <li>Doesn't&nbsp;want to&nbsp;figure things out</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Motivation</div>
+            <ul class="archetype-card-list">
+              <li>Remove ads and&nbsp;watch in&nbsp;peace</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Key need</div>
+            <ul class="archetype-card-list">
+              <li>Simplicity</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Fear</div>
+            <ul class="archetype-card-list">
+              <li>Pushiness, upsells, extra steps</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Behavior pattern</div>
+            <ul class="archetype-card-list">
+              <li>Doesn't&nbsp;read the&nbsp;text</li>
+              <li>Makes quick decisions</li>
+              <li>Will abandon the&nbsp;process if&nbsp;frustrated</li>
+            </ul>
+          </div>
+          <div>
+            <div class="archetype-card-field-label">Success criteria</div>
+            <ul class="archetype-card-list">
+              <li>Minimum steps</li>
+              <li>One plan</li>
+              <li>No&nbsp;pressure</li>
+            </ul>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 6 — 4 FORCES ── -->
+    <section class="slide slide-forces">
+      <div class="eyebrow">4 Forces</div>
+
+      <div class="forces-wrap fit-wrap">
+      <div class="archetype-card">
+        <div class="archetype-card-title">The Rational Controller</div>
+        <div class="archetype-card-fields">
+        <div>
+          <div class="archetype-card-field-label">Push (what pushes away from&nbsp;the&nbsp;free version)</div>
+          <ul class="archetype-card-list">
+            <li>Annoying ads</li>
+            <li>Limitations</li>
+            <li>Lack of&nbsp;control</li>
+            <li>Not&nbsp;being able to&nbsp;tell exactly what you're getting</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Pull (what attracts to&nbsp;the&nbsp;subscription)</div>
+          <ul class="archetype-card-list">
+            <li>No ads</li>
+            <li>Exclusives</li>
+            <li>Clear description of&nbsp;benefits</li>
+            <li>Transparent terms</li>
+            <li>Ability to&nbsp;manage the&nbsp;subscription</li>
+            <li>Visible next charge date</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Anxiety (what's scary)</div>
+          <ul class="archetype-card-list">
+            <li>Auto-charge without&nbsp;notice</li>
+            <li>Price increase after&nbsp;the&nbsp;trial period</li>
+            <li>Fine print</li>
+            <li>Hidden terms</li>
+            <li>Unclear subscription management</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Habit (what keeps them on&nbsp;the&nbsp;free model)</div>
+          <ul class="archetype-card-list">
+            <li>Can watch fine as&nbsp;is</li>
+            <li>Too lazy to&nbsp;figure it&nbsp;out</li>
+            <li>Habit of&nbsp;going without&nbsp;a&nbsp;subscription</li>
+            <li>Alternative services</li>
+          </ul>
+        </div>
+        </div>
+      </div>
+
+      <div class="archetype-card">
+        <div class="archetype-card-title">The "No-Frills" Pragmatist</div>
+        <div class="archetype-card-fields">
+        <div>
+          <div class="archetype-card-field-label">Push</div>
+          <ul class="archetype-card-list">
+            <li>Too many ads</li>
+            <li>Inconvenience</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Pull</div>
+          <ul class="archetype-card-list">
+            <li>Quickly remove ads</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Anxiety</div>
+          <ul class="archetype-card-list">
+            <li>Upsell</li>
+            <li>Complicated flow</li>
+            <li>Phone number / spam</li>
+          </ul>
+        </div>
+        <div>
+          <div class="archetype-card-field-label">Habit</div>
+          <ul class="archetype-card-list">
+            <li>Free also works</li>
+            <li>Doesn't&nbsp;want to&nbsp;spend time on&nbsp;it</li>
+          </ul>
+        </div>
+        </div>
+      </div>
+
+      <div class="forces-conclusion">
+        <h2 class="section-heading">Conclusion</h2>
+        <div class="forces-conclusion-list">
+          <p>Main Push&nbsp;— annoying ads</p>
+          <p>Main Pull&nbsp;— no ads + a&nbsp;sense of&nbsp;control</p>
+          <p>Main Anxiety&nbsp;— auto-charges and&nbsp;opacity</p>
+          <p>Main Habit&nbsp;— "it's fine for&nbsp;free anyway"</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 7 — CJM: CONTROLLER ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-cjm">
+      <div class="eyebrow">CJM (controller)</div>
+      <div class="cjm-wrap hscroll-viewport pan-fit">
+        <table class="cjm-table hscroll-track">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Trigger</th>
+              <th>Subscription page</th>
+              <th>Plan selection</th>
+              <th>Card entry</th>
+              <th>Payment completion</th>
+              <th>After payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label"><p class="cjm-text">User actions</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Sees an ad / a limit</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Studies the&nbsp;subscription terms</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Analyzes the&nbsp;available plans</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Enters payment details</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Completes the&nbsp;payment</p></td>
+              <td data-label="After payment"><p class="cjm-text">Returns to&nbsp;viewing. Gets a&nbsp;charge reminder. Decides whether to&nbsp;renew</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Thoughts</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Fed up with&nbsp;it. Maybe worth subscribing</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">What's included? Is&nbsp;there a&nbsp;catch?</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Why am I&nbsp;being offered this specifically?<br>What's the&nbsp;difference?</p></td>
+              <td data-label="Card entry"><p class="cjm-text">When will I&nbsp;be charged? Can&nbsp;I&nbsp;cancel?<br>Won't the&nbsp;price go&nbsp;up?</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Is that it? Where's the&nbsp;confirmation?</p></td>
+              <td data-label="After payment"><p class="cjm-text">The ads are gone. When's the&nbsp;next charge? Should I&nbsp;renew?</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Emotions</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Annoyance</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Wariness</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Doubt</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Anxiety, wariness</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Neutral, mild confusion</p></td>
+              <td data-label="After payment"><p class="cjm-text">Relief at&nbsp;first. Anxiety closer to&nbsp;the&nbsp;charge date if&nbsp;there's no&nbsp;reminder</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Pain points</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Ads are in&nbsp;the&nbsp;way</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Text overload<br>No clear free-vs-paid comparison<br>Terms are described vaguely</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">No explanation of&nbsp;differences<br>No clear selection logic<br>Several options with&nbsp;no&nbsp;priority</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Auto-renewal on&nbsp;by&nbsp;default<br>No charge reminder<br>No visible info about&nbsp;managing the&nbsp;subscription</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">No sense of&nbsp;completion<br>Unclear when the&nbsp;next charge is<br>Unclear where to&nbsp;manage the&nbsp;subscription</p></td>
+              <td data-label="After payment"><p class="cjm-text">No charge reminder. Hard to&nbsp;find where to&nbsp;cancel. Unclear what perks the&nbsp;subscription gives</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Opportunities for&nbsp;improvement</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Clearly show the&nbsp;subscription's value</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Clear visual hierarchy<br>A free-vs-premium table<br>Transparent pricing with&nbsp;no&nbsp;fine print</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Justification for&nbsp;the&nbsp;recommended plan<br>One primary option + alternatives<br>A short "who this is for" explanation</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Explicit next charge date<br>Info about&nbsp;a&nbsp;reminder before&nbsp;the&nbsp;charge<br>Visible "manage subscription" link</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">A vivid confirmation screen<br>Next charge date<br>A subscription management button</p></td>
+              <td data-label="After payment"><p class="cjm-text">Push/email reminder 3 days ahead. A visible "manage subscription" link. Next-charge info right on&nbsp;the&nbsp;success screen</p></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 8 — CJM: PRAGMATIST ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-cjm">
+      <div class="eyebrow">CJM (pragmatist)</div>
+      <div class="cjm-wrap hscroll-viewport pan-fit">
+        <table class="cjm-table hscroll-track">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Trigger</th>
+              <th>Subscription page</th>
+              <th>Plan selection</th>
+              <th>Card entry</th>
+              <th>Payment completion</th>
+              <th>After payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label"><p class="cjm-text">User actions</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Watching a&nbsp;video, hits an&nbsp;ad</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Goes to&nbsp;the&nbsp;checkout page</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Quickly scans the&nbsp;options</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Enters the&nbsp;card</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Completes the&nbsp;payment</p></td>
+              <td data-label="After payment"><p class="cjm-text">Returns to&nbsp;viewing, stops thinking about&nbsp;the&nbsp;subscription</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Thoughts</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Oh come on, how much longer</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Where's the&nbsp;button?</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">I just want no&nbsp;ads, nothing else matters</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Let's get this over with</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">No more ads now?</p></td>
+              <td data-label="After payment"><p class="cjm-text">Finally, no ads, great</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Emotions</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Annoyance</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Impatience</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Doubt, if&nbsp;there are too many options</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Annoyance, if&nbsp;there's more than one or&nbsp;two steps</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Relief, if&nbsp;the&nbsp;effect is instant</p></td>
+              <td data-label="After payment"><p class="cjm-text">Relief, then&nbsp;— zero further attention to&nbsp;the&nbsp;topic</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Pain points</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Ads are in&nbsp;the&nbsp;way</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">Text overload<br>Several plans<br>Unclear what to&nbsp;pick</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Too much choice<br>Upsell<br>Complex structure</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Extra fields<br>Phone number<br>Add-on subscriptions<br>"Upgrade your plan" offers</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Unclear whether the&nbsp;subscription activated<br>No clear confirmation</p></td>
+              <td data-label="After payment"><p class="cjm-text">Doesn't&nbsp;track charges, finds out about&nbsp;renewal only after&nbsp;the&nbsp;fact in&nbsp;the&nbsp;bank app, doesn't&nbsp;remember how to&nbsp;cancel if&nbsp;needed</p></td>
+            </tr>
+            <tr>
+              <td class="row-label"><p class="cjm-text">Opportunities for&nbsp;improvement</p></td>
+              <td data-label="Trigger"><p class="cjm-text">Give a&nbsp;quick, obvious path to&nbsp;the&nbsp;subscription with&nbsp;no&nbsp;extra text or&nbsp;explanations</p></td>
+              <td data-label="Subscription page"><p class="cjm-text">One primary plan, a&nbsp;large button, minimal secondary info on&nbsp;the&nbsp;first screen</p></td>
+              <td data-label="Plan selection"><p class="cjm-text">Clearly state the&nbsp;base scenario: "No ads&nbsp;— X&nbsp;₽ per&nbsp;month." Everything else is&nbsp;secondary</p></td>
+              <td data-label="Card entry"><p class="cjm-text">Minimal fields, a&nbsp;linear process, no&nbsp;upsells at&nbsp;this stage</p></td>
+              <td data-label="Payment completion"><p class="cjm-text">Ads disappear instantly + a&nbsp;short, clear success screen</p></td>
+              <td data-label="After payment"><p class="cjm-text">One unobtrusive notification right after&nbsp;payment (no ads + where to&nbsp;cancel), then&nbsp;leave it&nbsp;alone</p></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 9 — IA ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-ia">
+      <div class="eyebrow">IA</div>
+      <div class="ia-wrap hscroll-viewport pan-fit">
+        <div class="ia-columns hscroll-track">
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Home</div>
+            <div class="ia-item">Personalized content</div>
+            <div class="ia-item">Catalog</div>
+            <div class="ia-item">Shorts</div>
+            <div class="ia-item">Collections</div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Browse</div>
+            <div class="ia-group">
+              <div class="ia-item">Search</div>
+              <div class="ia-subgroup">
+                <div class="ia-leaf">Videos</div>
+                <div class="ia-leaf">Channels</div>
+                <div class="ia-leaf">Shorts</div>
+                <div class="ia-leaf">Playlists</div>
+              </div>
+            </div>
+            <div class="ia-group">
+              <div class="ia-item">Catalog</div>
+              <div class="ia-subgroup">
+                <div class="ia-leaf">Movies</div>
+                <div class="ia-leaf">TV series</div>
+                <div class="ia-leaf">TV shows</div>
+                <div class="ia-leaf">Sports</div>
+                <div class="ia-leaf">Music</div>
+                <div class="ia-leaf">Podcasts</div>
+                <div class="ia-leaf">Kids</div>
+              </div>
+            </div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Studio</div>
+            <div class="ia-item">Upload video</div>
+            <div class="ia-item">Upload Shorts</div>
+            <div class="ia-item">Start a live stream</div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">You</div>
+            <div class="ia-item">Subscriptions</div>
+            <div class="ia-item">Watch history</div>
+            <div class="ia-item">Playlists</div>
+            <div class="ia-item">Watch later</div>
+            <div class="ia-item">Comments</div>
+            <div class="ia-item">Liked videos</div>
+          </div>
+          <div class="ia-col">
+            <div class="ia-item ia-item-title">Settings</div>
+            <div class="ia-item">My data</div>
+            <div class="ia-item">Notifications</div>
+            <div class="ia-item">Devices</div>
+            <div class="ia-item">Subscriptions</div>
+            <div class="ia-item">Purchases</div>
+            <div class="ia-item">Payment methods</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 10 — JTBD ── -->
+    <section class="slide slide-jtbd">
+      <div class="eyebrow">JTBD</div>
+      <div class="jtbd-wrap fit-wrap">
+        <div class="jtbd-grid">
+          <div class="jtbd-divider"></div>
+          <div>
+            <div class="jtbd-heading">Controller</div>
+            <p class="jtbd-text jtbd-gap-a">When I&nbsp;open the&nbsp;subscription page and&nbsp;don't understand the&nbsp;terms, I&nbsp;want to&nbsp;find clear information about&nbsp;the&nbsp;price, charge date, and&nbsp;cancellation, so&nbsp;I don't feel like I've&nbsp;been deceived.</p>
+            <p class="jtbd-text jtbd-gap-b">When I've just paid for&nbsp;the&nbsp;subscription, I&nbsp;want to&nbsp;immediately see the&nbsp;next charge date and&nbsp;quickly find subscription management, so&nbsp;I&nbsp;stay in&nbsp;control of&nbsp;the&nbsp;situation.</p>
+          </div>
+          <div>
+            <p class="jtbd-text jtbd-gap-c">When I'm choosing a&nbsp;plan and&nbsp;don't understand how paid differs from&nbsp;free, I&nbsp;want to&nbsp;see a&nbsp;clear comparison, so&nbsp;I&nbsp;pay deliberately, not&nbsp;blindly.</p>
+          </div>
+          <div>
+            <div class="jtbd-heading">Pragmatist</div>
+            <p class="jtbd-text jtbd-gap-a">When an&nbsp;ad interrupts my&nbsp;viewing, I&nbsp;want to&nbsp;remove it&nbsp;in&nbsp;as&nbsp;few steps as&nbsp;possible, so&nbsp;I&nbsp;can get straight back to&nbsp;the&nbsp;video without&nbsp;frustration.</p>
+          </div>
+          <div>
+            <p class="jtbd-text jtbd-gap-d">When I&nbsp;see the&nbsp;checkout page, I&nbsp;want to&nbsp;see one clear plan and&nbsp;pay right away, so&nbsp;I&nbsp;don't have to&nbsp;sort through options or&nbsp;waste time.</p>
+            <p class="jtbd-text jtbd-gap-e">When I've just paid for&nbsp;the&nbsp;subscription, I&nbsp;want to&nbsp;immediately see that the&nbsp;ads are gone, so&nbsp;I&nbsp;can confirm it&nbsp;all worked and&nbsp;stop thinking about&nbsp;it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 11 — USER-FLOW ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-userflow">
+      <div class="eyebrow">User-flow</div>
+      <p class="mobile-zoom-hint">The diagram is wider than the screen — pinch to zoom in</p>
+      <div class="userflow-wrap hscroll-viewport pan-fit">
+        <img class="hscroll-track" src="projects/rutube/user-flow.svg" alt="Rutube Premium subscription checkout user-flow">
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 12 — UI SCREENS STRIP ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-strip">
+      <div class="eyebrow">UI</div>
+      <div class="strip-viewport hscroll-viewport pan-fit">
+        <div class="strip-track hscroll-track">
+          <div class="strip-item">
+            <span class="strip-num">[1]</span>
+            <img src="projects/rutube/ui-01.png" alt="Viewing without a subscription">
+            <p class="strip-caption">Viewing without&nbsp;a&nbsp;subscription</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[2]</span>
+            <img src="projects/rutube/ui-02.png" alt="Plan selection">
+            <p class="strip-caption">Plan selection</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[3]</span>
+            <img src="projects/rutube/ui-03.png" alt="Payment">
+            <p class="strip-caption">Payment</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[4]</span>
+            <img src="projects/rutube/ui-04.png" alt="Successful payment">
+            <p class="strip-caption">Successful payment</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[5]</span>
+            <img src="projects/rutube/ui-05.png" alt="Payment error">
+            <p class="strip-caption">Payment error</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[6]</span>
+            <img src="projects/rutube/ui-06.png" alt="Viewing with a subscription">
+            <p class="strip-caption">Viewing with&nbsp;a&nbsp;subscription</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[7]</span>
+            <img src="projects/rutube/ui-07.png" alt="Subscription management">
+            <p class="strip-caption">Subscription management</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 13 — TESTING ── -->
+    <div class="pin-scroll">
+    <section class="slide slide-testing">
+      <div class="eyebrow">Testing</div>
+      <div class="testing-viewport hscroll-viewport pan-fit">
+        <div class="testing-track hscroll-track">
+        <div class="testing-intro">
+          <div class="field-label">Hypothesis</div>
+          <p class="testing-intro-text">If the&nbsp;subscription terms are made clear upfront&nbsp;— an&nbsp;explicit plan comparison, a&nbsp;visible charge date, a&nbsp;sense of&nbsp;completion after&nbsp;payment&nbsp;— users will stop abandoning checkout, and&nbsp;the&nbsp;process itself will become noticeably simpler. Validated through moderated testing of&nbsp;a&nbsp;clickable prototype: the&nbsp;same respondents as&nbsp;in&nbsp;the&nbsp;research phase&nbsp;— which let them compare the&nbsp;old Rutube flow and&nbsp;the&nbsp;new prototype from&nbsp;their own experience.</p>
+          <img class="testing-screens" src="projects/rutube/testing-screens.png" alt="Screens used in testing">
+        </div>
+        <div class="testing-table-wrap">
+          <table class="testing-table">
+            <colgroup>
+              <col style="width:5.4659%"><col style="width:16.2186%"><col style="width:12.3656%"><col style="width:12.0072%"><col style="width:19.086%"><col style="width:34.8566%">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Flow step</th>
+                <th>Passed?</th>
+                <th>Time</th>
+                <th>Errors and snags</th>
+                <th>Quotes and observations</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-num"><p class="testing-text">1</p></td>
+                <td data-label="Flow step"><p class="testing-text">Video and&nbsp;ad banner</p></td>
+                <td data-label="Passed?"><p class="testing-text">Yes</p></td>
+                <td data-label="Time"><p class="testing-text">28 sec</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">Tapped the&nbsp;like button, tried to&nbsp;close the&nbsp;banner at&nbsp;the&nbsp;bottom</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">"Oh no, damn, an&nbsp;ad. I&nbsp;want to&nbsp;skip it, but&nbsp;I&nbsp;just can't skip it&nbsp;outright"</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">2</p></td>
+                <td data-label="Flow step"><p class="testing-text">Plan selection</p></td>
+                <td data-label="Passed?"><p class="testing-text">Yes</p></td>
+                <td data-label="Time"><p class="testing-text">10 sec</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">—</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">"This is convenient, because there's a&nbsp;clear benefit for&nbsp;me." Immediately picked the&nbsp;annual plan, appreciated the&nbsp;price comparison</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">3</p></td>
+                <td data-label="Flow step"><p class="testing-text">Payment form</p></td>
+                <td data-label="Passed?"><p class="testing-text">Yes</p></td>
+                <td data-label="Time"><p class="testing-text">20 sec</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">—</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">First chose a&nbsp;bank card, entered the&nbsp;details</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">4</p></td>
+                <td data-label="Flow step"><p class="testing-text">Error screen</p></td>
+                <td data-label="Passed?"><p class="testing-text">Yes</p></td>
+                <td data-label="Time"><p class="testing-text">5 sec</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">Wasn't thrown off</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">"Couldn't process the&nbsp;card details&nbsp;— let's try again, but&nbsp;probably better with&nbsp;the&nbsp;Fast Payment System this time." Immediately decided to&nbsp;switch payment method</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">5</p></td>
+                <td data-label="Flow step"><p class="testing-text">Retrying payment</p></td>
+                <td data-label="Passed?"><p class="testing-text">Yes</p></td>
+                <td data-label="Time"><p class="testing-text">5 sec</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">—</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">Via the&nbsp;Fast Payment System&nbsp;— successful</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">6</p></td>
+                <td data-label="Flow step"><p class="testing-text">Success screen</p></td>
+                <td data-label="Passed?"><p class="testing-text">Yes</p></td>
+                <td data-label="Time"><p class="testing-text">15 sec</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">—</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">"Subscription active, ads off, I&nbsp;can see the&nbsp;next charge. There's even a&nbsp;reminder&nbsp;— awesome." Tapped "Continue watching"</p></td>
+              </tr>
+              <tr>
+                <td class="row-num"><p class="testing-text">7</p></td>
+                <td data-label="Flow step"><p class="testing-text">Subscription management</p></td>
+                <td data-label="Passed?"><p class="testing-text">Didn't go in</p></td>
+                <td data-label="Time"><p class="testing-text">—</p></td>
+                <td data-label="Errors and snags"><p class="testing-text">—</p></td>
+                <td data-label="Quotes and observations"><p class="testing-text">Noticed the&nbsp;"Manage subscription" button but&nbsp;didn't&nbsp;click it: "I&nbsp;understand what&nbsp;subscription management is&nbsp;about&nbsp;— just not&nbsp;relevant for&nbsp;me right now"</p></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 14 — INSIGHTS ── -->
+    <section class="slide slide-insights">
+      <div class="eyebrow">Insights</div>
+      <div class="insights-wrap fit-wrap">
+        <div class="insights-grid">
+          <div>
+            <p class="insights-text">The flow confirmed the&nbsp;hypothesis: both archetypes' pain points are closed, success criteria met at&nbsp;100%.</p>
+            <p class="insights-text insights-gap-b">Archetypes work as&nbsp;a&nbsp;frame, but&nbsp;not&nbsp;a&nbsp;rigid one: behavior can diverge from&nbsp;the&nbsp;original classification depending on&nbsp;context.</p>
+          </div>
+          <div></div>
+          <div>
+            <p class="insights-text">SEQ 6.3 out&nbsp;of&nbsp;7, SUS 91.7 out&nbsp;of&nbsp;100&nbsp;— high simplicity and&nbsp;ease of&nbsp;use.</p>
+            <p class="insights-text insights-gap-a">Two growth points found: the&nbsp;error screen reads as&nbsp;a&nbsp;dead end, and&nbsp;the&nbsp;cancel button on&nbsp;the&nbsp;success screen is visually weak.</p>
+          </div>
+          <div>
+            <p class="insights-text insights-gap-c">Transparent terms and&nbsp;explicit control over&nbsp;the&nbsp;subscription removed the&nbsp;main fear&nbsp;— hidden charges.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 15 — DEV PREP ── -->
+    <section class="slide slide-devprep">
+      <div class="eyebrow">Dev prep</div>
+      <div class="devprep-wrap fit-wrap">
+        <div class="devprep-media">
+          <img src="projects/rutube/ui-kit.png" alt="UI kit and token system">
+        </div>
+        <p class="devprep-text">To&nbsp;make the&nbsp;solution implementation-ready, a&nbsp;two-tier token system and&nbsp;UI kit were built.</p>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+    <!-- ── SLIDE 16 — RESULTS ── -->
+    <section class="slide slide-results">
+      <div class="eyebrow">Results</div>
+      <div class="results-wrap fit-wrap">
+        <div class="section-heading results-quote">The case went through the&nbsp;full cycle: from&nbsp;research to&nbsp;a&nbsp;system ready for&nbsp;development.</div>
+        <div class="results-done">
+          <div class="section-heading">What was done</div>
+          <div class="results-lists">
+            <ul class="results-list">
+              <li>Built a&nbsp;research base: interviews, competitive analysis, MoSCoW prioritization</li>
+              <li>Formed two behavioral archetypes based on&nbsp;observed patterns</li>
+              <li>Designed the&nbsp;information architecture and&nbsp;CJM</li>
+            </ul>
+            <ul class="results-list">
+              <li>Drew key screens: plan selection, payment, success, error, subscription management</li>
+              <li>Built a&nbsp;two-tier token system and&nbsp;a&nbsp;UI kit of&nbsp;7&nbsp;sections</li>
+              <li>Ran usability testing: hypothesis confirmed, key archetype pain points closed (SUS 91.7, SEQ 6.3)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Rutube: Subscription</div>
+    </section>
+
+  </div>
+
+  <a class="mobile-back" href="index-en.html#cases">← Back to&nbsp;all cases</a>
+
+  <div id="cursor-outer"></div>
+
+  <script>
+    (function () {
+      document.querySelectorAll('a[href="index-en.html#cases"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+        });
+      });
+
+      // Fit-to-viewport: content must never sit closer than 40px to the
+      // header or footer (100px for pannable "mockup" content — tables,
+      // IA, user-flow, screens — which want visible air around them, not
+      // a tight fit). Header/footer positions are measured against each
+      // slide's own top edge, so the result holds wherever the page happens
+      // to be scrolled. If a slide's natural content is taller than the
+      // space that leaves, shrink it uniformly with scaleY() — never
+      // clips, never overlaps. Pannable content keeps working since
+      // translateX on the inner track composes fine with scaleY() on the
+      // outer wrapper.
+      var FIT_MARGIN = 40;
+      var PAN_MARGIN = 100;
+      var fitEls = document.querySelectorAll('.fit-wrap');
+      var panFitEls = document.querySelectorAll('.pan-fit');
+      var sampleEyebrow = document.querySelector('.eyebrow');
+      var sampleTitle = document.querySelector('.slide-title');
+      function slideTop(el) { return el.closest('.slide').getBoundingClientRect().top; }
+      function applyFitTo(els, margin, prop, headerBottom, footerTop) {
+        var available = footerTop - margin - (headerBottom + margin);
+        els.forEach(function (el) {
+          el.style.setProperty(prop, 1);
+          if (available <= 0) return;
+          var natural = el.getBoundingClientRect().height;
+          var ratio = natural > available ? available / natural : 1;
+          el.style.setProperty(prop, ratio);
+        });
+      }
+      function applyFit() {
+        if (!sampleEyebrow || !sampleTitle) return;
+        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom - slideTop(sampleEyebrow);
+        var footerTop = sampleTitle.getBoundingClientRect().top - slideTop(sampleTitle);
+        applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
+        applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
+      }
+      applyFit();
+      window.addEventListener('resize', applyFit);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
+
+      // Wide content (tables, IA, user-flow, screens): the slide stays
+      // pinned while the page scrolls through its .pin-scroll wrapper, and
+      // that scroll pans the content left to right — one scrolled pixel,
+      // one panned pixel, the same feel the wheel had before the page
+      // became a normal scroll. Content narrower than its viewport is just
+      // centered.
+      var desktop = window.matchMedia('(min-width: 901px)');
+      var wides = Array.prototype.map.call(document.querySelectorAll('.hscroll-viewport'), function (viewport) {
+        return {
+          viewport: viewport,
+          track: viewport.querySelector('.hscroll-track'),
+          wrap: viewport.closest('.pin-scroll'),
+          panMax: 0,
+          pinAt: 0
+        };
+      });
+      function panWide(w) {
+        if (!desktop.matches) { w.track.style.transform = ''; return; }
+        if (w.panMax === 0) {
+          w.track.style.transform = 'translateX(' + ((w.viewport.clientWidth - w.track.scrollWidth) / 2) + 'px)';
+          return;
+        }
+        var p = Math.min(1, Math.max(0, (window.scrollY - w.pinAt) / w.panMax));
+        w.track.style.transform = 'translateX(' + (-p * w.panMax) + 'px)';
+      }
+      // Two passes: every wrapper's height has to be set before any pin
+      // position is read, since each one shifts everything below it.
+      function measureWides() {
+        wides.forEach(function (w) {
+          if (!desktop.matches) {
+            w.panMax = 0;
+            w.wrap.style.removeProperty('--pan');
+            return;
+          }
+          w.panMax = Math.max(0, w.track.scrollWidth - w.viewport.clientWidth);
+          w.wrap.style.setProperty('--pan', w.panMax + 'px');
+        });
+        wides.forEach(function (w) {
+          w.pinAt = w.wrap.getBoundingClientRect().top + window.scrollY;
+          panWide(w);
+        });
+      }
+      var ticking = false;
+      function panAll() { ticking = false; wides.forEach(panWide); }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(panAll); }
+      }, { passive: true });
+      window.addEventListener('resize', measureWides);
+      // scrollWidth is measured before images (SVGs especially) have
+      // finished loading, so the first pass can be wrong until something
+      // re-triggers it — re-run once each track's images are in.
+      wides.forEach(function (w) {
+        w.track.querySelectorAll('img').forEach(function (img) {
+          if (img.complete) return;
+          img.addEventListener('load', measureWides);
+        });
+      });
+      window.addEventListener('load', measureWides);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureWides); }
+      measureWides();
+    })();
+  </script>
+
+  <script>
+    var ring = document.getElementById('cursor-outer');
+    var mx = -100, my = -100;
+    var scale = 1, scaleTarget = 1, placed = false;
+    document.addEventListener('mousemove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      if (!placed) { placed = true; ring.style.opacity = '1'; }
+    });
+    document.addEventListener('mousedown', function () { scaleTarget = 0.6; });
+    document.addEventListener('mouseup',   function () { scaleTarget = 1; });
+    (function loop() {
+      scale += (scaleTarget - scale) * 0.2;
+      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
+      requestAnimationFrame(loop);
+    })();
+  </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
+</body>
+</html>
