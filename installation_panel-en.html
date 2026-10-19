@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon-light.png">
+  <link rel="apple-touch-icon" href="favicon-light.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An admin panel for managing equipment installation: installation groups, installers, transport.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Installation Panel — Andrey Beregovoy">
+  <meta property="og:description" content="An admin panel for managing equipment installation: installation groups, installers, transport.">
+  <meta property="og:url" content="https://beregovoy.design/installation_panel-en">
+  <meta property="og:image" content="https://beregovoy.design/projects/installation_panel.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Installation Panel&nbsp;— Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --fg: #000000;
+      /* Responsive type scale — clamp(min, ideal-vw, max), each ideal-vw
+         calibrated so it equals the old fixed px exactly at the 1440px
+         reference width, then scales with the viewport (floor/ceiling
+         keep it sane on narrow desktop windows and ultrawide monitors). */
+      --fs-heading: clamp(20px, 1.6667vw, 32px); /* 24px @ 1440 */
+      --fs-body: clamp(17px, 1.3889vw, 27px);    /* 20px @ 1440 */
+      --fs-nav: clamp(14px, 1.1111vw, 21px);     /* 16px @ 1440 */
+      --fs-small: clamp(10px, 0.8333vw, 16px);   /* 12px @ 1440 */
+    }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Jost', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+    a { color: inherit; text-decoration: none; }
+    * { cursor: none !important; }
+
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-outer { display: none !important; }
+      * { cursor: auto !important; }
+    }
+    #cursor-outer {
+      position: fixed; top: 0; left: 0;
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1px solid #fff;
+      pointer-events: none; z-index: 99999;
+      will-change: transform;
+      mix-blend-mode: difference;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    /* ── Close control ── */
+    .viewer-nav { position: fixed; top: 40px; right: 40px; z-index: 100; }
+    .viewer-nav a { display: flex; color: var(--fg); }
+    .viewer-nav svg { width: 48px; height: 48px; }
+    /* Sits over scrolling slides now — same difference blend as the
+       cursor ring. Desktop only: on mobile the bar has its own opaque
+       background. */
+    @media (min-width: 901px) {
+      .viewer-nav { mix-blend-mode: difference; }
+      .viewer-nav a { color: #fff; }
+    }
+
+    /* ── Slides ── */
+    /* Slides stack vertically, one full viewport each — the page scrolls
+       like any other, no overlap between them. */
+    .slide {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* The screens slide pins while the page scrolls through this wrapper
+       (one viewport plus the strip's overflow, --pan set from JS), and
+       that scroll pans the strip sideways. Once the strip reaches its end
+       the wrapper ends and the slide scrolls away like any other. */
+    .strip-scroll { height: calc(100vh + var(--pan, 0px)); }
+    .slide-strip { position: sticky; top: 0; }
+    /* Pages, not one long sheet: on desktop each slide is a white page on
+       a gray canvas with a thin gutter between them (mobile already
+       spaces them with margins). The screens slide sits flush inside its
+       wrapper so the pin lasts exactly as long as the pan. */
+    @media (min-width: 901px) {
+      .slides { background: #e8e8e8; }
+      .slide { background: var(--bg); margin-bottom: 16px; }
+      .strip-scroll { margin-bottom: 16px; }
+      .slide-strip, .slides > :last-child { margin-bottom: 0; }
+    }
+
+    .eyebrow {
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    .slide-title {
+      position: absolute; left: 40px; bottom: 40px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 4.2vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+    }
+
+    /* Mobile-only stand-in for .slide-title — shown once, up top, instead
+       of the same name repeating at the bottom of every stacked section. */
+    .mobile-title { display: none; }
+    /* Mobile-only closing link back to the cases grid. */
+    .mobile-back { display: none; }
+
+    /* ── Slide 1: hero ── */
+    /* Centered the same way as every other slide's content block
+       (.portal-grid, .strip-viewport) — safe now that .hero-heading is
+       a true sibling instead of living inside this box (see comment
+       on .hero-heading below): the fit-scale JS already shrinks
+       content taller than the header/footer gap before it ever gets
+       close to the heading, the same guarantee those other slides
+       rely on. */
+    .hero-grid {
+      position: absolute; top: 50%; left: 40px; right: 40px;
+      transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 660fr 310fr 310fr;
+      column-gap: 40px; align-items: start;
+    }
+    /* TL;DR row: Задача/Проблема -> Решение -> Результат, scannable
+       before the full case unfolds below — every value here is a
+       compressed restatement of something the case already says
+       further down (the hero problem text, the Обзор/Задача copy, the
+       final Результат slide), never a new fact. */
+    .hero-tldr {
+      grid-column: 1 / -1;
+      display: flex; gap: 40px;
+      margin-bottom: 40px; padding-bottom: 40px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .hero-tldr-item { flex: 1 1 0; }
+    .hero-tldr-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 8px;
+    }
+    .hero-tldr-value {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; color: var(--fg);
+    }
+    .hero-media { grid-column: 1; }
+    .hero-media img { width: 100%; display: block; }
+    /* Same fixed top-left slot every other slide's .eyebrow sits in —
+       was inline in the grid next to the photo. Must be a SIBLING of
+       .hero-grid, not a child: .hero-grid has its own transform, which
+       makes it the containing block for any absolutely positioned
+       descendant regardless of that descendant's own position value —
+       a heading nested inside it would resolve top:40 against the
+       grid's box (already offset top:128), landing ~168px down
+       instead of 40px, on top of the column labels. */
+    .hero-heading {
+      position: absolute; top: 40px; left: 40px; height: 48px;
+      display: flex; align-items: center;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; line-height: normal;
+      text-transform: uppercase; color: var(--fg);
+    }
+    .hero-col-a { grid-column: 2; }
+    .hero-col-b { grid-column: 3; }
+    .hero-col-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 32px;
+    }
+    .hero-col-body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
+    /* Key figures under the overview: the number in the Hero style (the
+       site's stat-num style), its label in the Nav style at half opacity
+       (same treatment as the recommendation names on the main page). */
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 24px 40px; margin-top: 32px; }
+    .stat-num {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200; font-size: 4.2vw;
+      letter-spacing: 0.03em; line-height: 0.9;
+      text-transform: uppercase; font-kerning: none;
+      color: var(--fg);
+    }
+    .stat-label {
+      display: block; margin-top: 12px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-nav);
+      letter-spacing: 0; line-height: 1.2; text-transform: uppercase;
+      color: var(--fg); opacity: 0.5;
+    }
+    .hero-col-list {
+      margin-top: 16px; padding-left: 14px; list-style: none;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+    .hero-col-list li { position: relative; margin-bottom: 6px; }
+    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
+
+    /* ── Slide 2: screens strip ── */
+    /* Panned by the page scroll (see .strip-scroll), not by its own. */
+    .strip-viewport {
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
+      overflow: hidden;
+    }
+    .strip-track {
+      display: flex; align-items: flex-start; gap: 40px;
+      will-change: transform;
+    }
+    .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
+    .strip-num {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 20px;
+    }
+    .strip-item img { width: 100%; aspect-ratio: 880 / 550; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
+    .strip-caption {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
+    /* ── Slide 3: callout grid ── */
+    .portal-grid {
+      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
+      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
+    }
+    .portal-media { grid-column: 2; }
+    .portal-media img { width: 100%; display: block; }
+    /* "Ход работы" has no media, just two even columns of callouts —
+       auto-placement already puts the first .portal-callouts in
+       column 1 and the second in column 2 once there's no media div
+       between them to skip over. */
+    .process-grid { grid-template-columns: 1fr 1fr; }
+    /* justify-content:space-between was a no-op here — .portal-grid uses
+       align-items:start, so .portal-callouts never stretches taller
+       than its own content and there's no free space to distribute.
+       That left 0px between the two stacked callouts, tighter than
+       the 20px between a callout's own number and its text — backwards
+       hierarchy. gap fixes it directly. */
+    .portal-callouts { display: flex; flex-direction: column; gap: 40px; }
+    .portal-num {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: var(--fs-heading);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg); margin-bottom: 20px;
+    }
+    .portal-text {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300; font-size: var(--fs-body);
+      line-height: 1.2; letter-spacing: 0; color: var(--fg);
+    }
+
+    /* ── Mobile: same content, reflowed into one continuous scrolling
+       document — single column instead of desktop's full-viewport slides. Spacing
+       system, three sizes only: 24px edge padding, 32px between blocks
+       within a section (subtitle -> photo -> text), 64px between whole
+       sections. Structure repeats: subtitle, photo, text/points — same
+       shape every time. transform: none !important on every axis the
+       desktop JS still (harmlessly) drives keeps it from fighting this
+       layout — simpler than teaching that JS about the breakpoint. ── */
+    @media (max-width: 900px) {
+      /* Close stays reachable at all times — fixed, full-width, opaque,
+         so scrolling content passes under it instead of through it. */
+      .viewer-nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: var(--bg);
+        padding: 16px 24px;
+        justify-content: flex-start;
+      }
+      /* Matches the menu-close icon size on index.html/cases.html —
+         48px (shared with the desktop-only prev/next arrows) was too
+         big once it's the only thing left in the bar on mobile. */
+      .viewer-nav svg { width: 24px; height: 24px; }
+
+      /* The one big title, shown once at the very top — not repeated
+         per section. One fixed size shared by all three case pages
+         (not fit per-text) so "Design System" and "Installation Panel"
+         read as the same scale instead of each stretching to its own
+         text length. Calibrated against the longest title across the
+         three cases ("Installation Panel", measured in the real font)
+         so it never overflows down to a 320px-wide phone. */
+      .mobile-title {
+        display: block;
+        margin: 80px 0 64px;
+        padding: 0 24px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 200; font-size: clamp(20px, calc(8.66vw - 4.16px), 48px);
+        letter-spacing: 0.03em; line-height: 0.9;
+        text-transform: uppercase; font-kerning: none;
+      }
+      .slide-title { display: none; }
+
+      .slides {
+        display: block; width: auto; height: auto;
+        transform: none !important;
+      }
+      .slide-hero, .slide-strip, .slide-portal { position: static; height: auto; }
+      /* Hairline between stacked slides — without it, adjacent slides
+         (same white background, no gutter like desktop's gray canvas)
+         read as one continuous block. */
+      .slide {
+        height: auto; overflow: visible;
+        padding: 24px 24px 0;
+        margin-bottom: 64px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      /* .slide-hero, not :first-child — the screens-strip slide is
+         wrapped in its own .strip-scroll/.pin-scroll div, making it
+         :first-child of THAT wrapper too. */
+      .slide-hero { padding-top: 0; border-top: 0; }
+
+      .eyebrow { position: static; height: auto; margin-bottom: 32px; }
+      /* The card on the main page already carries these figures — inside the
+         case itself the same numbers repeated at hero size read as noise
+         next to text that already says them. */
+      .hero-stats { display: none; }
+
+      /* Hero: subtitle (heading) -> photo -> text, in that order —
+         flex+order reorders without touching the DOM (source order is
+         photo first, for desktop's side-by-side grid). heading is a
+         sibling of .hero-grid now (its containing block on desktop
+         must NOT be the transformed grid — see comment above), so on
+         mobile .hero-grid itself becomes display:contents and
+         .slide-hero is the actual flex container: that folds the
+         grid's children back into one shared order-based sequence
+         together with the heading. */
+      .hero-grid { display: contents; }
+      .slide-hero { display: flex; flex-direction: column; }
+      .hero-tldr { order: 0; flex-direction: column; gap: 24px; margin-bottom: 32px; }
+      .hero-heading { position: static; height: auto; order: 1; margin-bottom: 32px; }
+      .hero-media   { order: 2; margin-bottom: 32px; }
+      .hero-col-a   { order: 3; margin-bottom: 32px; }
+      .hero-col-b   { order: 4; }
+
+      .strip-viewport {
+        position: static; transform: none !important;
+        overflow: visible;
+      }
+      .strip-scroll { height: auto; }
+      .strip-track {
+        flex-direction: column; gap: 32px;
+        transform: none !important;
+      }
+      .strip-item { flex: none; width: 100%; }
+
+      /* Portal: subtitle (eyebrow, above) -> photo -> all four points
+         together — desktop's DOM order is callouts[1,2] -> media ->
+         callouts[3,4] for the side-by-side grid, so reorder the same
+         way as hero instead of letting the photo land mid-list. */
+      .portal-grid {
+        position: static; transform: none !important;
+        display: flex; flex-direction: column;
+      }
+      .portal-media { order: 1; margin-bottom: 32px; }
+      .portal-callouts { order: 2; gap: 24px; margin-bottom: 32px; }
+
+      /* Closing "back to cases" — shown once, at the very end. */
+      .mobile-back {
+        display: block;
+        padding: 0 24px 64px;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300; font-size: 16px;
+        text-transform: uppercase; color: var(--fg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewer-nav">
+    <a href="index-en.html#cases" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
+    </a>
+  </div>
+
+  <div class="mobile-title">Installation Panel</div>
+
+  <div class="slides">
+
+    <!-- ── SLIDE 1 — HERO ── -->
+    <section class="slide slide-hero">
+      <h1 class="hero-heading">An&nbsp;admin panel for&nbsp;managing equipment installation</h1>
+      <div class="hero-grid fit-wrap">
+        <div class="hero-tldr">
+          <div class="hero-tldr-item">
+            <div class="hero-tldr-label">Task</div>
+            <p class="hero-tldr-value">Installation data was scattered across&nbsp;different places — everything needed to&nbsp;be&nbsp;brought into&nbsp;one portal.</p>
+          </div>
+          <div class="hero-tldr-item">
+            <div class="hero-tldr-label">Solution</div>
+            <p class="hero-tldr-value">Installation groups, installer registry, and&nbsp;transport — in&nbsp;one structure and&nbsp;one flow.</p>
+          </div>
+          <div class="hero-tldr-item">
+            <div class="hero-tldr-label">Result</div>
+            <p class="hero-tldr-value">The&nbsp;portal fully met the&nbsp;brief: the&nbsp;manager filters and&nbsp;drills into&nbsp;details from&nbsp;one place.</p>
+          </div>
+        </div>
+        <div class="hero-media">
+          <img src="projects/installation_panel/Installers.png" alt="Installation Panel — installer registry">
+        </div>
+        <div class="hero-col-a">
+          <div class="hero-col-label">Overview</div>
+          <p class="hero-col-body">Product: an&nbsp;internal tool for&nbsp;tracking the&nbsp;installation process of&nbsp;smart cameras and&nbsp;devices onto&nbsp;vehicles. Managers monitor installation status broken down by&nbsp;client company, vehicle type, and&nbsp;installer teams.</p>
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num">3</span><span class="stat-label">modules in&nbsp;one portal</span></div>
+            <div class="stat"><span class="stat-num">6</span><span class="stat-label">screens in&nbsp;the&nbsp;flow</span></div>
+          </div>
+        </div>
+        <div class="hero-col-b">
+          <div class="hero-col-label">Task</div>
+          <p class="hero-col-body">Installation data was scattered across&nbsp;different places: each section lived on&nbsp;its own. Everything needed to&nbsp;be&nbsp;brought into&nbsp;a&nbsp;single portal with three connected modules:</p>
+          <ul class="hero-col-list">
+            <li>installation groups;</li>
+            <li>installer registry;</li>
+            <li>assigned transport.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-title">Installation Panel</div>
+    </section>
+
+    <!-- ── SLIDE 2 — HOW: PROCESS ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Process</div>
+      <div class="portal-grid process-grid fit-wrap">
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[1]</div>
+            <p class="portal-text">Before the&nbsp;brief, I researched admin panel patterns: I saw that they reuse the&nbsp;same entities as&nbsp;much as&nbsp;possible, and&nbsp;consistency comes first, because&nbsp;an&nbsp;admin panel has to&nbsp;be&nbsp;uniform.</p>
+          </div>
+          <div>
+            <div class="portal-num">[2]</div>
+            <p class="portal-text">Worked together with a&nbsp;design lead, we&nbsp;led the&nbsp;project jointly.</p>
+          </div>
+        </div>
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[3]</div>
+            <p class="portal-text">I picked the&nbsp;format to&nbsp;match the&nbsp;data type, not one template for&nbsp;everything: a&nbsp;table for&nbsp;installation groups, to&nbsp;make aggregating and&nbsp;filtering easier; cards for&nbsp;transport, so&nbsp;the&nbsp;model reads from&nbsp;the&nbsp;picture rather than the&nbsp;text.</p>
+          </div>
+          <div>
+            <div class="portal-num">[4]</div>
+            <p class="portal-text">Consistency in&nbsp;practice: the&nbsp;installer profile and&nbsp;its creation form use the&nbsp;same structure, one pattern for&nbsp;reading and&nbsp;writing.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Installation Panel</div>
+    </section>
+
+    <!-- ── SLIDE 3 — SCREENS STRIP ── -->
+    <div class="strip-scroll">
+    <section class="slide slide-strip">
+      <div class="eyebrow">6 screens: end-to-end navigation</div>
+      <div class="strip-viewport pan-fit">
+        <div class="strip-track">
+          <div class="strip-item">
+            <span class="strip-num">[1]</span>
+            <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" alt="Installation groups list">
+            <p class="strip-caption">Installation groups. A&nbsp;summary list: client, vehicle type, status, unit count, with filters by&nbsp;status and&nbsp;company. I chose a&nbsp;table: it's easier to&nbsp;aggregate and&nbsp;filter with, and&nbsp;however many rows there are, nothing gets lost.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[2]</span>
+            <img src="projects/installation_panel/Installation%20Groups%20-%20Installation%20Details.png" alt="Installation details">
+            <p class="strip-caption">Installation details. Straight from&nbsp;the&nbsp;list into&nbsp;a&nbsp;specific installation: installers, status per&nbsp;vehicle, date, client department. I built this as&nbsp;a&nbsp;vertically stretched timeline: the&nbsp;pattern is familiar, stages run one after&nbsp;another, and&nbsp;you can scroll to&nbsp;see what's already done.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[3]</span>
+            <img src="projects/installation_panel/Installation%20Groups%20-%20Department.png" alt="Department view">
+            <p class="strip-caption">I gathered all of&nbsp;a&nbsp;specific department's installations in&nbsp;one place, so&nbsp;there's no&nbsp;need to&nbsp;flip through them one by&nbsp;one.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[4]</span>
+            <img src="projects/installation_panel/Installers.png" alt="Installer list">
+            <p class="strip-caption">I built an&nbsp;installer registry with search by&nbsp;name, status, number of&nbsp;active assignments, and&nbsp;company, so&nbsp;the&nbsp;right installer can be&nbsp;found in&nbsp;seconds. Clicking a&nbsp;row opens the&nbsp;profile.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[5]</span>
+            <img src="projects/installation_panel/Installers%20-%20Person.png" alt="Installer profile">
+            <p class="strip-caption">I gathered the&nbsp;installer's full history and&nbsp;current workload in&nbsp;one profile (assigned vehicles, groups, contacts), so&nbsp;none of&nbsp;it has to&nbsp;be&nbsp;requested piece by&nbsp;piece.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[5.1]</span>
+            <img src="projects/installation_panel/Installers%20-%20Create%20New%20Populated.png" alt="Creating an installer">
+            <p class="strip-caption">I made the&nbsp;creation form structurally identical to&nbsp;the&nbsp;profile: the&nbsp;same pattern for&nbsp;reading and&nbsp;writing, nothing new to&nbsp;learn.</p>
+          </div>
+          <div class="strip-item">
+            <span class="strip-num">[6]</span>
+            <img src="projects/installation_panel/Vehicles%20-%20List.png" alt="Vehicle list">
+            <p class="strip-caption">Vehicles. A&nbsp;vehicle list: type, plate number, installation status, assigned installer. Here I chose cards over&nbsp;a&nbsp;table: it matters to&nbsp;recognize the&nbsp;model from&nbsp;the&nbsp;picture rather than reading text.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Installation Panel</div>
+    </section>
+    </div>
+
+    <!-- ── SLIDE 4 — CALLOUT GRID: RESULT ── -->
+    <section class="slide slide-portal">
+      <div class="eyebrow">Result</div>
+      <div class="portal-grid fit-wrap">
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[1]</div>
+            <p class="portal-text">The&nbsp;manager sees all installation groups in&nbsp;one place and&nbsp;filters by&nbsp;status and&nbsp;client.</p>
+          </div>
+          <div>
+            <div class="portal-num">[2]</div>
+            <p class="portal-text">From&nbsp;any group, jumps into&nbsp;a&nbsp;specific installation's or&nbsp;department's details in&nbsp;one click, without losing context.</p>
+          </div>
+          <div>
+            <div class="portal-num">[3]</div>
+            <p class="portal-text">Installer registry with search; the&nbsp;profile and&nbsp;creation form use the&nbsp;same structure.</p>
+          </div>
+        </div>
+        <div class="portal-media">
+          <img src="projects/installation_panel/Installation%20Groups%20-%20List.png" alt="Unified portal — installation groups">
+        </div>
+        <div class="portal-callouts">
+          <div>
+            <div class="portal-num">[4]</div>
+            <p class="portal-text">Vehicles of&nbsp;different types are shown in&nbsp;a&nbsp;unified format, visually distinguished by&nbsp;a&nbsp;type icon.</p>
+          </div>
+          <div>
+            <div class="portal-num">[5]</div>
+            <p class="portal-text">The&nbsp;portal fully met the&nbsp;brief: the&nbsp;manager sees all installation groups, filters, and&nbsp;drills into&nbsp;the&nbsp;details of&nbsp;any installation, department, or&nbsp;installer. The&nbsp;structure is the&nbsp;same everywhere.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-title">Installation Panel</div>
+    </section>
+
+  </div>
+
+  <a class="mobile-back" href="index-en.html#cases">← Back to&nbsp;all cases</a>
+
+  <div id="cursor-outer"></div>
+
+  <script>
+    (function () {
+      document.querySelectorAll('a[href="index-en.html#cases"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
+        });
+      });
+
+      // Fit-to-viewport: content must never sit closer than 40px to the
+      // header or footer (100px for pannable "mockup" content — the
+      // screens strip — which wants visible air around it, not a tight
+      // fit). Header/footer positions are measured against each slide's
+      // own top edge, so the result holds wherever the page happens to
+      // be scrolled. If a slide's natural content is taller than the
+      // space that leaves, shrink it uniformly with scaleY() — never
+      // clips, never overlaps.
+      var FIT_MARGIN = 40;
+      var PAN_MARGIN = 100;
+      var fitEls = document.querySelectorAll('.fit-wrap');
+      var panFitEls = document.querySelectorAll('.pan-fit');
+      var sampleEyebrow = document.querySelector('.eyebrow');
+      var sampleTitle = document.querySelector('.slide-title');
+      function slideTop(el) { return el.closest('.slide').getBoundingClientRect().top; }
+      function applyFitTo(els, margin, prop, headerBottom, footerTop) {
+        var available = footerTop - margin - (headerBottom + margin);
+        els.forEach(function (el) {
+          el.style.setProperty(prop, 1);
+          if (available <= 0) return;
+          var natural = el.getBoundingClientRect().height;
+          var ratio = natural > available ? available / natural : 1;
+          el.style.setProperty(prop, ratio);
+        });
+      }
+      function applyFit() {
+        if (!sampleEyebrow || !sampleTitle) return;
+        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom - slideTop(sampleEyebrow);
+        var footerTop = sampleTitle.getBoundingClientRect().top - slideTop(sampleTitle);
+        applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
+        applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
+      }
+      applyFit();
+      window.addEventListener('resize', applyFit);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
+
+      // Screens strip: the slide stays pinned while the page scrolls
+      // through .strip-scroll, and that scroll pans the strip left to
+      // right — one scrolled pixel, one panned pixel, the same feel the
+      // wheel had before the page became a normal scroll.
+      var stripScroll = document.querySelector('.strip-scroll');
+      var viewport = document.querySelector('.strip-viewport');
+      var track = document.querySelector('.strip-track');
+      var panMax = 0, pinAt = 0, ticking = false;
+      function panStrip() {
+        ticking = false;
+        var p = panMax ? Math.min(1, Math.max(0, (window.scrollY - pinAt) / panMax)) : 0;
+        track.style.transform = 'translateX(' + (-p * panMax) + 'px)';
+      }
+      function measureStrip() {
+        panMax = Math.max(0, track.scrollWidth - viewport.clientWidth);
+        stripScroll.style.setProperty('--pan', panMax + 'px');
+        pinAt = stripScroll.getBoundingClientRect().top + window.scrollY;
+        panStrip();
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(panStrip); }
+      }, { passive: true });
+      window.addEventListener('resize', measureStrip);
+      window.addEventListener('load', measureStrip);
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureStrip); }
+      measureStrip();
+    })();
+  </script>
+
+  <script>
+    var ring = document.getElementById('cursor-outer');
+    var mx = -100, my = -100;
+    var scale = 1, scaleTarget = 1, placed = false;
+    document.addEventListener('mousemove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      if (!placed) { placed = true; ring.style.opacity = '1'; }
+    });
+    document.addEventListener('mousedown', function () { scaleTarget = 0.6; });
+    document.addEventListener('mouseup',   function () { scaleTarget = 1; });
+    (function loop() {
+      scale += (scaleTarget - scale) * 0.2;
+      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
+      requestAnimationFrame(loop);
+    })();
+  </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
+</body>
+</html>
