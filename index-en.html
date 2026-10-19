@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon-light.png">
+  <link rel="apple-touch-icon" href="favicon-light.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Andrey Beregovoy — UX/Product designer. Portfolio with case studies and recommendations.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Andrey Beregovoy">
+  <meta property="og:description" content="Andrey Beregovoy — UX/Product designer. Portfolio with case studies and recommendations.">
+  <meta property="og:url" content="https://beregovoy.design/index-en">
+  <meta property="og:image" content="https://beregovoy.design/photo.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Andrey Beregovoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
+  <script>
+    window.__bvgInternal = false;
+    (function () {
+      var entry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var navType = entry ? entry.type : 'navigate';
+      var internal = false;
+      try { internal = sessionStorage.getItem('bvg_nav') === '1'; sessionStorage.removeItem('bvg_nav'); } catch (e) {}
+      if (internal && navType !== 'reload' && navType !== 'back_forward') {
+        window.__bvgInternal = true;
+        document.documentElement.classList.add('entering');
+      }
+      // A reload always starts from the top: no restored scroll position
+      // (the intro measures its slide-in from the top of the page, so a
+      // restored one made it play over the cases block) and no leftover
+      // #cases from the "Кейсы" link. Chrome restores the position during
+      // load, so it is pushed back to 0 right after (instantly: the page
+      // has smooth scrolling, which would show as a scroll up) until the
+      // first real input. Only reloads: the back button keeps restoring.
+      if (navType === 'reload') {
+        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+        var touched = false;
+        function toTop() {
+          if (!touched) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }
+        ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
+          window.addEventListener(ev, function () { touched = true; }, { passive: true, once: true });
+        });
+        toTop();
+        document.addEventListener('DOMContentLoaded', toTop);
+        window.addEventListener('load', function () {
+          toTop();
+          [30, 80, 200, 500].forEach(function (ms) { setTimeout(toTop, ms); });
+        });
+      }
+    })();
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Normal vertical scroll on every device — the page is one long
+       canvas now (hero, cases, footer). Locked only during the
+       intro so the slide-up transform can't flash a scrollable gap. */
+    body.preloading,
+    html.entering body { overflow: hidden; }
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+
+    :root {
+      --bg: #ffffff;
+      --fg: #000000;
+      --bg-alt: #f4f4f4;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Jost', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Nav ── */
+    /* Pinned to the top-right corner of the page itself, not the screen:
+       it scrolls away with the content. */
+    nav {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      display: flex;
+      gap: 20px;
+      z-index: 100;
+    }
+
+    /* Desktop reads the contacts from the footer at the end of the page;
+       this copy only exists for the mobile menu overlay (see media
+       query). */
+    .contacts { display: none; }
+
+    /* No-op on desktop — the nav renders exactly as before, this
+       wrapper only becomes an actual box on mobile (see media query). */
+    .menu-overlay { display: contents; }
+    .menu-toggle { display: none; }
+    .menu-bar-bg { display: none; }
+    .nav-link {
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--fg);
+      transition: opacity 0.2s;
+    }
+    .nav-link::before,
+    .nav-link::after {
+      display: inline-block;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .nav-link::before { content: '['; margin-right: 2px; }
+    .nav-link::after  { content: ']'; margin-left: 2px; }
+    .nav-link:hover::before,
+    .nav-link:hover::after { opacity: 1; }
+
+    /* ── Language switch: RUS | ENG, under nav on desktop. Lives at the
+       top level (outside .page) like nav, not inside .bio where the
+       status pill used to sit — so it's never caught by .page's
+       transform during the intro slide and needs no JS pull-out, unlike
+       the pill used to. */
+    .lang-switch {
+      position: absolute;
+      top: 76px;
+      right: 40px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+    .lang-switch-current { opacity: 0.4; }
+
+    /* ── Page: three full-width blocks (hero, cases, footer) on white /
+       light gray / white, so the split between them reads at a glance. ── */
+    .page { display: flex; flex-direction: column; }
+    .block { padding: 40px; }
+    .block-alt { background: var(--bg-alt); }
+
+    /* Title, bio and recommendations, spread over the first screen like
+       the old poster. The block stops 96px short of the viewport bottom,
+       so the top of the cases block (its gray band and heading) shows
+       under it as a cue that there's more below. */
+    .hero {
+      min-height: calc(100vh - 96px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 64px;
+    }
+
+    /* White footer under the gray cases block, at the very end of the page
+       instead of floating over the content. The email on the left and the
+       Telegram link on the right, both written out. */
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px;
+    }
+    /* Addresses read as typed, at the Body size, not in the uppercase Nav
+       style. */
+    .site-footer .nav-link { position: relative; font-size: 20px; text-transform: none; }
+    /* The hover brackets sit outside the text instead of taking layout
+       width, so the addresses line up exactly with the page margins. */
+    .site-footer .nav-link::before,
+    .site-footer .nav-link::after { position: absolute; top: 0; margin: 0; }
+    .site-footer .nav-link::before { right: 100%; padding-right: 2px; }
+    .site-footer .nav-link::after { left: 100%; padding-left: 2px; }
+
+    /* ── Title: the page title and the "Кейсы" heading share one display
+       style. ── */
+    .page-title,
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      /* Smaller than the old single-word titles (8.2vw) — "UX /
+         Product дизайнер" is a much longer phrase and needs to stay on
+         one line rather than wrap. 5.5vw ran the full width of the
+         page and collided with nav — recalibrated from a screenshot to
+         4.2vw, plus padding-right reserving room for nav's corner so a
+         still-too-generous estimate wraps instead of overlapping it. */
+      font-size: 4.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: var(--fg);
+      font-kerning: none;
+    }
+    /* Reserves room for the nav in the corner — only the page title
+       shares a row with it. */
+    .page-title { padding-right: 260px; }
+    .section-label { margin-bottom: 64px; }
+
+    /* Forces this run onto one line always — without it, on mobile
+       (where it doesn't fit at the base 16vw), the browser wraps it
+       internally before JS ever measures it, so getBoundingClientRect()
+       reports the already-wrapped (narrower) box instead of the true
+       single-line width fitMobileTitle() needs to compute the right
+       scale-down. That under-corrected the size, which still wrapped —
+       to three lines instead of two, overflowing past the edge. */
+    .page-title-line1 {
+      white-space: nowrap;
+    }
+
+    /* ── Bio + education: one 3-column grid, two rows. Row 1 is photo /
+       name intro / markets paragraph; row 2 continues each column with
+       its education counterpart — the "Образование" label under the
+       photo, university under the name intro, courses under the
+       markets paragraph — instead of a separate block bolted on below. ── */
+    .bio {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0 40px;
+      /* Photo+pill (one taller grid item) used to top-align with the
+         two text columns, so the shorter paragraphs read closer to the
+         top of that block than the bottom — center everything on the
+         row instead. */
+      align-items: center;
+    }
+
+    /* Fluid but capped, and shown at its natural aspect ratio (no
+       object-fit crop) — a small full photo, not a stretched/cropped
+       fill of its column. Kept modest and simple while there's no
+       settled photo yet — no spanning/cropping tricks to chase. */
+    .bio-photo {
+      width: 100%;
+      max-width: 220px;
+      height: auto;
+      display: block;
+    }
+
+    /* Caps the block itself (not just the img) so the pill below,
+       sized to 100% of this box, actually matches the photo's width
+       instead of the full — much wider — grid column. */
+    .bio-photo-block {
+      max-width: 220px;
+      text-align: center;
+    }
+
+    /* Neutral badge (shadcn's "secondary" Badge) + a pulsing dot
+       (Tailwind's animate-ping, translated to a plain CSS keyframe) —
+       borrowed look, our copy, no framework. */
+    @keyframes status-ping {
+      0% { transform: scale(1); opacity: 0.7; }
+      75%, 100% { transform: scale(2.2); opacity: 0; }
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+      margin-top: 16px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+    .status-pill-dot-wrap {
+      position: relative;
+      display: inline-flex;
+      width: 8px;
+      height: 8px;
+      flex: none;
+    }
+    .status-pill-dot-ping {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #2ecc71;
+      animation: status-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .status-pill-dot-ping { animation: none; opacity: 0; }
+    }
+    .status-pill-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ecc71;
+    }
+
+    .bio-col {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: var(--fg);
+    }
+
+    /* ── Testimonials: one recommendation at a time, sliding smoothly
+       into the next — quieter than three full quotes stacked side by
+       side. ── */
+    .testimonials {
+      overflow: hidden;
+    }
+
+    .testimonials-track {
+      display: flex;
+      transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .testimonial-slide {
+      flex: 0 0 100%;
+      min-width: 0;
+    }
+
+    /* 66ch — the classic readable-line-length guideline (Bringhurst:
+       45-75 characters per line, ~66 as the sweet spot). Constrained
+       here on the text itself, not the sliding track — capping the
+       track's own width made it clip mid-slide, since each slide is
+       flex: 0 0 100% of it and the transform math depends on that. */
+    .testimonial-quote {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: var(--fg);
+      display: block;
+      max-width: 66ch;
+      margin: 0 auto 16px;
+      text-align: center;
+    }
+
+    .testimonial-name {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--fg);
+      opacity: 0.5;
+      display: block;
+      max-width: 66ch;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* Pills — one per real recommendation (not the loop clone). Each
+       fills in sync with the autoplay timer, like a story progress
+       bar; click one to jump straight to it. The button itself carries
+       10px of transparent top/bottom padding so the tap target is much
+       taller than the 3px visual bar — easy to hit on mobile without
+       making the bar itself look thick. */
+    .testimonial-pills {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .testimonial-pill {
+      width: 24px;
+      flex: none;
+      padding: 10px 0;
+      border: 0;
+      background: none;
+      display: block;
+    }
+    .testimonial-pill-track {
+      display: block;
+      height: 1px;
+      border-radius: 1px;
+      background: rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+    .testimonial-pill-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--fg);
+    }
+
+    /* ── Cases: 2x2 grid of white cards on the gray block. Each card carries
+       the thumbnail, the title (Heading style) and a short overview (Body
+       style), so a case reads at a glance without opening it. ── */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px 40px;
+    }
+    .case-item {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      transition: transform 0.4s ease;
+    }
+    /* A small lift, not the old 12%: rows are only 64px apart, a bigger
+       one would slide the card over the row above. */
+    .case-item:hover { transform: translateY(-12px); }
+    .case-img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+    }
+    .case-img picture { display: block; width: 100%; height: 100%; }
+    .case-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top left;
+      display: block;
+    }
+    /* Cards in a row are the same height (grid stretch); the body fills
+       whatever the image leaves and pushes the figures to the bottom, so
+       the hairline and the numbers line up across a row however long the
+       descriptions run. */
+    .case-body { flex: 1; display: flex; flex-direction: column; padding: 24px 24px 32px; }
+    .case-title {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 12px;
+    }
+    .case-desc {
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 1.2;
+      color: var(--fg);
+      margin-bottom: 24px;
+    }
+    /* Two key figures per card, under a hairline: number in the Hero style
+       (the site's stat-num style), label in the Nav style at half
+       opacity. */
+    .case-stats {
+      display: flex;
+      gap: 24px 40px;
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+    }
+    .stat-num {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 4.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      font-kerning: none;
+      color: var(--fg);
+    }
+    .stat-label {
+      display: block;
+      margin-top: 12px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: var(--fg);
+      opacity: 0.5;
+    }
+    /* Narrow windows: a label can wrap to two lines in one card and not in
+       its neighbour, which would move that card's hairline. Reserve two
+       lines so the figures block is the same height in every card. */
+    @media (max-width: 1100px) {
+      .stat-label { min-height: 2.4em; }
+    }
+
+    /* ── Responsive: collapse multi-column blocks to a single column,
+       and let .page's own flex gap handle spacing between the stacked
+       blocks (title → bio → education → testimonials — already the
+       right reading order in DOM, no reordering needed). ── */
+    @media (max-width: 900px) {
+      /* Narrow windows (incl. a resized desktop, where the base poster
+         lock still applies) stack taller than the screen — let them
+         scroll instead of clipping. */
+      html, body { overflow-y: auto; }
+      /* Two rows of small left-aligned links read cramped next to the
+         page's own content — a single corner toggle instead, opening a
+         full-screen menu. Flat 5-item nav on a visual-first portfolio
+         is exactly the case hamburger+overlay is the right call for
+         (NN/g: hidden nav costs discoverability on content-heavy sites,
+         but a small flat list here loses nothing by being one tap away). */
+      /* Purely a backdrop — full-width opaque bar behind the toggle and
+         the pill, so scrolling content passes under both instead of
+         visibly overlapping them. The toggle and pill stay independent
+         fixed elements (the pill lives in the DOM under the photo, not
+         next to the toggle) rather than real flex siblings, so they're
+         each given the exact same top/height band below and just
+         center their own content within it — guarantees their content
+         lines up on the same row regardless of the very different font
+         sizes (16px label vs 12px pill). */
+      .menu-bar-bg {
+        display: block;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 56px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        z-index: 190;
+      }
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 16px; left: 24px;
+        height: 24px;
+        z-index: 200;
+        background: none;
+        border: 0;
+        padding: 0;
+        font-family: 'Jost', sans-serif;
+        font-weight: 300;
+        font-size: 16px;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        color: var(--fg);
+      }
+      .menu-toggle svg { display: block; width: 24px; height: 24px; }
+      /* The language switch takes the pill's old spot in the bar; the
+         pill itself just stays in its normal place under the photo
+         (same as desktop) instead of being pulled up here — matches the
+         "Меню" label's font exactly (16px/300/Jost), not the pill's
+         own 12px. */
+      .lang-switch {
+        position: fixed;
+        top: 16px; right: 24px;
+        height: 24px;
+        z-index: 200;
+      }
+      /* Distracting sitting on top of the full-screen menu it's meant
+         to be closing — hide it while open. */
+      html.menu-open .lang-switch { opacity: 0; pointer-events: none; }
+      /* Frosted glass instead of flat white — the page underneath stays
+         faintly, heavily blurred, so the overlay doesn't feel like a
+         totally separate screen. */
+      .menu-overlay {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 40px;
+        position: fixed;
+        inset: 0;
+        padding: 110px 24px 60px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        /* Between the bar (190) and the toggle (200) — it needs to
+           paint over the opaque-looking bar when open (same reason the
+           bar now shares its blur/translucency, so there's no seam),
+           while the toggle itself must stay clickable above it. */
+        z-index: 195;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      html.menu-open .menu-overlay { opacity: 1; pointer-events: auto; }
+      .menu-overlay nav,
+      .menu-overlay .contacts {
+        position: static;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 0;
+      }
+      /* Reuses the site's existing Heading style (24px, weight 200,
+         0.08em) for overlay links — not a new size, just applied here
+         instead of the usual Nav scale, since these need to read as
+         real tap targets in a full-screen menu. */
+      .menu-overlay .nav-link {
+        font-weight: 200;
+        font-size: 24px;
+        letter-spacing: 0.08em;
+      }
+      /* The desktop hover-bracket ::before is invisible (opacity: 0)
+         but still takes up layout width, pushing the visible text right
+         of where it looks like it should start — that's why the X sat
+         further left than "ИНДЕКС" below it. Touch has no hover to
+         reveal it anyway, so just drop it here. */
+      .menu-overlay .nav-link::before,
+      .menu-overlay .nav-link::after {
+        display: none;
+      }
+      /* Was 40px — the toggle now floats independently instead of
+         pushing the page down (nav used to occupy real flow height
+         above it), so the title needs its own clearance below the
+         toggle instead of overlapping it. */
+      .block { padding: 64px 24px; }
+      .hero { min-height: 0; gap: 40px; padding-top: 100px; }
+      .cases-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stat-num { font-size: 12vw; line-height: 1; }
+      .case-item:hover { transform: none; }
+      .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
+      .site-footer { flex-direction: column; align-items: flex-start; gap: 12px; padding: 32px 24px; }
+      /* 0.9 (desktop's single-line value) crowds the wrapped second
+         line — same fix as the hero-name issue this had earlier. */
+      .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
+      .page-title-break { display: block; }
+      .bio { grid-template-columns: 1fr; gap: 24px; }
+      /* Full column width (342px on a 390px phone) read as an oversized
+         portrait once it had the whole row to itself instead of sharing
+         it with the desktop text columns — capped back down to about
+         half that instead, centered in the stacked column. */
+      .bio-photo-block { max-width: 170px; margin: 0; text-align: left; }
+      .bio-photo { max-width: 170px; }
+      /* Desktop forces the parenthetical onto its own line (fine at
+         that width); on mobile the same break left "в Teradata"
+         orphaned alone mid-block — let it wrap naturally instead, the
+         trailing "Action Engine)" landing alone on the last line is
+         fine. */
+      .testimonial-break { display: none; }
+      /* Desktop centers these (see base rule) — mobile keeps the
+         original left-aligned block, unaffected by that change. */
+      .testimonial-quote,
+      .testimonial-name {
+        text-align: left;
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    /* ── Preloader ── */
+    nav, .lang-switch { transition: opacity 0.35s ease; }
+    body.preloading nav, body.preloading .lang-switch { opacity: 0; }
+
+    /* ── Internal navigation intro ── */
+    .page { transition: opacity 0.35s ease; }
+    html.entering .page { opacity: 0; }
+    html.no-motion nav,
+    html.no-motion .lang-switch,
+    html.no-motion .page { transition: none !important; }
+
+    #preload {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9000;
+      overflow: hidden;
+      transition: background 0.6s ease;
+    }
+    #preload-count {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 200;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+      color: var(--fg);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #preload-title {
+      position: absolute;
+      left: 40px; bottom: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 4.2vw;
+      letter-spacing: 0.03em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--fg);
+      transform: translateY(50%);
+      font-kerning: none;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    /* This media block is placed after the rule it overrides on
+       purpose — an earlier attempt put it in the main mobile media
+       query above, which comes before #preload-title in the file, so
+       the unconditional left: 40px there won (same specificity, later
+       source order wins) and silently ate the override. */
+    @media (max-width: 900px) {
+      /* .page-title gets line-height: 1.05 on mobile (0.9 crowds the
+         wrapped second line) but #preload-title is a separate element
+         with its own base 0.9 — never inherited that fix, so the clone
+         and the real title visibly changed line-height on handoff. */
+      #preload-title { left: 24px; line-height: 1.05; }
+    }
+
+    /* ── Cursor ── */
+    * { cursor: none !important; }
+
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-outer, #cursor-dot { display: none !important; }
+      * { cursor: auto !important; }
+    }
+
+    #cursor-outer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      pointer-events: none;
+      z-index: 99999;
+      will-change: transform;
+      mix-blend-mode: difference;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="preload">
+    <span id="preload-title"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">Designer</span></span>
+    <span id="preload-count">000</span>
+  </div>
+
+  <div class="menu-bar-bg"></div>
+  <button type="button" id="menuToggle" class="menu-toggle" aria-label="Menu">Menu</button>
+  <div class="menu-overlay" id="menuOverlay">
+    <nav>
+      <a href="index-en.html" class="nav-link">Home</a>
+      <a href="#cases" class="nav-link">Cases</a>
+    </nav>
+
+    <div class="contacts">
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Email</a>
+    </div>
+  </div>
+
+  <div class="lang-switch">
+    <a href="index.html" class="nav-link">RUS</a>
+    <span aria-hidden="true">|</span>
+    <span class="lang-switch-current">ENG</span>
+  </div>
+
+  <main class="page">
+
+    <section class="block hero">
+
+    <h1 class="page-title" id="pageTitle"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">Designer</span></h1>
+
+    <div class="bio">
+      <div class="bio-photo-block">
+        <picture>
+          <source srcset="photo.webp" type="image/webp">
+          <img class="bio-photo" src="photo.jpg" alt="Andrey Beregovoy" decoding="async">
+        </picture>
+        <span class="status-pill">
+          <span class="status-pill-dot-wrap">
+            <span class="status-pill-dot-ping"></span>
+            <span class="status-pill-dot"></span>
+          </span>
+          Open to&nbsp;offers
+        </span>
+      </div>
+      <p class="bio-col">My name is Andrey Beregovoy, I'm a&nbsp;UX/Product designer. Equally comfortable working out the logic and&nbsp;building the interface by&nbsp;hand: from&nbsp;a&nbsp;Figma mockup to&nbsp;a&nbsp;finished site built with&nbsp;Claude Code.</p>
+      <p class="bio-col">3&nbsp;years on&nbsp;international projects: the&nbsp;US, UK, UAE, Russia. Built design systems from&nbsp;scratch, assembled UI&nbsp;kits for&nbsp;complex products. Studied under&nbsp;Ilona Sarkisova and&nbsp;Misha Rozov. English C1.</p>
+    </div>
+
+    <div class="testimonials">
+      <div class="testimonials-track">
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">“What stands out most about Andrey is&nbsp;his independence and&nbsp;efficiency: he works incredibly fast and&nbsp;needs almost no&nbsp;guidance to&nbsp;take an&nbsp;idea all the&nbsp;way to&nbsp;a&nbsp;finished result.”</p>
+          <span class="testimonial-name">Jonathan Carpenter — Head of&nbsp;UX&nbsp;at&nbsp;Teradata<br class="testimonial-break">(ex-CXO/UX Lead at&nbsp;Action Engine)</span>
+        </div>
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">“He built a&nbsp;design system of&nbsp;50+ components from&nbsp;scratch, which significantly sped up&nbsp;the&nbsp;team's work and&nbsp;ensured consistency across interfaces.”</p>
+          <span class="testimonial-name">Dmitry Varzin — CEO of&nbsp;Action Engine</span>
+        </div>
+        <div class="testimonial-slide">
+          <p class="testimonial-quote">“Over the&nbsp;past year, Andrey single-handedly covered all the&nbsp;design work on&nbsp;a&nbsp;project with a&nbsp;team of&nbsp;20+&nbsp;people, and&nbsp;we never had to&nbsp;worry about either design quality or&nbsp;the&nbsp;timeline. I'd recommend him for&nbsp;a&nbsp;design team in&nbsp;any complex domain.”</p>
+          <span class="testimonial-name">Ilya — Team Lead at&nbsp;Action Engine</span>
+        </div>
+      </div>
+      <div class="testimonial-pills">
+        <button class="testimonial-pill" type="button" aria-label="Recommendation 1"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Recommendation 2"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+        <button class="testimonial-pill" type="button" aria-label="Recommendation 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
+      </div>
+    </div>
+
+    </section>
+
+    <section class="block block-alt cases" id="cases">
+      <h2 class="section-label">Cases</h2>
+      <div class="cases-grid">
+
+        <a href="rutube.html" class="case-item">
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/rutube.webp" type="image/webp">
+              <img src="projects/rutube.png" alt="Rutube — Subscription redesign" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <div class="case-body">
+            <h3 class="case-title">Subscription Checkout Redesign</h3>
+            <p class="case-desc">Redesign of&nbsp;plan selection, payment, and&nbsp;subscription management: from&nbsp;research to&nbsp;testing.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">91.7</span><span class="stat-label">SUS out&nbsp;of&nbsp;100</span></div>
+              <div class="stat"><span class="stat-num">6.3</span><span class="stat-label">SEQ out&nbsp;of&nbsp;7</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="auditors_monitoring.html" class="case-item">
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/auditors_monitoring.webp" type="image/webp">
+              <img src="projects/auditors_monitoring.png" alt="Auditor monitoring" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <div class="case-body">
+            <h3 class="case-title">Auditor Monitoring</h3>
+            <p class="case-desc">A&nbsp;tool for&nbsp;field audit managers: auditor map, statuses, and&nbsp;routes.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">40+</span><span class="stat-label">regions of&nbsp;Russia</span></div>
+              <div class="stat"><span class="stat-num">~20</span><span class="stat-label">features solo</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="installation_panel.html" class="case-item">
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/installation_panel.webp" type="image/webp">
+              <img src="projects/installation_panel.png" alt="Installation Panel" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <div class="case-body">
+            <h3 class="case-title">Installation Panel</h3>
+            <p class="case-desc">Admin panel for&nbsp;managing equipment installation: crews, installers, transport.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">3</span><span class="stat-label">modules in&nbsp;one portal</span></div>
+              <div class="stat"><span class="stat-num">6</span><span class="stat-label">screens in&nbsp;the&nbsp;flow</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="design_system.html" class="case-item">
+          <div class="case-img">
+            <picture>
+              <source srcset="projects/design_system.webp" type="image/webp">
+              <img src="projects/design_system.png" alt="EchoTwin AI Design System" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <div class="case-body">
+            <h3 class="case-title">EchoTwin AI Design System</h3>
+            <p class="case-desc">Design system for&nbsp;a&nbsp;road-anomaly monitoring product, Dark and&nbsp;Light themes.</p>
+            <div class="case-stats">
+              <div class="stat"><span class="stat-num">50+</span><span class="stat-label">components</span></div>
+              <div class="stat"><span class="stat-num">377</span><span class="stat-label">variables</span></div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">beregovoy.designs@gmail.com</a>
+      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">t.me/sa1nteau</a>
+    </footer>
+
+  </main>
+
+  <div id="cursor-outer"></div>
+
+  <script>
+    (function () {
+      const preload   = document.getElementById('preload');
+      const countEl   = document.getElementById('preload-count');
+      const titleEl   = document.getElementById('preload-title');
+      const realTitle = document.querySelector('.page-title');
+      const navEl     = document.querySelector('nav');
+      const langSwitchEl = document.querySelector('.lang-switch');
+      const pageEl    = document.querySelector('.page');
+      const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // "UX / Product" filled the full width edge-to-edge, "дизайнер"
+      // below it at the same size — same technique fitName() used for
+      // the old hero name. Fitted independently for the real title and
+      // the preload clone (each measured in its own box/positioning
+      // context) rather than copying one onto the other, so a metrics
+      // difference between the two contexts can't produce a mismatch.
+      function fitOne(el) {
+        const line1 = el.querySelector('.page-title-line1');
+        const mobile = document.documentElement.clientWidth <= 900;
+        if (!mobile || !line1) {
+          el.style.fontSize = '';
+          return;
+        }
+        el.style.fontSize = '16vw';
+        const avail = document.documentElement.clientWidth - 48;
+        const w = line1.getBoundingClientRect().width;
+        if (w > avail) {
+          const current = parseFloat(getComputedStyle(el).fontSize);
+          el.style.fontSize = (current * avail / w) + 'px';
+        }
+      }
+      function fitMobileTitle() {
+        fitOne(realTitle);
+        fitOne(titleEl);
+      }
+      window.addEventListener('resize', fitMobileTitle);
+
+      // Internal nav between here and CASES dissolves the current screen
+      // out; the destination page plays a fast version of the entry intro
+      // (title slides up into place, no counter). The full intro with
+      // counter only plays on a real entry (external link or reload).
+      function currentFile() {
+        const p = location.pathname.split('/').pop();
+        return (p === '' ? 'index.html' : p).replace(/\.html$/, '');
+      }
+      let navBusy = false;
+      (function bindNavTransition() {
+        const here = currentFile();
+        const mainEl = document.querySelector('.page');
+        document.querySelectorAll('nav a, .case-item').forEach(function (a) {
+          if (a.hasAttribute('download')) return;
+          const href = a.getAttribute('href');
+          // In-page anchors ("Кейсы") scroll natively — no page transition.
+          if (href.charAt(0) === '#') return;
+          if (href.replace(/\.html$/, '') === here) {
+            a.addEventListener('click', function (e) {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            return;
+          }
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (navBusy) return;
+            navBusy = true;
+            try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
+            if (reduce) { window.location.href = href; return; }
+            // Only the page content fades — nav stays put throughout the
+            // whole transition.
+            mainEl.style.transition = 'opacity 0.35s ease';
+            mainEl.style.opacity = '0';
+            setTimeout(function () { window.location.href = href; }, 350);
+          });
+        });
+      })();
+
+      function clearEnterState() {
+        const html = document.documentElement;
+        if (!html.classList.contains('entering')) return;
+        html.classList.add('no-motion');
+        html.classList.remove('entering');
+      }
+
+      function shouldPreload() {
+        return !window.__bvgInternal;
+      }
+
+      const canShow = shouldPreload();
+
+      // Arriving with #cases (the close button on a case page) means
+      // "put me back where I was" — skip the title intro entirely and
+      // land on the block instead of sliding in from the top.
+      let hashTarget = null;
+      try { hashTarget = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch (err) {}
+
+      if (reduce || hashTarget) {
+        fitMobileTitle();
+        preload.remove();
+        clearEnterState();
+        if (hashTarget) hashTarget.scrollIntoView({ behavior: 'instant', block: 'start' });
+        return;
+      }
+
+      document.body.classList.add('preloading');
+
+      // Slides the whole page — title and content together, as one rigid
+      // block — from a half-visible-at-bottom start up into its natural
+      // resting position. Since the content sits inside .page, it can never
+      // drift out of sync with the title or visually collide with it: it's
+      // the exact same transform, not two separately-animated pieces.
+      function slidePageIn() {
+        fitMobileTitle();
+        const r = realTitle.getBoundingClientRect();
+        const startY = window.innerHeight - (r.top + r.height / 2);
+
+        pageEl.style.willChange = 'transform';
+        pageEl.style.transition = 'none';
+        pageEl.style.transform = 'translateY(' + startY + 'px)';
+        void pageEl.offsetHeight; // commit the instant position before animating away from it
+
+        preload.style.background = 'transparent';
+        preload.style.pointerEvents = 'none';
+        navEl.style.opacity = '1';
+        if (langSwitchEl) langSwitchEl.style.opacity = '1';
+        document.documentElement.classList.remove('entering');
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            pageEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
+            pageEl.style.transform = 'translateY(0)';
+          });
+        });
+
+        setTimeout(function () {
+          document.body.classList.remove('preloading');
+          preload.remove();
+          // Drop the transform once settled — leaving it (even at an
+          // identity translateY(0)) makes .page a containing block for any
+          // position:fixed descendant, pinning it to .page's box instead
+          // of the true viewport.
+          pageEl.style.transform = '';
+          pageEl.style.willChange = '';
+        }, 1000);
+      }
+
+      if (!canShow) {
+        // Internal nav: nav never hides, it's shown right away. No counter,
+        // no clone — just slide the real page into place, so there's
+        // motion on screen from the first frame instead of a blank gap
+        // before the page appears.
+        slidePageIn();
+        return;
+      }
+
+      // Full entry: counter + clone letter-reveal (masked by #preload's
+      // opaque background), then hand off to the same slide as fast-intro.
+      function finish() {
+        countEl.style.opacity = '0';
+        setTimeout(function () {
+          titleEl.style.opacity = '0';
+          slidePageIn();
+        }, 300);
+      }
+
+      function run() {
+        countEl.style.opacity = '1';
+        const DURATION = 2200;
+        const start = performance.now();
+        let titleShown = false;
+        (function frame(now) {
+          const t = Math.min((now - start) / DURATION, 1);
+          countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
+          if (t >= 0.5 && !titleShown) {
+            titleShown = true;
+            titleEl.style.clipPath = 'inset(0 0% 0 0)';
+          }
+          if (t < 1) requestAnimationFrame(frame);
+          else finish();
+        })(start);
+      }
+
+      // Fit before the clone's clip-path reveal even starts — run() was
+      // being called with the clone still at its unfitted CSS size, so
+      // the visible reveal itself was the wrong size, not just the
+      // handoff to the real title afterwards.
+      function fitThenRun() {
+        // document.fonts.ready can resolve a frame or two before the
+        // browser has actually repainted with the swapped-in font —
+        // measuring right on resolve risked reading stale (fallback-
+        // font) metrics, computing a fit that then didn't match once
+        // the real font's glyphs actually rendered. Two rAFs guarantee
+        // at least one real paint has happened first.
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            fitMobileTitle();
+            run();
+          });
+        });
+      }
+      if (document.fonts && document.fonts.ready) {
+        Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(fitThenRun);
+      } else {
+        fitThenRun();
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const track = document.querySelector('.testimonials-track');
+      if (!track) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const slides = Array.from(track.children);
+      const total = slides.length;
+      if (total < 2) return;
+
+      const pills = Array.from(document.querySelectorAll('.testimonial-pill'));
+      const fills = Array.from(document.querySelectorAll('.testimonial-pill-fill'));
+      const DURATION = 6000;
+
+      // Loop by cloning the first slide onto the end: slide up to it
+      // normally, then snap back to the real first slide with no
+      // transition the instant that last slide finishes arriving — the
+      // jump is invisible since the clone looks identical to slide 0.
+      track.appendChild(slides[0].cloneNode(true));
+      let index = 0;
+      let timer = null;
+
+      // Pills before the active one sit full (already shown this lap),
+      // the active one animates its own fill over DURATION — the same
+      // span the autoplay timer runs on — and later ones sit empty.
+      function setPills(active) {
+        fills.forEach(function (fill, i) {
+          fill.style.transition = 'none';
+          fill.style.width = i < active ? '100%' : '0%';
+          if (i === active) {
+            if (reduce) {
+              fill.style.width = '100%';
+            } else {
+              void fill.offsetWidth; // commit the 0% before animating to 100%
+              fill.style.transition = 'width ' + DURATION + 'ms linear';
+              fill.style.width = '100%';
+            }
+          }
+        });
+      }
+
+      function render() {
+        track.style.transition = reduce ? 'none' : 'transform 1s cubic-bezier(0.65,0,0.35,1)';
+        track.style.transform = 'translateX(-' + (index * 100) + '%)';
+        setPills(index % total);
+      }
+
+      function advance() {
+        index++;
+        render();
+        if (index === total) {
+          setTimeout(function () {
+            track.style.transition = 'none';
+            track.style.transform = 'translateX(0)';
+            index = 0;
+          }, 1050);
+        }
+      }
+
+      function startTimer() {
+        clearInterval(timer);
+        if (!reduce) timer = setInterval(advance, DURATION);
+      }
+
+      // Pills double as a scrubber — jump straight to any recommendation
+      // (including back to a previous one) and restart the autoplay
+      // clock from there.
+      document.querySelectorAll('.testimonial-pill').forEach(function (pill, i) {
+        pill.addEventListener('click', function () {
+          index = i;
+          render();
+          startTimer();
+        });
+      });
+
+      setPills(0);
+      startTimer();
+    })();
+  </script>
+
+  <script>
+    const ring = document.getElementById('cursor-outer');
+    let mx = -100, my = -100;
+    let scale = 1, scaleTarget = 1, placed = false;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      if (!placed) { placed = true; ring.style.opacity = '1'; }
+      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
+    });
+    document.addEventListener('mousedown', () => { scaleTarget = 0.6; });
+    document.addEventListener('mouseup',   () => { scaleTarget = 1; });
+    (function loop() {
+      scale += (scaleTarget - scale) * 0.2;
+      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
+      requestAnimationFrame(loop);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const toggle  = document.getElementById('menuToggle');
+      const overlay = document.getElementById('menuOverlay');
+      if (!toggle || !overlay) return;
+      // Same Phosphor X path already used for the viewer-nav close
+      // button on the case-study pages — reusing it here instead of a
+      // "Закрыть" label.
+      var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>';
+      function setOpen(open) {
+        document.documentElement.classList.toggle('menu-open', open);
+        toggle.innerHTML = open ? closeIcon : 'Menu';
+        toggle.setAttribute('aria-label', open ? 'Close' : 'Menu');
+      }
+      toggle.addEventListener('click', function () {
+        setOpen(!document.documentElement.classList.contains('menu-open'));
+      });
+      // Clicking a link inside closes the menu — mainly matters for CV
+      // (download, doesn't navigate away) and a self-link no-op tap.
+      overlay.addEventListener('click', function (e) {
+        if (e.target.closest('a')) setOpen(false);
+      });
+    })();
+  </script>
+
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
+</body>
+</html>
