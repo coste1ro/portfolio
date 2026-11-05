@@ -10,7 +10,7 @@ Personal portfolio site for Andrey Beregovoy (product designer). Static HTML pag
 - `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case pages, see "Case pages" below. Rutube is a learning project from Ilona Sarkisova's course (the page says so)
 - There is no English version: the old `*-en.html` pages and the language switch were removed on purpose
 - `/cases` redirects to `/#cases` (`vercel.json`)
-- `Береговой_Андрей_CV.pdf` — the current CV, linked URL-encoded from the menu and the footer (the file name is Cyrillic, NFC)
+- `Beregovoy_Andrey_CV.pdf` — the current CV, linked from the menu and the footer. Keep the file name ASCII: a Cyrillic name showed up as mojibake in the browser's PDF viewer
 - `fonts/` — self-hosted Onest (variable, weight 400–500, SIL OFL 1.1), one woff2 per unicode-range subset (cyrillic, latin)
 - `photo-about.jpg/.webp` — the square crop used in "Обо мне" (600x600); `IMG001.jpg` (untracked) is its original
 - `projects/` — images per case (`rutube/`, `auditors_monitoring/`, `installation_panel/`, `design_system/`), `projects/covers/` has the 4:3 card covers (1600x1200). Each case folder has `hero-wide.jpg/.webp` (2760x1380 composed cover); `rutube/plans.png` and `payment-success.png` are only the sources of its cover. Some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Images ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**
