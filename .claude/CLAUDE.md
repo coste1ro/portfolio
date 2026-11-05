@@ -4,82 +4,60 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal portfolio site for Andrey Beregovoy (UX/Product designer). Five static HTML pages, no build step, no bundler, no npm, no package.json — open any `.html` file directly or serve statically.
+Personal portfolio site for Andrey Beregovoy (product designer). Static HTML pages, no build step, no bundler, no npm, no package.json — open any `.html` file directly or serve statically.
 
-- `index.html` — the one landing page, a single vertical scroll of three full-width blocks: hero (page title, photo + bio, recommendations carousel), cases (gray block, 2x2 grid of white `.case-item` cards: thumbnail, title, short overview, two key figures) and a footer (email left, Telegram right). `Кейсы` in the nav is the in-page anchor `#cases`
-- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case study pages, see "Case study pages" below
-- `/cases` redirects to `/#cases` (`vercel.json`); `cases.html` and `about.html` no longer exist
-- `favicon.svg` — orange rounded square with cursor ring + dot; `favicon-light.png`/`favicon-dark.png` swap via `prefers-color-scheme`
-- `projects/` — images organised per case study (`rutube/`, `auditors_monitoring/`, `installation_panel/`); some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Thumbnails/photos ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**, the `.webp` is what most browsers actually load
-- `logos/` — third-party tool logos (Claude, Figma, Lovable, Manus) used in the skills/tools section
+- `index.html` — one vertical scroll: hero (name | menu | statement), 2x2 case cards, "Обо мне" (photo with tilt, bio, tool logos, experience, three testimonials), footer. `Кейсы` / `Обо мне` in the menu are in-page anchors (`#cases`, `#about`)
+- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case pages, see "Case pages" below. Rutube is a learning project from Ilona Sarkisova's course (the page says so)
+- `index-en.html`, `rutube-en.html`, `auditors_monitoring-en.html`, `installation_panel-en.html`, `design_system-en.html` — English versions in the **previous** design (light/dark theme, Jost, custom cursor). They were not redesigned and the Russian pages no longer link to them
+- `index-v2.html`, `index-draft.html` — old untracked drafts of earlier directions, not used
+- `/cases` redirects to `/#cases` (`vercel.json`)
+- `Береговой_Андрей_CV.pdf` — the current CV, linked URL-encoded from the menu and the footer (the file name is Cyrillic, NFC). `Beregovoy_Andrey_*.pdf` are older CVs, unused
+- `fonts/` — self-hosted Onest (variable, weight 400–500, SIL OFL 1.1), one woff2 per unicode-range subset (cyrillic, latin)
+- `photo-about.jpg/.webp` — the square crop used in "Обо мне" (600x600); `photo.jpg/.webp` is the old studio portrait, kept only for the English pages
+- `projects/` — images per case (`rutube/`, `auditors_monitoring/`, `installation_panel/`, `design_system/`), `projects/covers/` has the 4:3 card covers (1600x1200). Each case folder has `hero-wide.jpg/.webp` (2760x1380 composed cover). Some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Images ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**
+- `logos/` — old PNG tool logos, no longer used (the tool logos on the main page are inline SVG)
 
 ## Tech stack
 
-- Pure HTML + CSS + vanilla JS, all inline in each `.html` file — no shared JS/CSS files, so a fix usually needs to be applied per-page
-- Tailwind CSS via CDN (only on `index.html`)
-- Fonts: Jost, Montserrat, Roboto Mono from Google Fonts (see Typography below) — `rutube.html` is the one exception, still on an older Archivo/Space Grotesk/Fira Code system pending its own rework
-- Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`; other branches get a preview deploy. `vercel.json` sets `cleanUrls: true` (site serves `/rutube` not `/rutube.html`; internal links still use the `.html` filename and are matched extension-agnostically by the nav JS, see below) and the `/cases` → `/#cases` redirect
+- Pure HTML + CSS + vanilla JS, all inline in each `.html` file — no shared JS/CSS files, so a fix usually needs to be applied per page (five Russian pages share the same base CSS)
+- No Tailwind, no Google Fonts: Onest is self-hosted via `@font-face` with `unicode-range`
+- Hosted on Vercel, domain `beregovoy.design` — auto-deploys on push to `main`; other branches get a preview deploy. `vercel.json` sets `cleanUrls: true` (the site serves `/rutube`, internal links still use the `.html` filename) and the `/cases` → `/#cases` redirect
 
 ## Commands
 
 No build/lint/test tooling exists in this repo. To preview changes, open the `.html` file directly in a browser (no dev server required).
 
-## CSS architecture
+## Design system
 
-### Typography
-Exactly **4 text styles** exist across the whole site — don't introduce a 5th, reuse one of these:
-1. **Hero** — display titles (`.page-title`, `.stat-num`, case-study `.slide-title`). Montserrat, weight 200 (ExtraLight), uppercase, `font-kerning: none`, line-height 0.9 (90%), letter-spacing 0.03em (3%). Sized in **`vw`, not px** (e.g. `.page-title{font-size:8.2vw}`) so it scales proportionally with viewport — the one style that isn't a fixed px size.
-2. **Heading** — short uppercase labels *and* one-line headings alike (`.manifesto-label` "Манифест", case-study `ОБЗОР`/`ЗАДАЧА` column labels, case-study intro headings like "Инструмент для менеджера..."). Jost, weight 200 (ExtraLight), 24px, uppercase, letter-spacing 0.08em (8%).
-3. **Nav** — nav links and the LIGHT|DARK theme switch only. Jost, weight 300 (Light), 16px, uppercase, 0 letter-spacing.
-4. **Body** — paragraphs and lists (`.bio-col`, `.manifesto-text`, `.hero-col-body`). Jost, weight 300 (Light), 20px, line-height 1.2 (120%), 0 letter-spacing.
+- One dark theme. Page background `#1b1b1a` with a weak monochrome grain: a fixed `body::before` layer made of two SVG `feTurbulence` tiles (light and dark specks, alpha baked into the colour matrix), no image files. No gradients or blobs — the owner rejected them
+- Text `#f4f4f2`, muted `#8f8f8a`, secondary text `#b8b8b3`, hairlines `rgba(244,244,242,.12)`, corner radius 10px. No accent colour on the page
+- Font: Onest only, weights 400 and 500. Sizes: 15 (meta, captions), 16, 17 (quotes), 18 (body), 22 (case titles, figures). The type scale is deliberately flat; the impeccable `flat-type-hierarchy` rule is ignored on the owner's decision
+- Grid: three equal columns, 30px side padding and 32px gap (20px padding on mobile, breakpoint `max-width: 900px`). Labels sit in column 1, content in columns 2–3
+- Short words (в, и, с, к, от, на, по…) are glued to the next word with `&nbsp;`; hyphenated words are wrapped in `.nw`. Keep doing this for new copy
+- Links: native cursor, no custom cursor, no theme switch, no preloader. Menu links hug their text (the menu is a flex column with `align-items: flex-start`) so only the word reacts to hover
+- Every figure and claim must already exist in the cases or the CV, never invented. Unknown facts are asked for, not guessed
 
-Roboto Mono (weight 200) shows up only for the reload counter (`#preload-count`) — not a 5th text style, just a numeric display.
+## Main page notes
 
-Every size above is fixed px, calibrated at a 1440px reference width — only the Hero style uses `vw`. This mirrors the fluid-grid technique (`fr`-based multi-column layouts) used elsewhere in the CSS: proportions are pixel-exact at 1440px and scale from there.
+- A reload starts at the top: the head script drops a leftover `#cases` and keeps re-applying `scrollTo(0)` (instantly, `html` has smooth scrolling) until the first real input. Only `navType === 'reload'`, so the back button keeps restoring
+- The photo tilts toward the cursor (`.photo-tilt` perspective wrapper + `.photo-wrap`); off on touch devices and with reduced motion
+- Tool logos are inline SVG in muted grey; on hover Claude and Claude Code turn `#d97757`, Codex `#7c6fff`, ChatGPT white, Figma swaps to its five-colour mark
 
-### Theme system
-Light theme is the default (`:root`). Dark theme applied via `html.dark`, toggled by the `.theme-switch` LIGHT|DARK buttons and persisted in `localStorage['bvg_theme']`. All colours are CSS variables (`--bg`, `--fg`, etc.) redefined per-theme. An early blocking `<script>` in `<head>` (before first paint, on every page) reads `bvg_theme` and adds `html.dark` immediately, to avoid a flash of the wrong theme. Accent colour: `#e05c18`.
+## Case pages
 
-### Cursor
-- `* { cursor: none !important; }` hides native cursor globally on all pages
-- Custom cursor: `#cursor-outer` (ring) + `#cursor-dot` — both use `mix-blend-mode: difference` so they auto-contrast against any background
-- `.cursor-link` state overrides to `mix-blend-mode: normal` so "Открыть" label stays readable
-- Touch devices: `@media (hover: none) and (pointer: coarse)` hides cursor elements and restores `cursor: auto !important` — this rule must come **after** `* { cursor: none !important; }` so it wins
+The four case pages share one template (duplicated inline). Structure, borrowed from peers' case studies (Foliobin MCP research):
 
-### Responsive
-Breakpoint: `@media (max-width: 720px)`. Skills grid uses `display: contents` on `.skills-col` at mobile to collapse 3-col → 1-col.
-
-### Case study pages
-The four case pages share one vertical-scroll layout, duplicated inline per file (no shared CSS/JS, so a fix is applied four times):
-
-- Each `<section class="slide">` is a full-viewport (`100vh`) page, one under another. On desktop they are white pages on a gray (`#e8e8e8`) canvas with a 16px gutter; mobile (`max-width: 900px`) is one stacked column instead.
-- Slides with a wide widget (the screens strip, and on rutube also the tables, IA, user-flow) sit inside a `.strip-scroll` / `.pin-scroll` wrapper of `100vh + var(--pan)`. The slide is `position: sticky; top: 0`, so it pins while the page scrolls through the wrapper, and JS translates the inner track by the scrolled distance (one scrolled px = one panned px). `--pan` is the widget's overflow, set from JS; on rutube every wrapper is measured in two passes (all heights first, then all pin offsets) because each wrapper shifts the ones below it.
-- The hero slide: `.hero-heading` is a **sibling** of `.hero-grid`, never a child. `.hero-grid` has its own `transform`, which makes it the containing block for absolutely positioned descendants, so a nested heading resolves `top:40px` against the grid, not the slide.
-- Fit-to-viewport: content that is taller than the space between `.eyebrow` and `.slide-title` is shrunk with `scaleY(var(--fit-scale))`; positions are measured against each slide's own top edge so it holds at any scroll position.
-- The close button (`.viewer-nav`) returns to `index.html#cases`; it is fixed top-right with `mix-blend-mode: difference`.
-- Each case shows its two key figures (`.hero-stats`: number in the Hero style, label in the Nav style at half opacity) under the Обзор text and again on its card on the main page. Every figure must already exist in the case or the resume, never invented.
-
-## Page navigation & transitions
-
-`index.html` and the case pages are linked by a fade-out / fast-intro handshake, duplicated inline:
-
-- **Reload/direct-visit** of `index.html` plays the full intro: a counter (`#preload-count`, 000→100), then the page title reveals via a clone (`#preload-title`) and the whole `.page` slides up (`slidePageIn()`).
-- **Internal nav clicks** (a `.case-item` or a nav link to another page) skip the counter. The click handler fades `.page` out (`opacity 0.35s`), sets `sessionStorage['bvg_nav'] = '1'`, then navigates; an early `<head>` script on the destination reads and clears that flag into `window.__bvgInternal` (and adds `html.entering`), and `shouldPreload()` (`return !window.__bvgInternal`) picks the path. Case pages set the flag on their close link too.
-- **Arriving with `#cases`** (the close button on a case page) skips the intro entirely and scrolls the block into view.
-- **A reload always starts at the top.** Chrome restores the old scroll position during load (and jumps to a leftover `#cases`), which made the intro play over the cases block. The head script clears the hash and forces `scrollTo(0)` (`behavior: 'instant'`, since `html` has `scroll-behavior: smooth`) right after load, until the first real input. Only `navType === 'reload'` is touched, so the back button restores position as usual.
-- `html.entering .page { opacity: 0 }` is the **only** pre-paint hide rule — `nav` is deliberately *not* in it, so it renders from the first frame and never flickers during navigation.
-- `html.no-motion` (set via `clearEnterState()`) forces `transition: none !important` — the `prefers-reduced-motion` / instant-reveal path.
-- Nav self-clicks (link to the page you're already on) must call `e.preventDefault()`; in-page anchors (`#cases`) are left to the browser.
-- The nav is `position: absolute` in the top-right corner of the page, so it scrolls away with the content (on mobile it is the fixed frosted bar + menu toggle). Don't make it fixed again: the owner wants nothing floating over the content.
-
-## Do NOT touch
-
-- **Scroll-driven animations** (`animation-timeline: view()`, `animation-range`) — fragile, leave as-is
-- **WebGL dither** (`#hero-dither` canvas + its JS) — visual background effect on index.html
-- **`img-scale-in` CSS animation** — used on case study images
+1. Close button (fixed, top-right, returns to `index.html#cases`); no menu and no name on case pages
+2. Hero as a plain vertical stack: title (22px, one line), overview, `Роль` / `Команда` (or `Контекст`), two key figures
+3. Wide cover (`hero-wide`)
+4. `Проблема и решение` as aligned pairs (problem left, solution right; stacked with small labels on mobile)
+5. `Результат`, then details (Rutube: research, users, CJM, JTBD, testing; short cases: `Как работал`), then `Экраны`
+6. `Экраны`: a pinned stage. `.pin` is `var(--stage) + var(--pan)` tall, `.pin-stick` is `position: sticky` and centred by JS (`--top`), JS translates `.track` by the scrolled distance (one scrolled px = one panned px). Card height is fixed per page through `--h` so all captions align; each figure sets its own aspect ratio in `--ar`. At `max-width: 900px` and with `prefers-reduced-motion` the stage is a normal horizontally scrolling rail
+7. `Моя роль`, `Что дальше`, `Ещё кейсы` (the other three cases), footer
 
 ## User preferences
 
 - Verify UI changes by rendering them headless and reading the screenshots yourself (see `.claude/rules/workflow.md`); don't open a visible browser window
 - Do not add comments explaining what code does — only add comments for non-obvious constraints or workarounds
 - Commit after each logical change, push is separate
+- Prefer structurally different options over variations when exploring; the owner decides visually
