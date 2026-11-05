@@ -99,6 +99,7 @@
   .q p{font-size:17px;line-height:1.5;color:#d4d4cf;margin:0;}
   .q footer{font-size:15px;line-height:1.4;color:#8f8f8a;}
   .q footer b{color:#f4f4f2;font-weight:500;display:block;}
+  .dots{display:none;}
 
   .foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:0 30px;padding:20px 0 24px;border-top:1px solid rgba(244,244,242,.12);font-size:16px;line-height:1.5;}
   .foot span{color:#8f8f8a;}
@@ -114,12 +115,23 @@
     .about{padding:0 20px 72px;}
     .abgrid{gap:40px;}
     .foot{margin:0 20px;padding:20px 0 24px;gap:12px;}
-    .quotes{grid-template-columns:1fr;grid-template-rows:none;row-gap:48px;margin-top:96px;}
-    .q{grid-row:auto;grid-template-rows:auto auto;}
+    .quotes{display:flex;gap:20px;margin:96px -20px 0;padding:0 20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;scrollbar-width:none;overscroll-behavior-x:contain;}
+    .quotes::-webkit-scrollbar{display:none;}
+    .q{flex:0 0 100%;scroll-snap-align:start;grid-row:auto;grid-template-rows:1fr auto;}
+    .q footer{min-height:4.2em;}
+    .dots{display:flex;gap:8px;margin-top:28px;--t:6s;}
+    .dot{all:unset;box-sizing:border-box;position:relative;width:32px;height:21px;}
+    .dot::before,.dot::after{content:"";position:absolute;left:0;top:9px;height:3px;border-radius:2px;}
+    .dot::before{width:100%;background:rgba(244,244,242,.2);}
+    .dot::after{width:0;background:#f4f4f2;}
+    .dot[aria-current="true"]::after{width:100%;}
+    .dots.run .dot[aria-current="true"]::after{width:0;animation:fill var(--t) linear forwards;}
   }
+  @keyframes fill{to{width:100%;}}
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto;}
     .media img,.menu a,.photo-wrap{transition:none;}
+    .dots.run .dot[aria-current="true"]::after{animation:none;width:100%;}
   }
 </style>
 </head>
@@ -195,7 +207,7 @@
     </div>
   </div>
 
-  <div class="quotes">
+  <div class="quotes" role="region" aria-roledescription="карусель" aria-label="Рекомендации">
     <figure class="q">
       <p>«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
       <footer><b>Джонатан Карпентер</b>руководитель UX в Teradata (экс-CXO/UX-лид Action Engine)</footer>
@@ -232,6 +244,67 @@
       wrap.classList.remove('live');
       wrap.style.transform = '';
     });
+  })();
+</script>
+<script>
+  (function () {
+    var track = document.querySelector('.quotes');
+    var slides = track ? track.querySelectorAll('.q') : [];
+    if (slides.length < 2) return;
+    var mobile = matchMedia('(max-width: 900px)');
+    var still = matchMedia('(prefers-reduced-motion: reduce)');
+    var dots = document.createElement('div');
+    dots.className = 'dots';
+    var buttons = [].map.call(slides, function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'dot';
+      b.setAttribute('aria-label', 'Рекомендация ' + (i + 1));
+      b.addEventListener('click', function () { go(i); });
+      dots.appendChild(b);
+      return b;
+    });
+    track.after(dots);
+    var idx = 0, timer = 0, settle = 0, visible = false;
+    function step() { return slides[1].offsetLeft - slides[0].offsetLeft; }
+    function mark(i) {
+      idx = i;
+      buttons.forEach(function (b, k) { b.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    }
+    function stop() {
+      clearTimeout(timer);
+      dots.classList.remove('run');
+    }
+    function start() {
+      stop();
+      if (!mobile.matches || still.matches || !visible || document.hidden) return;
+      void dots.offsetWidth;
+      dots.classList.add('run');
+      timer = setTimeout(function () { go((idx + 1) % slides.length); }, 6000);
+    }
+    function go(i) {
+      stop();
+      track.scrollTo({ left: i * step(), behavior: still.matches ? 'auto' : 'smooth' });
+    }
+    track.addEventListener('scroll', function () {
+      clearTimeout(settle);
+      stop();
+      settle = setTimeout(function () {
+        var i = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / step())));
+        mark(i);
+        start();
+      }, 140);
+    }, { passive: true });
+    ['touchstart', 'pointerdown'].forEach(function (ev) {
+      track.addEventListener(ev, stop, { passive: true });
+    });
+    new IntersectionObserver(function (e) {
+      visible = e[0].isIntersecting;
+      visible ? start() : stop();
+    }, { threshold: 0.6 }).observe(track);
+    document.addEventListener('visibilitychange', start);
+    mobile.addEventListener('change', function () { track.scrollLeft = 0; mark(0); start(); });
+    mark(0);
   })();
 </script>
 </body>
