@@ -1,592 +1,303 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <link rel="icon" type="image/png" href="favicon-light.png">
-  <link rel="apple-touch-icon" href="favicon-light.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Дизайн-система для продукта мониторинга дорожных аномалий: 377 переменных, 50+ компонентов, темы Dark/Light.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Дизайн-система EchoTwin AI — Андрей Береговой">
-  <meta property="og:description" content="Дизайн-система для продукта мониторинга дорожных аномалий: 377 переменных, 50+ компонентов, темы Dark/Light.">
-  <meta property="og:url" content="https://beregovoy.design/design_system">
-  <meta property="og:image" content="https://beregovoy.design/projects/design_system.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <title>Дизайн-система EchoTwin AI&nbsp;— Андрей Береговой</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200;300&family=Roboto+Mono:wght@200;300&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #ffffff;
-      --fg: #000000;
-      /* Responsive type scale — clamp(min, ideal-vw, max), each ideal-vw
-         calibrated so it equals the old fixed px exactly at the 1440px
-         reference width, then scales with the viewport (floor/ceiling
-         keep it sane on narrow desktop windows and ultrawide monitors). */
-      --fs-heading: clamp(20px, 1.6667vw, 32px); /* 24px @ 1440 */
-      --fs-body: clamp(17px, 1.3889vw, 27px);    /* 20px @ 1440 */
-      --fs-nav: clamp(14px, 1.1111vw, 21px);     /* 16px @ 1440 */
-      --fs-small: clamp(10px, 0.8333vw, 16px);   /* 12px @ 1440 */
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b1b1a">
+<meta name="color-scheme" content="dark">
+<title>Дизайн-система: единый источник правды для интерфейсов продукта — Андрей Береговой</title>
+<meta name="description" content="Дизайн-система для крупного продукта мониторинга дорожных аномалий в ОАЭ, собранная в Figma на переменных.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Дизайн-система: единый источник правды для интерфейсов продукта — Андрей Береговой">
+<meta property="og:description" content="Дизайн-система для крупного продукта мониторинга дорожных аномалий в ОАЭ, собранная в Figma на переменных.">
+<meta property="og:url" content="https://beregovoy.design/design_system">
+<meta property="og:image" content="https://beregovoy.design/projects/design_system/hero-wide.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon-light.png">
+<link rel="apple-touch-icon" href="favicon-light.png">
+<style>
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-cyrillic.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
 
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'Jost', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      transition: background 0.3s, color 0.3s;
-    }
-    a { color: inherit; text-decoration: none; }
-    * { cursor: none !important; }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{background:#1b1b1a;scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{margin:0;background:transparent;color:#f4f4f2;font-family:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.24 0 0 0 -0.12'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.8 0 0 0 0.4'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:240px 240px,240px 240px;}
+  a:focus-visible{outline:2px solid #f4f4f2;outline-offset:4px;border-radius:2px;}
+  .nw{white-space:nowrap;}
+  .ph{color:#8f8f8a;border-bottom:1px dashed #6a6a66;}
 
-    @media (hover: none) and (pointer: coarse) {
-      #cursor-outer { display: none !important; }
-      * { cursor: auto !important; }
-    }
-    #cursor-outer {
-      position: fixed; top: 0; left: 0;
-      width: 24px; height: 24px; border-radius: 50%;
-      border: 1px solid #fff;
-      pointer-events: none; z-index: 99999;
-      will-change: transform;
-      mix-blend-mode: difference;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
+  .close{position:fixed;top:20px;right:30px;z-index:10;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#f4f4f2;background:rgba(27,27,26,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 0 0 1px rgba(244,244,242,.16);transition:background .15s ease;}
+  .close:hover{background:rgba(70,70,68,.82);}
+  .close svg{display:block;width:18px;height:18px;}
 
-    /* ── Close control ── */
-    .viewer-nav { position: fixed; top: 40px; right: 40px; z-index: 100; }
-    .viewer-nav a { display: flex; color: var(--fg); }
-    .viewer-nav svg { width: 48px; height: 48px; }
-    /* Sits over scrolling slides now — same difference blend as the
-       cursor ring. Desktop only: on mobile the bar has its own opaque
-       background. */
-    @media (min-width: 901px) {
-      .viewer-nav { mix-blend-mode: difference; }
-      .viewer-nav a { color: #fff; }
-    }
+  .hero{padding:28px 30px 64px;}
+  .hero h1{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 20px;padding-right:56px;}
+  .hero .ov{max-width:680px;}
+  .hero .meta-dl{margin-top:28px;}
+  .hero .figs{margin-top:28px;}
+  .hero p{font-size:18px;line-height:1.4;margin:0 0 18px;max-width:440px;}
+  .hero p:last-child{margin-bottom:0;}
+  .figs{display:flex;gap:40px;margin:0;}
+  .fig b{display:block;font-weight:500;font-size:22px;line-height:1.2;}
+  .fig span{font-size:15px;line-height:1.5;color:#8f8f8a;}
+  .hero .meta{font-size:15px;line-height:1.5;color:#8f8f8a;}
 
-    /* ── Slides ── */
-    /* Slides stack vertically, one full viewport each — the page scrolls
-       like any other, no overlap between them. */
-    .slide {
-      position: relative;
-      height: 100vh;
-      overflow: hidden;
-    }
-    /* The screens slide pins while the page scrolls through this wrapper
-       (one viewport plus the strip's overflow, --pan set from JS), and
-       that scroll pans the strip sideways. Once the strip reaches its end
-       the wrapper ends and the slide scrolls away like any other. */
-    .strip-scroll { height: calc(100vh + var(--pan, 0px)); }
-    .slide-strip { position: sticky; top: 0; }
-    /* Pages, not one long sheet: on desktop each slide is a white page on
-       a gray canvas with a thin gutter between them (mobile already
-       spaces them with margins). The screens slide sits flush inside its
-       wrapper so the pin lasts exactly as long as the pan. */
-    @media (min-width: 901px) {
-      .slides { background: #e8e8e8; }
-      .slide { background: var(--bg); margin-bottom: 16px; }
-      .strip-scroll { margin-bottom: 16px; }
-      .slide-strip, .slides > :last-child { margin-bottom: 0; }
-    }
+  .cover{padding:0 30px 120px;}
+  .cover img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
 
-    .eyebrow {
-      position: absolute; top: 40px; left: 40px; height: 48px;
-      display: flex; align-items: center;
-      font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: var(--fs-heading);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg);
-    }
+  .sec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding:0 30px 120px;}
+  .sec.tight{padding-bottom:40px;}
+  .lab{font-weight:400;font-size:18px;line-height:1.4;color:#8f8f8a;margin:0;}
+  .txt{grid-column:2 / span 2;max-width:680px;}
+  .txt p{font-size:18px;line-height:1.4;margin:0 0 18px;}
+  .txt p:last-child{margin-bottom:0;}
+  .c2{grid-column:2;}
+  .c3{grid-column:3;}
+  .top{margin-top:28px;}
+  .sub{font-weight:500;font-size:18px;line-height:1.35;margin:0 0 6px;}
+  .kv{margin:0;}
+  .kv dt{font-size:15px;line-height:1.5;color:#8f8f8a;margin:18px 0 2px;}
+  .kv dd{margin:0;font-size:18px;line-height:1.4;}
+  .list{margin:0;padding:0;list-style:none;}
+  .list li{font-size:18px;line-height:1.4;padding:11px 0;}
+  .list li + li{border-top:1px solid rgba(244,244,242,.12);}
+  .list li:first-child{padding-top:0;}
+  .list li:last-child{padding-bottom:0;}
+  .logos{display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px;margin:28px 0 0;padding:0;list-style:none;}
+  .logos img{display:block;height:32px;width:auto;border-radius:6px;}
+  .quote{margin:0;}
+  .quote h3{font-weight:500;font-size:18px;line-height:1.35;margin:0 0 4px;}
+  .quote .t{font-size:15px;line-height:1.5;color:#8f8f8a;margin:0 0 14px;}
+  .quote blockquote{margin:0;font-size:17px;line-height:1.5;color:#d4d4cf;}
+  .wide{grid-column:1 / -1;margin:56px 0 0;}
+  .wide img{display:block;width:100%;height:auto;border-radius:10px;}
 
-    .slide-title {
-      position: absolute; left: 40px; bottom: 40px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200; font-size: 4.2vw;
-      letter-spacing: 0.03em; line-height: 0.9;
-      text-transform: uppercase; font-kerning: none;
-    }
+  .pin{height:calc(var(--stage,100vh) + var(--pan,0px));margin-bottom:120px;}
+  .pin-stick{position:sticky;top:var(--top,0px);overflow:hidden;}
+  .track{--h:min(640px,calc(100vh - 150px));display:flex;align-items:flex-start;gap:24px;padding:0 30px;will-change:transform;}
+  .shot{flex:0 0 calc(var(--h) * var(--ar,1.40625));margin:0;}
+  .shot img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+  .shot figcaption{margin-top:16px;font-size:15px;line-height:1.4;color:#b8b8b3;}
+  .shot figcaption span{color:#8f8f8a;margin-right:8px;}
 
-    /* Mobile-only stand-in for .slide-title — shown once, up top, instead
-       of the same name repeating at the bottom of every stacked section. */
-    .mobile-title { display: none; }
-    /* Mobile-only closing link back to the cases grid. */
-    .mobile-back { display: none; }
+  .note{font-size:18px;line-height:1.4;margin:0;}
+  .meta-dl{margin:0;}
+  .meta-dl div{display:flex;gap:16px;align-items:baseline;margin:0 0 6px;}
+  .meta-dl dt{font-size:15px;line-height:1.5;color:#8f8f8a;min-width:88px;}
+  .meta-dl dd{margin:0;font-size:15px;line-height:1.5;}
+  .pairs{grid-column:2 / span 2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}
+  .pairs .h{font-size:15px;line-height:1.5;color:#8f8f8a;padding-bottom:12px;}
+  .pairs .c{font-size:18px;line-height:1.4;padding:16px 0;border-top:1px solid rgba(244,244,242,.12);}
+  .pairs .c.p{color:#b8b8b3;}
+  .shot figcaption b{font-weight:500;color:#f4f4f2;margin-right:0;}
+  .shot figcaption i{display:block;font-style:normal;color:#8f8f8a;margin-top:4px;max-width:680px;}
 
-    /* ── Slide 1: hero ── */
-    /* Centered the same way as every other slide's content block
-       (.portal-grid, .strip-viewport) — safe now that .hero-heading is
-       a true sibling instead of living inside this box (see comment
-       on .hero-heading below): the fit-scale JS already shrinks
-       content taller than the header/footer gap before it ever gets
-       close to the heading, the same guarantee those other slides
-       rely on. */
-    .hero-grid {
-      position: absolute; top: 50%; left: 40px; right: 40px;
-      transform: translateY(-50%) scaleY(var(--fit-scale, 1));
-      display: grid; grid-template-columns: 660fr 310fr 310fr;
-      column-gap: 40px; align-items: start;
-    }
-    .hero-media { grid-column: 1; }
-    .hero-media img { width: 100%; display: block; }
-    /* Same fixed top-left slot every other slide's .eyebrow sits in —
-       was inline in the grid next to the photo. Must be a SIBLING of
-       .hero-grid, not a child: .hero-grid has its own transform, which
-       makes it the containing block for any absolutely positioned
-       descendant regardless of that descendant's own position value —
-       a heading nested inside it would resolve top:40 against the
-       grid's box (already offset top:128), landing ~168px down
-       instead of 40px, on top of the column labels. */
-    .hero-heading {
-      position: absolute; top: 40px; left: 40px; height: 48px;
-      display: flex; align-items: center;
-      font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: var(--fs-heading);
-      letter-spacing: 0.08em; line-height: normal;
-      text-transform: uppercase; color: var(--fg);
-    }
-    .hero-col-a { grid-column: 2; }
-    .hero-col-b { grid-column: 3; }
-    .hero-col-label {
-      font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: var(--fs-heading);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 32px;
-    }
-    .hero-col-body {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: var(--fs-body);
-      line-height: 1.2; letter-spacing: 0; color: var(--fg);
-    }
+  .more{padding:0 30px 100px;}
+  .more .lab{margin:0 0 28px;}
+  .more-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:56px 32px;}
+  .media{display:block;aspect-ratio:4 / 3;border-radius:10px;overflow:hidden;background:#161615;}
+  .media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .media:hover img{transform:scale(1.03);}
+  .cap{margin-top:18px;}
+  .tt{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 6px;}
+  .tt a{color:inherit;text-decoration:none;}
+  .ds{font-size:16px;line-height:1.45;color:#b8b8b3;margin:0;max-width:560px;}
 
-    /* Key figures under the overview: the number in the Hero style (the
-       site's stat-num style), its label in the Nav style at half opacity
-       (same treatment as the recommendation names on the main page). */
-    .hero-stats { display: flex; flex-wrap: wrap; gap: 24px 40px; margin-top: 32px; }
-    .stat-num {
-      display: block;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200; font-size: 4.2vw;
-      letter-spacing: 0.03em; line-height: 0.9;
-      text-transform: uppercase; font-kerning: none;
-      color: var(--fg);
-    }
-    .stat-label {
-      display: block; margin-top: 12px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: var(--fs-nav);
-      letter-spacing: 0; line-height: 1.2; text-transform: uppercase;
-      color: var(--fg); opacity: 0.5;
-    }
-    .hero-col-list {
-      margin-top: 16px; padding-left: 14px; list-style: none;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: var(--fs-body);
-      line-height: 1.2; letter-spacing: 0; color: var(--fg);
-    }
-    .hero-col-list li { position: relative; margin-bottom: 6px; }
-    .hero-col-list li::before { content: '\00b7'; position: absolute; left: -14px; }
+  .foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:0 30px;padding:20px 0 24px;border-top:1px solid rgba(244,244,242,.12);font-size:16px;line-height:1.5;}
+  .foot span{color:#8f8f8a;}
+  .foot a{color:#f4f4f2;text-decoration:none;}
+  .foot a:hover{text-decoration:underline;text-underline-offset:3px;}
 
-    /* ── Slide 2: screens strip ── */
-    /* Panned by the page scroll (see .strip-scroll), not by its own. */
-    .strip-viewport {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale-pan, 1));
-      overflow: hidden;
-    }
-    .strip-track {
-      display: flex; align-items: flex-start; gap: 40px;
-      will-change: transform;
-    }
-    .strip-item { flex: 0 0 clamp(500px, min(61.111vw, 64vh), 1100px); display: flex; flex-direction: column; }
-    .strip-num {
-      font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: var(--fs-heading);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 20px;
-    }
-    .strip-item img { width: 100%; aspect-ratio: 880 / 550; display: block; object-fit: cover; object-position: top left; margin-bottom: 20px; }
-    .strip-caption {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: var(--fs-body);
-      line-height: 1.2; letter-spacing: 0; color: var(--fg);
-    }
-
-    /* ── Slide 3: callout grid ── */
-    .portal-grid {
-      position: absolute; left: 40px; right: 40px; top: 50%; transform: translateY(-50%) scaleY(var(--fit-scale, 1));
-      display: grid; grid-template-columns: 310fr 660fr 310fr; column-gap: 40px;
-    }
-    .portal-media { grid-column: 2; }
-    .portal-media img { width: 100%; display: block; }
-    /* "Ход работы" has no media, just two even columns of callouts —
-       auto-placement already puts the first .portal-callouts in
-       column 1 and the second in column 2 once there's no media div
-       between them to skip over. */
-    .process-grid { grid-template-columns: 1fr 1fr; }
-    /* justify-content:space-between was a no-op here — .portal-grid uses
-       align-items:start, so .portal-callouts never stretches taller
-       than its own content and there's no free space to distribute.
-       That left 0px between the two stacked callouts, tighter than
-       the 20px between a callout's own number and its text — backwards
-       hierarchy. gap fixes it directly. */
-    .portal-callouts { display: flex; flex-direction: column; gap: 40px; }
-    .portal-num {
-      font-family: 'Jost', sans-serif;
-      font-weight: 200; font-size: var(--fs-heading);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg); margin-bottom: 20px;
-    }
-    .portal-text {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300; font-size: var(--fs-body);
-      line-height: 1.2; letter-spacing: 0; color: var(--fg);
-    }
-
-    /* ── Mobile: same content, reflowed into one continuous scrolling
-       document — single column instead of desktop's full-viewport slides. Spacing
-       system, three sizes only: 24px edge padding, 32px between blocks
-       within a section (subtitle -> photo -> text), 64px between whole
-       sections. Structure repeats: subtitle, photo, text/points — same
-       shape every time. transform: none !important on every axis the
-       desktop JS still (harmlessly) drives keeps it from fighting this
-       layout — simpler than teaching that JS about the breakpoint. ── */
-    @media (max-width: 900px) {
-      /* Close stays reachable at all times — fixed, full-width, opaque,
-         so scrolling content passes under it instead of through it. */
-      .viewer-nav {
-        position: fixed; top: 0; left: 0; right: 0;
-        background: var(--bg);
-        padding: 16px 24px;
-        justify-content: flex-start;
-      }
-      /* Matches the menu-close icon size on index.html/cases.html —
-         48px (shared with the desktop-only prev/next arrows) was too
-         big once it's the only thing left in the bar on mobile. */
-      .viewer-nav svg { width: 24px; height: 24px; }
-
-      /* The one big title, shown once at the very top — not repeated
-         per section. One fixed size shared by all three case pages
-         (not fit per-text) so "Design System" and "Installation Panel"
-         read as the same scale instead of each stretching to its own
-         text length. Calibrated against the longest title across the
-         three cases ("Installation Panel", measured in the real font)
-         so it never overflows down to a 320px-wide phone. */
-      .mobile-title {
-        display: block;
-        margin: 80px 0 64px;
-        padding: 0 24px;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 200; font-size: clamp(20px, calc(8.66vw - 4.16px), 48px);
-        letter-spacing: 0.03em; line-height: 0.9;
-        text-transform: uppercase; font-kerning: none;
-      }
-      .slide-title { display: none; }
-
-      .slides {
-        display: block; width: auto; height: auto;
-        transform: none !important;
-      }
-      .slide-hero, .slide-strip, .slide-portal { position: static; height: auto; }
-      /* Hairline between stacked slides — without it, adjacent slides
-         (same white background, no gutter like desktop's gray canvas)
-         read as one continuous block. */
-      .slide {
-        height: auto; overflow: visible;
-        padding: 24px 24px 0;
-        margin-bottom: 64px;
-        border-top: 1px solid rgba(0, 0, 0, 0.08);
-      }
-      /* .slide-hero, not :first-child — the screens-strip slide is
-         wrapped in its own .strip-scroll/.pin-scroll div, making it
-         :first-child of THAT wrapper too. */
-      .slide-hero { padding-top: 0; border-top: 0; }
-
-      .eyebrow { position: static; height: auto; margin-bottom: 32px; }
-      /* The card on the main page already carries these figures — inside the
-         case itself the same numbers repeated at hero size read as noise
-         next to text that already says them. */
-      .hero-stats { display: none; }
-
-      /* Hero: subtitle (heading) -> photo -> text, in that order —
-         flex+order reorders without touching the DOM (source order is
-         photo first, for desktop's side-by-side grid). heading is a
-         sibling of .hero-grid now (its containing block on desktop
-         must NOT be the transformed grid — see comment above), so on
-         mobile .hero-grid itself becomes display:contents and
-         .slide-hero is the actual flex container: that folds the
-         grid's children back into one shared order-based sequence
-         together with the heading. */
-      .hero-grid { display: contents; }
-      .slide-hero { display: flex; flex-direction: column; }
-      .hero-heading { position: static; height: auto; order: 1; margin-bottom: 32px; }
-      .hero-media   { order: 2; margin-bottom: 32px; }
-      .hero-col-a   { order: 3; margin-bottom: 32px; }
-      .hero-col-b   { order: 4; }
-
-      .strip-viewport {
-        position: static; transform: none !important;
-        overflow: visible;
-      }
-      .strip-scroll { height: auto; }
-      .strip-track {
-        flex-direction: column; gap: 32px;
-        transform: none !important;
-      }
-      .strip-item { flex: none; width: 100%; }
-
-      /* Portal: subtitle (eyebrow, above) -> photo -> all five points
-         together — desktop's DOM order is callouts[1,2,3] -> media ->
-         callouts[4,5] for the side-by-side grid, so reorder the same
-         way as hero instead of letting the photo land mid-list. */
-      .portal-grid {
-        position: static; transform: none !important;
-        display: flex; flex-direction: column;
-      }
-      .portal-media { order: 1; margin-bottom: 32px; }
-      .portal-callouts { order: 2; gap: 24px; margin-bottom: 32px; }
-
-      /* Closing "back to cases" — shown once, at the very end. */
-      .mobile-back {
-        display: block;
-        padding: 0 24px 64px;
-        font-family: 'Jost', sans-serif;
-        font-weight: 300; font-size: 16px;
-        text-transform: uppercase; color: var(--fg);
-      }
-    }
-  </style>
+  @media (max-width:900px){
+    .close{top:14px;right:20px;}
+    .hero,.sec,.more-grid,.foot{grid-template-columns:1fr;}
+    .hero{padding:72px 20px 40px;}
+    .hero h1{padding-right:0;}
+    .hero .meta-dl,.hero .figs{margin-top:24px;}
+    .cover{padding:0 20px 72px;}
+    .sec{gap:20px;padding:0 20px 72px;}
+    .sec.tight{padding-bottom:28px;}
+    .txt,.c2,.c3{grid-column:auto;}
+    .more{padding:0 20px 72px;}
+    .more-grid{gap:48px;}
+    .foot{margin:0 20px;padding:20px 0 24px;gap:12px;}
+    .pairs{grid-column:auto;grid-template-columns:1fr;}
+    .pairs .h{display:none;}
+    .pairs .c{padding:14px 0;}
+    .pairs .c.p{padding-bottom:4px;border-top:1px solid rgba(244,244,242,.12);}
+    .pairs .c.s{border-top:0;padding-top:0;}
+    .pairs .c.p::before,.pairs .c.s::before{display:block;font-size:15px;line-height:1.5;color:#8f8f8a;margin-bottom:2px;}
+    .pairs .c.p::before{content:"Проблема";}
+    .pairs .c.s::before{content:"Решение";}
+    .meta-dl dt{min-width:72px;}
+    .pin{height:auto;margin-bottom:72px;}
+    .pin-stick{position:static;height:auto;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#3a3a38 transparent;}
+    .track{padding:0 20px 20px;}
+    .shot{flex-basis:82vw;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .close,.media img{transition:none;}
+    .pin{height:auto;margin-bottom:72px;}
+    .pin-stick{position:static;height:auto;overflow-x:auto;}
+    .track{padding-bottom:20px;}
+    .shot{flex-basis:min(900px,82vw);}
+  }
+  .track{--h:min(720px,calc(100vh - 150px));}
+</style>
 </head>
 <body>
 
-  <div class="viewer-nav">
-    <a href="index.html#cases" aria-label="Закрыть">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>
-    </a>
+<a class="close" href="index.html#cases" aria-label="Закрыть кейс"><svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></a>
+
+<header class="hero">
+  <h1>Дизайн-система: единый источник правды для интерфейсов продукта</h1>
+  <p class="ov">Дизайн-система для&nbsp;крупного продукта мониторинга дорожных аномалий в&nbsp;ОАЭ, собранная в&nbsp;Figma на&nbsp;переменных (Variables). Единый источник правды: примитивы, семантические токены, типографика и&nbsp;размеры, из&nbsp;которых строятся 50+ компонентов и&nbsp;все экраны интерфейса.</p>
+  <dl class="meta-dl">
+      <div><dt>Роль</dt><dd>продуктовый дизайнер</dd></div>
+      <div><dt>Команда</dt><dd>идею предложил дизайн-лид, дальше сам</dd></div>
+    </dl>
+  <div class="figs">
+      <div class="fig"><b>50+</b><span>компонентов</span></div>
+      <div class="fig"><b>377</b><span>переменных</span></div>
   </div>
+</header>
 
-  <div class="mobile-title">Дизайн-система EchoTwin AI</div>
+<main>
+<div class="cover">
+  <picture><source srcset="projects/design_system/hero-wide.webp" type="image/webp"><img src="projects/design_system/hero-wide.jpg" alt="Дизайн-система: единый источник правды для интерфейсов продукта" width="2760" height="1380"></picture>
+</div>
 
-  <div class="slides">
-
-    <!-- ── SLIDE 1 — HERO ── -->
-    <section class="slide slide-hero">
-      <h1 class="hero-heading">Дизайн-система: единый источник правды для&nbsp;интерфейсов продукта</h1>
-      <div class="hero-grid fit-wrap">
-        <div class="hero-media">
-          <img src="projects/design_system/all-comps.png" alt="Дизайн-система — библиотека компонентов">
-        </div>
-        <div class="hero-col-a">
-          <div class="hero-col-label">Обзор</div>
-          <p class="hero-col-body">Дизайн-система для&nbsp;крупного продукта мониторинга дорожных аномалий в&nbsp;ОАЭ, собранная в&nbsp;Figma на&nbsp;переменных (Variables). Единый источник правды: примитивы, семантические токены, типографика и&nbsp;размеры, из&nbsp;которых строятся 50+&nbsp;компонентов и&nbsp;все экраны интерфейса.</p>
-          <div class="hero-stats">
-            <div class="stat"><span class="stat-num">50+</span><span class="stat-label">компонентов</span></div>
-            <div class="stat"><span class="stat-num">377</span><span class="stat-label">переменных</span></div>
-          </div>
-        </div>
-        <div class="hero-col-b">
-          <div class="hero-col-label">Задача</div>
-          <p class="hero-col-body">Задокументировать систему в&nbsp;одном месте и&nbsp;связать всё переменными, чтобы команде было проще пользоваться компонентами и&nbsp;быстрее масштабировать продукт:</p>
-          <ul class="hero-col-list">
-            <li>377 переменных в&nbsp;четырёх коллекциях;</li>
-            <li>темы Dark&nbsp;/ Light через семантику;</li>
-            <li>50+ компонентов с&nbsp;вариантами.</li>
-          </ul>
-          <p class="hero-col-body hero-col-note">Перед стартом изучил другие дизайн-системы и&nbsp;взял за&nbsp;основу цветовую систему Tailwind. Идею предложил дизайн-лид, дальше делал систему сам: лид только изредка подключался.</p>
-        </div>
-      </div>
-      <div class="slide-title">Дизайн-система EchoTwin AI</div>
-    </section>
-
-    <!-- ── SLIDE 2 — HOW: PROCESS ── -->
-    <section class="slide slide-portal">
-      <div class="eyebrow">Ход работы</div>
-      <div class="portal-grid process-grid fit-wrap">
-        <div class="portal-callouts">
-          <div>
-            <div class="portal-num">[1]</div>
-            <p class="portal-text">Старый локальный UI-кит перестал справляться с&nbsp;ростом продукта. Дизайн-лид предложил собрать нормальную дизайн-систему.</p>
-          </div>
-          <div>
-            <div class="portal-num">[2]</div>
-            <p class="portal-text">Начали смотреть в&nbsp;сторону атомарного дизайна, но&nbsp;для&nbsp;одного продукта без&nbsp;множества дочерних это избыточно. Выбрал модель проще: токены и&nbsp;компоненты без&nbsp;лишних уровней.</p>
-          </div>
-        </div>
-        <div class="portal-callouts">
-          <div>
-            <div class="portal-num">[3]</div>
-            <p class="portal-text">Перед тем как&nbsp;строить систему, изучил, как&nbsp;связаны примитивы и&nbsp;семантика, и&nbsp;взял за&nbsp;основу цветовую систему Tailwind.</p>
-          </div>
-          <div>
-            <div class="portal-num">[4]</div>
-            <p class="portal-text">Делал систему сам, дизайн-лид только изредка что-то поправлял.</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide-title">Дизайн-система EchoTwin AI</div>
-    </section>
-
-    <!-- ── SLIDE 3 — SCREENS STRIP ── -->
-    <div class="strip-scroll">
-    <section class="slide slide-strip">
-      <div class="eyebrow">377 переменных&nbsp;· 50+ компонентов</div>
-      <div class="strip-viewport pan-fit">
-        <div class="strip-track">
-          <div class="strip-item">
-            <span class="strip-num">[1]</span>
-            <img src="projects/design_system/all-comps.png" alt="Библиотека компонентов">
-            <p class="strip-caption">Библиотека компонентов: цвета, типографика, инпуты, навигация, контролы, кнопки, статусы, иконки и&nbsp;карточки. 50+&nbsp;компонентов с&nbsp;вариантами, из&nbsp;которых собираются все экраны.</p>
-          </div>
-          <div class="strip-item">
-            <span class="strip-num">[2]</span>
-            <img src="projects/design_system/primitives.png" alt="Примитивы — цветовые шкалы">
-            <p class="strip-caption">Коллекция .Primitives, 256&nbsp;переменных: полные цветовые шкалы по&nbsp;11&nbsp;ступеней (50–950). Базовый слой, на&nbsp;который ссылается всё остальное.</p>
-          </div>
-          <div class="strip-item">
-            <span class="strip-num">[3]</span>
-            <img src="projects/design_system/semantic.png" alt="Семантические токены с темами Dark и Light">
-            <p class="strip-caption">Semantic, 67&nbsp;токенов (text, bg, stroke, icons, btn…), связанных с&nbsp;примитивами. Здесь&nbsp;же переключаются темы Dark и&nbsp;Light.</p>
-          </div>
-          <div class="strip-item">
-            <span class="strip-num">[4]</span>
-            <img src="projects/design_system/font.png" alt="Токены типографики">
-            <p class="strip-caption">Font, 28&nbsp;токенов: размеры (12–48), начертания, трекинг и&nbsp;интерлиньяж. Семейство: Inter.</p>
-          </div>
-          <div class="strip-item">
-            <span class="strip-num">[5]</span>
-            <img src="projects/design_system/numbers.png" alt="Числовые токены — радиусы и размеры">
-            <p class="strip-caption">Numbers, 26&nbsp;токенов: радиусы, толщины границ, размытие и&nbsp;размерная шкала.</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide-title">Дизайн-система EchoTwin AI</div>
-    </section>
+<section class="sec" id="spine">
+  <h2 class="lab">Проблема и решение</h2>
+  <div class="txt">
+    <p>Задача&nbsp;— задокументировать систему в&nbsp;одном месте и&nbsp;связать всё переменными, чтобы команде было проще пользоваться компонентами и&nbsp;быстрее масштабировать продукт.</p>
+  </div>
+  <div class="pairs top">
+    <div class="h">Проблема</div>
+    <div class="h">Решение</div>
+    <div class="c p">Старый локальный UI-кит перестал справляться с&nbsp;ростом продукта, его было тяжело поддерживать.</div>
+    <div class="c s">Единый источник правды на&nbsp;переменных Figma: примитивы, семантика, типографика и&nbsp;размеры; 377 переменных в&nbsp;четырёх коллекциях.</div>
+    <div class="c p">Тему было тяжело переключать.</div>
+    <div class="c s">Темы Dark и&nbsp;Light переключаются через семантические токены.</div>
+  </div>
+</section>
+<section class="sec" id="result">
+  <h2 class="lab">Результат</h2>
+  <div class="txt">
+    <p>Правка токена в&nbsp;одном месте применяется по&nbsp;всему интерфейсу: систему используют все дизайнеры и&nbsp;разработчики продукта. Тему стало просто переключать, а&nbsp;систему, в&nbsp;отличие от&nbsp;старого UI-кита, стало легко поддерживать. Систему продолжают использовать и&nbsp;поддерживать до&nbsp;сих пор.</p>
+  </div>
+</section>
+<section class="sec" id="process">
+  <h2 class="lab">Как работал</h2>
+  <div class="txt">
+    <ul class="list">
+      <li>Начали смотреть в&nbsp;сторону атомарного дизайна, но&nbsp;для&nbsp;одного продукта без&nbsp;множества дочерних это избыточно. Выбрал модель проще: токены и&nbsp;компоненты без&nbsp;лишних уровней.</li>
+      <li>Перед тем как строить систему, изучил, как связаны примитивы и&nbsp;семантика, и&nbsp;взял за&nbsp;основу цветовую систему Tailwind.</li>
+    </ul>
+  </div>
+</section>
+<section class="sec tight" id="screens">
+  <h2 class="lab">Экраны</h2>
+  <div class="txt">
+    <p>377 переменных и&nbsp;50+ компонентов: от&nbsp;примитивов до&nbsp;библиотеки.</p>
+  </div>
+</section>
+<div class="pin" role="group" aria-label="Экраны">
+  <div class="pin-stick">
+    <div class="track">
+      <figure class="shot" style="--ar:1.21729"><picture><source srcset="projects/design_system/all-comps.webp" type="image/webp"><img src="projects/design_system/all-comps.png" alt="Библиотека компонентов" width="2000" height="1643"></picture><figcaption><span>1</span><b>Библиотека компонентов</b><i>Цвета, типографика, инпуты, навигация, контролы, кнопки, статусы, иконки и&nbsp;карточки. 50+ компонентов с&nbsp;вариантами, из&nbsp;которых собираются все экраны.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.97900"><picture><source srcset="projects/design_system/primitives.webp" type="image/webp"><img src="projects/design_system/primitives.png" alt="Primitives" width="1958" height="2000"></picture><figcaption><span>2</span><b>Primitives</b><i>256 переменных: полные цветовые шкалы по&nbsp;11 ступеней (50–950). Базовый слой, на&nbsp;который ссылается всё остальное.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.97900"><picture><source srcset="projects/design_system/semantic.webp" type="image/webp"><img src="projects/design_system/semantic.png" alt="Semantic" width="1958" height="2000"></picture><figcaption><span>3</span><b>Semantic</b><i>67 токенов (text, bg, stroke, icons, btn…), связанных с&nbsp;примитивами. Здесь же переключаются темы Dark и&nbsp;Light.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.97900"><picture><source srcset="projects/design_system/font.webp" type="image/webp"><img src="projects/design_system/font.png" alt="Font" width="1958" height="2000"></picture><figcaption><span>4</span><b>Font</b><i>28 токенов: размеры 12–48, начертания, трекинг и&nbsp;интерлиньяж. Семейство: Inter.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.97900"><picture><source srcset="projects/design_system/numbers.webp" type="image/webp"><img src="projects/design_system/numbers.png" alt="Numbers" width="1958" height="2000"></picture><figcaption><span>5</span><b>Numbers</b><i>26 токенов: радиусы, толщины границ, размытие и&nbsp;размерная шкала.</i></figcaption></figure>
     </div>
-
-    <!-- ── SLIDE 4 — CALLOUT GRID: RESULT ── -->
-    <section class="slide slide-portal">
-      <div class="eyebrow">Результат</div>
-      <div class="portal-grid fit-wrap">
-        <div class="portal-callouts">
-          <div>
-            <div class="portal-num">[1]</div>
-            <p class="portal-text">Правка токена в&nbsp;одном месте применяется по&nbsp;всему интерфейсу: систему используют все дизайнеры и&nbsp;разработчики продукта.</p>
-          </div>
-        </div>
-        <div class="portal-media">
-          <img src="projects/design_system/semantic.png" alt="Семантические токены с темами Dark и Light">
-        </div>
-        <div class="portal-callouts">
-          <div>
-            <div class="portal-num">[2]</div>
-            <p class="portal-text">Тему стало просто переключать, а&nbsp;систему, в&nbsp;отличие от&nbsp;старого UI-кита, стало легко поддерживать.</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide-title">Дизайн-система EchoTwin AI</div>
-    </section>
-
   </div>
+</div>
+<section class="sec" id="role">
+  <h2 class="lab">Моя роль</h2>
+  <div class="txt">
+    <ul class="list">
+      <li>Продуктовый дизайнер. Идею собрать нормальную дизайн-систему предложил дизайн-лид. Систему делал сам, лид только изредка что-то поправлял.</li>
+    </ul>
+  </div>
+</section>
+<section class="sec" id="next">
+  <h2 class="lab">Что дальше</h2>
+  <div class="txt">
+    <p>Дописать спецификации к&nbsp;компонентам: состояния, поведение, правила использования. Тогда это будет полноценная дизайн-система, а&nbsp;не&nbsp;только набор переменных и&nbsp;компонентов.</p>
+  </div>
+</section>
 
-  <a class="mobile-back" href="index.html#cases">← Ко&nbsp;всем кейсам</a>
+<section class="more" aria-labelledby="more-h">
+  <h2 class="lab" id="more-h">Ещё кейсы</h2>
+  <div class="more-grid">
+    <article>
+      <a class="media" href="rutube.html" aria-label="Редизайн оформления подписки"><picture><source srcset="projects/covers/subscription.webp" type="image/webp"><img src="projects/covers/subscription.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+      <div class="cap">
+        <h3 class="tt"><a href="rutube.html">Редизайн оформления подписки</a></h3>
+        <p class="ds">Редизайн страницы выбора тарифа, оплаты и&nbsp;управления подпиской для&nbsp;сервиса с&nbsp;миллионной аудиторией.</p>
+      </div>
+    </article>
+    <article>
+      <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source srcset="projects/covers/auditors.webp" type="image/webp"><img src="projects/covers/auditors.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+      <div class="cap">
+        <h3 class="tt"><a href="auditors_monitoring.html">Мониторинг аудиторов</a></h3>
+        <p class="ds">Инструмент менеджера полевого аудита по&nbsp;40+ регионам России: карта аудиторов, статусы, маршруты.</p>
+      </div>
+    </article>
+    <article>
+      <a class="media" href="installation_panel.html" aria-label="Панель инсталляций"><picture><source srcset="projects/covers/installation.webp" type="image/webp"><img src="projects/covers/installation.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+      <div class="cap">
+        <h3 class="tt"><a href="installation_panel.html">Панель инсталляций</a></h3>
+        <p class="ds">Админ-панель установки оборудования: 3 модуля в&nbsp;одном портале&nbsp;— группы, установщики, транспорт.</p>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
 
-  <div id="cursor-outer"></div>
+<footer class="foot">
+  <span>© 2026 Андрей Береговой</span>
+  <div class="foot-links"><a href="https://t.me/sa1nteau">Телеграм</a><span aria-hidden="true">&nbsp;·&nbsp;</span><a href="mailto:beregovoy.designs@gmail.com">Почта</a></div>
+  <div><a href="%D0%91%D0%B5%D1%80%D0%B5%D0%B3%D0%BE%D0%B2%D0%BE%D0%B9_%D0%90%D0%BD%D0%B4%D1%80%D0%B5%D0%B9_CV.pdf" download="Береговой_Андрей_CV.pdf">Скачать резюме</a></div>
+</footer>
 
-  <script>
-    (function () {
-      document.querySelectorAll('a[href="index.html#cases"]').forEach(function (a) {
-        a.addEventListener('click', function () {
-          try { sessionStorage.setItem('bvg_nav', '1'); } catch (e) {}
-        });
-      });
-
-      // Fit-to-viewport: content must never sit closer than 40px to the
-      // header or footer (100px for pannable "mockup" content — the
-      // screens strip — which wants visible air around it, not a tight
-      // fit). Header/footer positions are measured against each slide's
-      // own top edge, so the result holds wherever the page happens to
-      // be scrolled. If a slide's natural content is taller than the
-      // space that leaves, shrink it uniformly with scaleY() — never
-      // clips, never overlaps.
-      var FIT_MARGIN = 40;
-      var PAN_MARGIN = 100;
-      var fitEls = document.querySelectorAll('.fit-wrap');
-      var panFitEls = document.querySelectorAll('.pan-fit');
-      var sampleEyebrow = document.querySelector('.eyebrow');
-      var sampleTitle = document.querySelector('.slide-title');
-      function slideTop(el) { return el.closest('.slide').getBoundingClientRect().top; }
-      function applyFitTo(els, margin, prop, headerBottom, footerTop) {
-        var available = footerTop - margin - (headerBottom + margin);
-        els.forEach(function (el) {
-          el.style.setProperty(prop, 1);
-          if (available <= 0) return;
-          var natural = el.getBoundingClientRect().height;
-          var ratio = natural > available ? available / natural : 1;
-          el.style.setProperty(prop, ratio);
-        });
+<script>
+  (function () {
+    var pin = document.querySelector('.pin');
+    if (!pin) return;
+    var stick = pin.querySelector('.pin-stick'), track = pin.querySelector('.track');
+    var off = matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)');
+    var pan = 0, top = 0;
+    function update() {
+      if (off.matches) return;
+      var x = Math.min(Math.max(top - pin.getBoundingClientRect().top, 0), pan);
+      track.style.transform = 'translate3d(' + (-x) + 'px,0,0)';
+    }
+    function measure() {
+      if (off.matches) {
+        pin.style.removeProperty('--stage');
+        pin.style.removeProperty('--pan');
+        stick.style.removeProperty('top');
+        track.style.transform = '';
+        return;
       }
-      function applyFit() {
-        if (!sampleEyebrow || !sampleTitle) return;
-        var headerBottom = sampleEyebrow.getBoundingClientRect().bottom - slideTop(sampleEyebrow);
-        var footerTop = sampleTitle.getBoundingClientRect().top - slideTop(sampleTitle);
-        applyFitTo(fitEls, FIT_MARGIN, '--fit-scale', headerBottom, footerTop);
-        applyFitTo(panFitEls, PAN_MARGIN, '--fit-scale-pan', headerBottom, footerTop);
-      }
-      applyFit();
-      window.addEventListener('resize', applyFit);
-      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(applyFit); }
-
-      // Screens strip: the slide stays pinned while the page scrolls
-      // through .strip-scroll, and that scroll pans the strip left to
-      // right — one scrolled pixel, one panned pixel, the same feel the
-      // wheel had before the page became a normal scroll.
-      var stripScroll = document.querySelector('.strip-scroll');
-      var viewport = document.querySelector('.strip-viewport');
-      var track = document.querySelector('.strip-track');
-      var panMax = 0, pinAt = 0, ticking = false;
-      function panStrip() {
-        ticking = false;
-        var p = panMax ? Math.min(1, Math.max(0, (window.scrollY - pinAt) / panMax)) : 0;
-        track.style.transform = 'translateX(' + (-p * panMax) + 'px)';
-      }
-      function measureStrip() {
-        panMax = Math.max(0, track.scrollWidth - viewport.clientWidth);
-        stripScroll.style.setProperty('--pan', panMax + 'px');
-        pinAt = stripScroll.getBoundingClientRect().top + window.scrollY;
-        panStrip();
-      }
-      window.addEventListener('scroll', function () {
-        if (!ticking) { ticking = true; requestAnimationFrame(panStrip); }
-      }, { passive: true });
-      window.addEventListener('resize', measureStrip);
-      window.addEventListener('load', measureStrip);
-      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureStrip); }
-      measureStrip();
-    })();
-  </script>
-
-  <script>
-    var ring = document.getElementById('cursor-outer');
-    var mx = -100, my = -100;
-    var scale = 1, scaleTarget = 1, placed = false;
-    document.addEventListener('mousemove', function (e) {
-      mx = e.clientX; my = e.clientY;
-      if (!placed) { placed = true; ring.style.opacity = '1'; }
-    });
-    document.addEventListener('mousedown', function () { scaleTarget = 0.6; });
-    document.addEventListener('mouseup',   function () { scaleTarget = 1; });
-    (function loop() {
-      scale += (scaleTarget - scale) * 0.2;
-      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
-      requestAnimationFrame(loop);
-    })();
-  </script>
-
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-
+      var h = stick.offsetHeight;
+      top = Math.max(16, Math.round((innerHeight - h) / 2));
+      pan = Math.max(0, track.scrollWidth - stick.clientWidth);
+      pin.style.setProperty('--stage', h + 'px');
+      pin.style.setProperty('--pan', pan + 'px');
+      stick.style.top = top + 'px';
+      update();
+    }
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', measure);
+    addEventListener('load', measure);
+    off.addEventListener('change', measure);
+    measure();
+  })();
+</script>
 </body>
 </html>

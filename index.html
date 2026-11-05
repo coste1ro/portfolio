@@ -1,1215 +1,243 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <link rel="icon" type="image/png" href="favicon-light.png">
-  <link rel="apple-touch-icon" href="favicon-light.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Андрей Береговой — UX/Product дизайнер. Портфолио с кейсами и рекомендациями.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Андрей Береговой">
-  <meta property="og:description" content="Андрей Береговой — UX/Product дизайнер. Портфолио с кейсами и рекомендациями.">
-  <meta property="og:url" content="https://beregovoy.design/">
-  <meta property="og:image" content="https://beregovoy.design/photo.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <title>Андрей Береговой</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300&family=Montserrat:wght@200&family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
-  <script>
-    window.__bvgInternal = false;
-    (function () {
-      var entry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-      var navType = entry ? entry.type : 'navigate';
-      var internal = false;
-      try { internal = sessionStorage.getItem('bvg_nav') === '1'; sessionStorage.removeItem('bvg_nav'); } catch (e) {}
-      if (internal && navType !== 'reload' && navType !== 'back_forward') {
-        window.__bvgInternal = true;
-        document.documentElement.classList.add('entering');
-      }
-      // A reload always starts from the top: no restored scroll position
-      // (the intro measures its slide-in from the top of the page, so a
-      // restored one made it play over the cases block) and no leftover
-      // #cases from the "Кейсы" link. Chrome restores the position during
-      // load, so it is pushed back to 0 right after (instantly: the page
-      // has smooth scrolling, which would show as a scroll up) until the
-      // first real input. Only reloads: the back button keeps restoring.
-      if (navType === 'reload') {
-        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
-        var touched = false;
-        function toTop() {
-          if (!touched) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-        }
-        ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
-          window.addEventListener(ev, function () { touched = true; }, { passive: true, once: true });
-        });
-        toTop();
-        document.addEventListener('DOMContentLoaded', toTop);
-        window.addEventListener('load', function () {
-          toTop();
-          [30, 80, 200, 500].forEach(function (ms) { setTimeout(toTop, ms); });
-        });
-      }
-    })();
-  </script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b1b1a">
+<meta name="color-scheme" content="dark">
+<title>Андрей Береговой — продуктовый дизайнер</title>
+<meta name="description" content="Андрей Береговой — продуктовый дизайнер. 3+ года проектирую SaaS, B2B-сервисы и GIS-платформы: от карт до админ-панелей. Строю дизайн-системы с нуля.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Андрей Береговой — продуктовый дизайнер">
+<meta property="og:description" content="Андрей Береговой — продуктовый дизайнер. 3+ года проектирую SaaS, B2B-сервисы и GIS-платформы: от карт до админ-панелей. Строю дизайн-системы с нуля.">
+<meta property="og:url" content="https://beregovoy.design/">
+<meta property="og:image" content="https://beregovoy.design/photo-about.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon-light.png">
+<link rel="apple-touch-icon" href="favicon-light.png">
+<script>
+  // A reload starts from the top: drop a leftover #cases from the "Кейсы" link and stop Chrome restoring the scroll position. Chrome still re-anchors to the old fragment while the page loads, so the top is re-applied (instantly: html is smooth-scrolling) until the first real input. Only reloads, so the back button keeps restoring.
+  (function () {
+    var entry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    if (!entry || entry.type !== 'reload') return;
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    history.scrollRestoration = 'manual';
+    var touched = false;
+    function toTop() {
+      if (!touched) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
+      window.addEventListener(ev, function () { touched = true; }, { passive: true, once: true });
+    });
+    toTop();
+    document.addEventListener('DOMContentLoaded', toTop);
+    window.addEventListener('load', function () {
+      toTop();
+      [30, 80, 200, 500].forEach(function (ms) { setTimeout(toTop, ms); });
+    });
+  })();
+</script>
+<style>
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-cyrillic.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
 
-    /* Normal vertical scroll on every device — the page is one long
-       canvas now (hero, cases, footer). Locked only during the
-       intro so the slide-up transform can't flash a scrollable gap. */
-    body.preloading,
-    html.entering body { overflow: hidden; }
-    @media (prefers-reduced-motion: no-preference) {
-      html { scroll-behavior: smooth; }
-    }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  html{background:#1b1b1a;}
+  body{margin:0;background:transparent;color:#f4f4f2;font-family:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.24 0 0 0 -0.12'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.8 0 0 0 0.4'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:240px 240px,240px 240px;}
+  a:focus-visible{outline:2px solid #f4f4f2;outline-offset:4px;border-radius:2px;}
+  .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 
-    :root {
-      --bg: #ffffff;
-      --fg: #000000;
-      --bg-alt: #f4f4f4;
-    }
+  .hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding:28px 30px 120px;}
+  .nm{font-weight:500;font-size:18px;line-height:1.35;margin:0;}
+  .menu{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+  .menu a{font-size:18px;line-height:1.35;color:#8f8f8a;text-decoration:none;transition:color .15s ease;}
+  .menu a:hover{color:#f4f4f2;}
+  .stmt{font-size:18px;line-height:1.4;max-width:440px;}
+  .stmt p{margin:0 0 18px;}
+  .nw{white-space:nowrap;}
 
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'Jost', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      transition: background 0.3s, color 0.3s;
-    }
+  .works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px 32px;padding:0 30px 160px;}
+  .about{scroll-margin-top:24px;}
+  .media{display:block;aspect-ratio:4 / 3;border-radius:10px;overflow:hidden;background:#161615;}
+  .media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .media:hover img{transform:scale(1.03);}
+  .cap{margin-top:18px;}
+  .tt{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 6px;}
+  .tt a{color:inherit;text-decoration:none;}
+  .ds{font-size:16px;line-height:1.45;color:#b8b8b3;margin:0 0 10px;max-width:560px;}
+  .mt{font-size:15px;line-height:1.5;color:#8f8f8a;margin:0;}
+  .ph{color:#8f8f8a;border-bottom:1px dashed #6a6a66;}
 
-    a { color: inherit; text-decoration: none; }
+  .about{padding:0 30px 96px;}
+  .abgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;align-items:start;}
+  .photo-tilt{width:200px;perspective:700px;}
+  .photo-wrap{position:relative;width:200px;height:200px;border-radius:10px;overflow:hidden;transition:transform .5s cubic-bezier(.2,.8,.2,1);will-change:transform;}
+  .photo-wrap.live{transition:transform .08s linear;}
+  .photo{display:block;width:200px;height:200px;object-fit:cover;}
+  .abtext p{font-size:18px;line-height:1.4;margin:0 0 32px;max-width:440px;}
+  .tools{display:flex;flex-wrap:wrap;gap:20px 24px;margin:0;padding:0;list-style:none;color:#8f8f8a;}
+  .tools svg{display:block;width:24px;height:24px;}
+  .tools li{position:relative;transition:color .25s ease;}
+  .tools svg:first-child{transition:opacity .25s ease;}
+  .tools .clr{position:absolute;left:0;top:0;opacity:0;transition:opacity .25s ease;}
+  .t-claude:hover,.t-cc:hover{color:#d97757;}
+  .t-codex:hover{color:#7c6fff;}
+  .t-gpt:hover{color:#f4f4f2;}
+  .t-figma:hover svg:first-child{opacity:0;}
+  .t-figma:hover .clr{opacity:1;}
+  .exp{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:18px 0;font-size:18px;line-height:1.35;}
+  .exp:first-child{padding-top:0;}
+  .exp:last-child{padding-bottom:0;}
+  .exp + .exp{border-top:1px solid rgba(244,244,242,.12);}
+  .exp .y{white-space:nowrap;}
+  .exp .y,.exp .r{color:#8f8f8a;}
+  .exp .r{display:block;}
 
-    /* ── Nav ── */
-    /* Pinned to the top-right corner of the page itself, not the screen:
-       it scrolls away with the content. */
-    nav {
-      position: absolute;
-      top: 40px;
-      right: 40px;
-      display: flex;
-      gap: 20px;
-      z-index: 100;
-    }
+  .quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto;column-gap:32px;row-gap:0;margin-top:160px;}
+  .q{margin:0;display:grid;grid-row:span 2;grid-template-rows:subgrid;row-gap:20px;}
+  .q p{font-size:17px;line-height:1.5;color:#d4d4cf;margin:0;}
+  .q footer{font-size:15px;line-height:1.4;color:#8f8f8a;}
+  .q footer b{color:#f4f4f2;font-weight:500;display:block;}
 
-    /* Desktop reads the contacts from the footer at the end of the page;
-       this copy only exists for the mobile menu overlay (see media
-       query). */
-    .contacts { display: none; }
+  .foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:0 30px;padding:20px 0 24px;border-top:1px solid rgba(244,244,242,.12);font-size:16px;line-height:1.5;}
+  .foot span{color:#8f8f8a;}
+  .foot a{color:#f4f4f2;text-decoration:none;}
+  .foot a:hover{text-decoration:underline;text-underline-offset:3px;}
 
-    /* No-op on desktop — the nav renders exactly as before, this
-       wrapper only becomes an actual box on mobile (see media query). */
-    .menu-overlay { display: contents; }
-    .menu-toggle { display: none; }
-    .menu-bar-bg { display: none; }
-    .nav-link {
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      color: var(--fg);
-      transition: opacity 0.2s;
-    }
-    .nav-link::before,
-    .nav-link::after {
-      display: inline-block;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    .nav-link::before { content: '['; margin-right: 2px; }
-    .nav-link::after  { content: ']'; margin-left: 2px; }
-    .nav-link:hover::before,
-    .nav-link:hover::after { opacity: 1; }
-
-    /* ── Language switch: RUS | ENG, under nav on desktop. Lives at the
-       top level (outside .page) like nav, not inside .bio where the
-       status pill used to sit — so it's never caught by .page's
-       transform during the intro slide and needs no JS pull-out, unlike
-       the pill used to. */
-    .lang-switch {
-      position: absolute;
-      top: 76px;
-      right: 40px;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      color: var(--fg);
-    }
-    .lang-switch-current { opacity: 0.4; }
-
-    /* ── Page: three full-width blocks (hero, cases, footer) on white /
-       light gray / white, so the split between them reads at a glance. ── */
-    .page { display: flex; flex-direction: column; }
-    .block { padding: 40px; }
-    .block-alt { background: var(--bg-alt); }
-
-    /* Title, bio and recommendations, spread over the first screen like
-       the old poster. The block stops 96px short of the viewport bottom,
-       so the top of the cases block (its gray band and heading) shows
-       under it as a cue that there's more below. */
-    .hero {
-      min-height: calc(100vh - 96px);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 64px;
-    }
-
-    /* White footer under the gray cases block, at the very end of the page
-       instead of floating over the content. The email on the left and the
-       Telegram link on the right, both written out. */
-    .site-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 40px;
-    }
-    /* Addresses read as typed, at the Body size, not in the uppercase Nav
-       style. */
-    .site-footer .nav-link { position: relative; font-size: 20px; text-transform: none; }
-    /* The hover brackets sit outside the text instead of taking layout
-       width, so the addresses line up exactly with the page margins. */
-    .site-footer .nav-link::before,
-    .site-footer .nav-link::after { position: absolute; top: 0; margin: 0; }
-    .site-footer .nav-link::before { right: 100%; padding-right: 2px; }
-    .site-footer .nav-link::after { left: 100%; padding-left: 2px; }
-
-    /* ── Title: the page title and the "Кейсы" heading share one display
-       style. ── */
-    .page-title,
-    .section-label {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      /* Smaller than the old single-word titles (8.2vw) — "UX /
-         Product дизайнер" is a much longer phrase and needs to stay on
-         one line rather than wrap. 5.5vw ran the full width of the
-         page and collided with nav — recalibrated from a screenshot to
-         4.2vw, plus padding-right reserving room for nav's corner so a
-         still-too-generous estimate wraps instead of overlapping it. */
-      font-size: 4.2vw;
-      letter-spacing: 0.03em;
-      line-height: 0.9;
-      text-transform: uppercase;
-      color: var(--fg);
-      font-kerning: none;
-    }
-    /* Reserves room for the nav in the corner — only the page title
-       shares a row with it. */
-    .page-title { padding-right: 260px; }
-    .section-label { margin-bottom: 64px; }
-
-    /* Forces this run onto one line always — without it, on mobile
-       (where it doesn't fit at the base 16vw), the browser wraps it
-       internally before JS ever measures it, so getBoundingClientRect()
-       reports the already-wrapped (narrower) box instead of the true
-       single-line width fitMobileTitle() needs to compute the right
-       scale-down. That under-corrected the size, which still wrapped —
-       to three lines instead of two, overflowing past the edge. */
-    .page-title-line1 {
-      white-space: nowrap;
-    }
-
-    /* ── Bio + education: one 3-column grid, two rows. Row 1 is photo /
-       name intro / markets paragraph; row 2 continues each column with
-       its education counterpart — the "Образование" label under the
-       photo, university under the name intro, courses under the
-       markets paragraph — instead of a separate block bolted on below. ── */
-    .bio {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0 40px;
-      /* Photo+pill (one taller grid item) used to top-align with the
-         two text columns, so the shorter paragraphs read closer to the
-         top of that block than the bottom — center everything on the
-         row instead. */
-      align-items: center;
-    }
-
-    /* Fluid but capped, and shown at its natural aspect ratio (no
-       object-fit crop) — a small full photo, not a stretched/cropped
-       fill of its column. Kept modest and simple while there's no
-       settled photo yet — no spanning/cropping tricks to chase. */
-    .bio-photo {
-      width: 100%;
-      max-width: 220px;
-      height: auto;
-      display: block;
-    }
-
-    /* Caps the block itself (not just the img) so the pill below,
-       sized to 100% of this box, actually matches the photo's width
-       instead of the full — much wider — grid column. */
-    .bio-photo-block {
-      max-width: 220px;
-      text-align: center;
-    }
-
-    /* Neutral badge (shadcn's "secondary" Badge) + a pulsing dot
-       (Tailwind's animate-ping, translated to a plain CSS keyframe) —
-       borrowed look, our copy, no framework. */
-    @keyframes status-ping {
-      0% { transform: scale(1); opacity: 0.7; }
-      75%, 100% { transform: scale(2.2); opacity: 0; }
-    }
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      max-width: 100%;
-      margin-top: 16px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 12px;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      color: var(--fg);
-    }
-    .status-pill-dot-wrap {
-      position: relative;
-      display: inline-flex;
-      width: 8px;
-      height: 8px;
-      flex: none;
-    }
-    .status-pill-dot-ping {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: #2ecc71;
-      animation: status-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .status-pill-dot-ping { animation: none; opacity: 0; }
-    }
-    .status-pill-dot {
-      position: relative;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #2ecc71;
-    }
-
-    .bio-col {
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.2;
-      letter-spacing: 0;
-      color: var(--fg);
-    }
-
-    /* ── Testimonials: one recommendation at a time, sliding smoothly
-       into the next — quieter than three full quotes stacked side by
-       side. ── */
-    .testimonials {
-      overflow: hidden;
-    }
-
-    .testimonials-track {
-      display: flex;
-      transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
-    }
-
-    .testimonial-slide {
-      flex: 0 0 100%;
-      min-width: 0;
-    }
-
-    /* 66ch — the classic readable-line-length guideline (Bringhurst:
-       45-75 characters per line, ~66 as the sweet spot). Constrained
-       here on the text itself, not the sliding track — capping the
-       track's own width made it clip mid-slide, since each slide is
-       flex: 0 0 100% of it and the transform math depends on that. */
-    .testimonial-quote {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.2;
-      letter-spacing: 0;
-      color: var(--fg);
-      display: block;
-      max-width: 66ch;
-      margin: 0 auto 16px;
-      text-align: center;
-    }
-
-    .testimonial-name {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      color: var(--fg);
-      opacity: 0.5;
-      display: block;
-      max-width: 66ch;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    /* Pills — one per real recommendation (not the loop clone). Each
-       fills in sync with the autoplay timer, like a story progress
-       bar; click one to jump straight to it. The button itself carries
-       10px of transparent top/bottom padding so the tap target is much
-       taller than the 3px visual bar — easy to hit on mobile without
-       making the bar itself look thick. */
-    .testimonial-pills {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 24px;
-    }
-    .testimonial-pill {
-      width: 24px;
-      flex: none;
-      padding: 10px 0;
-      border: 0;
-      background: none;
-      display: block;
-    }
-    .testimonial-pill-track {
-      display: block;
-      height: 1px;
-      border-radius: 1px;
-      background: rgba(0, 0, 0, 0.15);
-      overflow: hidden;
-    }
-    .testimonial-pill-fill {
-      display: block;
-      height: 100%;
-      width: 0%;
-      background: var(--fg);
-    }
-
-    /* ── Cases: 2x2 grid of white cards on the gray block. Each card carries
-       the thumbnail, the title (Heading style) and a short overview (Body
-       style), so a case reads at a glance without opening it. ── */
-    .cases-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px 40px;
-    }
-    .case-item {
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
-      transition: transform 0.4s ease;
-    }
-    /* A small lift, not the old 12%: rows are only 64px apart, a bigger
-       one would slide the card over the row above. */
-    .case-item:hover { transform: translateY(-12px); }
-    .case-img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-    }
-    .case-img picture { display: block; width: 100%; height: 100%; }
-    .case-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: top left;
-      display: block;
-    }
-    /* Cards in a row are the same height (grid stretch); the body fills
-       whatever the image leaves and pushes the figures to the bottom, so
-       the hairline and the numbers line up across a row however long the
-       descriptions run. */
-    .case-body { flex: 1; display: flex; flex-direction: column; padding: 24px 24px 32px; }
-    .case-title {
-      font-family: 'Jost', sans-serif;
-      font-weight: 200;
-      font-size: 24px;
-      line-height: 1.2;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--fg);
-      margin-bottom: 12px;
-    }
-    .case-desc {
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.2;
-      color: var(--fg);
-      margin-bottom: 24px;
-    }
-    /* Two key figures per card, under a hairline: number in the Hero style
-       (the site's stat-num style), label in the Nav style at half
-       opacity. */
-    .case-stats {
-      display: flex;
-      gap: 24px 40px;
-      margin-top: auto;
-      padding-top: 24px;
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-    }
-    .stat-num {
-      display: block;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      font-size: 4.2vw;
-      letter-spacing: 0.03em;
-      line-height: 0.9;
-      text-transform: uppercase;
-      font-kerning: none;
-      color: var(--fg);
-    }
-    .stat-label {
-      display: block;
-      margin-top: 12px;
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 16px;
-      letter-spacing: 0;
-      line-height: 1.2;
-      text-transform: uppercase;
-      color: var(--fg);
-      opacity: 0.5;
-    }
-    /* Narrow windows: a label can wrap to two lines in one card and not in
-       its neighbour, which would move that card's hairline. Reserve two
-       lines so the figures block is the same height in every card. */
-    @media (max-width: 1100px) {
-      .stat-label { min-height: 2.4em; }
-    }
-
-    /* ── Responsive: collapse multi-column blocks to a single column,
-       and let .page's own flex gap handle spacing between the stacked
-       blocks (title → bio → education → testimonials — already the
-       right reading order in DOM, no reordering needed). ── */
-    @media (max-width: 900px) {
-      /* Narrow windows (incl. a resized desktop, where the base poster
-         lock still applies) stack taller than the screen — let them
-         scroll instead of clipping. */
-      html, body { overflow-y: auto; }
-      /* Two rows of small left-aligned links read cramped next to the
-         page's own content — a single corner toggle instead, opening a
-         full-screen menu. Flat 5-item nav on a visual-first portfolio
-         is exactly the case hamburger+overlay is the right call for
-         (NN/g: hidden nav costs discoverability on content-heavy sites,
-         but a small flat list here loses nothing by being one tap away). */
-      /* Purely a backdrop — full-width opaque bar behind the toggle and
-         the pill, so scrolling content passes under both instead of
-         visibly overlapping them. The toggle and pill stay independent
-         fixed elements (the pill lives in the DOM under the photo, not
-         next to the toggle) rather than real flex siblings, so they're
-         each given the exact same top/height band below and just
-         center their own content within it — guarantees their content
-         lines up on the same row regardless of the very different font
-         sizes (16px label vs 12px pill). */
-      .menu-bar-bg {
-        display: block;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        height: 56px;
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        z-index: 190;
-      }
-      .menu-toggle {
-        display: flex;
-        align-items: center;
-        position: fixed;
-        top: 16px; left: 24px;
-        height: 24px;
-        z-index: 200;
-        background: none;
-        border: 0;
-        padding: 0;
-        font-family: 'Jost', sans-serif;
-        font-weight: 300;
-        font-size: 16px;
-        letter-spacing: 0;
-        text-transform: uppercase;
-        color: var(--fg);
-      }
-      .menu-toggle svg { display: block; width: 24px; height: 24px; }
-      /* The language switch takes the pill's old spot in the bar; the
-         pill itself just stays in its normal place under the photo
-         (same as desktop) instead of being pulled up here — matches the
-         "Меню" label's font exactly (16px/300/Jost), not the pill's
-         own 12px. */
-      .lang-switch {
-        position: fixed;
-        top: 16px; right: 24px;
-        height: 24px;
-        z-index: 200;
-      }
-      /* Distracting sitting on top of the full-screen menu it's meant
-         to be closing — hide it while open. */
-      html.menu-open .lang-switch { opacity: 0; pointer-events: none; }
-      /* Frosted glass instead of flat white — the page underneath stays
-         faintly, heavily blurred, so the overlay doesn't feel like a
-         totally separate screen. */
-      .menu-overlay {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 40px;
-        position: fixed;
-        inset: 0;
-        padding: 110px 24px 60px;
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        /* Between the bar (190) and the toggle (200) — it needs to
-           paint over the opaque-looking bar when open (same reason the
-           bar now shares its blur/translucency, so there's no seam),
-           while the toggle itself must stay clickable above it. */
-        z-index: 195;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-      html.menu-open .menu-overlay { opacity: 1; pointer-events: auto; }
-      .menu-overlay nav,
-      .menu-overlay .contacts {
-        position: static;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-        padding: 0;
-      }
-      /* Reuses the site's existing Heading style (24px, weight 200,
-         0.08em) for overlay links — not a new size, just applied here
-         instead of the usual Nav scale, since these need to read as
-         real tap targets in a full-screen menu. */
-      .menu-overlay .nav-link {
-        font-weight: 200;
-        font-size: 24px;
-        letter-spacing: 0.08em;
-      }
-      /* The desktop hover-bracket ::before is invisible (opacity: 0)
-         but still takes up layout width, pushing the visible text right
-         of where it looks like it should start — that's why the X sat
-         further left than "ИНДЕКС" below it. Touch has no hover to
-         reveal it anyway, so just drop it here. */
-      .menu-overlay .nav-link::before,
-      .menu-overlay .nav-link::after {
-        display: none;
-      }
-      /* Was 40px — the toggle now floats independently instead of
-         pushing the page down (nav used to occupy real flow height
-         above it), so the title needs its own clearance below the
-         toggle instead of overlapping it. */
-      .block { padding: 64px 24px; }
-      .hero { min-height: 0; gap: 40px; padding-top: 100px; }
-      .cases-grid { grid-template-columns: 1fr; gap: 40px; }
-      .stat-num { font-size: 12vw; line-height: 1; }
-      .case-item:hover { transform: none; }
-      .section-label { font-size: 16vw; line-height: 1.05; margin-bottom: 32px; }
-      .site-footer { flex-direction: column; align-items: flex-start; gap: 12px; padding: 32px 24px; }
-      /* 0.9 (desktop's single-line value) crowds the wrapped second
-         line — same fix as the hero-name issue this had earlier. */
-      .page-title { font-size: 16vw; padding-right: 0; line-height: 1.05; }
-      .page-title-break { display: block; }
-      .bio { grid-template-columns: 1fr; gap: 24px; }
-      /* Full column width (342px on a 390px phone) read as an oversized
-         portrait once it had the whole row to itself instead of sharing
-         it with the desktop text columns — capped back down to about
-         half that instead, centered in the stacked column. */
-      .bio-photo-block { max-width: 170px; margin: 0; text-align: left; }
-      .bio-photo { max-width: 170px; }
-      /* Desktop forces the parenthetical onto its own line (fine at
-         that width); on mobile the same break left "в Teradata"
-         orphaned alone mid-block — let it wrap naturally instead, the
-         trailing "Action Engine)" landing alone on the last line is
-         fine. */
-      .testimonial-break { display: none; }
-      /* Desktop centers these (see base rule) — mobile keeps the
-         original left-aligned block, unaffected by that change. */
-      .testimonial-quote,
-      .testimonial-name {
-        text-align: left;
-        margin-left: 0;
-        margin-right: 0;
-      }
-    }
-
-    /* ── Preloader ── */
-    nav, .lang-switch { transition: opacity 0.35s ease; }
-    body.preloading nav, body.preloading .lang-switch { opacity: 0; }
-
-    /* ── Internal navigation intro ── */
-    .page { transition: opacity 0.35s ease; }
-    html.entering .page { opacity: 0; }
-    html.no-motion nav,
-    html.no-motion .lang-switch,
-    html.no-motion .page { transition: none !important; }
-
-    #preload {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 9000;
-      overflow: hidden;
-      transition: background 0.6s ease;
-    }
-    #preload-count {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 200;
-      font-size: 24px;
-      letter-spacing: 0.08em;
-      font-variant-numeric: tabular-nums;
-      color: var(--fg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    #preload-title {
-      position: absolute;
-      left: 40px; bottom: 0;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 200;
-      font-size: 4.2vw;
-      letter-spacing: 0.03em;
-      line-height: 0.9;
-      text-transform: uppercase;
-      white-space: nowrap;
-      color: var(--fg);
-      transform: translateY(50%);
-      font-kerning: none;
-      clip-path: inset(0 100% 0 0);
-      transition: clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1);
-    }
-    /* This media block is placed after the rule it overrides on
-       purpose — an earlier attempt put it in the main mobile media
-       query above, which comes before #preload-title in the file, so
-       the unconditional left: 40px there won (same specificity, later
-       source order wins) and silently ate the override. */
-    @media (max-width: 900px) {
-      /* .page-title gets line-height: 1.05 on mobile (0.9 crowds the
-         wrapped second line) but #preload-title is a separate element
-         with its own base 0.9 — never inherited that fix, so the clone
-         and the real title visibly changed line-height on handoff. */
-      #preload-title { left: 24px; line-height: 1.05; }
-    }
-
-    /* ── Cursor ── */
-    * { cursor: none !important; }
-
-    @media (hover: none) and (pointer: coarse) {
-      #cursor-outer, #cursor-dot { display: none !important; }
-      * { cursor: auto !important; }
-    }
-
-    #cursor-outer {
-      position: fixed;
-      top: 0; left: 0;
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      border: 1px solid #fff;
-      pointer-events: none;
-      z-index: 99999;
-      will-change: transform;
-      mix-blend-mode: difference;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-  </style>
+  @media (max-width:900px){
+    .hero,.works,.abgrid,.foot{grid-template-columns:1fr;}
+    .hero{gap:28px;padding:24px 20px 72px;}
+    .menu{flex-direction:row;flex-wrap:wrap;gap:2px 12px;}
+    .menu a{font-size:16px;}
+    .works{gap:48px;padding:0 20px 112px;}
+    .about{padding:0 20px 72px;}
+    .abgrid{gap:40px;}
+    .foot{margin:0 20px;padding:20px 0 24px;gap:12px;}
+    .quotes{grid-template-columns:1fr;grid-template-rows:none;row-gap:48px;margin-top:96px;}
+    .q{grid-row:auto;grid-template-rows:auto auto;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .media img,.menu a,.photo-wrap{transition:none;}
+  }
+</style>
 </head>
 <body>
 
-  <div id="preload">
-    <span id="preload-title"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">дизайнер</span></span>
-    <span id="preload-count">000</span>
+<header class="hero">
+  <h1 class="nm">Андрей Береговой</h1>
+  <nav class="menu" aria-label="Разделы">
+    <a href="#cases">Кейсы</a>
+    <a href="#about">Обо мне</a>
+    <a href="%D0%91%D0%B5%D1%80%D0%B5%D0%B3%D0%BE%D0%B2%D0%BE%D0%B9_%D0%90%D0%BD%D0%B4%D1%80%D0%B5%D0%B9_CV.pdf">Резюме</a>
+    <a href="https://t.me/sa1nteau">Телеграм</a>
+    <a href="mailto:beregovoy.designs@gmail.com">Почта</a>
+  </nav>
+  <div class="stmt">
+    <p>Продуктовый дизайнер.</p>
+    <p>3+&nbsp;года проектирую SaaS, <span class="nw">B2B-сервисы</span> и&nbsp;<span class="nw">GIS-платформы</span>: от&nbsp;карт до&nbsp;<span class="nw">админ-панелей</span>. Строю <span class="nw">дизайн-системы</span> с&nbsp;нуля и&nbsp;сопровождаю разработку до&nbsp;релиза. Фокусируюсь на&nbsp;<span class="nw">ИИ-инструментах</span> в&nbsp;продуктовой работе.</p>
   </div>
+</header>
 
-  <div class="menu-bar-bg"></div>
-  <button type="button" id="menuToggle" class="menu-toggle" aria-label="Меню">Меню</button>
-  <div class="menu-overlay" id="menuOverlay">
-    <nav>
-      <a href="index.html" class="nav-link">Главная</a>
-      <a href="#cases" class="nav-link">Кейсы</a>
-    </nav>
+<main>
+<section class="works" id="cases">
+  <h2 class="sr">Кейсы</h2>
+  <article>
+    <a class="media" href="rutube.html" aria-label="Редизайн оформления подписки"><picture><source srcset="projects/covers/subscription.webp" type="image/webp"><img src="projects/covers/subscription.jpg" alt="" width="1600" height="1200"></picture></a>
+    <div class="cap">
+      <h3 class="tt"><a href="rutube.html">Редизайн оформления подписки</a></h3>
+      <p class="ds">Пользователи бросали оформление подписки: тарифы описаны неявно, автопродление спрятано в&nbsp;мелком шрифте. Редизайн прошёл юзабилити-тест: SUS 91.7, SEQ 6.3.</p>
+      <p class="mt">Продуктовый дизайнер</p>
+    </div>
+  </article>
+  <article>
+    <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source srcset="projects/covers/auditors.webp" type="image/webp"><img src="projects/covers/auditors.jpg" alt="" width="1600" height="1200"></picture></a>
+    <div class="cap">
+      <h3 class="tt"><a href="auditors_monitoring.html">Мониторинг аудиторов</a></h3>
+      <p class="ds">Инструмент менеджера полевого аудита по&nbsp;40+ регионам России: карта аудиторов, статусы, маршруты. ~20 фич&nbsp;— в&nbsp;одиночку. Менеджеры и&nbsp;заказчики отметили, что от&nbsp;звонков полностью ушли.</p>
+      <p class="mt">Продуктовый дизайнер</p>
+    </div>
+  </article>
+  <article>
+    <a class="media" href="installation_panel.html" aria-label="Панель инсталляций"><picture><source srcset="projects/covers/installation.webp" type="image/webp"><img src="projects/covers/installation.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+    <div class="cap">
+      <h3 class="tt"><a href="installation_panel.html">Панель инсталляций</a></h3>
+      <p class="ds">Админ-панель установки оборудования: 3 модуля в&nbsp;одном портале&nbsp;— группы, установщики, транспорт. 6 экранов флоу. Портал в&nbsp;проде, им пользуются до&nbsp;сих пор.</p>
+      <p class="mt">Продуктовый дизайнер</p>
+    </div>
+  </article>
+  <article>
+    <a class="media" href="design_system.html" aria-label="Дизайн-система EchoTwin AI"><picture><source srcset="projects/covers/design-system.webp" type="image/webp"><img src="projects/covers/design-system.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+    <div class="cap">
+      <h3 class="tt"><a href="design_system.html">Дизайн-система EchoTwin AI</a></h3>
+      <p class="ds">Дизайн-система для продукта мониторинга дорожных аномалий: 50+ компонентов, 377 переменных, темы Dark и&nbsp;Light. Систему используют и&nbsp;продолжают поддерживать.</p>
+      <p class="mt">Продуктовый дизайнер</p>
+    </div>
+  </article>
+</section>
 
-    <div class="contacts">
-      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">Telegram</a>
-      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">Почта</a>
+<section class="about" id="about">
+  <h2 class="sr">Обо мне</h2>
+  <div class="abgrid">
+    <div class="photo-tilt"><div class="photo-wrap"><picture><source srcset="photo-about.webp" type="image/webp"><img class="photo" src="photo-about.jpg" alt="Андрей Береговой" width="200" height="200" loading="lazy"></picture></div></div>
+    <div class="abtext">
+      <p>Работал на&nbsp;международных проектах: США, Великобритания, ОАЭ, Россия. Собирал UI-киты для сложных продуктов.</p>
+      <p>Макеты делаю в&nbsp;Figma, прототипы и&nbsp;сайты собираю в&nbsp;коде вместе с&nbsp;Claude Code.</p>
+      <p>Учился у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова. English Intermediate.</p>
+      <ul class="tools" aria-label="Инструменты">
+        <li title="Figma" class="t-figma"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path clip-rule="evenodd" d="M6.082 8.241C4.83 7.441 4 6.057 4 4.483 4 2.007 6.05 0 8.578 0h7.844C18.95 0 21 2.007 21 4.483c0 1.574-.829 2.959-2.082 3.758C20.17 9.041 21 10.426 21 12c0 2.476-2.05 4.483-4.578 4.483h-.084A4.615 4.615 0 0113.24 15.3v4.176C13.24 21.98 11.145 24 8.599 24 6.076 24 4 21.998 4 19.517c0-1.574.829-2.959 2.082-3.758C4.829 14.959 4 13.574 4 12c0-1.574.829-2.959 2.082-3.759zM13.24 12c0 1.676 1.387 3.034 3.098 3.034h.084c1.711 0 3.099-1.358 3.099-3.034 0-1.676-1.388-3.034-3.1-3.034h-.083c-1.71 0-3.098 1.358-3.098 3.034zm-1.48-3.034H8.578C6.867 8.966 5.48 10.324 5.48 12c0 1.672 1.382 3.029 3.089 3.034H11.76V8.966zm-3.182 7.517h-.01c-1.707.005-3.089 1.362-3.089 3.034 0 1.67 1.403 3.034 3.12 3.034 1.74 0 3.161-1.381 3.161-3.075v-2.993H8.578zm3.182-8.966H8.578c-1.711 0-3.099-1.358-3.099-3.034 0-1.676 1.388-3.034 3.1-3.034h3.181v6.068zm4.662 0H13.24V1.45h3.182c1.711 0 3.099 1.358 3.099 3.034 0 1.676-1.388 3.034-3.1 3.034z"></path></svg><svg class="clr" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20a4 4 0 014-4h4v4a4 4 0 01-8 0z" fill="#0ACF83"></path><path d="M12 0v8h4a4 4 0 000-8h-4z" fill="#FF7262"></path><path d="M15.967 16a4 4 0 100-8 4 4 0 000 8z" fill="#1ABCFE"></path><path d="M4 4a4 4 0 004 4h4V0H8a4 4 0 00-4 4z" fill="#F24E1E"></path><path d="M4 12a4 4 0 004 4h4V8H8a4 4 0 00-4 4z" fill="#A259FF"></path></svg><span class="sr">Figma</span></li>
+        <li title="Claude Code" class="t-cc"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path clip-rule="evenodd" d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949zM6 10.949h1.488V8.102H6v2.847zm10.51 0H18V8.102h-1.49v2.847z"></path></svg><span class="sr">Claude Code</span></li>
+        <li title="Claude" class="t-claude"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z"></path></svg><span class="sr">Claude</span></li>
+        <li title="Codex" class="t-codex"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path clip-rule="evenodd" d="M8.086.457a6.105 6.105 0 013.046-.415c1.333.153 2.521.72 3.564 1.7a.117.117 0 00.107.029c1.408-.346 2.762-.224 4.061.366l.063.03.154.076c1.357.703 2.33 1.77 2.918 3.198.278.679.418 1.388.421 2.126a5.655 5.655 0 01-.18 1.631.167.167 0 00.04.155 5.982 5.982 0 011.578 2.891c.385 1.901-.01 3.615-1.183 5.14l-.182.22a6.063 6.063 0 01-2.934 1.851.162.162 0 00-.108.102c-.255.736-.511 1.364-.987 1.992-1.199 1.582-2.962 2.462-4.948 2.451-1.583-.008-2.986-.587-4.21-1.736a.145.145 0 00-.14-.032c-.518.167-1.04.191-1.604.185a5.924 5.924 0 01-2.595-.622 6.058 6.058 0 01-2.146-1.781c-.203-.269-.404-.522-.551-.821a7.74 7.74 0 01-.495-1.283 6.11 6.11 0 01-.017-3.064.166.166 0 00.008-.074.115.115 0 00-.037-.064 5.958 5.958 0 01-1.38-2.202 5.196 5.196 0 01-.333-1.589 6.915 6.915 0 01.188-2.132c.45-1.484 1.309-2.648 2.577-3.493.282-.188.55-.334.802-.438.286-.12.573-.22.861-.304a.129.129 0 00.087-.087A6.016 6.016 0 015.635 2.31C6.315 1.464 7.132.846 8.086.457zm-.804 7.85a.848.848 0 00-1.473.842l1.694 2.965-1.688 2.848a.849.849 0 001.46.864l1.94-3.272a.849.849 0 00.007-.854l-1.94-3.393zm5.446 6.24a.849.849 0 000 1.695h4.848a.849.849 0 000-1.696h-4.848z"></path></svg><span class="sr">Codex</span></li>
+        <li title="ChatGPT" class="t-gpt"><svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M9.205 8.658v-2.26c0-.19.072-.333.238-.428l4.543-2.616c.619-.357 1.356-.523 2.117-.523 2.854 0 4.662 2.212 4.662 4.566 0 .167 0 .357-.024.547l-4.71-2.759a.797.797 0 00-.856 0l-5.97 3.473zm10.609 8.8V12.06c0-.333-.143-.57-.429-.737l-5.97-3.473 1.95-1.118a.433.433 0 01.476 0l4.543 2.617c1.309.76 2.189 2.378 2.189 3.948 0 1.808-1.07 3.473-2.76 4.163zM7.802 12.703l-1.95-1.142c-.167-.095-.239-.238-.239-.428V5.899c0-2.545 1.95-4.472 4.591-4.472 1 0 1.927.333 2.712.928L8.23 5.067c-.285.166-.428.404-.428.737v6.898zM12 15.128l-2.795-1.57v-3.33L12 8.658l2.795 1.57v3.33L12 15.128zm1.796 7.23c-1 0-1.927-.332-2.712-.927l4.686-2.712c.285-.166.428-.404.428-.737v-6.898l1.974 1.142c.167.095.238.238.238.428v5.233c0 2.545-1.974 4.472-4.614 4.472zm-5.637-5.303l-4.544-2.617c-1.308-.761-2.188-2.378-2.188-3.948A4.482 4.482 0 014.21 6.327v5.423c0 .333.143.571.428.738l5.947 3.449-1.95 1.118a.432.432 0 01-.476 0zm-.262 3.9c-2.688 0-4.662-2.021-4.662-4.519 0-.19.024-.38.047-.57l4.686 2.71c.286.167.571.167.856 0l5.97-3.448v2.26c0 .19-.07.333-.237.428l-4.543 2.616c-.619.357-1.356.523-2.117.523zm5.899 2.83a5.947 5.947 0 005.827-4.756C22.287 18.339 24 15.84 24 13.296c0-1.665-.713-3.282-1.998-4.448.119-.5.19-.999.19-1.498 0-3.401-2.759-5.947-5.946-5.947-.642 0-1.26.095-1.88.31A5.962 5.962 0 0010.205 0a5.947 5.947 0 00-5.827 4.757C1.713 5.447 0 7.945 0 10.49c0 1.666.713 3.283 1.998 4.448-.119.5-.19 1-.19 1.499 0 3.401 2.759 5.946 5.946 5.946.642 0 1.26-.095 1.88-.309a5.96 5.96 0 004.162 1.713z"></path></svg><span class="sr">ChatGPT</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="exp"><span>Action Engine<span class="r">Продуктовый дизайнер</span></span><span class="y">05.2023–08.2026</span></div>
+      <div class="exp"><span>egenalegke<span class="r">Senior-дизайнер</span></span><span class="y">04.2024–07.2026</span></div>
     </div>
   </div>
 
-  <div class="lang-switch">
-    <span class="lang-switch-current">RUS</span>
-    <span aria-hidden="true">|</span>
-    <a href="index-en.html" class="nav-link">ENG</a>
+  <div class="quotes">
+    <figure class="q">
+      <p>«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
+      <footer><b>Джонатан Карпентер</b>руководитель UX в Teradata (экс-CXO/UX-лид Action Engine)</footer>
+    </figure>
+    <figure class="q">
+      <p>«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
+      <footer><b>Дмитрий Варзин</b>генеральный директор Action Engine</footer>
+    </figure>
+    <figure class="q">
+      <p>«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+ человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
+      <footer><b>Илья</b>тимлид Action Engine</footer>
+    </figure>
   </div>
+</section>
+</main>
 
-  <main class="page">
+<footer class="foot">
+  <span>© 2026 Андрей Береговой</span>
+  <div class="foot-links"><a href="https://t.me/sa1nteau">Телеграм</a><span aria-hidden="true">&nbsp;·&nbsp;</span><a href="mailto:beregovoy.designs@gmail.com">Почта</a></div>
+  <div><a href="%D0%91%D0%B5%D1%80%D0%B5%D0%B3%D0%BE%D0%B2%D0%BE%D0%B9_%D0%90%D0%BD%D0%B4%D1%80%D0%B5%D0%B9_CV.pdf" download="Береговой_Андрей_CV.pdf">Скачать резюме</a></div>
+</footer>
 
-    <section class="block hero">
-
-    <h1 class="page-title" id="pageTitle"><span class="page-title-line1">UX / Product</span> <span class="page-title-break">дизайнер</span></h1>
-
-    <div class="bio">
-      <div class="bio-photo-block">
-        <picture>
-          <source srcset="photo.webp" type="image/webp">
-          <img class="bio-photo" src="photo.jpg" alt="Андрей Береговой" decoding="async">
-        </picture>
-        <span class="status-pill">
-          <span class="status-pill-dot-wrap">
-            <span class="status-pill-dot-ping"></span>
-            <span class="status-pill-dot"></span>
-          </span>
-          Открыт к&nbsp;предложениям
-        </span>
-      </div>
-      <p class="bio-col">Меня зовут Андрей Береговой, я&nbsp;UX/Product дизайнер. Одинаково легко продумываю логику и&nbsp;собираю интерфейс руками: от&nbsp;макета в&nbsp;Figma до&nbsp;готового сайта на&nbsp;Claude Code.</p>
-      <p class="bio-col">3&nbsp;года на&nbsp;международных проектах: США, Великобритания, ОАЭ, Россия. Строил дизайн-системы с&nbsp;нуля, собирал UI-киты под&nbsp;сложные продукты. Учился у&nbsp;Илоны Саркисовой и&nbsp;Миши Розова. English C1.</p>
-    </div>
-
-    <div class="testimonials">
-      <div class="testimonials-track">
-        <div class="testimonial-slide">
-          <p class="testimonial-quote">«Больше всего в&nbsp;Андрее выделяются самостоятельность и&nbsp;эффективность: работает невероятно быстро и&nbsp;почти не&nbsp;нуждается в&nbsp;подсказках, чтобы довести идею до&nbsp;готового результата».</p>
-          <span class="testimonial-name">Джонатан Карпентер — руководитель UX&nbsp;в&nbsp;Teradata<br class="testimonial-break">(экс-CXO/UX-лид Action Engine)</span>
-        </div>
-        <div class="testimonial-slide">
-          <p class="testimonial-quote">«Он с&nbsp;нуля построил дизайн-систему из&nbsp;50+ компонентов, которая значительно ускорила работу команды и&nbsp;обеспечила единообразие интерфейсов».</p>
-          <span class="testimonial-name">Дмитрий Варзин — генеральный директор Action Engine</span>
-        </div>
-        <div class="testimonial-slide">
-          <p class="testimonial-quote">«Последний год Андрей в&nbsp;одиночку закрывал все задачи на&nbsp;проекте с&nbsp;командой 20+&nbsp;человек, а&nbsp;мы были спокойны и&nbsp;за&nbsp;качество дизайна, и&nbsp;за&nbsp;таймлайн. Порекомендовал&nbsp;бы его в&nbsp;дизайн-команду в&nbsp;любом сложном домене».</p>
-          <span class="testimonial-name">Илья — тимлид Action Engine</span>
-        </div>
-      </div>
-      <div class="testimonial-pills">
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 1"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 2"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
-        <button class="testimonial-pill" type="button" aria-label="Рекомендация 3"><span class="testimonial-pill-track"><span class="testimonial-pill-fill"></span></span></button>
-      </div>
-    </div>
-
-    </section>
-
-    <section class="block block-alt cases" id="cases">
-      <h2 class="section-label">Кейсы</h2>
-      <div class="cases-grid">
-
-        <a href="rutube.html" class="case-item">
-          <div class="case-img">
-            <picture>
-              <source srcset="projects/rutube.webp" type="image/webp">
-              <img src="projects/rutube.png" alt="Rutube — Редизайн подписки" loading="lazy" decoding="async">
-            </picture>
-          </div>
-          <div class="case-body">
-            <h3 class="case-title">Редизайн оформления подписки</h3>
-            <p class="case-desc">Редизайн выбора тарифа, оплаты и&nbsp;управления подпиской: от&nbsp;исследования до&nbsp;тестирования.</p>
-            <div class="case-stats">
-              <div class="stat"><span class="stat-num">91.7</span><span class="stat-label">SUS из&nbsp;100</span></div>
-              <div class="stat"><span class="stat-num">6.3</span><span class="stat-label">SEQ из&nbsp;7</span></div>
-            </div>
-          </div>
-        </a>
-
-        <a href="auditors_monitoring.html" class="case-item">
-          <div class="case-img">
-            <picture>
-              <source srcset="projects/auditors_monitoring.webp" type="image/webp">
-              <img src="projects/auditors_monitoring.png" alt="Мониторинг аудиторов" loading="lazy" decoding="async">
-            </picture>
-          </div>
-          <div class="case-body">
-            <h3 class="case-title">Мониторинг аудиторов</h3>
-            <p class="case-desc">Инструмент менеджера полевого аудита: карта аудиторов, статусы и&nbsp;маршруты.</p>
-            <div class="case-stats">
-              <div class="stat"><span class="stat-num">40+</span><span class="stat-label">регионов России</span></div>
-              <div class="stat"><span class="stat-num">~20</span><span class="stat-label">фич в&nbsp;одиночку</span></div>
-            </div>
-          </div>
-        </a>
-
-        <a href="installation_panel.html" class="case-item">
-          <div class="case-img">
-            <picture>
-              <source srcset="projects/installation_panel.webp" type="image/webp">
-              <img src="projects/installation_panel.png" alt="Панель инсталляций" loading="lazy" decoding="async">
-            </picture>
-          </div>
-          <div class="case-body">
-            <h3 class="case-title">Панель инсталляций</h3>
-            <p class="case-desc">Админ-панель управления установкой оборудования: группы, установщики, транспорт.</p>
-            <div class="case-stats">
-              <div class="stat"><span class="stat-num">3</span><span class="stat-label">модуля в&nbsp;одном портале</span></div>
-              <div class="stat"><span class="stat-num">6</span><span class="stat-label">экранов флоу</span></div>
-            </div>
-          </div>
-        </a>
-
-        <a href="design_system.html" class="case-item">
-          <div class="case-img">
-            <picture>
-              <source srcset="projects/design_system.webp" type="image/webp">
-              <img src="projects/design_system.png" alt="Дизайн-система EchoTwin AI" loading="lazy" decoding="async">
-            </picture>
-          </div>
-          <div class="case-body">
-            <h3 class="case-title">Дизайн-система EchoTwin AI</h3>
-            <p class="case-desc">Дизайн-система для&nbsp;продукта мониторинга дорожных аномалий, темы Dark и&nbsp;Light.</p>
-            <div class="case-stats">
-              <div class="stat"><span class="stat-num">50+</span><span class="stat-label">компонентов</span></div>
-              <div class="stat"><span class="stat-num">377</span><span class="stat-label">переменных</span></div>
-            </div>
-          </div>
-        </a>
-
-      </div>
-    </section>
-
-    <footer class="site-footer">
-      <a href="mailto:beregovoy.designs@gmail.com" class="nav-link">beregovoy.designs@gmail.com</a>
-      <a href="https://t.me/sa1nteau" class="nav-link" target="_blank" rel="noopener noreferrer">t.me/sa1nteau</a>
-    </footer>
-
-  </main>
-
-  <div id="cursor-outer"></div>
-
-  <script>
-    (function () {
-      const preload   = document.getElementById('preload');
-      const countEl   = document.getElementById('preload-count');
-      const titleEl   = document.getElementById('preload-title');
-      const realTitle = document.querySelector('.page-title');
-      const navEl     = document.querySelector('nav');
-      const langSwitchEl = document.querySelector('.lang-switch');
-      const pageEl    = document.querySelector('.page');
-      const reduce    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // "UX / Product" filled the full width edge-to-edge, "дизайнер"
-      // below it at the same size — same technique fitName() used for
-      // the old hero name. Fitted independently for the real title and
-      // the preload clone (each measured in its own box/positioning
-      // context) rather than copying one onto the other, so a metrics
-      // difference between the two contexts can't produce a mismatch.
-      function fitOne(el) {
-        const line1 = el.querySelector('.page-title-line1');
-        const mobile = document.documentElement.clientWidth <= 900;
-        if (!mobile || !line1) {
-          el.style.fontSize = '';
-          return;
-        }
-        el.style.fontSize = '16vw';
-        const avail = document.documentElement.clientWidth - 48;
-        const w = line1.getBoundingClientRect().width;
-        if (w > avail) {
-          const current = parseFloat(getComputedStyle(el).fontSize);
-          el.style.fontSize = (current * avail / w) + 'px';
-        }
-      }
-      function fitMobileTitle() {
-        fitOne(realTitle);
-        fitOne(titleEl);
-      }
-      window.addEventListener('resize', fitMobileTitle);
-
-      // Internal nav between here and CASES dissolves the current screen
-      // out; the destination page plays a fast version of the entry intro
-      // (title slides up into place, no counter). The full intro with
-      // counter only plays on a real entry (external link or reload).
-      function currentFile() {
-        const p = location.pathname.split('/').pop();
-        return (p === '' ? 'index.html' : p).replace(/\.html$/, '');
-      }
-      let navBusy = false;
-      (function bindNavTransition() {
-        const here = currentFile();
-        const mainEl = document.querySelector('.page');
-        document.querySelectorAll('nav a, .case-item').forEach(function (a) {
-          if (a.hasAttribute('download')) return;
-          const href = a.getAttribute('href');
-          // In-page anchors ("Кейсы") scroll natively — no page transition.
-          if (href.charAt(0) === '#') return;
-          if (href.replace(/\.html$/, '') === here) {
-            a.addEventListener('click', function (e) {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-            return;
-          }
-          a.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (navBusy) return;
-            navBusy = true;
-            try { sessionStorage.setItem('bvg_nav', '1'); } catch (err) {}
-            if (reduce) { window.location.href = href; return; }
-            // Only the page content fades — nav stays put throughout the
-            // whole transition.
-            mainEl.style.transition = 'opacity 0.35s ease';
-            mainEl.style.opacity = '0';
-            setTimeout(function () { window.location.href = href; }, 350);
-          });
-        });
-      })();
-
-      function clearEnterState() {
-        const html = document.documentElement;
-        if (!html.classList.contains('entering')) return;
-        html.classList.add('no-motion');
-        html.classList.remove('entering');
-      }
-
-      function shouldPreload() {
-        return !window.__bvgInternal;
-      }
-
-      const canShow = shouldPreload();
-
-      // Arriving with #cases (the close button on a case page) means
-      // "put me back where I was" — skip the title intro entirely and
-      // land on the block instead of sliding in from the top.
-      let hashTarget = null;
-      try { hashTarget = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch (err) {}
-
-      if (reduce || hashTarget) {
-        fitMobileTitle();
-        preload.remove();
-        clearEnterState();
-        if (hashTarget) hashTarget.scrollIntoView({ behavior: 'instant', block: 'start' });
-        return;
-      }
-
-      document.body.classList.add('preloading');
-
-      // Slides the whole page — title and content together, as one rigid
-      // block — from a half-visible-at-bottom start up into its natural
-      // resting position. Since the content sits inside .page, it can never
-      // drift out of sync with the title or visually collide with it: it's
-      // the exact same transform, not two separately-animated pieces.
-      function slidePageIn() {
-        fitMobileTitle();
-        const r = realTitle.getBoundingClientRect();
-        const startY = window.innerHeight - (r.top + r.height / 2);
-
-        pageEl.style.willChange = 'transform';
-        pageEl.style.transition = 'none';
-        pageEl.style.transform = 'translateY(' + startY + 'px)';
-        void pageEl.offsetHeight; // commit the instant position before animating away from it
-
-        preload.style.background = 'transparent';
-        preload.style.pointerEvents = 'none';
-        navEl.style.opacity = '1';
-        if (langSwitchEl) langSwitchEl.style.opacity = '1';
-        document.documentElement.classList.remove('entering');
-
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            pageEl.style.transition = 'transform 1s cubic-bezier(0.76,0,0.24,1)';
-            pageEl.style.transform = 'translateY(0)';
-          });
-        });
-
-        setTimeout(function () {
-          document.body.classList.remove('preloading');
-          preload.remove();
-          // Drop the transform once settled — leaving it (even at an
-          // identity translateY(0)) makes .page a containing block for any
-          // position:fixed descendant, pinning it to .page's box instead
-          // of the true viewport.
-          pageEl.style.transform = '';
-          pageEl.style.willChange = '';
-        }, 1000);
-      }
-
-      if (!canShow) {
-        // Internal nav: nav never hides, it's shown right away. No counter,
-        // no clone — just slide the real page into place, so there's
-        // motion on screen from the first frame instead of a blank gap
-        // before the page appears.
-        slidePageIn();
-        return;
-      }
-
-      // Full entry: counter + clone letter-reveal (masked by #preload's
-      // opaque background), then hand off to the same slide as fast-intro.
-      function finish() {
-        countEl.style.opacity = '0';
-        setTimeout(function () {
-          titleEl.style.opacity = '0';
-          slidePageIn();
-        }, 300);
-      }
-
-      function run() {
-        countEl.style.opacity = '1';
-        const DURATION = 2200;
-        const start = performance.now();
-        let titleShown = false;
-        (function frame(now) {
-          const t = Math.min((now - start) / DURATION, 1);
-          countEl.textContent = String(Math.round(t * 100)).padStart(3, '0');
-          if (t >= 0.5 && !titleShown) {
-            titleShown = true;
-            titleEl.style.clipPath = 'inset(0 0% 0 0)';
-          }
-          if (t < 1) requestAnimationFrame(frame);
-          else finish();
-        })(start);
-      }
-
-      // Fit before the clone's clip-path reveal even starts — run() was
-      // being called with the clone still at its unfitted CSS size, so
-      // the visible reveal itself was the wrong size, not just the
-      // handoff to the real title afterwards.
-      function fitThenRun() {
-        // document.fonts.ready can resolve a frame or two before the
-        // browser has actually repainted with the swapped-in font —
-        // measuring right on resolve risked reading stale (fallback-
-        // font) metrics, computing a fit that then didn't match once
-        // the real font's glyphs actually rendered. Two rAFs guarantee
-        // at least one real paint has happened first.
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            fitMobileTitle();
-            run();
-          });
-        });
-      }
-      if (document.fonts && document.fonts.ready) {
-        Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(fitThenRun);
-      } else {
-        fitThenRun();
-      }
-    })();
-  </script>
-
-  <script>
-    (function () {
-      const track = document.querySelector('.testimonials-track');
-      if (!track) return;
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const slides = Array.from(track.children);
-      const total = slides.length;
-      if (total < 2) return;
-
-      const pills = Array.from(document.querySelectorAll('.testimonial-pill'));
-      const fills = Array.from(document.querySelectorAll('.testimonial-pill-fill'));
-      const DURATION = 6000;
-
-      // Loop by cloning the first slide onto the end: slide up to it
-      // normally, then snap back to the real first slide with no
-      // transition the instant that last slide finishes arriving — the
-      // jump is invisible since the clone looks identical to slide 0.
-      track.appendChild(slides[0].cloneNode(true));
-      let index = 0;
-      let timer = null;
-
-      // Pills before the active one sit full (already shown this lap),
-      // the active one animates its own fill over DURATION — the same
-      // span the autoplay timer runs on — and later ones sit empty.
-      function setPills(active) {
-        fills.forEach(function (fill, i) {
-          fill.style.transition = 'none';
-          fill.style.width = i < active ? '100%' : '0%';
-          if (i === active) {
-            if (reduce) {
-              fill.style.width = '100%';
-            } else {
-              void fill.offsetWidth; // commit the 0% before animating to 100%
-              fill.style.transition = 'width ' + DURATION + 'ms linear';
-              fill.style.width = '100%';
-            }
-          }
-        });
-      }
-
-      function render() {
-        track.style.transition = reduce ? 'none' : 'transform 1s cubic-bezier(0.65,0,0.35,1)';
-        track.style.transform = 'translateX(-' + (index * 100) + '%)';
-        setPills(index % total);
-      }
-
-      function advance() {
-        index++;
-        render();
-        if (index === total) {
-          setTimeout(function () {
-            track.style.transition = 'none';
-            track.style.transform = 'translateX(0)';
-            index = 0;
-          }, 1050);
-        }
-      }
-
-      function startTimer() {
-        clearInterval(timer);
-        if (!reduce) timer = setInterval(advance, DURATION);
-      }
-
-      // Pills double as a scrubber — jump straight to any recommendation
-      // (including back to a previous one) and restart the autoplay
-      // clock from there.
-      document.querySelectorAll('.testimonial-pill').forEach(function (pill, i) {
-        pill.addEventListener('click', function () {
-          index = i;
-          render();
-          startTimer();
-        });
-      });
-
-      setPills(0);
-      startTimer();
-    })();
-  </script>
-
-  <script>
-    const ring = document.getElementById('cursor-outer');
-    let mx = -100, my = -100;
-    let scale = 1, scaleTarget = 1, placed = false;
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      if (!placed) { placed = true; ring.style.opacity = '1'; }
-      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
+<script>
+  (function () {
+    var tilt = document.querySelector('.photo-tilt');
+    if (!tilt || matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return;
+    var wrap = tilt.firstElementChild;
+    tilt.addEventListener('pointerenter', function () { wrap.classList.add('live'); });
+    tilt.addEventListener('pointermove', function (e) {
+      var r = tilt.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      wrap.style.transform = 'rotateY(' + ((x - 0.5) * 16).toFixed(2) + 'deg) rotateX(' + ((0.5 - y) * 16).toFixed(2) + 'deg) scale(1.04)';
     });
-    document.addEventListener('mousedown', () => { scaleTarget = 0.6; });
-    document.addEventListener('mouseup',   () => { scaleTarget = 1; });
-    (function loop() {
-      scale += (scaleTarget - scale) * 0.2;
-      ring.style.transform = 'translate3d(' + (mx - 12) + 'px,' + (my - 12) + 'px,0) scale(' + scale.toFixed(3) + ')';
-      requestAnimationFrame(loop);
-    })();
-  </script>
-
-  <script>
-    (function () {
-      const toggle  = document.getElementById('menuToggle');
-      const overlay = document.getElementById('menuOverlay');
-      if (!toggle || !overlay) return;
-      // Same Phosphor X path already used for the viewer-nav close
-      // button on the case-study pages — reusing it here instead of a
-      // "Закрыть" label.
-      var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></svg>';
-      function setOpen(open) {
-        document.documentElement.classList.toggle('menu-open', open);
-        toggle.innerHTML = open ? closeIcon : 'Меню';
-        toggle.setAttribute('aria-label', open ? 'Закрыть' : 'Меню');
-      }
-      toggle.addEventListener('click', function () {
-        setOpen(!document.documentElement.classList.contains('menu-open'));
-      });
-      // Clicking a link inside closes the menu — mainly matters for CV
-      // (download, doesn't navigate away) and a self-link no-op tap.
-      overlay.addEventListener('click', function (e) {
-        if (e.target.closest('a')) setOpen(false);
-      });
-    })();
-  </script>
-
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-
+    tilt.addEventListener('pointerleave', function () {
+      wrap.classList.remove('live');
+      wrap.style.transform = '';
+    });
+  })();
+</script>
 </body>
 </html>
