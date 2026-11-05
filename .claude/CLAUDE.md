@@ -8,14 +8,13 @@ Personal portfolio site for Andrey Beregovoy (product designer). Static HTML pag
 
 - `index.html` — one vertical scroll: hero (name | menu | statement), 2x2 case cards, "Обо мне" (photo with tilt, bio, tool logos, experience, three testimonials), footer. `Кейсы` / `Обо мне` in the menu are in-page anchors (`#cases`, `#about`)
 - `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case pages, see "Case pages" below. Rutube is a learning project from Ilona Sarkisova's course (the page says so)
-- `index-en.html`, `rutube-en.html`, `auditors_monitoring-en.html`, `installation_panel-en.html`, `design_system-en.html` — English versions in the **previous** design (light/dark theme, Jost, custom cursor). They were not redesigned and the Russian pages no longer link to them
-- `index-v2.html`, `index-draft.html` — old untracked drafts of earlier directions, not used
+- There is no English version: the old `*-en.html` pages and the language switch were removed on purpose
 - `/cases` redirects to `/#cases` (`vercel.json`)
-- `Береговой_Андрей_CV.pdf` — the current CV, linked URL-encoded from the menu and the footer (the file name is Cyrillic, NFC). `Beregovoy_Andrey_*.pdf` are older CVs, unused
+- `Береговой_Андрей_CV.pdf` — the current CV, linked URL-encoded from the menu and the footer (the file name is Cyrillic, NFC)
 - `fonts/` — self-hosted Onest (variable, weight 400–500, SIL OFL 1.1), one woff2 per unicode-range subset (cyrillic, latin)
-- `photo-about.jpg/.webp` — the square crop used in "Обо мне" (600x600); `photo.jpg/.webp` is the old studio portrait, kept only for the English pages
-- `projects/` — images per case (`rutube/`, `auditors_monitoring/`, `installation_panel/`, `design_system/`), `projects/covers/` has the 4:3 card covers (1600x1200). Each case folder has `hero-wide.jpg/.webp` (2760x1380 composed cover). Some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Images ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**
-- `logos/` — old PNG tool logos, no longer used (the tool logos on the main page are inline SVG)
+- `photo-about.jpg/.webp` — the square crop used in "Обо мне" (600x600); `IMG001.jpg` (untracked) is its original
+- `projects/` — images per case (`rutube/`, `auditors_monitoring/`, `installation_panel/`, `design_system/`), `projects/covers/` has the 4:3 card covers (1600x1200). Each case folder has `hero-wide.jpg/.webp` (2760x1380 composed cover); `rutube/plans.png` and `payment-success.png` are only the sources of its cover. Some filenames contain spaces, reference them URL-encoded (e.g. `01%20overview%20map.png`). Images ship as `<picture>` with a `.webp` source + PNG/JPEG fallback — when replacing a source image, regenerate **both**
+- The tool logos on the main page are inline SVG (no logo files)
 
 ## Tech stack
 

@@ -6,7 +6,7 @@ See `.claude/CLAUDE.md` for full codebase description.
 
 ## Rules (in `.claude/rules/`)
 
-- `do-not-touch.md` — scroll animations, WebGL dither, img-scale-in
-- `workflow.md` — look at renders headless, commit cadence, comment policy
-- `css.md` — cursor ordering, theme system, mix-blend-mode, image paths
+- `do-not-touch.md` — nothing is frozen right now
+- `workflow.md` — look at renders headless, commit cadence, comment policy, no invented facts
+- `css.md` — theme and grain, font, layout grid, image paths
 - `coding-approach.md` — think before coding, simplicity, surgical changes
