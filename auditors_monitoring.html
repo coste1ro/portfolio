@@ -188,7 +188,7 @@
     <div class="h">Проблема</div>
     <div class="h">Решение</div>
     <div class="c p">Менеджер узнаёт, где аудитор, только по&nbsp;звонку или переписке.</div>
-    <div class="c s">Все аудиторы на&nbsp;одной карте, статус виден по&nbsp;цвету пина; фильтры по&nbsp;группе и&nbsp;статусу.</div>
+    <div class="c s">Все аудиторы на&nbsp;одной карте, статус виден по&nbsp;цвету маркера; фильтры по&nbsp;группе и&nbsp;статусу.</div>
     <div class="c p">С&nbsp;десятками аудиторов в&nbsp;подчинении нужного человека не&nbsp;найти быстро.</div>
     <div class="c s">Поиск и&nbsp;единая карточка аудитора: открывается и&nbsp;с&nbsp;карты, и&nbsp;из&nbsp;списка.</div>
     <div class="c p">Ход дня аудитора не&nbsp;виден без&nbsp;звонка.</div>
@@ -200,7 +200,7 @@
 <section class="sec" id="result">
   <h2 class="lab">Результат</h2>
   <div class="txt">
-    <p>Фичу приняли, она в&nbsp;проде: веб-портал работает и&nbsp;на&nbsp;десктопе, и&nbsp;в&nbsp;мобильных браузерах. Задачи из&nbsp;ТЗ закрыты: менеджеры и&nbsp;заказчики отметили, что от&nbsp;звонков аудиторам, чтобы понять, где они и&nbsp;что делают, полностью ушли. Нужного человека стало быстрее находить, а&nbsp;за&nbsp;работой в&nbsp;поле&nbsp;— удобнее следить.</p>
+    <p>Фичу приняли, она в&nbsp;проде: веб-портал работает и&nbsp;на&nbsp;десктопе, и&nbsp;в&nbsp;мобильных браузерах. Задачи из&nbsp;ТЗ закрыты: менеджеры и&nbsp;заказчики отметили, что от&nbsp;звонков аудиторам, чтобы понять, где они и&nbsp;что делают, полностью ушли. Нужного человека стало быстрее находить, а&nbsp;за&nbsp;работой в&nbsp;поле&nbsp;— удобнее следить. В&nbsp;админке видно, где каждый аудитор и&nbsp;кто сейчас на&nbsp;линии, а&nbsp;менеджер открывает детали, историю статусов и&nbsp;маршруты.</p>
   </div>
 </section>
 <section class="sec" id="process">
@@ -208,8 +208,11 @@
   <div class="txt">
     <ul class="list">
       <li>Два интерфейса под две роли: аудитор в&nbsp;поле работает с&nbsp;мобильным приложением, видит задания и&nbsp;маршрут на&nbsp;день, а&nbsp;менеджер&nbsp;— с&nbsp;десктопа, через веб-портал с&nbsp;обзором сразу по&nbsp;всей команде.</li>
+      <li>Получал ТЗ на&nbsp;фичу и&nbsp;созванивался с&nbsp;ответственным разработчиком и&nbsp;техлидом: они объясняли фичу, я&nbsp;задавал вопросы там, где было непонятно, и&nbsp;называл оценку, когда будут первые экраны.</li>
       <li>Перед макетами поресёрчил, как обычно группируют статусы на&nbsp;картах, и&nbsp;собрал контекст от&nbsp;техлида: рынок, видение заказчика.</li>
-      <li>Статусов больше десяти, поэтому выбрал цвет вместо иконок: под каждый пришлось бы рисовать отдельный значок, а&nbsp;цвет считывается быстрее.</li>
+      <li>Разбивал фичу на&nbsp;флоу и&nbsp;показывал разработчикам флоу за&nbsp;флоу: на&nbsp;созвонах по&nbsp;оценкам, а&nbsp;ревью по&nbsp;ТЗ шло ещё и&nbsp;прямо в&nbsp;Figma.</li>
+      <li>Статусов больше десяти. Иконки отмёл сразу: столько значков не&nbsp;подобрать, и&nbsp;по&nbsp;логике кодирования такой подход неверный. Выбрал цвет для статуса, а&nbsp;тип объекта показал формой: аудитор&nbsp;— круг, дом аудитора&nbsp;— квадрат, торговая точка&nbsp;— пин.</li>
+      <li>Правки были мелкие: тексты, дорисованные панели, данные ближе к&nbsp;реальным, ховеры. Крупных переделок не&nbsp;было. Принимал сначала ответственный за&nbsp;фичу, потом техлид, после этого фича уходила в&nbsp;прод.</li>
     </ul>
   </div>
 </section>
@@ -222,8 +225,8 @@
 <div class="pin" role="group" aria-label="Экраны">
   <div class="pin-stick">
     <div class="track">
-      <figure class="shot" style="--ar:1.60000"><picture><source srcset="projects/auditors_monitoring/01%20overview%20map.webp" type="image/webp"><img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Карта аудиторов" width="1440" height="900"></picture><figcaption><span>1</span><b>Карта аудиторов</b><i>Все аудиторы на&nbsp;одной карте, статус каждого виден по&nbsp;цвету пина. Фильтры «Группа» и&nbsp;«Статус» вынесены наверх, чтобы сузить список, не&nbsp;уходя с&nbsp;карты.</i></figcaption></figure>
-      <figure class="shot" style="--ar:1.56894"><picture><source srcset="projects/auditors_monitoring/pin%20coding%20system.webp" type="image/webp"><img src="projects/auditors_monitoring/pin%20coding%20system.png" alt="Система пинов" width="990" height="631"></picture><figcaption><span>2</span><b>Система пинов</b><i>Статусов больше десяти: выбрал цвет, а&nbsp;не&nbsp;иконки, он считывается быстрее.</i></figcaption></figure>
+      <figure class="shot" style="--ar:1.60000"><picture><source srcset="projects/auditors_monitoring/01%20overview%20map.webp" type="image/webp"><img src="projects/auditors_monitoring/01%20overview%20map.png" alt="Карта аудиторов" width="1440" height="900"></picture><figcaption><span>1</span><b>Карта аудиторов</b><i>Аудиторы, их дома и&nbsp;торговые точки на&nbsp;одной карте, статус каждого виден по&nbsp;цвету. Фильтры «Группа» и&nbsp;«Статус» вынесены наверх, чтобы сузить список, не&nbsp;уходя с&nbsp;карты.</i></figcaption></figure>
+      <figure class="shot" style="--ar:1.56894"><picture><source srcset="projects/auditors_monitoring/pin%20coding%20system.webp" type="image/webp"><img src="projects/auditors_monitoring/pin%20coding%20system.png" alt="Система пинов" width="990" height="631"></picture><figcaption><span>2</span><b>Система пинов</b><i>Пины торговых точек: статусов больше десяти, поэтому выбрал цвет, а&nbsp;не&nbsp;иконки. Тип объекта на&nbsp;карте читается по&nbsp;форме: аудитор&nbsp;— круг, дом аудитора&nbsp;— квадрат, торговая точка&nbsp;— пин.</i></figcaption></figure>
       <figure class="shot" style="--ar:1.60000"><picture><source srcset="projects/auditors_monitoring/02%20auditors%20list%20popup.webp" type="image/webp"><img src="projects/auditors_monitoring/02%20auditors%20list%20popup.png" alt="Карточка аудитора" width="1440" height="900"></picture><figcaption><span>3</span><b>Карточка аудитора</b><i>Клик по&nbsp;строке списка и&nbsp;клик по&nbsp;пину ведут в&nbsp;одну карточку: статус, устройство, версия приложения, свежесть данных.</i></figcaption></figure>
       <figure class="shot" style="--ar:1.60000"><picture><source srcset="projects/auditors_monitoring/03%20auditors%20route.webp" type="image/webp"><img src="projects/auditors_monitoring/03%20auditors%20route.png" alt="Маршрут за день" width="1440" height="900"></picture><figcaption><span>4</span><b>Маршрут за день</b><i>Менеджер видит прогресс без&nbsp;звонка. Время в&nbsp;пути между точками спрятал за&nbsp;клик на&nbsp;отрезок, чтобы не&nbsp;перегружать карту.</i></figcaption></figure>
       <figure class="shot" style="--ar:1.49223"><picture><source srcset="projects/auditors_monitoring/04%20tt%20details%20list.webp" type="image/webp"><img src="projects/auditors_monitoring/04%20tt%20details%20list.png" alt="Карточка точки" width="1440" height="965"></picture><figcaption><span>5</span><b>Карточка точки</b><i>Всё, что раньше уточняли в&nbsp;разных местах: статус сбора, вывеска, назначенные аудиторы, даты плана и&nbsp;визита.</i></figcaption></figure>
