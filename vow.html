@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b1b1a">
+<meta name="color-scheme" content="dark">
+<title>Vow: приложение для тех, кто бросает никотин — Андрей Береговой</title>
+<meta name="description" content="Личный проект: iOS-приложение для тех, кто бросает никотин. Честный счётчик, деньги, четыре виджета и «переждать тягу» без аккаунта, рекламы и бейджей.">
+<meta name="author" content="Андрей Береговой">
+<link rel="canonical" href="https://www.beregovoy.design/vow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Андрей Береговой">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Vow: приложение для тех, кто бросает никотин — Андрей Береговой">
+<meta property="og:description" content="Личный проект: iOS-приложение для тех, кто бросает никотин. Честный счётчик, деньги, четыре виджета и «переждать тягу» без аккаунта, рекламы и бейджей.">
+<meta property="og:url" content="https://www.beregovoy.design/vow">
+<meta property="og:image" content="https://www.beregovoy.design/projects/vow/hero-wide.jpg">
+<meta property="og:image:width" content="2760">
+<meta property="og:image:height" content="1380">
+<meta property="og:image:alt" content="Vow: приложение для тех, кто бросает никотин — Андрей Береговой">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vow: приложение для тех, кто бросает никотин — Андрей Береговой">
+<meta name="twitter:description" content="Личный проект: iOS-приложение для тех, кто бросает никотин. Честный счётчик, деньги, четыре виджета и «переждать тягу» без аккаунта, рекламы и бейджей.">
+<meta name="twitter:image" content="https://www.beregovoy.design/projects/vow/hero-wide.jpg">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-cyrillic.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{background:#1b1b1a;scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{margin:0;background:transparent;color:#f4f4f2;font-family:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.24 0 0 0 -0.12'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.8 0 0 0 0.4'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:240px 240px,240px 240px;}
+  a:focus-visible{outline:2px solid #f4f4f2;outline-offset:4px;border-radius:2px;}
+  .nw{white-space:nowrap;}
+  .ph{color:#8f8f8a;border-bottom:1px dashed #6a6a66;}
+
+  .close{position:fixed;top:20px;right:30px;z-index:10;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#f4f4f2;background:rgba(27,27,26,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 0 0 1px rgba(244,244,242,.16);transition:background .15s ease;}
+  .close:hover{background:rgba(70,70,68,.82);}
+  .close svg{display:block;width:18px;height:18px;}
+
+  .hero{padding:28px 30px 64px;}
+  .hero h1{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 20px;padding-right:56px;}
+  .hero .ov{max-width:680px;}
+  .hero .meta-dl{margin-top:28px;}
+  .hero .figs{margin-top:28px;}
+  .hero p{font-size:18px;line-height:1.4;margin:0 0 18px;max-width:440px;}
+  .hero p:last-child{margin-bottom:0;}
+  .figs{display:flex;gap:40px;margin:0;}
+  .fig b{display:block;font-weight:500;font-size:22px;line-height:1.2;}
+  .fig span{font-size:15px;line-height:1.5;color:#8f8f8a;}
+  .hero .meta{font-size:15px;line-height:1.5;color:#8f8f8a;}
+
+  .cover{padding:0 30px 120px;}
+  .cover img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+
+  .sec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding:0 30px 120px;}
+  .sec.tight{padding-bottom:40px;}
+  .lab{font-weight:400;font-size:18px;line-height:1.4;color:#8f8f8a;margin:0;}
+  .txt{grid-column:2 / span 2;max-width:680px;}
+  .txt p{font-size:18px;line-height:1.4;margin:0 0 18px;}
+  .txt p:last-child{margin-bottom:0;}
+  .c2{grid-column:2;}
+  .c3{grid-column:3;}
+  .top{margin-top:28px;}
+  .sub{font-weight:500;font-size:18px;line-height:1.35;margin:0 0 6px;}
+  .kv{margin:0;}
+  .kv dt{font-size:15px;line-height:1.5;color:#8f8f8a;margin:18px 0 2px;}
+  .kv dd{margin:0;font-size:18px;line-height:1.4;}
+  .list{margin:0;padding:0;list-style:none;}
+  .list li{font-size:18px;line-height:1.4;padding:11px 0;}
+  .list li + li{border-top:1px solid rgba(244,244,242,.12);}
+  .list li:first-child{padding-top:0;}
+  .list li:last-child{padding-bottom:0;}
+  .logos{display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px;margin:28px 0 0;padding:0;list-style:none;}
+  .logos img{display:block;height:32px;width:auto;border-radius:6px;}
+  .quote{margin:0;}
+  .quote h3{font-weight:500;font-size:18px;line-height:1.35;margin:0 0 4px;}
+  .quote .t{font-size:15px;line-height:1.5;color:#8f8f8a;margin:0 0 14px;}
+  .quote blockquote{margin:0;font-size:17px;line-height:1.5;color:#d4d4cf;}
+  .wide{grid-column:1 / -1;margin:56px 0 0;}
+  .wide img{display:block;width:100%;height:auto;border-radius:10px;}
+
+  .pin{height:calc(var(--stage,100vh) + var(--pan,0px));margin-bottom:120px;}
+  .pin-stick{position:sticky;top:var(--top,0px);overflow:hidden;}
+  .track{--h:min(640px,calc(100vh - 150px));display:flex;align-items:flex-start;gap:24px;padding:0 30px;will-change:transform;}
+  .shot{flex:0 0 calc(var(--h) * var(--ar,1.40625));margin:0;}
+  .shot img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+  .shot figcaption{margin-top:16px;font-size:15px;line-height:1.4;color:#b8b8b3;}
+  .shot figcaption span{color:#8f8f8a;margin-right:8px;}
+
+  .note{font-size:18px;line-height:1.4;margin:0;}
+  .meta-dl{margin:0;}
+  .meta-dl div{display:flex;gap:16px;align-items:baseline;margin:0 0 6px;}
+  .meta-dl dt{font-size:15px;line-height:1.5;color:#8f8f8a;min-width:88px;}
+  .meta-dl dd{margin:0;font-size:15px;line-height:1.5;}
+  .pairs{grid-column:2 / span 2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}
+  .pairs .h{font-size:15px;line-height:1.5;color:#8f8f8a;padding-bottom:12px;}
+  .pairs .c{font-size:18px;line-height:1.4;padding:16px 0;border-top:1px solid rgba(244,244,242,.12);}
+  .pairs .c.p{color:#b8b8b3;}
+  .shot figcaption b{font-weight:500;color:#f4f4f2;margin-right:0;}
+  .shot figcaption i{display:block;font-style:normal;color:#8f8f8a;margin-top:4px;max-width:680px;}
+
+  .more{padding:0 30px 100px;}
+  .more .lab{margin:0 0 28px;}
+  .more-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:56px 32px;}
+  .media{display:block;aspect-ratio:4 / 3;border-radius:10px;overflow:hidden;background:#161615;}
+  .media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .media:hover img{transform:scale(1.03);}
+  .cap{margin-top:18px;}
+  .tt{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 6px;}
+  .tt a{color:inherit;text-decoration:none;}
+  .ds{font-size:16px;line-height:1.45;color:#b8b8b3;margin:0;max-width:560px;}
+
+  .foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:0 30px;padding:20px 0 24px;border-top:1px solid rgba(244,244,242,.12);font-size:16px;line-height:1.5;}
+  .foot span{color:#8f8f8a;}
+  .foot a{color:#f4f4f2;text-decoration:none;}
+  .foot a:hover{text-decoration:underline;text-underline-offset:3px;}
+
+  @media (max-width:900px){
+    .close{top:14px;right:20px;}
+    .hero,.sec,.more-grid,.foot{grid-template-columns:1fr;}
+    .hero{padding:72px 20px 40px;}
+    .hero h1{padding-right:0;}
+    .hero .meta-dl,.hero .figs{margin-top:24px;}
+    .cover{padding:0 20px 72px;}
+    .sec{gap:20px;padding:0 20px 72px;}
+    .sec.tight{padding-bottom:28px;}
+    .txt,.c2,.c3{grid-column:auto;}
+    .more{padding:0 20px 72px;}
+    .more-grid{gap:48px;}
+    .foot{margin:0 20px;padding:20px 0 24px;gap:12px;}
+    .pairs{grid-column:auto;grid-template-columns:1fr;}
+    .pairs .h{display:none;}
+    .pairs .c{padding:14px 0;}
+    .pairs .c.p{padding-bottom:4px;border-top:1px solid rgba(244,244,242,.12);}
+    .pairs .c.s{border-top:0;padding-top:0;}
+    .pairs .c.p::before,.pairs .c.s::before{display:block;font-size:15px;line-height:1.5;color:#8f8f8a;margin-bottom:2px;}
+    .pairs .c.p::before{content:"Проблема";}
+    .pairs .c.s::before{content:"Решение";}
+    .meta-dl dt{min-width:72px;}
+    .pin{height:auto;margin-bottom:72px;}
+    .pin-stick{position:static;height:auto;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#3a3a38 transparent;}
+    .track{padding:0 20px 20px;}
+    .shot{flex-basis:82vw;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .close,.media img{transition:none;}
+    .pin{height:auto;margin-bottom:72px;}
+    .pin-stick{position:static;height:auto;overflow-x:auto;}
+    .track{padding-bottom:20px;}
+    .shot{flex-basis:min(900px,82vw);}
+  }
+
+  .hero .meta-dl dd{max-width:560px;}
+  .c2 .sub,.c3 .sub{margin-bottom:14px;}
+  .sub.top.wide-sub{grid-column:1 / -1;margin:72px 0 0;font-size:22px;line-height:1.2;}
+  .txt.top{margin-top:28px;}
+  .txt.half{grid-column:2;}
+  .side{grid-column:3;}
+  .side img{display:block;width:100%;height:auto;max-width:440px;}
+
+  .strip{grid-column:1 / -1;display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:32px 24px;margin:56px 0 0;align-items:start;}
+  .strip.s4{--gap-rows:56px;}
+  .sf{margin:0;min-width:0;}
+  .sf img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+  .sf.pf img{border-radius:0;background:none;}
+  .sf.cmp img,.sf img.cmp{aspect-ratio:9 / 16;object-fit:cover;object-position:top;}
+  .sf figcaption{margin-top:14px;font-size:15px;line-height:1.4;color:#b8b8b3;}
+  .sf figcaption b{display:block;font-weight:500;color:#f4f4f2;}
+  .sf figcaption i{display:block;font-style:normal;color:#8f8f8a;margin-top:2px;}
+  .crop{aspect-ratio:804 / 930;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(#000 84%,transparent);mask-image:linear-gradient(#000 84%,transparent);}
+  .crop img{position:absolute;inset:0 auto auto 0;width:100%;height:auto;}
+  .strip.tiles{row-gap:40px;}
+  .wide-sub + .strip{margin-top:28px;}
+  .strip.widgets .sf img{border-radius:14px;}
+  .shot img{border-radius:0;background:none;}
+
+  @media (max-width:900px){
+    .txt.half,.side{grid-column:auto;}
+    .side img{max-width:320px;}
+    .strip,.strip.s4,.strip.s7{display:flex;overflow-x:auto;gap:16px;margin:36px -20px 0;padding:0 20px 16px;scrollbar-width:thin;scrollbar-color:#3a3a38 transparent;}
+    .strip .sf{flex:0 0 58vw;}
+    .strip.tiles .sf{flex-basis:64vw;}
+    .strip.s7 .sf{flex-basis:46vw;}
+    .sub.top.wide-sub{margin-top:48px;}
+    .pairs[style*="--lp"] .c.p::before{content:var(--lp) !important;}
+    .pairs[style*="--ls"] .c.s::before{content:var(--ls) !important;}
+  }
+
+</style>
+</head>
+<body>
+
+<a class="close" href="index.html#cases" aria-label="Закрыть кейс"><svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></a>
+
+<header class="hero">
+  <h1>Vow&nbsp;— приложение для&nbsp;тех, кто бросает никотин</h1>
+  <p class="ov">Спокойное <span class="nw">iOS-приложение</span> для&nbsp;тех, кто бросает сигареты, вейп или нагреваемый табак: живой счётчик дней, деньги, четыре виджета и&nbsp;кнопка «переждать тягу». Без&nbsp;аккаунта, рекламы, бейджей и&nbsp;чата: данные остаются на&nbsp;телефоне.</p>
+  <dl class="meta-dl">
+      <div><dt>Роль</dt><dd>продуктовый дизайнер: исследование, продукт, визуальный язык, проверка на&nbsp;устройстве</dd></div>
+      <div><dt>Контекст</dt><dd>личный проект без&nbsp;заказчика, код писал Claude Code по&nbsp;моим решениям</dd></div>
+      <div><dt>Статус</dt><dd>работает на&nbsp;моём iPhone, в&nbsp;App Store ещё нет</dd></div>
+    </dl>
+  <div class="figs">
+      <div class="fig"><b>7</b><span>конкурентов разобрал по&nbsp;экранам и&nbsp;отзывам</span></div>
+      <div class="fig"><b>4</b><span>виджета на&nbsp;домашнем экране и&nbsp;экране блокировки</span></div>
+  </div>
+</header>
+
+<main>
+<div class="cover">
+  <picture><source srcset="projects/vow/hero-wide.webp" type="image/webp"><img src="projects/vow/hero-wide.jpg" alt="Vow: приложение для тех, кто бросает никотин" width="2760" height="1380"></picture>
+</div>
+
+<section class="sec" id="spine">
+  <h2 class="lab">Проблема и&nbsp;решение</h2>
+  <div class="txt ">
+<p>Приложения для&nbsp;отказа от&nbsp;курения шумят там, где человеку нужна тишина. Я&nbsp;разобрал семь популярных и&nbsp;прочитал отзывы тех, кто ими пользуется. Хвалят одно и&nbsp;то же, простые честные цифры; ругают тоже одно и&nbsp;то же, шум вокруг них. Из&nbsp;этого получились шесть пар.</p>
+  </div>
+  <div class="pairs top" style="--lp:'Проблема';--ls:'Решение'">
+    <div class="h">Проблема</div>
+    <div class="h">Решение</div>
+    <div class="c p">Счётчик не&nbsp;герой. Его прячут под&nbsp;баннером настроения, лентой эмодзи и&nbsp;колесом из&nbsp;пяти кнопок.</div>
+    <div class="c s">Число главное на&nbsp;экране: три цифры с&nbsp;подписями, вокруг пустота.</div>
+    <div class="c p">Стены бейджей, ленты, лидерборды и&nbsp;чаты. Чат нельзя отключить, даже оплатив Pro.</div>
+    <div class="c s">Ни&nbsp;бейджей, ни&nbsp;чата, ни&nbsp;ленты. Из&nbsp;«достижений» только ближайшая цель и&nbsp;рекорд.</div>
+    <div class="c p">Срыв обнуляет всё, а&nbsp;счётчик путает дату установки с&nbsp;датой отказа.</div>
+    <div class="c s">Срыв оставляет серию в&nbsp;календаре, рекорд хранится отдельно, дату начала можно указать в&nbsp;прошлом.</div>
+    <div class="c p">Прогресс пропадает вместе с&nbsp;аккаунтом: сломанный вход заставляет переустанавливать приложение.</div>
+    <div class="c s">Аккаунта нет. Данные на&nbsp;телефоне, копия файлом, восстановить можно на&nbsp;другом.</div>
+    <div class="c p">Реклама без&nbsp;выхода и&nbsp;платные функции, которые раскрываются после ввода личных данных.</div>
+    <div class="c s">Рекламы нет, платных экранов нет: счётчик, виджеты и&nbsp;«переждать тягу» остаются бесплатным ядром.</div>
+    <div class="c p">В&nbsp;момент тяги просят заполнить анкету: настроение, место, компания.</div>
+    <div class="c s">Один тап на&nbsp;«переждать тягу»: дыхание или заземление, без&nbsp;вопросов и&nbsp;очков.</div>
+  </div>
+</section>
+<section class="sec" id="result">
+  <h2 class="lab">Результат</h2>
+  <div class="txt ">
+<p>Приложение собрано и&nbsp;работает на&nbsp;моём iPhone: онбординг из&nbsp;четырёх шагов, три вкладки, четыре виджета, русский и&nbsp;английский, светлая и&nbsp;тёмная темы. Каждый экран описан сценариями, их закрывают 71 <span class="nw">UI-тест</span> и&nbsp;68 тестов на&nbsp;логику.</p>
+<p>Метрик использования пока нет: приложения нет в&nbsp;App Store, в&nbsp;TestFlight его никто не&nbsp;получал. Проект идёт с&nbsp;17 сентября 2026 года, и&nbsp;вот что я&nbsp;могу честно показать: живой прогон с&nbsp;одним человеком, вопрос которого поменял навигацию (см. «Навигация»), и&nbsp;несколько недель сборок на&nbsp;собственном телефоне. Следующий шаг в&nbsp;конце страницы.</p>
+  </div>
+</section>
+<section class="sec" id="research">
+  <h2 class="lab">Исследование</h2>
+  <div class="txt ">
+<p>Начал не&nbsp;с&nbsp;экранов, а&nbsp;с&nbsp;рынка и&nbsp;с&nbsp;себя: рисовать дизайн, когда мало вводных, бессмысленно. Разобрал 54 экрана семи приложений и&nbsp;прочитал отзывы пользователей, а&nbsp;не&nbsp;маркетинг. Всё приоритизировал по&nbsp;MoSCoW: что обязательно, чего точно не&nbsp;должно быть.</p>
+  </div>
+<div class="strip s7" style="--n:7"><figure class="sf cmp"><picture><source srcset="projects/vow/comp-easyquit.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-easyquit.jpg" alt="EasyQuit" width="640" height="1138" loading="lazy"></picture><figcaption><b>EasyQuit</b><i>Восемь равных карточек статистики и&nbsp;«+100 бейджей»: главной цифры нет.</i></figcaption></figure><figure class="sf cmp"><picture><source srcset="projects/vow/comp-kickit.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-kickit.jpg" alt="Kick It" width="640" height="1138" loading="lazy"></picture><figcaption><b>Kick It</b><i>Солнце и&nbsp;облака за&nbsp;счётчиком дней.</i></figcaption></figure><figure class="sf cmp"><picture><source srcset="projects/vow/comp-kwit.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-kwit.jpg" alt="Kwit" width="640" height="1138" loading="lazy"></picture><figcaption><b>Kwit</b><i>Счётчик под&nbsp;баннером настроения и&nbsp;неделей эмодзи, основное за&nbsp;пейволлом.</i></figcaption></figure><figure class="sf cmp"><picture><source srcset="projects/vow/comp-quitnow.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-quitnow.jpg" alt="QuitNow" width="640" height="1138" loading="lazy"></picture><figcaption><b>QuitNow</b><i>Ближе всех к&nbsp;цели: крупные цифры. Но&nbsp;рядом чат и&nbsp;80 достижений.</i></figcaption></figure><figure class="sf cmp"><picture><source srcset="projects/vow/comp-quitstart.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-quitstart.jpg" alt="quitSTART" width="640" height="1138" loading="lazy"></picture><figcaption><b>quitSTART</b><i>Колесо из&nbsp;пяти настроений крупнее самого счётчика, пять вкладок.</i></figcaption></figure><figure class="sf cmp"><picture><source srcset="projects/vow/comp-smokeclock.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-smokeclock.jpg" alt="SmokeClock" width="640" height="1138" loading="lazy"></picture><figcaption><b>SmokeClock</b><i>Считает время до&nbsp;следующей сигареты, а&nbsp;не&nbsp;без&nbsp;неё.</i></figcaption></figure><figure class="sf cmp"><picture><source srcset="projects/vow/comp-smokefree.webp" type="image/webp"><img class="cmp" src="projects/vow/comp-smokefree.jpg" alt="Smoke Free" width="640" height="1138" loading="lazy"></picture><figcaption><b>Smoke Free</b><i>Стена бейджей, <span class="nw">чат-бот</span>, расписание клиник, лидерборд.</i></figcaption></figure></div>
+  <div class="c2 top">
+    <h3 class="sub">За что люди держатся</h3>
+    <ul class="list"><li>Простые честные цифры: дни, деньги, проценты восстановления. Самая частая похвала у&nbsp;всех семи.</li><li>Инструмент в&nbsp;момент тяги: короткий, по&nbsp;запросу, не&nbsp;система.</li><li>Честный бесплатный тариф без&nbsp;ощущения, что тебя обманули.</li></ul>
+  </div>
+  <div class="c3 top">
+    <h3 class="sub">Что отталкивает</h3>
+    <ul class="list"><li>Пейволл, который раскрывается после ввода данных (Kwit).</li><li>Реклама без&nbsp;выхода: «11 вставок за&nbsp;15 минут» (EasyQuit).</li><li>Потеря прогресса <span class="nw">из-за</span>&nbsp;аккаунта (Smoke Free, Kwit).</li><li>Срыв обнуляет всё (Kwit), дата путается (quitSTART, EasyQuit).</li><li>Чат, который нельзя отключить (QuitNow).</li></ul>
+  </div>
+</section>
+<section class="sec" id="users">
+  <h2 class="lab">Понимание пользователя</h2>
+  <div class="txt ">
+<p>Первым респондентом был я&nbsp;сам: начал в&nbsp;<span class="nw">15–16</span> лет с&nbsp;вейпов, потом сигареты и&nbsp;нагреваемый табак, бросал три раза, дольше всего держался около восьми месяцев. Прибавил к&nbsp;этому отзывы и&nbsp;исследования, и&nbsp;вот что из&nbsp;этого следует для&nbsp;продукта.</p>
+  </div>
+  <div class="pairs top" style="--lp:'Узнал';--ls:'Следует'">
+    <div class="h">Что узнал</div>
+    <div class="h">Что из&nbsp;этого следует</div>
+    <div class="c p">Срывался не&nbsp;<span class="nw">из-за</span>&nbsp;триггера, а&nbsp;от&nbsp;усталости каждый день убеждать себя.</div>
+    <div class="c s">Ничего, что требует действий: ни&nbsp;ежедневных <span class="nw">чек-инов</span>, ни&nbsp;напоминаний. Счётчик просто на&nbsp;виду, в&nbsp;том числе на&nbsp;экране блокировки.</div>
+    <div class="c p">Путь не&nbsp;сводится к&nbsp;сигаретам: вейп, потом сигареты, потом стики. В&nbsp;исследовании 5 из&nbsp;8 приложений про&nbsp;вейп спрашивали число сигарет и&nbsp;цену пачки.</div>
+    <div class="c s">Можно выбрать несколько продуктов, подпись одна&nbsp;— «без&nbsp;никотина», спрашиваю только сумму трат: единицы у&nbsp;продуктов разные, универсальна лишь сумма.</div>
+    <div class="c p">Рядом курит близкий человек и&nbsp;бросать не&nbsp;собирается. Это вне моего контроля.</div>
+    <div class="c s">Тон никогда не&nbsp;стыдит за&nbsp;окружение, срыв называется «бывает.».</div>
+    <div class="c p">С&nbsp;экрана блокировки приложение не&nbsp;должно кричать о&nbsp;привычке.</div>
+    <div class="c s">Нейтральное имя, ни&nbsp;сигарет, ни&nbsp;огня, ни&nbsp;дыма в&nbsp;картинках. Виджеты подписаны «дней свободы» и&nbsp;«уже твои».</div>
+  </div>
+</section>
+<section class="sec" id="character">
+  <h2 class="lab">Принципы</h2>
+  <div class="txt ">
+<p>Из&nbsp;исследования и&nbsp;своего опыта вывел характер продукта: Vow&nbsp;— тихий свидетель обещания, которое человек дал себе сам. Название значит «обет»; <span class="nw">по-русски</span> я&nbsp;не&nbsp;перевожу слово, а&nbsp;говорю «дай себе слово».</p>
+<p>Три роли, которых у&nbsp;приложения нет. Не&nbsp;тренер: не&nbsp;даёт заданий и&nbsp;не&nbsp;спрашивает каждый день. Не&nbsp;судья: не&nbsp;стыдит, срыв не&nbsp;провал. Не&nbsp;болельщик: ни&nbsp;конфетти, ни&nbsp;бейджей, ни&nbsp;восклицательных знаков. Голос приложения: строчными, на&nbsp;«ты», только о&nbsp;состоянии, а&nbsp;не&nbsp;о&nbsp;лишении.</p>
+  </div>
+  <div class="pairs top" style="--lp:'Так';--ls:'Не так'">
+    <div class="h">Так</div>
+    <div class="h">Не&nbsp;так</div>
+    <div class="c p">47 дней без&nbsp;никотина</div>
+    <div class="c s">Ура! 47 дней без&nbsp;сигарет!</div>
+    <div class="c p">срыв случается, твои дни остаются в&nbsp;истории</div>
+    <div class="c s">Ты не&nbsp;проиграл, всё хорошо!</div>
+    <div class="c p">тяга обычно стихает за&nbsp;несколько минут</div>
+    <div class="c s">Это точно пройдёт за&nbsp;3 минуты</div>
+    <div class="c p">симптомы отмены обычно уже стихли</div>
+    <div class="c s">Твои лёгкие чистые!</div>
+  </div>
+</section>
+<section class="sec tight" id="decisions">
+  <h2 class="lab">Ключевые решения</h2>
+  <div class="txt ">
+<p>Девять решений, на&nbsp;которых держится продукт. У&nbsp;каждого есть вариант, который я&nbsp;отверг.</p>
+  </div>
+</section>
+<section class="sec" id="counter">
+  <h2 class="lab">Счётчик</h2>
+  <div class="txt ">
+<p>Герой экрана&nbsp;— число, и&nbsp;показать его я&nbsp;искал дольше всего: перебрал восемь раскладок, включая точечную матрицу, каскад и&nbsp;плакат с&nbsp;цифрами. Мне не&nbsp;нравилось всё, что я&nbsp;придумывал сам, и&nbsp;я&nbsp;пошёл тем же&nbsp;путём, что рынок: три цифры с&nbsp;подписями снизу. Остальное ушло.</p>
+<p>Счёт идёт по&nbsp;календарю и&nbsp;перестраивается вместе со&nbsp;сроком: в&nbsp;первые сутки часы, минуты и&nbsp;секунды; дальше дни, часы, минуты; с&nbsp;месяца месяцы, дни, часы; с&nbsp;года годы, месяцы, дни. Цифр всегда три, и&nbsp;показываю только то, что имеет смысл на&nbsp;этом сроке: в&nbsp;первый час нет смысла в&nbsp;месяцах, а&nbsp;через год в&nbsp;секундах.</p>
+  </div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><div class="crop"><picture><source srcset="projects/vow/home-first-day.webp" type="image/webp"><img src="projects/vow/home-first-day.png" alt="Первые сутки" width="804" height="1748" loading="lazy"></picture></div><figcaption><b>Первые сутки</b><i>часы, минуты, секунды</i></figcaption></figure><figure class="sf pf"><div class="crop"><picture><source srcset="projects/vow/home-3d.webp" type="image/webp"><img src="projects/vow/home-3d.png" alt="3 дня" width="804" height="1748" loading="lazy"></picture></div><figcaption><b>3 дня</b><i>дни, часы, минуты</i></figcaption></figure><figure class="sf pf"><div class="crop"><picture><source srcset="projects/vow/home.webp" type="image/webp"><img src="projects/vow/home.png" alt="47 дней" width="804" height="1748" loading="lazy"></picture></div><figcaption><b>47 дней</b><i>месяц, дни, часы</i></figcaption></figure><figure class="sf pf"><div class="crop"><picture><source srcset="projects/vow/home-1y.webp" type="image/webp"><img src="projects/vow/home-1y.png" alt="400 дней" width="804" height="1748" loading="lazy"></picture></div><figcaption><b>400 дней</b><i>год, месяц, дни</i></figcaption></figure><figure class="sf pf"><div class="crop"><picture><source srcset="projects/vow/home-5y.webp" type="image/webp"><img src="projects/vow/home-5y.png" alt="2000 дней" width="804" height="1748" loading="lazy"></picture></div><figcaption><b>2000 дней</b><i>годы, месяцы, дни</i></figcaption></figure></div>
+  <h3 class="sub top wide-sub">Восемь способов показать время</h3>
+<div class="strip s4 tiles" style="--n:4"><figure class="sf"><picture><source srcset="projects/vow/counter-axis.webp" type="image/webp"><img src="projects/vow/counter-axis.jpg" alt="Столбиком" width="900" height="978" loading="lazy"></picture><figcaption><b>Столбиком</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-cascade.webp" type="image/webp"><img src="projects/vow/counter-cascade.jpg" alt="Каскадом" width="900" height="978" loading="lazy"></picture><figcaption><b>Каскадом</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-columns.webp" type="image/webp"><img src="projects/vow/counter-columns.jpg" alt="В три колонки" width="900" height="978" loading="lazy"></picture><figcaption><b>В&nbsp;три колонки</b><i>выбрал</i></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-glow.webp" type="image/webp"><img src="projects/vow/counter-glow.jpg" alt="Точки со свечением" width="900" height="978" loading="lazy"></picture><figcaption><b>Точки со&nbsp;свечением</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-literal.webp" type="image/webp"><img src="projects/vow/counter-literal.jpg" alt="По центру" width="900" height="978" loading="lazy"></picture><figcaption><b>По&nbsp;центру</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-matrix.webp" type="image/webp"><img src="projects/vow/counter-matrix.jpg" alt="Точечная матрица" width="900" height="978" loading="lazy"></picture><figcaption><b>Точечная матрица</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-poster.webp" type="image/webp"><img src="projects/vow/counter-poster.jpg" alt="Плакатом" width="900" height="978" loading="lazy"></picture><figcaption><b>Плакатом</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/counter-table.webp" type="image/webp"><img src="projects/vow/counter-table.jpg" alt="Таблицей" width="900" height="978" loading="lazy"></picture><figcaption><b>Таблицей</b></figcaption></figure></div>
+</section>
+<section class="sec" id="orb">
+  <h2 class="lab">Шар</h2>
+  <div class="txt ">
+<p>Фирменный знак один: стеклянный шар. Он на&nbsp;иконке, на&nbsp;приветствии, в&nbsp;«переждать тягу» и&nbsp;на&nbsp;виджете. Я&nbsp;доводил его цвет, свечение и&nbsp;блик, убрал белые полосы, которые «дешевили», и&nbsp;ввёл правило: шар не&nbsp;масштабируется нигде, кроме дыхания. Если он вырос, значит ты вдыхаешь.</p>
+<p>При&nbsp;запуске из&nbsp;дымки проступает шар, оседает название, в&nbsp;центр падает капля, и&nbsp;волна открывает главную. Около двух секунд и&nbsp;одна лёгкая вибрация; при&nbsp;включённом «уменьшении движения» заставки нет.</p>
+  </div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><picture><source srcset="projects/vow/launch-1.webp" type="image/webp"><img src="projects/vow/launch-1.png" alt="Из дымки" width="804" height="1748" loading="lazy"></picture><figcaption><b>Из&nbsp;дымки</b><i>проступает шар</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/launch-2.webp" type="image/webp"><img src="projects/vow/launch-2.png" alt="Название и шар" width="804" height="1748" loading="lazy"></picture><figcaption><b>Название и&nbsp;шар</b><i>оседает «Vow»</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/launch-3.webp" type="image/webp"><img src="projects/vow/launch-3.png" alt="Капля" width="804" height="1748" loading="lazy"></picture><figcaption><b>Капля</b><i>падает в&nbsp;центр шара</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/launch-4.webp" type="image/webp"><img src="projects/vow/launch-4.png" alt="Волна" width="804" height="1748" loading="lazy"></picture><figcaption><b>Волна</b><i>открывает главную</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/welcome.webp" type="image/webp"><img src="projects/vow/welcome.png" alt="Приветствие" width="804" height="1748" loading="lazy"></picture><figcaption><b>Приветствие</b><i>бросать&nbsp;— спокойно</i></figcaption></figure></div>
+</section>
+<section class="sec" id="craving">
+  <h2 class="lab">Переждать тягу</h2>
+  <div class="txt ">
+<p>Кнопка внизу главной ведёт не&nbsp;на&nbsp;одну технику, а&nbsp;на&nbsp;список способов. Раньше нажатие сразу запускало последнюю технику дыхания; когда способов стало два, я&nbsp;убрал этот ярлык. Основа&nbsp;— «серфинг по&nbsp;тяге»: острая тяга обычно длится несколько минут.</p>
+<p>Дыхание: три техники (ровное <span class="nw">4·4·4·4</span>, <span class="nw">4·7·8</span>, медленное <span class="nw">4·6</span>). Перед стартом отсчёт <span class="nw">3-2-1</span>, чтобы не&nbsp;застать врасплох; пока человек выбирает технику, отсчёт стоит. На&nbsp;вдохе и&nbsp;выдохе лёгкая вибрация. Заземление: пять вещей, которые видишь, четыре, к&nbsp;которым можно прикоснуться, и&nbsp;так до&nbsp;одной. В&nbsp;конце один вопрос: «тяга прошла?». Ответ записывается на&nbsp;телефоне и&nbsp;нигде не&nbsp;показывается.</p>
+  </div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><picture><source srcset="projects/vow/craving.webp" type="image/webp"><img src="projects/vow/craving.png" alt="Выбор способа" width="804" height="1748" loading="lazy"></picture><figcaption><b>Выбор способа</b><i>дыхание или заземление</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/breath-count.webp" type="image/webp"><img src="projects/vow/breath-count.png" alt="Отсчёт" width="804" height="1748" loading="lazy"></picture><figcaption><b>Отсчёт <span class="nw">3-2-1</span></b><i>техника выбирается здесь</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/breath-in.webp" type="image/webp"><img src="projects/vow/breath-in.png" alt="Вдох" width="804" height="1748" loading="lazy"></picture><figcaption><b>Вдох</b><i>шар растёт, выдох сжимает</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/ground-see.webp" type="image/webp"><img src="projects/vow/ground-see.png" alt="Заземление" width="804" height="1748" loading="lazy"></picture><figcaption><b>Заземление</b><i>пять вещей, которые видишь</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/craving-end.webp" type="image/webp"><img src="projects/vow/craving-end.png" alt="Тяга прошла?" width="804" height="1748" loading="lazy"></picture><figcaption><b>Тяга прошла?</b><i>ответ только для&nbsp;тебя</i></figcaption></figure></div>
+</section>
+<section class="sec" id="slip">
+  <h2 class="lab">Срыв</h2>
+  <div class="txt ">
+<p>Срыв&nbsp;— самое уязвимое место приложения: у&nbsp;Kwit он обнуляет всё, и&nbsp;человек уходит. У&nbsp;меня срыв называется «бывает.», серия до&nbsp;него остаётся в&nbsp;календаре, а&nbsp;рекорд хранится отдельно. Слов «нарушил», «подвёл», «провал» в&nbsp;приложении нет.</p>
+<p>Срыв отмечается тапом на&nbsp;день в&nbsp;календаре, без&nbsp;подтверждений: тап по&nbsp;дню серии исключает его из&nbsp;серии, тап по&nbsp;пустому дню возвращает. Если срыв сегодня, серия заканчивается в&nbsp;момент срыва, и&nbsp;часы сегодняшнего дня остаются человеку.</p>
+  </div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><picture><source srcset="projects/vow/days.webp" type="image/webp"><img src="projects/vow/days.png" alt="Календарь" width="804" height="1748" loading="lazy"></picture><figcaption><b>Календарь</b><i>серии лентами, тап по&nbsp;дню</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/relapse.webp" type="image/webp"><img src="projects/vow/relapse.png" alt="Лист срыва" width="804" height="1748" loading="lazy"></picture><figcaption><b>«бывает.»</b><i>дни остаются твоими</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/home-3d.webp" type="image/webp"><img src="projects/vow/home-3d.png" alt="Рекорд" width="804" height="1748" loading="lazy"></picture><figcaption><b>Рекорд остаётся</b><i>после срыва идёт новая серия</i></figcaption></figure></div>
+</section>
+<section class="sec" id="money">
+  <h2 class="lab">Деньги</h2>
+  <div class="txt ">
+<p>Деньги&nbsp;— второй по&nbsp;частоте повод для&nbsp;похвалы в&nbsp;отзывах, поэтому у&nbsp;них своя вкладка: сколько сэкономлено за&nbsp;всё время, в&nbsp;среднем в&nbsp;день, неделю, месяц и&nbsp;год и&nbsp;«если продолжишь» через год и&nbsp;через пять лет.</p>
+<p>Спрашиваю только сумму. Валюта пересчитывается по&nbsp;курсу: это единственный сетевой запрос в&nbsp;приложении, данные человека никуда не&nbsp;уходят. Копейки остаются у&nbsp;сильных валют, у&nbsp;рубля и&nbsp;тенге их нет: они дешевят интерфейс. Иконка вкладки&nbsp;— знак выбранной валюты.</p>
+  </div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><picture><source srcset="projects/vow/money.webp" type="image/webp"><img src="projects/vow/money.png" alt="Деньги" width="804" height="1748" loading="lazy"></picture><figcaption><b>Светлая тема</b></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/money-dark.webp" type="image/webp"><img src="projects/vow/money-dark.png" alt="Деньги, тёмная тема" width="804" height="1748" loading="lazy"></picture><figcaption><b>Тёмная тема</b></figcaption></figure></div>
+</section>
+<section class="sec" id="widgets">
+  <h2 class="lab">Виджеты</h2>
+  <div class="txt ">
+<p>По&nbsp;моему разбору, ни&nbsp;у&nbsp;одного из&nbsp;семи конкурентов нет полноценных виджетов: у&nbsp;EasyQuit виджет считает не&nbsp;от&nbsp;той даты. Для&nbsp;человека, которому счётчик нужен на&nbsp;виду, это главный довод в&nbsp;пользу приложения.</p>
+<p>Сначала я&nbsp;рисовал пять виджетов и&nbsp;оставил четыре: «свобода» (число дней), «часы» (месяцы, дни, часы), «деньги» и&nbsp;«переждать тягу»&nbsp;— шар с&nbsp;ветром без&nbsp;текста. Нажатие открывает «переждать тягу». Подписи нейтральные, «дней свободы» и&nbsp;«уже твои», потому что виджет увидят и&nbsp;на&nbsp;экране блокировки.</p>
+  </div>
+<div class="strip s5 widgets" style="--n:5"><figure class="sf"><picture><source srcset="projects/vow/widgets-light.webp" type="image/webp"><img src="projects/vow/widgets-light.jpg" alt="Виджеты, светлая тема" width="804" height="1253" loading="lazy"></picture><figcaption><b>Светлая тема</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/widgets-dark.webp" type="image/webp"><img src="projects/vow/widgets-dark.jpg" alt="Виджеты, тёмная тема" width="804" height="1253" loading="lazy"></picture><figcaption><b>Тёмная тема</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/widgets-accent.webp" type="image/webp"><img src="projects/vow/widgets-accent.jpg" alt="Виджеты, акцентный режим" width="804" height="1253" loading="lazy"></picture><figcaption><b>Акцентный режим</b><i>виджеты экрана блокировки перекрашивает система</i></figcaption></figure></div>
+</section>
+<section class="sec" id="nav">
+  <h2 class="lab">Навигация</h2>
+  <div class="txt ">
+<p>Три вкладки и&nbsp;ни&nbsp;одной больше: «дни свободы», «главная», «деньги». Настройки шестерёнкой справа сверху, листом снизу. Раньше слева была «история». Я&nbsp;дал приложение одному человеку, и&nbsp;он спросил: «зачем раздел „история“, это же&nbsp;сразу намёк, что будет срыв». Раздел стал «путём», а&nbsp;когда в&nbsp;нём появился календарь, «днями свободы»: слово «свободы» принципиально.</p>
+<p>Иконку для&nbsp;этой вкладки подбирал на&nbsp;макетах, из&nbsp;семи вариантов остался календарь.</p>
+  </div>
+<div class="strip s7 tiles" style="--n:7"><figure class="sf"><picture><source srcset="projects/vow/tab-calendar.webp" type="image/webp"><img src="projects/vow/tab-calendar.jpg" alt="Календарь" width="528" height="468" loading="lazy"></picture><figcaption><b>Календарь</b><i>выбрал</i></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/tab-chart.webp" type="image/webp"><img src="projects/vow/tab-chart.jpg" alt="График" width="528" height="468" loading="lazy"></picture><figcaption><b>График</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/tab-curve.webp" type="image/webp"><img src="projects/vow/tab-curve.jpg" alt="Кривая" width="528" height="468" loading="lazy"></picture><figcaption><b>Кривая</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/tab-peak.webp" type="image/webp"><img src="projects/vow/tab-peak.jpg" alt="Пик" width="528" height="468" loading="lazy"></picture><figcaption><b>Пик</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/tab-route.webp" type="image/webp"><img src="projects/vow/tab-route.jpg" alt="Маршрут" width="528" height="468" loading="lazy"></picture><figcaption><b>Маршрут</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/tab-sprout.webp" type="image/webp"><img src="projects/vow/tab-sprout.jpg" alt="Росток" width="528" height="468" loading="lazy"></picture><figcaption><b>Росток</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/vow/tab-steps.webp" type="image/webp"><img src="projects/vow/tab-steps.jpg" alt="Ступени" width="528" height="468" loading="lazy"></picture><figcaption><b>Ступени</b><i>«непонятно, что за&nbsp;раздел»</i></figcaption></figure></div>
+</section>
+<section class="sec" id="data">
+  <h2 class="lab">Данные</h2>
+  <div class="txt half">
+<p>Аккаунта нет, и&nbsp;это ответ на&nbsp;главную жалобу в&nbsp;отзывах: потерянный прогресс. Данные лежат только на&nbsp;телефоне.</p>
+<p>Для&nbsp;страховки в&nbsp;настройках есть «сохранить копию» (файл, который можно положить куда угодно), «восстановить из&nbsp;копии» и&nbsp;«удалить всё». При&nbsp;восстановлении чужой, повреждённый и&nbsp;более новый файл отклоняются с&nbsp;объяснением, данные не&nbsp;меняются. Синхронизацию через iCloud отложил до&nbsp;версии 1.1.</p>
+  </div>
+  <div class="side"><figure class="sf pf"><picture><source srcset="projects/vow/settings.webp" type="image/webp"><img src="projects/vow/settings.png" alt="Настройки" width="804" height="1748" loading="lazy"></picture></figure></div>
+
+</section>
+<section class="sec" id="health">
+  <h2 class="lab">Слова про&nbsp;здоровье</h2>
+  <div class="txt half">
+<p>Список «что происходит с&nbsp;организмом»&nbsp;— самый рискованный текст приложения. Для&nbsp;сигарет в&nbsp;нём десять пунктов от&nbsp;20 минут до&nbsp;10 лет, основа&nbsp;— данные ВОЗ, NHS, CDC и&nbsp;American Cancer Society. Для&nbsp;вейпа и&nbsp;нагреваемого табака общий список из&nbsp;пяти: данных о&nbsp;сроках пользы именно от&nbsp;их отказа нет, и&nbsp;я&nbsp;не&nbsp;стал их придумывать.</p>
+<p>Исследование с&nbsp;источниками показало и&nbsp;места, где формулировки приложения надо смягчить, например «лёгкие очищаются» преувеличивает. Эта правка и&nbsp;сверка чисел с&nbsp;первоисточниками в&nbsp;списке работ до&nbsp;релиза.</p>
+  </div>
+  <div class="side"><figure class="sf pf"><picture><source srcset="projects/vow/recovery.webp" type="image/webp"><img src="projects/vow/recovery.png" alt="Что происходит с организмом" width="804" height="1748" loading="lazy"></picture></figure></div>
+
+</section>
+<section class="sec" id="versions">
+  <h2 class="lab">Две версии дизайна</h2>
+  <div class="txt ">
+<p>Первая версия была «музеем»: чёрный фон, арки, восковая печать «слово дано», каталожная нумерация серий. Мне хотелось рыцарской темы, но&nbsp;не&nbsp;через доспехи, а&nbsp;через материальную культуру эпохи, и&nbsp;я&nbsp;собрал под&nbsp;это <span class="nw">дизайн-систему</span> в&nbsp;Claude Design. Версия получилась цельной, но&nbsp;через пару дней на&nbsp;телефоне я&nbsp;понял: это старомодно.</p>
+<p>Человеку, который устал себя убеждать, нужна лёгкость, а&nbsp;не&nbsp;стоицизм: «стойкое слово» перестало подходить. Я&nbsp;предложил дышащие формы, градиенты, светлые тона и&nbsp;стекло, получил от&nbsp;Claude Design первую версию в&nbsp;духе 2010-х, дал корректирующий промпт и&nbsp;собрал вторую версию, ту, что на&nbsp;обложке.</p>
+  </div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><picture><source srcset="projects/vow/v1-home.webp" type="image/webp"><img src="projects/vow/v1-home.png" alt="Версия 1, главная" width="804" height="1748" loading="lazy"></picture><figcaption><b>Главная</b><i>арка и&nbsp;печать</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/v1-days.webp" type="image/webp"><img src="projects/vow/v1-days.png" alt="Версия 1, история" width="804" height="1748" loading="lazy"></picture><figcaption><b>История</b><i>серии как каталог</i></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/v1-onboarding.webp" type="image/webp"><img src="projects/vow/v1-onboarding.png" alt="Версия 1, онбординг" width="804" height="1748" loading="lazy"></picture><figcaption><b>Онбординг</b><i>дата в&nbsp;арке</i></figcaption></figure></div>
+  <h3 class="sub top wide-sub">Эксперимент: лёгкие за стеклом</h3>
+  <div class="txt top"><p>Однажды я&nbsp;захотел положить за&nbsp;стекло живые лёгкие, которые дышат в&nbsp;реальном ритме. Прошёл около десяти итераций вместе с&nbsp;Claude: ребристое стекло по&nbsp;референсу, цвет, частота вдоха. Эффектно, но&nbsp;лёгкие спорили с&nbsp;числом, и&nbsp;я&nbsp;убрал их с&nbsp;фона, «чтоб ничего не&nbsp;отвлекало». Дыхание осталось в&nbsp;одном месте, в&nbsp;шаре.</p></div>
+<div class="strip s5" style="--n:5"><figure class="sf pf"><picture><source srcset="projects/vow/lungs-light.webp" type="image/webp"><img src="projects/vow/lungs-light.png" alt="Лёгкие за стеклом" width="804" height="1748" loading="lazy"></picture><figcaption><b>Ребристое стекло</b></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/lungs-dark.webp" type="image/webp"><img src="projects/vow/lungs-dark.png" alt="Лёгкие, тёмная тема" width="804" height="1748" loading="lazy"></picture><figcaption><b>Тёмный вариант</b></figcaption></figure><figure class="sf pf"><picture><source srcset="projects/vow/lungs-warm.webp" type="image/webp"><img src="projects/vow/lungs-warm.png" alt="Лёгкие, тёплый цвет" width="804" height="1748" loading="lazy"></picture><figcaption><b>Тёплый цвет</b></figcaption></figure></div>
+</section>
+<section class="sec" id="rejected">
+  <h2 class="lab">Что отверг</h2>
+  <div class="pairs top" style="--lp:'Пробовал';--ls:'Почему убрал'">
+    <div class="h">Пробовал</div>
+    <div class="h">Почему убрал</div>
+    <div class="c p">Рыцарская тема: арки, восковая печать, каталожные номера.</div>
+    <div class="c s">Старомодно и&nbsp;слишком торжественно для&nbsp;человека, который устал себя убеждать. Перешёл от&nbsp;стойкости к&nbsp;лёгкости.</div>
+    <div class="c p">Приложение сразу про&nbsp;несколько зависимостей.</div>
+    <div class="c s">У&nbsp;них разная физиология, разная «валюта» прогресса и&nbsp;разные риски: с&nbsp;алкоголем резкий отказ бывает опасен. Первая версия про&nbsp;никотин.</div>
+    <div class="c p">Нативные компоненты SwiftUI вместо своих.</div>
+    <div class="c s">Приложение потеряло самобытность, вернул свои стеклянные компоненты.</div>
+    <div class="c p">Свечи, чётки, песочные часы, точечная матрица вместо числа.</div>
+    <div class="c s">Не&nbsp;читались лучше простого числа.</div>
+    <div class="c p">Один тап на&nbsp;«подышать» запускает последнюю технику.</div>
+    <div class="c s">Способов стало два: нажатие ведёт на&nbsp;выбор.</div>
+    <div class="c p">Слова по&nbsp;кругу вокруг шара на&nbsp;виджете «переждать тягу».</div>
+    <div class="c s">Выбивались из&nbsp;ритма приложения: фраза обычным шрифтом и&nbsp;одно слово курсивом.</div>
+    <div class="c p">Виджет «цель»: «50 дней свободы, ещё 2 д 10 ч».</div>
+    <div class="c s">Дублировал счётчик, а&nbsp;отсчёт до&nbsp;вехи ничего не&nbsp;говорил.</div>
+    <div class="c p">Точный остаток до&nbsp;цели: «3 дня 9 часов».</div>
+    <div class="c s">«через 3 дня»: мелкие доли только шумят.</div>
+    <div class="c p">«Зачем бросаю»: одна фраза внутри шара.</div>
+    <div class="c s">Сделал и&nbsp;убрал: сырая, первой версии не&nbsp;нужна.</div>
+  </div>
+</section>
+<section class="sec tight" id="screens">
+  <h2 class="lab">Экраны</h2>
+  <div class="txt ">
+<p>Весь путь человека: от&nbsp;первого запуска до&nbsp;срыва и&nbsp;денег.</p>
+  </div>
+</section>
+<div class="pin" role="group" aria-label="Экраны">
+  <div class="pin-stick">
+    <div class="track">
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/welcome.webp" type="image/webp"><img src="projects/vow/welcome.png" alt="Приветствие" width="804" height="1748" loading="lazy"></picture><figcaption><span>1</span><b>Приветствие</b><i>Название, шар и&nbsp;одна строка о&nbsp;том, что это.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/onb-date.webp" type="image/webp"><img src="projects/vow/onb-date.png" alt="С какого момента" width="804" height="1748" loading="lazy"></picture><figcaption><span>2</span><b>С&nbsp;какого момента</b><i>Дата и&nbsp;время начала, можно выбрать день в&nbsp;прошлом.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/onb-products.webp" type="image/webp"><img src="projects/vow/onb-products.png" alt="Что бросаешь" width="804" height="1748" loading="lazy"></picture><figcaption><span>3</span><b>Что бросаешь</b><i>Миниатюры вместо тегов, можно выбрать несколько.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/onb-spend.webp" type="image/webp"><img src="projects/vow/onb-spend.png" alt="Сколько уходило" width="804" height="1748" loading="lazy"></picture><figcaption><span>4</span><b>Сколько уходило</b><i>Только сумма и&nbsp;период. Шаг можно пропустить.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/home.webp" type="image/webp"><img src="projects/vow/home.png" alt="Главная" width="804" height="1748" loading="lazy"></picture><figcaption><span>5</span><b>Главная</b><i>Число, ближайшая цель, рекорд, сэкономленное и&nbsp;«переждать тягу».</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/craving.webp" type="image/webp"><img src="projects/vow/craving.png" alt="Переждать тягу" width="804" height="1748" loading="lazy"></picture><figcaption><span>6</span><b>Переждать тягу</b><i>Список способов, а&nbsp;не&nbsp;одна кнопка.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/breath-in.webp" type="image/webp"><img src="projects/vow/breath-in.png" alt="Дыхание" width="804" height="1748" loading="lazy"></picture><figcaption><span>7</span><b>Дыхание</b><i>Шар растёт на&nbsp;вдохе и&nbsp;сжимается на&nbsp;выдохе.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/days.webp" type="image/webp"><img src="projects/vow/days.png" alt="Дни свободы" width="804" height="1748" loading="lazy"></picture><figcaption><span>8</span><b>Дни свободы</b><i>Календарь серий и&nbsp;что происходит с&nbsp;организмом.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/relapse.webp" type="image/webp"><img src="projects/vow/relapse.png" alt="Срыв" width="804" height="1748" loading="lazy"></picture><figcaption><span>9</span><b>Срыв</b><i>Серия остаётся, новый отсчёт с&nbsp;сегодняшнего дня.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/money.webp" type="image/webp"><img src="projects/vow/money.png" alt="Деньги" width="804" height="1748" loading="lazy"></picture><figcaption><span>10</span><b>Деньги</b><i>Сэкономлено за&nbsp;всё время и&nbsp;прогноз.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/settings.webp" type="image/webp"><img src="projects/vow/settings.png" alt="Настройки" width="804" height="1748" loading="lazy"></picture><figcaption><span>11</span><b>Настройки</b><i>Дата, продукты, траты, тема, копия данных.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/home-dark.webp" type="image/webp"><img src="projects/vow/home-dark.png" alt="Тёмная тема" width="804" height="1748" loading="lazy"></picture><figcaption><span>12</span><b>Тёмная тема</b><i>Те же&nbsp;цвета шара, другая подложка.</i></figcaption></figure>
+      <figure class="shot" style="--ar:0.45995"><picture><source srcset="projects/vow/home-en.webp" type="image/webp"><img src="projects/vow/home-en.png" alt="English" width="804" height="1748" loading="lazy"></picture><figcaption><span>13</span><b>English</b><i>Приложение полностью переведено на&nbsp;английский.</i></figcaption></figure>
+    </div>
+  </div>
+</div>
+<section class="sec" id="process">
+  <h2 class="lab">Как работал</h2>
+  <div class="txt">
+<ul class="list"><li>Начал с&nbsp;болей и&nbsp;рынка, а&nbsp;не&nbsp;с&nbsp;экранов: семь конкурентов, отзывы пользователей, MoSCoW, психология отказа (серфинг по&nbsp;тяге, неприятие потери), формулировки про&nbsp;здоровье с&nbsp;источниками.</li><li>Вайрфреймы собрал в&nbsp;Figma, <span class="nw">дизайн-системы</span> делал в&nbsp;Claude Design: сначала «музей», потом стекло, где первый результат вышел в&nbsp;духе 2010-х, и&nbsp;я&nbsp;дал корректирующий промпт.</li><li>Дальше цикл: я&nbsp;формулирую мысль, Claude показывает варианты на&nbsp;<span class="nw">макетах-картинках</span>, я&nbsp;выбираю, и&nbsp;только потом правки в&nbsp;коде. Моё правило: сначала мысли, потом список, потом мой аппрув и&nbsp;только потом правки.</li><li>Каждые несколько дней новая сборка ставилась на&nbsp;мой iPhone, и&nbsp;я&nbsp;ревьюил её списком: кнопка «подышать» обрезана краем экрана и&nbsp;подписана вертикально, сегодняшний день нельзя вернуть в&nbsp;серию, после смены темы перекрашивается всё, кроме настроек. Из&nbsp;таких правок и&nbsp;рождалась большая часть деталей.</li><li>Сценарии каждого экрана записаны в&nbsp;документ, их закрывают автотесты. Упавший тест не&nbsp;ослабляют: либо чинят ошибку, либо вместе меняют документ и&nbsp;тест.</li><li>Показал приложение одному человеку, и&nbsp;его вопрос поменял навигацию.</li></ul>
+  </div>
+</section>
+<section class="sec" id="role">
+  <h2 class="lab">Моя роль</h2>
+  <div class="txt">
+<ul class="list"><li>Продуктовый дизайнер и&nbsp;автор продукта: идея, исследование, приоритизация, характер и&nbsp;голос, визуальный язык, все продуктовые решения и&nbsp;ревью каждой сборки на&nbsp;телефоне.</li><li>Код писал Claude Code по&nbsp;моим решениям, <span class="nw">дизайн-системы</span> собирал Claude Design по&nbsp;моим промптам. Разработчика нет, так что границы такие: я&nbsp;отвечаю за&nbsp;что и&nbsp;зачем, он за&nbsp;как.</li></ul>
+  </div>
+</section>
+<section class="sec" id="next">
+  <h2 class="lab">Что дальше</h2>
+  <div class="txt">
+<ul class="list"><li>TestFlight на&nbsp;<span class="nw">пять-десять</span> человек. Смотреть, доходят ли&nbsp;люди до&nbsp;«да, прошла» и&nbsp;возвращаются ли&nbsp;на&nbsp;седьмой и&nbsp;тридцатый день. Аналитики в&nbsp;приложении нет, так что через интервью.</li><li>До&nbsp;магазина: аккаунт разработчика, итоговое название (рабочее «Vow»: в&nbsp;App Store уже есть несколько приложений с&nbsp;таким именем), политика конфиденциальности и&nbsp;страница поддержки.</li><li>Смягчить формулировки про&nbsp;здоровье по&nbsp;исследованию, сверить числа с&nbsp;первоисточниками и&nbsp;пройти приложение с&nbsp;VoiceOver целиком.</li><li>Версия 1.1: синхронизация через iCloud и&nbsp;Live Activity на&nbsp;экране блокировки.</li></ul>
+  </div>
+</section>
+
+<section class="more" aria-labelledby="more-h">
+  <h2 class="lab" id="more-h">Ещё кейсы</h2>
+  <div class="more-grid">
+    <article>
+      <a class="media" href="rutube.html" aria-label="Редизайн оформления подписки"><picture><source srcset="projects/covers/subscription.webp" type="image/webp"><img src="projects/covers/subscription.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+      <div class="cap">
+        <h3 class="tt"><a href="rutube.html">Редизайн оформления подписки</a></h3>
+        <p class="ds">Редизайн страницы выбора тарифа, оплаты и&nbsp;управления подпиской для&nbsp;сервиса с&nbsp;миллионной аудиторией.</p>
+      </div>
+    </article>
+    <article>
+      <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source srcset="projects/covers/auditors.webp" type="image/webp"><img src="projects/covers/auditors.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+      <div class="cap">
+        <h3 class="tt"><a href="auditors_monitoring.html">Мониторинг аудиторов</a></h3>
+        <p class="ds">Инструмент менеджера полевого аудита в&nbsp;40+ регионах России: карта, статусы, маршруты.</p>
+      </div>
+    </article>
+    <article>
+      <a class="media" href="installation_panel.html" aria-label="Панель инсталляций"><picture><source srcset="projects/covers/installation.webp" type="image/webp"><img src="projects/covers/installation.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+      <div class="cap">
+        <h3 class="tt"><a href="installation_panel.html">Панель инсталляций</a></h3>
+        <p class="ds">Админ-панель установки оборудования: 3&nbsp;модуля в&nbsp;одном портале&nbsp;— группы, установщики, транспорт.</p>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Андрей Береговой</span>
+  <div class="foot-links"><a href="https://t.me/sa1nteau">Телеграм</a><span aria-hidden="true">&nbsp;·&nbsp;</span><a href="mailto:beregovoy.designs@gmail.com">Почта</a></div>
+  <div><a href="Beregovoy_Andrey_CV.pdf" download="Beregovoy_Andrey_CV.pdf">Скачать резюме</a></div>
+</footer>
+
+<script>
+  (function () {
+    var pin = document.querySelector('.pin');
+    if (!pin) return;
+    var stick = pin.querySelector('.pin-stick'), track = pin.querySelector('.track');
+    var off = matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)');
+    var pan = 0, top = 0;
+    function update() {
+      if (off.matches) return;
+      var x = Math.min(Math.max(top - pin.getBoundingClientRect().top, 0), pan);
+      track.style.transform = 'translate3d(' + (-x) + 'px,0,0)';
+    }
+    function measure() {
+      if (off.matches) {
+        pin.style.removeProperty('--stage');
+        pin.style.removeProperty('--pan');
+        stick.style.removeProperty('top');
+        track.style.transform = '';
+        return;
+      }
+      var h = stick.offsetHeight;
+      top = Math.max(16, Math.round((innerHeight - h) / 2));
+      pan = Math.max(0, track.scrollWidth - stick.clientWidth);
+      pin.style.setProperty('--stage', h + 'px');
+      pin.style.setProperty('--pan', pan + 'px');
+      stick.style.top = top + 'px';
+      update();
+    }
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', measure);
+    addEventListener('load', measure);
+    off.addEventListener('change', measure);
+    measure();
+  })();
+</script>
+</body>
+</html>
