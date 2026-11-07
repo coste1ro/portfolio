@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal portfolio site for Andrey Beregovoy (product designer). Static HTML pages, no build step, no bundler, no npm, no package.json — open any `.html` file directly or serve statically.
 
-- `index.html` — one vertical scroll: hero (name | menu | statement), 2x2 case cards, "Обо мне" (photo with tilt, bio, tool logos, experience, three testimonials), footer. `Кейсы` / `Обо мне` in the menu are in-page anchors (`#cases`, `#about`)
-- `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case pages, see "Case pages" below. Rutube is a learning project from Ilona Sarkisova's course (the page says so)
+- `index.html` — one vertical scroll: hero (name | menu | statement; on desktop a large gap `clamp(160px,30vh,320px)` separates it from the cases, mobile is untouched), a wide first tile for Vow (with an "В процессе" badge; a 4:3 cover on mobile) above 2x2 case cards, "Обо мне" (photo with tilt, bio, tool logos, experience, three testimonials), footer. `Кейсы` / `Обо мне` in the menu are in-page anchors (`#cases`, `#about`)
+- `vow.html` (personal iOS project, not published, status stated on the page), `rutube.html`, `auditors_monitoring.html`, `installation_panel.html`, `design_system.html` (shown as "Дизайн-система EchoTwin AI") — case pages, see "Case pages" below. Rutube is a learning project from Ilona Sarkisova's course (the page says so). `vow-process.html` is the long second page of Vow (research, principles, nine decisions with rejected options, two design versions), linked once from Vow's "Как работал"
 - There is no English version: the old `*-en.html` pages and the language switch were removed on purpose
 - `/cases` redirects to `/#cases` (`vercel.json`)
 - `Beregovoy_Andrey_CV.pdf` — the current CV, linked from the menu and the footer. Keep the file name ASCII: a Cyrillic name showed up as mojibake in the browser's PDF viewer
@@ -45,15 +45,18 @@ No build/lint/test tooling exists in this repo. To preview changes, open the `.h
 
 ## Case pages
 
-The four case pages share one template (duplicated inline). Structure, borrowed from peers' case studies (Foliobin MCP research):
+All five cases share one template (duplicated inline), grounded in a Foliobin analysis of 47 Russian portfolios (149 case pages): peers use one skeleton for every case, a case page is about 4-8k characters (median ~5k; in the 3-5 year band median ~6k, p90 ~8.7k), the result sits high or in the title, role/team is stated once, rejected options appear as a short chain, and heavy material goes to a link or a second page rather than being hidden. Sections, always in this order:
 
-1. Close button (fixed, top-right, returns to `index.html#cases`); no menu and no name on case pages
-2. Hero as a plain vertical stack: title (22px, one line), overview, `Роль` / `Команда` (or `Контекст`), two key figures
+1. Close button (fixed, top-right, returns to `index.html#cases`; on `vow-process.html` it returns to `vow.html`); no menu and no name on case pages
+2. Hero as a plain vertical stack: title (22px, one line), lede, `Роль` / `Команда` (or `Контекст`, `Статус`), two key figures
 3. Wide cover (`hero-wide`)
-4. `Проблема и решение` as aligned pairs (problem left, solution right; stacked with small labels on mobile)
-5. `Результат`, then details (Rutube: research, users, CJM, JTBD, testing; short cases: `Как работал`), then `Экраны`
-6. `Экраны`: a pinned stage. `.pin` is `var(--stage) + var(--pan)` tall, `.pin-stick` is `position: sticky` and centred by JS (`--top`), JS translates `.track` by the scrolled distance (one scrolled px = one panned px). Card height is fixed per page through `--h` so all captions align; each figure sets its own aspect ratio in `--ar`. At `max-width: 900px` and with `prefers-reduced-motion` the stage is a normal horizontally scrolling rail
-7. `Моя роль`, `Что дальше`, `Ещё кейсы` (the other three cases), footer
+4. `Проблема и решение` as aligned pairs (3-5 pairs; problem left, solution right; stacked with small labels on mobile)
+5. `Результат` (evidence such as test quotes lives here)
+6. `Как работал`: 4-6 points; research, archetypes, CJM, JTBD, tests and rejected options are folded into these points, never separate sections
+7. `Экраны`: a pinned stage. `.pin` is `var(--stage) + var(--pan)` tall, `.pin-stick` is `position: sticky` and centred by JS (`--top`), JS translates `.track` by the scrolled distance (one scrolled px = one panned px). Card height is fixed per page through `--h` so all captions align; each figure sets its own aspect ratio in `--ar`. At `max-width: 900px` and with `prefers-reduced-motion` the stage is a normal horizontally scrolling rail
+8. `Что делал` (what exactly was done, no repeat of the role chip), `Что дальше`, `Ещё кейсы` (the next three cases in rotation: vow > rutube > auditors > installation > design system > vow), footer
+
+Budget 4-8k characters of visible text. Anything beyond goes to a link, as Vow does with `vow-process.html`. Facts are never invented: roles, results and numbers come from Andrey (see `.claude/rules/workflow.md`); a missing fact is asked for, and a thin `Как работал` (installation panel, design system) is filled by interview, not by padding.
 
 ## User preferences
 
