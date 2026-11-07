@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b1b1a">
+<meta name="color-scheme" content="dark">
+<title>Rutube: исследование и решения — Андрей Береговой</title>
+<meta name="description" content="Подробности к кейсу Rutube: конкуренты, два архетипа, модель четырёх сил, CJM, job stories, семь экранов флоу, тест и UI kit.">
+<meta name="author" content="Андрей Береговой">
+<link rel="canonical" href="https://www.beregovoy.design/rutube-process">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Андрей Береговой">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Rutube: исследование и решения — Андрей Береговой">
+<meta property="og:description" content="Подробности к кейсу Rutube: конкуренты, два архетипа, модель четырёх сил, CJM, job stories, семь экранов флоу, тест и UI kit.">
+<meta property="og:url" content="https://www.beregovoy.design/rutube-process">
+<meta property="og:image" content="https://www.beregovoy.design/projects/rutube/hero-wide.jpg">
+<meta property="og:image:width" content="2760">
+<meta property="og:image:height" content="1380">
+<meta property="og:image:alt" content="Rutube: исследование и решения — Андрей Береговой">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rutube: исследование и решения — Андрей Береговой">
+<meta name="twitter:description" content="Подробности к кейсу Rutube: конкуренты, два архетипа, модель четырёх сил, CJM, job stories, семь экранов флоу, тест и UI kit.">
+<meta name="twitter:image" content="https://www.beregovoy.design/projects/rutube/hero-wide.jpg">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-cyrillic.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Onest';font-style:normal;font-weight:400 500;font-display:swap;src:url(fonts/onest-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{background:#1b1b1a;scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{margin:0;background:transparent;color:#f4f4f2;font-family:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.24 0 0 0 -0.12'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.8 0 0 0 0.4'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:240px 240px,240px 240px;}
+  a:focus-visible{outline:2px solid #f4f4f2;outline-offset:4px;border-radius:2px;}
+  .nw{white-space:nowrap;}
+  .ph{color:#8f8f8a;border-bottom:1px dashed #6a6a66;}
+
+  .close{position:fixed;top:20px;right:30px;z-index:10;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#f4f4f2;background:rgba(27,27,26,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 0 0 1px rgba(244,244,242,.16);transition:background .15s ease;}
+  .close:hover{background:rgba(70,70,68,.82);}
+  .close svg{display:block;width:18px;height:18px;}
+
+  .hero{padding:28px 30px 64px;}
+  .hero h1{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 20px;padding-right:56px;}
+  .hero .ov{max-width:680px;}
+  .hero .meta-dl{margin-top:28px;}
+  .hero .figs{margin-top:28px;}
+  .hero p{font-size:18px;line-height:1.4;margin:0 0 18px;max-width:440px;}
+  .hero p:last-child{margin-bottom:0;}
+  .figs{display:flex;gap:40px;margin:0;}
+  .fig b{display:block;font-weight:500;font-size:22px;line-height:1.2;}
+  .fig span{font-size:15px;line-height:1.5;color:#8f8f8a;}
+  .hero .meta{font-size:15px;line-height:1.5;color:#8f8f8a;}
+
+  .cover{padding:0 30px 120px;}
+  .cover img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+
+  .sec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding:0 30px 120px;}
+  .sec.tight{padding-bottom:40px;}
+  .lab{font-weight:400;font-size:18px;line-height:1.4;color:#8f8f8a;margin:0;}
+  .txt{grid-column:2 / span 2;max-width:680px;}
+  .txt p{font-size:18px;line-height:1.4;margin:0 0 18px;}
+  .txt p:last-child{margin-bottom:0;}
+  .c2{grid-column:2;}
+  .c3{grid-column:3;}
+  .top{margin-top:28px;}
+  .sub{font-weight:500;font-size:18px;line-height:1.35;margin:0 0 6px;}
+  .kv{margin:0;}
+  .kv dt{font-size:15px;line-height:1.5;color:#8f8f8a;margin:18px 0 2px;}
+  .kv dd{margin:0;font-size:18px;line-height:1.4;}
+  .list{margin:0;padding:0;list-style:none;}
+  .list li{font-size:18px;line-height:1.4;padding:11px 0;}
+  .list li + li{border-top:1px solid rgba(244,244,242,.12);}
+  .list li:first-child{padding-top:0;}
+  .list li:last-child{padding-bottom:0;}
+  .logos{display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px;margin:28px 0 0;padding:0;list-style:none;}
+  .logos img{display:block;height:32px;width:auto;border-radius:6px;}
+  .quote{margin:0;}
+  .quote h3{font-weight:500;font-size:18px;line-height:1.35;margin:0 0 4px;}
+  .quote .t{font-size:15px;line-height:1.5;color:#8f8f8a;margin:0 0 14px;}
+  .quote blockquote{margin:0;font-size:17px;line-height:1.5;color:#d4d4cf;}
+  .wide{grid-column:1 / -1;margin:56px 0 0;}
+  .wide img{display:block;width:100%;height:auto;border-radius:10px;}
+
+  .pin{height:calc(var(--stage,100vh) + var(--pan,0px));margin-bottom:120px;}
+  .pin-stick{position:sticky;top:var(--top,0px);overflow:hidden;}
+  .track{--h:min(640px,calc(100vh - 150px));display:flex;align-items:flex-start;gap:24px;padding:0 30px;will-change:transform;}
+  .shot{flex:0 0 calc(var(--h) * var(--ar,1.40625));margin:0;}
+  .shot img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+  .shot figcaption{margin-top:16px;font-size:15px;line-height:1.4;color:#b8b8b3;}
+  .shot figcaption span{color:#8f8f8a;margin-right:8px;}
+
+  .note{font-size:18px;line-height:1.4;margin:0;}
+  .meta-dl{margin:0;}
+  .meta-dl div{display:flex;gap:16px;align-items:baseline;margin:0 0 6px;}
+  .meta-dl dt{font-size:15px;line-height:1.5;color:#8f8f8a;min-width:88px;}
+  .meta-dl dd{margin:0;font-size:15px;line-height:1.5;}
+  .pairs{grid-column:2 / span 2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}
+  .pairs .h{font-size:15px;line-height:1.5;color:#8f8f8a;padding-bottom:12px;}
+  .pairs .c{font-size:18px;line-height:1.4;padding:16px 0;border-top:1px solid rgba(244,244,242,.12);}
+  .pairs .c.p{color:#b8b8b3;}
+  .shot figcaption b{font-weight:500;color:#f4f4f2;margin-right:0;}
+  .shot figcaption i{display:block;font-style:normal;color:#8f8f8a;margin-top:4px;max-width:680px;}
+
+  .more{padding:0 30px 100px;}
+  .more .lab{margin:0 0 28px;}
+  .more-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:56px 32px;}
+  .media{display:block;aspect-ratio:4 / 3;border-radius:10px;overflow:hidden;background:#161615;}
+  .media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .media:hover img{transform:scale(1.03);}
+  .cap{margin-top:18px;}
+  .tt{font-weight:500;font-size:22px;line-height:1.2;margin:0 0 6px;}
+  .tt a{color:inherit;text-decoration:none;}
+  .ds{font-size:16px;line-height:1.45;color:#b8b8b3;margin:0;max-width:560px;}
+
+  .foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:0 30px;padding:20px 0 24px;border-top:1px solid rgba(244,244,242,.12);font-size:16px;line-height:1.5;}
+  .foot span{color:#8f8f8a;}
+  .foot a{color:#f4f4f2;text-decoration:none;}
+  .foot a:hover{text-decoration:underline;text-underline-offset:3px;}
+
+  @media (max-width:900px){
+    .close{top:14px;right:20px;}
+    .hero,.sec,.more-grid,.foot{grid-template-columns:1fr;}
+    .hero{padding:72px 20px 40px;}
+    .hero h1{padding-right:0;}
+    .hero .meta-dl,.hero .figs{margin-top:24px;}
+    .cover{padding:0 20px 72px;}
+    .sec{gap:20px;padding:0 20px 72px;}
+    .sec.tight{padding-bottom:28px;}
+    .txt,.c2,.c3{grid-column:auto;}
+    .more{padding:0 20px 72px;}
+    .more-grid{gap:48px;}
+    .foot{margin:0 20px;padding:20px 0 24px;gap:12px;}
+    .pairs{grid-column:auto;grid-template-columns:1fr;}
+    .pairs .h{display:none;}
+    .pairs .c{padding:14px 0;}
+    .pairs .c.p{padding-bottom:4px;border-top:1px solid rgba(244,244,242,.12);}
+    .pairs .c.s{border-top:0;padding-top:0;}
+    .pairs .c.p::before,.pairs .c.s::before{display:block;font-size:15px;line-height:1.5;color:#8f8f8a;margin-bottom:2px;}
+    .pairs .c.p::before{content:"Проблема";}
+    .pairs .c.s::before{content:"Решение";}
+    .meta-dl dt{min-width:72px;}
+    .pin{height:auto;margin-bottom:72px;}
+    .pin-stick{position:static;height:auto;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#3a3a38 transparent;}
+    .track{padding:0 20px 20px;}
+    .shot{flex-basis:82vw;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .close,.media img{transition:none;}
+    .pin{height:auto;margin-bottom:72px;}
+    .pin-stick{position:static;height:auto;overflow-x:auto;}
+    .track{padding-bottom:20px;}
+    .shot{flex-basis:min(900px,82vw);}
+  }
+
+  .hero .meta-dl dd{max-width:560px;}
+  .c2 .sub,.c3 .sub{margin-bottom:14px;}
+  .sub.top.wide-sub{grid-column:1 / -1;margin:72px 0 0;font-size:22px;line-height:1.2;}
+  .txt.top{margin-top:28px;}
+  .txt.half{grid-column:2;}
+  .side{grid-column:3;}
+  .side img{display:block;width:100%;height:auto;max-width:440px;}
+
+  .strip{grid-column:1 / -1;display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:32px 24px;margin:56px 0 0;align-items:start;}
+  .strip.s4{--gap-rows:56px;}
+  .sf{margin:0;min-width:0;}
+  .sf img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+  .sf.pf img{border-radius:0;background:none;}
+  .sf.cmp img,.sf img.cmp{aspect-ratio:9 / 16;object-fit:cover;object-position:top;}
+  .sf figcaption{margin-top:14px;font-size:15px;line-height:1.4;color:#b8b8b3;}
+  .sf figcaption b{display:block;font-weight:500;color:#f4f4f2;}
+  .sf figcaption i{display:block;font-style:normal;color:#8f8f8a;margin-top:2px;}
+  .crop{aspect-ratio:804 / 930;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(#000 84%,transparent);mask-image:linear-gradient(#000 84%,transparent);}
+  .crop img{position:absolute;inset:0 auto auto 0;width:100%;height:auto;}
+  .strip.tiles{row-gap:40px;}
+  .wide-sub + .strip{margin-top:28px;}
+  .strip.widgets .sf img{border-radius:14px;}
+  .shot img{border-radius:0;background:none;}
+
+  @media (max-width:900px){
+    .txt.half,.side{grid-column:auto;}
+    .side img{max-width:320px;}
+    .strip,.strip.s4,.strip.s7{display:flex;overflow-x:auto;gap:16px;margin:36px -20px 0;padding:0 20px 16px;scrollbar-width:thin;scrollbar-color:#3a3a38 transparent;}
+    .strip .sf{flex:0 0 58vw;}
+    .strip.tiles .sf{flex-basis:64vw;}
+    .strip.s7 .sf{flex-basis:46vw;}
+    .sub.top.wide-sub{margin-top:48px;}
+    .pairs[style*="--lp"] .c.p::before{content:var(--lp) !important;}
+    .pairs[style*="--ls"] .c.s::before{content:var(--ls) !important;}
+  }
+
+
+  @media (min-width:901px){
+    .strip{grid-column:2 / -1;--cw:clamp(180px,17.5vw,260px);display:flex;gap:20px;overflow-x:auto;overscroll-behavior-x:contain;margin:56px -30px 0 0;padding:0 30px 16px 0;scrollbar-width:thin;scrollbar-color:#3a3a38 transparent;}
+    .strip .sf{flex:0 0 var(--cw);}
+    .strip.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px 20px;overflow:visible;margin-right:0;padding:0;}
+    .sub.top.wide-sub{grid-column:2 / -1;}
+  }
+
+  .kit{grid-column:2 / -1;margin:0;}
+  .kit img{display:block;width:100%;height:auto;border-radius:10px;background:#161615;}
+  @media (min-width:901px){
+    .strip.shots{--cw:clamp(300px,29vw,440px);}
+  }
+  @media (max-width:900px){
+    .kit{grid-column:auto;}
+    .strip.shots .sf{flex-basis:82vw;}
+  }
+
+  .txt a,.hero .ov a{color:#f4f4f2;text-decoration:underline;text-decoration-color:rgba(244,244,242,.4);text-underline-offset:3px;transition:text-decoration-color .15s ease;}
+  .txt a:hover,.hero .ov a:hover{text-decoration-color:#f4f4f2;}
+  .txt .list + p{margin-top:24px;}
+</style>
+</head>
+<body>
+
+<a class="close" href="rutube.html#details" aria-label="Вернуться к кейсу"><svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></a>
+
+<header class="hero">
+  <h1>Rutube: исследование и&nbsp;решения</h1>
+  <p class="ov">Подробности к&nbsp;<a href="rutube.html#details">кейсу Rutube</a>: конкуренты, два архетипа, модель четырёх сил, CJM, <span class="nw">job&nbsp;stories</span>, семь экранов флоу, тест и&nbsp;UI&nbsp;kit.</p>
+</header>
+
+<main>
+<section class="sec" id="research">
+  <h2 class="lab">Исследование</h2>
+  <div class="txt">
+    <p>Проанализировал прямых и&nbsp;непрямых конкурентов и&nbsp;их отзывы. Прямые конкуренты&nbsp;— видеохостинги с&nbsp;пользовательским контентом, где подписка отключает рекламу и&nbsp;добавляет бонусы. Непрямые&nbsp;— онлайн-кинотеатры, где подписка нужна, чтобы войти. Критерии приоритизировал по&nbsp;MoSCoW: в&nbsp;приоритете оказались понятность цены, разница между бесплатным и&nbsp;платным, прозрачность условий и&nbsp;понятность отмены.</p>
+    <ul class="logos" aria-label="Конкуренты"><li><img src="projects/rutube/logo-youtube.png" alt="YouTube" width="50" height="34"></li><li><img src="projects/rutube/logo-vk.png" alt="VK Видео" width="50" height="50"></li><li><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск" width="50" height="50"></li><li><img src="projects/rutube/logo-ivi.png" alt="ivi" width="50" height="50"></li><li><img src="projects/rutube/logo-okko.png" alt="Okko" width="50" height="50"></li><li><img src="projects/rutube/logo-premier.png" alt="Premier" width="50" height="50"></li><li><img src="projects/rutube/logo-smotrim.png" alt="Смотрим" width="50" height="50"></li></ul>
+  </div>
+</section>
+<section class="sec" id="users">
+  <h2 class="lab">Понимание пользователя</h2>
+  <div class="txt">
+    <p>Основная аудитория&nbsp;— 25–34 года: платёжеспособные, зрелые в&nbsp;цифровых продуктах, привыкшие жить на&nbsp;подписках. Глубинные интервью с&nbsp;тремя респондентами показали, что за&nbsp;одним и&nbsp;тем же действием стоят разные мотивы, страхи и&nbsp;ожидания. Так получились два архетипа.</p>
+  </div>
+  <div class="c2 top">
+    <h3 class="sub">Рациональный контролёр</h3>
+    <dl class="kv">
+      <dt>Ключевая потребность</dt><dd>Прозрачность и&nbsp;управляемость</dd>
+      <dt>Страх</dt><dd>Автосписание и&nbsp;повышение цены без&nbsp;уведомления, скрытые условия</dd>
+      <dt>Критерий успеха</dt><dd>Понимает, за&nbsp;что платит, видит дату списания, отменяет в&nbsp;1–2 клика, видит явное сравнение тарифов</dd>
+    </dl>
+  </div>
+  <div class="c3 top">
+    <h3 class="sub">Прагматик «без&nbsp;лишнего»</h3>
+    <dl class="kv">
+      <dt>Ключевая потребность</dt><dd>Простота</dd>
+      <dt>Страх</dt><dd>Навязчивость, апселлы, лишние шаги</dd>
+      <dt>Критерий успеха</dt><dd>Минимум шагов, один тариф, без&nbsp;давления</dd>
+    </dl>
+  </div>
+  <div class="txt top">
+    <p>Через модель четырёх сил для&nbsp;обоих архетипов вышло одно и&nbsp;то&nbsp;же. Главный толчок&nbsp;— раздражающая реклама. Главное притяжение&nbsp;— отсутствие рекламы и&nbsp;ощущение контроля. Главная тревога&nbsp;— автосписание и&nbsp;непрозрачность. Главная привычка&nbsp;— «и&nbsp;так можно бесплатно».</p>
+  </div>
+</section>
+<section class="sec" id="cjm">
+  <h2 class="lab">CJM</h2>
+  <div class="txt">
+    <p>Для&nbsp;каждого архетипа расписал путь от&nbsp;триггера до&nbsp;момента после оплаты: действия, мысли, эмоции и&nbsp;боли на&nbsp;каждом шаге. Из&nbsp;болей получились требования к&nbsp;решению.</p>
+  </div>
+  <div class="c2 top">
+    <h3 class="sub">Контролёр</h3>
+    <ul class="list">
+      <li>Таблица free и&nbsp;premium</li>
+      <li>Прозрачная стоимость без&nbsp;мелкого текста</li>
+      <li>Обоснование рекомендуемого тарифа</li>
+      <li>Явная дата следующего списания</li>
+      <li>Видимая ссылка «управлять подпиской»</li>
+      <li>Напоминание за&nbsp;3 дня до&nbsp;списания</li>
+    </ul>
+  </div>
+  <div class="c3 top">
+    <h3 class="sub">Прагматик</h3>
+    <ul class="list">
+      <li>Один основной тариф и&nbsp;крупная кнопка</li>
+      <li>Минимум полей, линейный процесс, без&nbsp;апселлов</li>
+      <li>Реклама исчезает мгновенно, короткий экран успеха</li>
+      <li>Одно ненавязчивое уведомление после оплаты: без&nbsp;рекламы и&nbsp;где отменить</li>
+    </ul>
+  </div>
+</section>
+<section class="sec" id="jtbd">
+  <h2 class="lab">JTBD</h2>
+  <div class="c2">
+    <h3 class="sub">Контролёр</h3>
+    <ul class="list">
+      <li>Когда я&nbsp;открываю страницу подписки и&nbsp;не&nbsp;понимаю условий, я&nbsp;хочу найти чёткую информацию о&nbsp;цене, дате списания и&nbsp;отмене, чтобы не&nbsp;чувствовать, что меня обманули.</li>
+      <li>Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть дату следующего списания и&nbsp;быстро найти управление, чтобы контролировать ситуацию.</li>
+      <li>Когда я&nbsp;выбираю тариф и&nbsp;не&nbsp;понимаю, чем платное отличается от&nbsp;бесплатного, я&nbsp;хочу увидеть явное сравнение, чтобы заплатить осознанно, а&nbsp;не&nbsp;вслепую.</li>
+    </ul>
+  </div>
+  <div class="c3">
+    <h3 class="sub">Прагматик</h3>
+    <ul class="list">
+      <li>Когда реклама прерывает просмотр, я&nbsp;хочу убрать её за&nbsp;минимум шагов, чтобы сразу вернуться к&nbsp;видео без&nbsp;фрустрации.</li>
+      <li>Когда я&nbsp;вижу страницу оформления, я&nbsp;хочу увидеть один понятный тариф и&nbsp;сразу оплатить, чтобы не&nbsp;разбираться в&nbsp;вариантах и&nbsp;не&nbsp;тратить время.</li>
+      <li>Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть, что реклама пропала, чтобы убедиться, что всё сработало, и&nbsp;больше не&nbsp;думать об&nbsp;этом.</li>
+    </ul>
+  </div>
+</section>
+<section class="sec" id="flow">
+  <h2 class="lab">Флоу и&nbsp;экраны</h2>
+  <div class="txt">
+    <p>Путь пользователя от&nbsp;просмотра с&nbsp;рекламой до&nbsp;управления подпиской: выбор тарифа, оплата, ошибка и&nbsp;повторная оплата, подтверждение.</p>
+  </div>
+  <div class="strip shots" style="--n:7"><figure class="sf"><picture><source srcset="projects/rutube/ui-01.webp" type="image/webp"><img src="projects/rutube/ui-01.png" alt="Просмотр без подписки" width="1440" height="1024" loading="lazy"></picture><figcaption><b>1. Просмотр без&nbsp;подписки</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/rutube/ui-02.webp" type="image/webp"><img src="projects/rutube/ui-02.png" alt="Выбор тарифа" width="1440" height="1024" loading="lazy"></picture><figcaption><b>2. Выбор тарифа</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/rutube/ui-03.webp" type="image/webp"><img src="projects/rutube/ui-03.png" alt="Оплата" width="1440" height="1024" loading="lazy"></picture><figcaption><b>3. Оплата</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/rutube/ui-04.webp" type="image/webp"><img src="projects/rutube/ui-04.png" alt="Успешная оплата" width="1440" height="1024" loading="lazy"></picture><figcaption><b>4. Успешная оплата</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/rutube/ui-05.webp" type="image/webp"><img src="projects/rutube/ui-05.png" alt="Ошибка оплаты" width="1440" height="1024" loading="lazy"></picture><figcaption><b>5. Ошибка оплаты</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/rutube/ui-06.webp" type="image/webp"><img src="projects/rutube/ui-06.png" alt="Просмотр с подпиской" width="1440" height="1024" loading="lazy"></picture><figcaption><b>6. Просмотр с&nbsp;подпиской</b></figcaption></figure><figure class="sf"><picture><source srcset="projects/rutube/ui-07.webp" type="image/webp"><img src="projects/rutube/ui-07.png" alt="Управление подпиской" width="1440" height="1024" loading="lazy"></picture><figcaption><b>7. Управление подпиской</b></figcaption></figure></div>
+</section>
+<section class="sec" id="testing">
+  <h2 class="lab">Тестирование и&nbsp;UI&nbsp;kit</h2>
+  <div class="txt">
+    <p>Проверил гипотезу на&nbsp;модерируемом тестировании кликабельного прототипа: если сделать условия подписки понятными сразу, пользователи перестанут бросать оформление. Респонденты те&nbsp;же, что и&nbsp;на&nbsp;этапе исследования, их было трое, поэтому они сравнили старый флоу Rutube с&nbsp;новым на&nbsp;собственном опыте.</p>
+    <p>Результат работы передан в&nbsp;разработку: двухуровневая система токенов и&nbsp;UI&nbsp;kit из&nbsp;7 секций.</p>
+  </div>
+  <figure class="kit"><picture><source srcset="projects/rutube/ui-kit.webp" type="image/webp"><img src="projects/rutube/ui-kit.png" alt="UI kit и система токенов" width="1669" height="733" loading="lazy"></picture></figure>
+</section>
+<section class="sec tight" id="back">
+  <div class="txt"><p><a href="rutube.html#details">← Вернуться к&nbsp;кейсу</a></p></div>
+</section>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Андрей Береговой</span>
+  <div class="foot-links"><a href="https://t.me/sa1nteau">Телеграм</a><span aria-hidden="true">&nbsp;·&nbsp;</span><a href="mailto:beregovoy.designs@gmail.com">Почта</a></div>
+  <div><a href="Beregovoy_Andrey_CV.pdf" download="Beregovoy_Andrey_CV.pdf">Скачать резюме</a></div>
+</footer>
+
+</body>
+</html>
