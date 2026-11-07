@@ -197,94 +197,32 @@
   <div class="txt">
     <p>Гипотеза подтвердилась на&nbsp;юзабилити-тесте: боли обоих архетипов закрыты, критерии успеха выполнены на&nbsp;100%. SUS 91.7 из&nbsp;100, SEQ 6.3 из&nbsp;7. Шесть шагов из&nbsp;семи пройдены.</p>
   </div>
+  <figure class="quote c2 top">
+    <h3>Ошибка оплаты</h3>
+    <p class="t">5 секунд, не&nbsp;растерялся и&nbsp;сразу выбрал СБП</p>
+    <blockquote>«Не&nbsp;удалось обработать данные карты&nbsp;— давайте попробуем ещё раз, но&nbsp;уже, наверное, лучше СБП».</blockquote>
+  </figure>
+  <figure class="quote c3 top">
+    <h3>Экран успеха</h3>
+    <p class="t">15 секунд</p>
+    <blockquote>«Подписка активна, реклама отключена, вижу следующее списание. Даже напоминалка будет&nbsp;— зашибись».</blockquote>
+  </figure>
 </section>
-<section class="sec" id="research">
-  <h2 class="lab">Исследование</h2>
+<section class="sec" id="process">
+  <h2 class="lab">Как работал</h2>
   <div class="txt">
-    <p>Проанализировал прямых и&nbsp;непрямых конкурентов и&nbsp;их отзывы. Прямые конкуренты&nbsp;— видеохостинги с&nbsp;пользовательским контентом, где подписка отключает рекламу и&nbsp;добавляет бонусы. Непрямые&nbsp;— онлайн-кинотеатры, где подписка нужна, чтобы войти. Критерии приоритизировал по&nbsp;MoSCoW: в&nbsp;приоритете оказались понятность цены, разница между бесплатным и&nbsp;платным, прозрачность условий и&nbsp;понятность отмены.</p>
-    <ul class="logos" aria-label="Конкуренты">
-      <li><img src="projects/rutube/logo-youtube.png" alt="YouTube" height="32"></li>
-      <li><img src="projects/rutube/logo-vk.png" alt="VK Видео" height="32"></li>
-      <li><img src="projects/rutube/logo-kinopoisk.png" alt="Кинопоиск" height="32"></li>
-      <li><img src="projects/rutube/logo-ivi.png" alt="ivi" height="32"></li>
-      <li><img src="projects/rutube/logo-okko.png" alt="Okko" height="32"></li>
-      <li><img src="projects/rutube/logo-premier.png" alt="Premier" height="32"></li>
-      <li><img src="projects/rutube/logo-smotrim.png" alt="Смотрим" height="32"></li>
+    <ul class="list">
+      <li>Начал с&nbsp;конкурентов: разобрал прямых (видеохостинги, где подписка отключает рекламу), непрямых (онлайн-кинотеатры) и&nbsp;их отзывы. По&nbsp;MoSCoW в&nbsp;приоритете оказались понятность цены, разница между бесплатным и&nbsp;платным, прозрачность условий и&nbsp;понятность отмены.</li>
+      <li>Провёл глубинные интервью с&nbsp;аудиторией 25–34 лет и&nbsp;собрал два архетипа. «Рациональному контролёру» нужны прозрачность и&nbsp;управляемость, он боится автосписания без&nbsp;уведомления. «Прагматику без&nbsp;лишнего»&nbsp;— простота, он боится навязчивости и&nbsp;лишних шагов.</li>
+      <li>Модель четырёх сил показала одно и&nbsp;то&nbsp;же для&nbsp;обоих: толкает раздражающая реклама, тревожат автосписание и&nbsp;непрозрачность, держит привычка «и&nbsp;так можно бесплатно».</li>
+      <li>Расписал CJM для&nbsp;каждого архетипа: действия, мысли, эмоции и&nbsp;боли на&nbsp;каждом шаге. Из&nbsp;болей получились требования: таблица free и&nbsp;premium, видимая дата списания, напоминание за&nbsp;3 дня, один тариф для&nbsp;прагматика.</li>
+      <li>Сформулировал по&nbsp;три job story на&nbsp;архетип, например: «когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть дату следующего списания и&nbsp;быстро найти управление, чтобы контролировать ситуацию».</li>
+      <li>Проверил гипотезу на&nbsp;модерируемом тестировании кликабельного прототипа. Респонденты те&nbsp;же, что на&nbsp;этапе исследования, поэтому они сравнили старый флоу Rutube с&nbsp;новым на&nbsp;собственном опыте. В&nbsp;разработку передал двухуровневую систему токенов и&nbsp;UI kit из&nbsp;7 секций.</li>
     </ul>
   </div>
 </section>
-<section class="sec" id="users">
-  <h2 class="lab">Понимание пользователя</h2>
-  <div class="txt">
-    <p>Основная аудитория&nbsp;— 25–34 года: платёжеспособные, зрелые в&nbsp;цифровых продуктах, привыкшие жить на&nbsp;подписках. Глубинные интервью показали, что за&nbsp;одним и&nbsp;тем же действием стоят разные мотивы, страхи и&nbsp;ожидания. Так получились два архетипа.</p>
-  </div>
-  <div class="c2 top">
-    <h3 class="sub">Рациональный контролёр</h3>
-    <dl class="kv">
-      <dt>Ключевая потребность</dt><dd>Прозрачность и&nbsp;управляемость</dd>
-      <dt>Страх</dt><dd>Автосписание и&nbsp;повышение цены без&nbsp;уведомления, скрытые условия</dd>
-      <dt>Критерий успеха</dt><dd>Понимает, за&nbsp;что платит, видит дату списания, отменяет в&nbsp;1–2 клика, видит явное сравнение тарифов</dd>
-    </dl>
-  </div>
-  <div class="c3 top">
-    <h3 class="sub">Прагматик «без лишнего»</h3>
-    <dl class="kv">
-      <dt>Ключевая потребность</dt><dd>Простота</dd>
-      <dt>Страх</dt><dd>Навязчивость, апселлы, лишние шаги</dd>
-      <dt>Критерий успеха</dt><dd>Минимум шагов, один тариф, без&nbsp;давления</dd>
-    </dl>
-  </div>
-  <div class="txt top">
-    <p>Через модель четырёх сил для&nbsp;обоих архетипов вышло одно и&nbsp;то же. Главный толчок&nbsp;— раздражающая реклама. Главное притяжение&nbsp;— отсутствие рекламы и&nbsp;ощущение контроля. Главная тревога&nbsp;— автосписание и&nbsp;непрозрачность. Главная привычка&nbsp;— «и&nbsp;так можно бесплатно».</p>
-  </div>
-</section>
-<section class="sec" id="cjm">
-  <h2 class="lab">CJM</h2>
-  <div class="txt">
-    <p>Для&nbsp;каждого архетипа расписал путь от&nbsp;триггера до&nbsp;момента после оплаты: действия, мысли, эмоции и&nbsp;боли на&nbsp;каждом шаге. Из&nbsp;болей получились требования к&nbsp;решению.</p>
-  </div>
-  <div class="c2 top">
-    <h3 class="sub">Контролёр</h3>
-    <ul class="list">
-      <li>Таблица free и&nbsp;premium</li>
-      <li>Прозрачная стоимость без&nbsp;мелкого текста</li>
-      <li>Обоснование рекомендуемого тарифа</li>
-      <li>Явная дата следующего списания</li>
-      <li>Видимая ссылка «управлять подпиской»</li>
-      <li>Напоминание за&nbsp;3 дня до&nbsp;списания</li>
-    </ul>
-  </div>
-  <div class="c3 top">
-    <h3 class="sub">Прагматик</h3>
-    <ul class="list">
-      <li>Один основной тариф и&nbsp;крупная кнопка</li>
-      <li>Минимум полей, линейный процесс, без&nbsp;апселлов</li>
-      <li>Реклама исчезает мгновенно, короткий экран успеха</li>
-      <li>Одно ненавязчивое уведомление после оплаты: без&nbsp;рекламы и&nbsp;где отменить</li>
-    </ul>
-  </div>
-</section>
-<section class="sec" id="jtbd">
-  <h2 class="lab">JTBD</h2>
-  <div class="c2">
-    <h3 class="sub">Контролёр</h3>
-    <ul class="list">
-      <li>Когда я&nbsp;открываю страницу подписки и&nbsp;не&nbsp;понимаю условий, я&nbsp;хочу найти чёткую информацию о&nbsp;цене, дате списания и&nbsp;отмене, чтобы не&nbsp;чувствовать, что меня обманули.</li>
-      <li>Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть дату следующего списания и&nbsp;быстро найти управление, чтобы контролировать ситуацию.</li>
-      <li>Когда я&nbsp;выбираю тариф и&nbsp;не&nbsp;понимаю, чем платное отличается от&nbsp;бесплатного, я&nbsp;хочу увидеть явное сравнение, чтобы заплатить осознанно, а&nbsp;не&nbsp;вслепую.</li>
-    </ul>
-  </div>
-  <div class="c3">
-    <h3 class="sub">Прагматик</h3>
-    <ul class="list">
-      <li>Когда реклама прерывает просмотр, я&nbsp;хочу убрать её за&nbsp;минимум шагов, чтобы сразу вернуться к&nbsp;видео без&nbsp;фрустрации.</li>
-      <li>Когда я&nbsp;вижу страницу оформления, я&nbsp;хочу увидеть один понятный тариф и&nbsp;сразу оплатить, чтобы не&nbsp;разбираться в&nbsp;вариантах и&nbsp;не&nbsp;тратить время.</li>
-      <li>Когда я&nbsp;только что оплатил подписку, я&nbsp;хочу сразу увидеть, что реклама пропала, чтобы убедиться, что всё сработало, и&nbsp;больше не&nbsp;думать об этом.</li>
-    </ul>
-  </div>
-</section>
-<section class="sec tight" id="solution">
-  <h2 class="lab">Флоу и экраны</h2>
+<section class="sec tight" id="screens">
+  <h2 class="lab">Экраны</h2>
   <div class="txt">
     <p>Путь пользователя от&nbsp;просмотра с&nbsp;рекламой до&nbsp;управления подпиской: выбор тарифа, оплата, ошибка и&nbsp;повторная оплата, подтверждение.</p>
   </div>
@@ -299,37 +237,15 @@
       <figure class="shot"><picture><source srcset="projects/rutube/ui-05.webp" type="image/webp"><img src="projects/rutube/ui-05.png" alt="Ошибка оплаты" width="1440" height="1024"></picture><figcaption><span>5</span>Ошибка оплаты</figcaption></figure>
       <figure class="shot"><picture><source srcset="projects/rutube/ui-06.webp" type="image/webp"><img src="projects/rutube/ui-06.png" alt="Просмотр с подпиской" width="1440" height="1024"></picture><figcaption><span>6</span>Просмотр с подпиской</figcaption></figure>
       <figure class="shot"><picture><source srcset="projects/rutube/ui-07.webp" type="image/webp"><img src="projects/rutube/ui-07.png" alt="Управление подпиской" width="1440" height="1024"></picture><figcaption><span>7</span>Управление подпиской</figcaption></figure>
+      <figure class="shot" style="--ar:2.27694"><picture><source srcset="projects/rutube/ui-kit.webp" type="image/webp"><img src="projects/rutube/ui-kit.png" alt="UI kit и система токенов" width="1669" height="733" loading="lazy"></picture><figcaption><span>8</span>UI kit и система токенов</figcaption></figure>
     </div>
   </div>
 </div>
-<section class="sec" id="testing">
-  <h2 class="lab">Тестирование</h2>
-  <div class="txt">
-    <p>Проверил гипотезу на&nbsp;модерируемом тестировании кликабельного прототипа: если сделать условия подписки понятными сразу, пользователи перестанут бросать оформление. Респонденты те же, что и&nbsp;на&nbsp;этапе исследования, поэтому они сравнили старый флоу Rutube с&nbsp;новым на&nbsp;собственном опыте.</p>
-  </div>
-  <figure class="quote c2 top">
-    <h3>Ошибка оплаты</h3>
-    <p class="t">5 секунд, не&nbsp;растерялся и&nbsp;сразу выбрал СБП</p>
-    <blockquote>«Не&nbsp;удалось обработать данные карты&nbsp;— давайте попробуем ещё раз, но&nbsp;уже, наверное, лучше СБП».</blockquote>
-  </figure>
-  <figure class="quote c3 top">
-    <h3>Экран успеха</h3>
-    <p class="t">15 секунд</p>
-    <blockquote>«Подписка активна, реклама отключена, вижу следующее списание. Даже напоминалка будет&nbsp;— зашибись».</blockquote>
-  </figure>
-  <div class="txt top">
-    <p>Результат работы передан в&nbsp;разработку: двухуровневая система токенов и&nbsp;UI kit из&nbsp;7 секций.</p>
-  </div>
-  <figure class="wide">
-    <picture><source srcset="projects/rutube/ui-kit.webp" type="image/webp"><img src="projects/rutube/ui-kit.png" alt="UI kit и система токенов" width="1669" height="733" loading="lazy"></picture>
-  </figure>
-</section>
+
 <section class="sec" id="role">
-  <h2 class="lab">Моя роль</h2>
+  <h2 class="lab">Что делал</h2>
   <div class="txt">
-    <ul class="list">
-      <li>Продуктовый дизайнер. Учебный проект на&nbsp;курсе Илоны Саркисовой. Весь цикл: интервью, конкурентный анализ, архетипы, CJM, ключевые экраны, система токенов и&nbsp;UI kit, юзабилити-тест.</li>
-    </ul>
+    <p>Весь цикл: интервью, конкурентный анализ, архетипы, CJM, ключевые экраны, система токенов и&nbsp;UI kit, юзабилити-тест.</p>
   </div>
 </section>
 <section class="sec" id="next">
@@ -346,14 +262,14 @@
       <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source srcset="projects/covers/auditors.webp" type="image/webp"><img src="projects/covers/auditors.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
       <div class="cap">
         <h3 class="tt"><a href="auditors_monitoring.html">Мониторинг аудиторов</a></h3>
-        <p class="ds">Инструмент менеджера полевого аудита по&nbsp;40+ регионам России: карта аудиторов, статусы, маршруты.</p>
+        <p class="ds">Инструмент менеджера полевого аудита в&nbsp;40+ регионах России: карта, статусы, маршруты.</p>
       </div>
     </article>
     <article>
       <a class="media" href="installation_panel.html" aria-label="Панель инсталляций"><picture><source srcset="projects/covers/installation.webp" type="image/webp"><img src="projects/covers/installation.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
       <div class="cap">
         <h3 class="tt"><a href="installation_panel.html">Панель инсталляций</a></h3>
-        <p class="ds">Админ-панель установки оборудования: 3 модуля в&nbsp;одном портале&nbsp;— группы, установщики, транспорт.</p>
+        <p class="ds">Админ-панель установки оборудования: 3&nbsp;модуля в&nbsp;одном портале&nbsp;— группы, установщики, транспорт.</p>
       </div>
     </article>
     <article>
