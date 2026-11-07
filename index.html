@@ -71,7 +71,12 @@
 
   .works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px 32px;padding:0 30px 160px;}
   .about{scroll-margin-top:24px;}
-  .media{display:block;aspect-ratio:4 / 3;border-radius:10px;overflow:hidden;background:#161615;}
+  .media{position:relative;display:block;aspect-ratio:4 / 3;border-radius:10px;overflow:hidden;background:#161615;}
+  .st{position:absolute;left:16px;top:16px;z-index:1;padding:4px 12px;border-radius:10px;font-size:15px;line-height:1.4;color:#f4f4f2;background:rgba(27,27,26,.55);border:1px solid rgba(244,244,242,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  @media (min-width:901px){
+    .works article:first-of-type{grid-column:1 / -1;}
+    .works article:first-of-type .media{aspect-ratio:2 / 1;}
+  }
   .media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1);}
   .media:hover img{transform:scale(1.03);}
   .cap{margin-top:18px;}
@@ -167,10 +172,10 @@
 <section class="works" id="cases">
   <h2 class="sr">Кейсы</h2>
   <article>
-    <a class="media" href="vow.html" aria-label="Vow: приложение для тех, кто бросает никотин"><picture><source srcset="projects/covers/vow.webp" type="image/webp"><img src="projects/covers/vow.jpg" alt="" width="1600" height="1200"></picture></a>
+    <a class="media" href="vow.html" aria-label="Vow: приложение для тех, кто бросает никотин"><span class="st">В&nbsp;процессе</span><picture><source media="(max-width:900px)" srcset="projects/covers/vow.webp" type="image/webp"><source srcset="projects/vow/hero-wide.webp" type="image/webp"><img src="projects/vow/hero-wide.jpg" alt="" width="2760" height="1380"></picture></a>
     <div class="cap">
       <h3 class="tt"><a href="vow.html">Vow: приложение для тех, кто бросает никотин</a></h3>
-      <p class="ds">Личный проект: iOS-приложение с&nbsp;честным счётчиком, четырьмя виджетами и&nbsp;«переждать тягу», без&nbsp;аккаунта, рекламы и&nbsp;бейджей. Исследование семи конкурентов, дизайн-система, работает на&nbsp;моём iPhone.</p>
+      <p class="ds">Личный проект: тихое iOS-приложение для&nbsp;тех, кто бросает никотин. Честный счётчик, четыре виджета и&nbsp;«переждать тягу», без&nbsp;аккаунта и&nbsp;бейджей. Работает на&nbsp;моём iPhone.</p>
     </div>
   </article>
   <article>
