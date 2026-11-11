@@ -47,6 +47,15 @@
       [30, 80, 200, 500].forEach(function (ms) { setTimeout(toTop, ms); });
     });
   })();
+
+  // The anchors only scroll; the address bar goes back to the plain URL afterwards, so a copied link opens on the hero, not on the cases.
+  (function () {
+    function clean() {
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    }
+    window.addEventListener('hashchange', clean);
+    window.addEventListener('load', clean);
+  })();
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Андрей Береговой","jobTitle":"Продуктовый дизайнер","url":"https://www.beregovoy.design/","sameAs":["https://t.me/sa1nteau"],"knowsAbout":["Product design","UX/UI design","Design systems","B2B and SaaS interfaces","GIS platforms"]}</script>
 <style>

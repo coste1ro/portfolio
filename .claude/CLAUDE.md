@@ -41,6 +41,7 @@ No build/lint/test tooling exists in this repo. To preview changes, open the `.h
 ## Main page notes
 
 - A reload starts at the top: the head script drops a leftover `#cases` and keeps re-applying `scrollTo(0)` (instantly, `html` has smooth scrolling) until the first real input. Only `navType === 'reload'`, so the back button keeps restoring
+- The anchors (`#cases`, `#about`, and the `#cases` the case pages' close button and `/cases` lead to) only scroll: a small script strips the hash from the address bar after the scroll (`hashchange` and `load`), so a copied link is always the plain URL and opens on the hero
 - The photo tilts toward the cursor (`.photo-tilt` perspective wrapper + `.photo-wrap`); off on touch devices and with reduced motion
 - Tool logos are inline SVG in muted grey; on hover Claude and Claude Code turn `#d97757`, Codex `#7c6fff`, ChatGPT white, Figma swaps to its five-colour mark
 
