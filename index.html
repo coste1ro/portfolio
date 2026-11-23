@@ -160,6 +160,22 @@
     .media img,.menu a,.photo-wrap{transition:none;}
     .dots.run .dot[aria-current="true"]::after{animation:none;width:100%;}
   }
+  .project-groups{padding:0 30px clamp(160px,30vh,320px);scroll-margin-top:30px;}
+  .project-group + .project-group{margin-top:96px;}
+  .group-title{font-size:18px;font-weight:400;line-height:1.4;margin:0 0 28px;color:#8f8f8a;}
+  .project-groups .works{padding:0;gap:56px 32px;}
+  .project-groups .commercial{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .project-groups .personal{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .project-groups .works article:first-of-type{grid-column:auto;}
+  .project-groups .works article:first-of-type .media{aspect-ratio:4 / 3;}
+  .project-groups .works article:first-of-type .media img{object-position:center;}
+  @media(max-width:900px){
+    .project-groups{padding:0 20px 112px;}
+    .project-group + .project-group{margin-top:72px;}
+    .group-title{font-size:18px;margin-bottom:24px;}
+    .project-groups .commercial,.project-groups .personal{grid-template-columns:1fr;}
+    .project-groups .works{gap:48px;}
+  }
 </style>
 </head>
 <body>
@@ -181,10 +197,12 @@
 </header>
 
 <main>
-<section class="works" id="cases">
-  <h2 class="sr">Кейсы</h2>
+<div class="project-groups" id="cases">
+<section class="project-group" aria-labelledby="commercial-title">
+<h2 class="group-title" id="commercial-title">Коммерческие проекты</h2>
+<div class="works commercial">
   <article>
-    <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source media="(max-width:900px)" srcset="projects/covers/auditors.webp" type="image/webp"><source srcset="projects/auditors_monitoring/hero-wide.webp" type="image/webp"><img src="projects/auditors_monitoring/hero-wide.jpg" alt="" width="2760" height="1380"></picture></a>
+    <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source srcset="projects/covers/auditors.webp" type="image/webp"><img src="projects/covers/auditors.jpg" alt="" width="1600" height="1200"></picture></a>
     <div class="cap">
       <h3 class="tt"><a href="auditors_monitoring.html">Мониторинг аудиторов</a></h3>
       <p class="ds">Инструмент менеджера полевого аудита: карта, статусы, маршруты. Менеджеры и&nbsp;заказчики отметили: от&nbsp;звонков полностью ушли.</p>
@@ -204,6 +222,11 @@
       <p class="ds">Дизайн-система продукта мониторинга дорожных аномалий: 50+ компонентов, 377 переменных. Используют до&nbsp;сих пор.</p>
     </div>
   </article>
+</div>
+</section>
+<section class="project-group" aria-labelledby="personal-title">
+<h2 class="group-title" id="personal-title">Личные и учебные проекты</h2>
+<div class="works personal">
   <article>
     <a class="media" href="vow.html" aria-label="Vow: приложение для тех, кто бросает никотин"><picture><source srcset="projects/covers/vow.webp" type="image/webp"><img src="projects/covers/vow.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
     <div class="cap">
@@ -218,7 +241,9 @@
       <p class="ds">Учебный проект: редизайн подписки, где тарифы описаны неявно, а&nbsp;автопродление спрятано. Тест на&nbsp;трёх респондентах: SUS 91.7, SEQ 6.3.</p>
     </div>
   </article>
+</div>
 </section>
+</div>
 
 <section class="about" id="about">
   <h2 class="sr">Обо мне</h2>
