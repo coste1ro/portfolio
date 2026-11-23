@@ -70,7 +70,7 @@
   a:focus-visible{outline:2px solid #f4f4f2;outline-offset:4px;border-radius:2px;}
   .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 
-  .hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding:28px 30px clamp(320px,60vh,640px);}
+  .hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;padding:28px 30px clamp(72px,12vh,144px);}
   .nm{font-weight:500;font-size:18px;line-height:1.35;margin:0;}
   .menu{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
   .menu a{font-size:18px;line-height:1.35;color:#8f8f8a;text-decoration:none;transition:color .15s ease;}
@@ -174,8 +174,9 @@
     <a href="mailto:beregovoy.designs@gmail.com">Почта</a>
   </nav>
   <div class="stmt">
-    <p>Продуктовый дизайнер.</p>
-    <p>3+&nbsp;года проектирую SaaS, <span class="nw">B2B-сервисы</span> и&nbsp;<span class="nw">GIS-платформы</span>: от&nbsp;карт до&nbsp;<span class="nw">админ-панелей</span>. Строю <span class="nw">дизайн-системы</span> с&nbsp;нуля и&nbsp;сопровождаю разработку до&nbsp;релиза. Фокусируюсь на&nbsp;<span class="nw">ИИ-инструментах</span> в&nbsp;продуктовой работе.</p>
+    <p>Продуктовый дизайнер — B2B SaaS и&nbsp;GIS.</p>
+    <p>Более трёх лет проектирую карты, административные панели и&nbsp;внутренние инструменты. Работал с&nbsp;международными заказчиками из&nbsp;США, Великобритании и&nbsp;ОАЭ, а&nbsp;также с&nbsp;российскими компаниями.</p>
+    <p>Создаю <span class="nw">дизайн-системы</span> в&nbsp;Figma и&nbsp;сопровождаю разработку до&nbsp;релиза. С&nbsp;<span class="nw">Claude Code</span> собираю работающие прототипы, сайты и&nbsp;собственные приложения.</p>
   </div>
 </header>
 
@@ -183,21 +184,7 @@
 <section class="works" id="cases">
   <h2 class="sr">Кейсы</h2>
   <article>
-    <a class="media" href="vow.html" aria-label="Vow: приложение для тех, кто бросает никотин"><picture><source media="(max-width:900px)" srcset="projects/covers/vow.webp" type="image/webp"><source srcset="projects/vow/hero-wide.webp" type="image/webp"><img src="projects/vow/hero-wide.jpg" alt="" width="2760" height="1380"></picture></a>
-    <div class="cap">
-      <h3 class="tt"><a href="vow.html">Vow: приложение для тех, кто бросает никотин</a></h3>
-      <p class="ds">Личный проект от&nbsp;идеи до&nbsp;рабочего приложения: тихий счётчик без&nbsp;никотина, четыре виджета и&nbsp;«переждать тягу». Пока только на&nbsp;моём iPhone.</p>
-    </div>
-  </article>
-  <article>
-    <a class="media" href="rutube.html" aria-label="Редизайн оформления подписки"><picture><source srcset="projects/covers/subscription.webp" type="image/webp"><img src="projects/covers/subscription.jpg" alt="" width="1600" height="1200"></picture></a>
-    <div class="cap">
-      <h3 class="tt"><a href="rutube.html">Редизайн оформления подписки</a></h3>
-      <p class="ds">Учебный проект: редизайн подписки, где тарифы описаны неявно, а&nbsp;автопродление спрятано. Тест на&nbsp;трёх респондентах: SUS 91.7, SEQ 6.3.</p>
-    </div>
-  </article>
-  <article>
-    <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source srcset="projects/covers/auditors.webp" type="image/webp"><img src="projects/covers/auditors.jpg" alt="" width="1600" height="1200"></picture></a>
+    <a class="media" href="auditors_monitoring.html" aria-label="Мониторинг аудиторов"><picture><source media="(max-width:900px)" srcset="projects/covers/auditors.webp" type="image/webp"><source srcset="projects/auditors_monitoring/hero-wide.webp" type="image/webp"><img src="projects/auditors_monitoring/hero-wide.jpg" alt="" width="2760" height="1380"></picture></a>
     <div class="cap">
       <h3 class="tt"><a href="auditors_monitoring.html">Мониторинг аудиторов</a></h3>
       <p class="ds">Инструмент менеджера полевого аудита: карта, статусы, маршруты. Менеджеры и&nbsp;заказчики отметили: от&nbsp;звонков полностью ушли.</p>
@@ -215,6 +202,20 @@
     <div class="cap">
       <h3 class="tt"><a href="design_system.html">Дизайн-система EchoTwin AI</a></h3>
       <p class="ds">Дизайн-система продукта мониторинга дорожных аномалий: 50+ компонентов, 377 переменных. Используют до&nbsp;сих пор.</p>
+    </div>
+  </article>
+  <article>
+    <a class="media" href="vow.html" aria-label="Vow: приложение для тех, кто бросает никотин"><picture><source srcset="projects/covers/vow.webp" type="image/webp"><img src="projects/covers/vow.jpg" alt="" width="1600" height="1200" loading="lazy"></picture></a>
+    <div class="cap">
+      <h3 class="tt"><a href="vow.html">Vow: приложение для тех, кто бросает никотин</a></h3>
+      <p class="ds">Личный проект от&nbsp;идеи до&nbsp;рабочего приложения: тихий счётчик без&nbsp;никотина, четыре виджета и&nbsp;«переждать тягу». Пока только на&nbsp;моём iPhone.</p>
+    </div>
+  </article>
+  <article>
+    <a class="media" href="rutube.html" aria-label="Редизайн оформления подписки"><picture><source srcset="projects/covers/subscription.webp" type="image/webp"><img src="projects/covers/subscription.jpg" alt="" width="1600" height="1200"></picture></a>
+    <div class="cap">
+      <h3 class="tt"><a href="rutube.html">Редизайн оформления подписки</a></h3>
+      <p class="ds">Учебный проект: редизайн подписки, где тарифы описаны неявно, а&nbsp;автопродление спрятано. Тест на&nbsp;трёх респондентах: SUS 91.7, SEQ 6.3.</p>
     </div>
   </article>
 </section>
